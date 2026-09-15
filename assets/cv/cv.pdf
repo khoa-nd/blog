@@ -1,42 +1,549 @@
 %PDF-1.4
 1 0 obj
-<< /Type /Catalog /Pages 2 0 R >>
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
 endobj
 2 0 obj
-<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
 endobj
 3 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>
-endobj
-4 0 obj
-<< /Length 245 >>
+<< /Length 5752 >>
 stream
 BT
-/F1 24 Tf
-1 0 0 1 72 720 Tm
-(Your Name) Tj
-/F1 12 Tf
-1 0 0 1 72 692 Tm
-(Placeholder CV - replace assets/cv/cv.pdf with your real file.) Tj
-/F1 12 Tf
-1 0 0 1 72 668 Tm
-(The download button reads its path from SITE.cvPath in js/data.js.) Tj
+/F2 23 Tf
+0 0 0 rg
+1 0 0 1 56.00 785.89 Tm
+(Nguyen Dang Khoa) Tj
+ET
+BT
+/F1 11.5 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 758.89 Tm
+(Solution Architect) Tj
+ET
+BT
+/F1 8.5 Tf
+.42 .42 .48 rg
+1 0 0 1 56.00 740.39 Tm
+(mail@nguyendangkhoa.info   \267   Ho Chi Minh City, Vietnam   \267   linkedin.com/in/your-handle   \267   github.com/your-handle) Tj
+ET
+.65 .65 .62 RG
+0.7 w
+56 721.89 m 539.28 721.89 l S
+BT
+/F1 9.5 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 707.89 Tm
+(I'm a Solution Architect working on design systems and content infrastructure. This site is where I keep track of) Tj
+ET
+BT
+/F1 9.5 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 694.59 Tm
+(what I'm building, where I've worked, and what I'm reading \226 written mostly for myself, published in case it's useful) Tj
+ET
+BT
+/F1 9.5 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 681.29 Tm
+(to you.) Tj
+ET
+BT
+/F2 8.5 Tf
+.18 .37 .65 rg
+1 0 0 1 56.00 655.99 Tm
+(EXPERIENCE) Tj
+ET
+.78 .78 .75 RG
+0.7 w
+56 642.49 m 539.28 642.49 l S
+BT
+/F1 8.5 Tf
+.42 .42 .48 rg
+1 0 0 1 481.63 630.49 Tm
+(2023 \226 Present) Tj
+ET
+BT
+/F2 11 Tf
+0 0 0 rg
+1 0 0 1 56.00 630.49 Tm
+(Senior Software Engineer) Tj
+ET
+BT
+/F1 9.5 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 617.99 Tm
+(B2B SaaS company) Tj
+ET
+BT
+/F1 9.5 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 604.99 Tm
+(Lead engineer on the platform team. Own the design system and the content infrastructure powering twelve) Tj
+ET
+BT
+/F1 9.5 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 592.09 Tm
+(regional sites. Mentor three engineers.) Tj
+ET
+BT
+/F1 8.5 Tf
+.45 .45 .5 rg
+1 0 0 1 56.00 577.69 Tm
+(TypeScript \267 Java \267 Design Systems \267 Leadership) Tj
+ET
+BT
+/F1 8.5 Tf
+.42 .42 .48 rg
+1 0 0 1 492.02 559.79 Tm
+(2021 \226 2023) Tj
+ET
+BT
+/F2 11 Tf
+0 0 0 rg
+1 0 0 1 56.00 559.79 Tm
+(Software Engineer) Tj
+ET
+BT
+/F1 9.5 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 547.29 Tm
+(Financial services company) Tj
+ET
+BT
+/F1 9.5 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 534.29 Tm
+(Built and operated backend services for payments reconciliation and risk reporting. Took the reconciliation process) Tj
+ET
+BT
+/F1 9.5 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 521.39 Tm
+(from three days of manual work to twenty minutes.) Tj
+ET
+BT
+/F1 8.5 Tf
+.45 .45 .5 rg
+1 0 0 1 56.00 506.99 Tm
+(Python \267 Kotlin \267 Kafka \267 Postgres) Tj
+ET
+BT
+/F1 8.5 Tf
+.42 .42 .48 rg
+1 0 0 1 492.02 489.09 Tm
+(2019 \226 2021) Tj
+ET
+BT
+/F2 11 Tf
+0 0 0 rg
+1 0 0 1 56.00 489.09 Tm
+(Full-stack Developer) Tj
+ET
+BT
+/F1 9.5 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 476.59 Tm
+(Digital agency) Tj
+ET
+BT
+/F1 9.5 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 463.59 Tm
+(Agency work across a dozen client projects \226 e-commerce, editorial sites, internal tools. Learned to ship fast and) Tj
+ET
+BT
+/F1 9.5 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 450.69 Tm
+(read someone else's codebase without complaining.) Tj
+ET
+BT
+/F1 8.5 Tf
+.45 .45 .5 rg
+1 0 0 1 56.00 436.29 Tm
+(JavaScript \267 PHP \267 React \267 AWS) Tj
+ET
+BT
+/F1 8.5 Tf
+.42 .42 .48 rg
+1 0 0 1 492.02 418.39 Tm
+(2018 \226 2019) Tj
+ET
+BT
+/F2 11 Tf
+0 0 0 rg
+1 0 0 1 56.00 418.39 Tm
+(Junior Developer) Tj
+ET
+BT
+/F1 9.5 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 405.89 Tm
+(Software consultancy) Tj
+ET
+BT
+/F1 9.5 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 392.89 Tm
+(First engineering role. Maintained an internal reporting tool and wrote the integration tests nobody else wanted to) Tj
+ET
+BT
+/F1 9.5 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 379.99 Tm
+(write.) Tj
+ET
+BT
+/F1 8.5 Tf
+.45 .45 .5 rg
+1 0 0 1 56.00 365.59 Tm
+(Java \267 Selenium \267 MySQL) Tj
+ET
+BT
+/F2 8.5 Tf
+.18 .37 .65 rg
+1 0 0 1 56.00 345.69 Tm
+(SKILLS) Tj
+ET
+.78 .78 .75 RG
+0.7 w
+56 332.19 m 539.28 332.19 l S
+BT
+/F2 9.5 Tf
+0 0 0 rg
+1 0 0 1 56.00 320.19 Tm
+(AI & Agentic Software Engineering) Tj
+ET
+BT
+/F1 9 Tf
+.3 .3 .35 rg
+1 0 0 1 56.00 308.69 Tm
+(OpenAI API \267 LangChain \267 MCP \267 RAG \267 PyTorch \267 Prompt Engineering \267 Agent Orchestration \267 Evals) Tj
+ET
+BT
+/F2 9.5 Tf
+0 0 0 rg
+1 0 0 1 56.00 292.29 Tm
+(Software Architecture & Design) Tj
+ET
+BT
+/F1 9 Tf
+.3 .3 .35 rg
+1 0 0 1 56.00 280.79 Tm
+(System Design \267 Microservices \267 Design Patterns \267 REST API \267 GraphQL \267 Kafka \267 Domain-Driven Design \267 Event) Tj
+ET
+BT
+/F1 9 Tf
+.3 .3 .35 rg
+1 0 0 1 56.00 268.39 Tm
+(Sourcing) Tj
+ET
+BT
+/F2 9.5 Tf
+0 0 0 rg
+1 0 0 1 56.00 251.99 Tm
+(Programming Frameworks & Skills) Tj
+ET
+BT
+/F1 9 Tf
+.3 .3 .35 rg
+1 0 0 1 56.00 240.49 Tm
+(TypeScript \267 JavaScript \267 Python \267 Java \267 Go \267 React \267 Next.js \267 Node.js \267 Tailwind \267 HTML5 \267 CSS3) Tj
+ET
+BT
+/F2 9.5 Tf
+0 0 0 rg
+1 0 0 1 56.00 224.09 Tm
+(Infrastructure & DevSecOps) Tj
+ET
+BT
+/F1 9 Tf
+.3 .3 .35 rg
+1 0 0 1 56.00 212.59 Tm
+(Docker \267 Kubernetes \267 AWS \267 Terraform \267 CI/CD \267 Git \267 Linux \267 DevSecOps \267 Observability) Tj
+ET
+BT
+/F2 9.5 Tf
+0 0 0 rg
+1 0 0 1 56.00 196.19 Tm
+(Software Solutions & Packages) Tj
+ET
+BT
+/F1 9 Tf
+.3 .3 .35 rg
+1 0 0 1 56.00 184.69 Tm
+(CMS \267 Postgres \267 MongoDB \267 Redis \267 Vector DB \267 Cloud \267 Mobile) Tj
+ET
+BT
+/F2 9.5 Tf
+0 0 0 rg
+1 0 0 1 56.00 168.29 Tm
+(Fundamental Skills) Tj
+ET
+BT
+/F1 9 Tf
+.3 .3 .35 rg
+1 0 0 1 56.00 156.79 Tm
+(Data Structures \267 Algorithms \267 Testing \267 Performance \267 Accessibility \267 Documentation \267 Agile) Tj
+ET
+BT
+/F2 8.5 Tf
+.18 .37 .65 rg
+1 0 0 1 56.00 136.39 Tm
+(SELECTED PROJECTS) Tj
+ET
+.78 .78 .75 RG
+0.7 w
+56 122.89 m 539.28 122.89 l S
+BT
+/F1 8.5 Tf
+.42 .42 .48 rg
+1 0 0 1 520.38 110.89 Tm
+(2025) Tj
+ET
+BT
+/F2 10.5 Tf
+0 0 0 rg
+1 0 0 1 56.00 110.89 Tm
+(Component Library & Design Tokens) Tj
+ET
+BT
+/F1 8.5 Tf
+.45 .45 .5 rg
+1 0 0 1 56.00 98.89 Tm
+(B2B SaaS  \(under NDA\)) Tj
+ET
+BT
+/F1 8.8 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 87.39 Tm
+(Architecture: Framework-agnostic web components \267 tokens compiled from one JSON source to CSS/iOS/Android) Tj
+ET
+BT
+/F1 8.8 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 75.19 Tm
+(Role: Lead engineer \267 set the API conventions and the adoption path) Tj
 ET
 endstream
 endobj
+4 0 obj
+<< /Type /Page /Parent 8 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 3 0 R >>
+endobj
 5 0 obj
-<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+<< /Length 3258 >>
+stream
+BT
+/F1 8.8 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 785.89 Tm
+(Impact: 48 components \267 adopted by 6 product teams) Tj
+ET
+BT
+/F1 8.5 Tf
+.45 .45 .5 rg
+1 0 0 1 56.00 773.69 Tm
+(TypeScript \267 Web Components \267 Storybook) Tj
+ET
+BT
+/F1 8.5 Tf
+.42 .42 .48 rg
+1 0 0 1 520.38 756.79 Tm
+(2025) Tj
+ET
+BT
+/F2 10.5 Tf
+0 0 0 rg
+1 0 0 1 56.00 756.79 Tm
+(CI Telemetry Pipeline) Tj
+ET
+BT
+/F1 8.5 Tf
+.45 .45 .5 rg
+1 0 0 1 56.00 744.79 Tm
+(Personal project) Tj
+ET
+BT
+/F1 8.8 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 733.29 Tm
+(Architecture: Event ingest -> columnar store -> rollup queries \267 flake detection over rolling windows) Tj
+ET
+BT
+/F1 8.8 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 721.09 Tm
+(Role: Sole author, design through operation) Tj
+ET
+BT
+/F1 8.8 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 708.89 Tm
+(Impact: 2M events/day \267 surfaced flaky tests that cut build time 38%) Tj
+ET
+BT
+/F1 8.5 Tf
+.45 .45 .5 rg
+1 0 0 1 56.00 696.69 Tm
+(Go \267 ClickHouse \267 Grafana) Tj
+ET
+BT
+/F1 8.5 Tf
+.42 .42 .48 rg
+1 0 0 1 520.38 679.79 Tm
+(2024) Tj
+ET
+BT
+/F2 10.5 Tf
+0 0 0 rg
+1 0 0 1 56.00 679.79 Tm
+(Payments Reconciliation Engine) Tj
+ET
+BT
+/F1 8.5 Tf
+.45 .45 .5 rg
+1 0 0 1 56.00 667.79 Tm
+(Financial services  \(under NDA\)) Tj
+ET
+BT
+/F1 8.8 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 656.29 Tm
+(Architecture: Scheduled DAG \267 idempotent matching across multiple provider feeds \267 exception queue for human review) Tj
+ET
+BT
+/F1 8.8 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 644.09 Tm
+(Role: Designed the matching model and owned the rollout) Tj
+ET
+BT
+/F1 8.8 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 631.89 Tm
+(Impact: 1.4M transactions/cycle \267 3 days of manual work -> 20 minutes) Tj
+ET
+BT
+/F1 8.5 Tf
+.45 .45 .5 rg
+1 0 0 1 56.00 619.69 Tm
+(Python \267 Postgres \267 Airflow) Tj
+ET
+BT
+/F1 8.5 Tf
+.42 .42 .48 rg
+1 0 0 1 520.38 602.79 Tm
+(2024) Tj
+ET
+BT
+/F2 10.5 Tf
+0 0 0 rg
+1 0 0 1 56.00 602.79 Tm
+(Headless Content Platform) Tj
+ET
+BT
+/F1 8.5 Tf
+.45 .45 .5 rg
+1 0 0 1 56.00 590.79 Tm
+(B2B SaaS  \(under NDA\)) Tj
+ET
+BT
+/F1 8.8 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 579.29 Tm
+(Architecture: Headless CMS \267 one editorial workspace fanning out to many regional front-ends \267 per-market publishing) Tj
+ET
+BT
+/F1 8.8 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 567.09 Tm
+(rules) Tj
+ET
+BT
+/F1 8.8 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 554.89 Tm
+(Role: Platform lead \267 content model, publishing rules, front-end integration) Tj
+ET
+BT
+/F1 8.8 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 542.69 Tm
+(Impact: 12 regional sites \267 4 languages from a single workspace) Tj
+ET
+BT
+/F1 8.5 Tf
+.45 .45 .5 rg
+1 0 0 1 56.00 530.49 Tm
+(Java \267 Magnolia \267 React) Tj
+ET
+BT
+/F1 8.5 Tf
+.42 .42 .48 rg
+1 0 0 1 520.38 513.59 Tm
+(2023) Tj
+ET
+BT
+/F2 10.5 Tf
+0 0 0 rg
+1 0 0 1 56.00 513.59 Tm
+(Local-First Analytics Notebook) Tj
+ET
+BT
+/F1 8.5 Tf
+.45 .45 .5 rg
+1 0 0 1 56.00 501.59 Tm
+(Personal project) Tj
+ET
+BT
+/F1 8.8 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 490.09 Tm
+(Architecture: In-process OLAP engine compiled to WASM \267 query execution entirely client-side, no server round-trip) Tj
+ET
+BT
+/F1 8.8 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 477.89 Tm
+(Role: Sole author) Tj
+ET
+BT
+/F1 8.8 Tf
+.28 .28 .32 rg
+1 0 0 1 56.00 465.69 Tm
+(Impact: 10GB local datasets \267 zero network calls by design) Tj
+ET
+BT
+/F1 8.5 Tf
+.45 .45 .5 rg
+1 0 0 1 56.00 453.49 Tm
+(Rust \267 DuckDB \267 Svelte) Tj
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 8 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 5 0 R >>
+endobj
+7 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R] /Count 2 >>
+endobj
+8 0 obj
+<< /Type /Catalog /Pages 7 0 R >>
 endobj
 xref
-0 6
+0 9
 0000000000 65535 f 
 0000000009 00000 n 
-0000000058 00000 n 
-0000000115 00000 n 
-0000000241 00000 n 
-0000000536 00000 n 
+0000000106 00000 n 
+0000000208 00000 n 
+0000006012 00000 n 
+0000006154 00000 n 
+0000009464 00000 n 
+0000009606 00000 n 
+0000009669 00000 n 
 trailer
-<< /Size 6 /Root 1 0 R >>
+<< /Size 9 /Root 8 0 R >>
 startxref
-606
+9718
 %%EOF

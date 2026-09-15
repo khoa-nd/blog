@@ -133,7 +133,7 @@ body {
 .footer-inner   { letter-spacing: 0.004em; }
 
 .spec-label,
-.hero-eyebrow   { letter-spacing: 0.06em; font-weight: 590; }
+.hero-eyebrow   { letter-spacing: 0.02em; font-weight: 590; }
 
 /* Interface text: SF's UI weight is 500, not 400. */
 .nav a          { font-weight: 450; letter-spacing: -0.004em; }
@@ -168,7 +168,6 @@ body {
 .spec-label,
 .book-status,
 .hobby-status,
-.hero-eyebrow,
 .project-year,
 .project-meta,
 .xp-period,
@@ -250,6 +249,8 @@ body {
 .site-footer    { border-top-color: var(--border); }
 .work-teaser    { border-color: var(--border); }
 
-.hero-eyebrow { letter-spacing: 0.06em; }
+/* Sans like the rest of the theme — uppercase needs only a little
+   tracking, far less than the monospace version did. */
+.hero-eyebrow { font-family: var(--font-sans); letter-spacing: 0.02em; }
 .hero-eyebrow::after { display: none; }
 .xp-company b { color: var(--accent); font-weight: 550; }

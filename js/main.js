@@ -133,8 +133,22 @@
       tags,
     ]);
 
-    return el("a", {
-      class: "project-card",
+    /* A "Present" action lives alongside the card rather than inside it:
+       a <button> nested in an <a> is invalid HTML and swallows clicks. */
+    const present = p.slides && p.slides.length
+      ? el("button", {
+          class: "present-cta",
+          type: "button",
+          "data-present": p.title,
+          "aria-label": "Present " + p.title,
+        }, [
+          el("span", { class: "present-cta-icon", "aria-hidden": "true", text: "▶" }),
+          el("span", { text: "Present" }),
+        ])
+      : null;
+
+    const card = el("a", {
+      class: "project-card" + (present ? " has-present" : ""),
       href: p.url || "#",
       "data-title": p.title.toLowerCase(),
       "data-desc": (p.desc || "").toLowerCase(),
@@ -142,6 +156,19 @@
       "data-year": String(p.year),
       "data-stack": (p.stack || []).join(" ").toLowerCase(),
     }, [thumb, body]);
+
+    if (!present) return card;
+
+    /* The wrapper carries the filter attributes too, because projects.js
+       queries them on the grid's direct children. */
+    return el("div", {
+      class: "project-card-wrap",
+      "data-title": card.getAttribute("data-title"),
+      "data-desc": card.getAttribute("data-desc"),
+      "data-category": card.getAttribute("data-category"),
+      "data-year": card.getAttribute("data-year"),
+      "data-stack": card.getAttribute("data-stack"),
+    }, [card, present]);
   }
 
   function esc(s) {
@@ -220,11 +247,23 @@
     });
   }
 
+  /* Render a short content string that may contain **bold** spans.
+     Everything is escaped first, so the JSON can never inject markup —
+     only the bold markers are honoured. */
+  function richText(str) {
+    return esc(str).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  }
+
   /* ---------- Shared identity fill-in ---------- */
   function initIdentity() {
     document.querySelectorAll("[data-site]").forEach(function (n) {
       const v = SITE[n.getAttribute("data-site")];
       if (v != null) n.textContent = v;
+    });
+    /* Fields that may carry **bold** markup, rendered rather than escaped flat. */
+    document.querySelectorAll("[data-site-rich]").forEach(function (n) {
+      const v = SITE[n.getAttribute("data-site-rich")];
+      if (v != null) n.innerHTML = richText(v);
     });
     document.querySelectorAll("[data-site-href]").forEach(function (n) {
       const key = n.getAttribute("data-site-href");
@@ -269,9 +308,20 @@
                   bookCard: bookCard, toast: toast };
 
   document.addEventListener("DOMContentLoaded", function () {
+    /* Nav needs no content, so it works even if the JSON fails to load. */
     initNav();
-    initIdentity();
-    initCV();
-    initCopyEmail();
+
+    /* These three read SITE, which arrives from content/site.json. */
+    function initContentBound() {
+      initIdentity();
+      initCV();
+      initCopyEmail();
+    }
+    if (window.ContentReady) {
+      window.ContentReady.then(initContentBound)
+        .catch(function () { /* content.js already surfaced the error */ });
+    } else {
+      initContentBound();
+    }
   });
 })();

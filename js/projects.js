@@ -4,6 +4,10 @@
    ============================================================ */
 (function () {
   "use strict";
+
+  /* Content arrives asynchronously from content/*.json, so the render
+     pass waits on it. ContentReady is defined in js/content.js. */
+  function renderProjects() {
   const el = Site.el;
 
   const grid    = document.getElementById("gallery");
@@ -107,4 +111,11 @@
   });
 
   render();
+  }
+
+  if (window.ContentReady) {
+    window.ContentReady.then(renderProjects).catch(function () { /* banner already shown */ });
+  } else {
+    renderProjects();
+  }
 })();

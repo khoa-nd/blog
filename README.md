@@ -13,16 +13,50 @@ mostly works too, but a server matches how it will be hosted.)
 
 ## Where the content lives
 
-**`js/data.js` is the only file you edit for content.** Every page reads from it.
+**All content lives in `content/*.json`.** Edit a file, refresh the browser —
+there is no build step for the site.
 
-| Constant     | Drives                                                   |
-|--------------|----------------------------------------------------------|
-| `SITE`       | Name, role, email, LinkedIn, GitHub, CV path, location   |
-| `SKILL_GROUPS` | The skills matrix in the home page's **Work** section |
-| `PROJECTS`   | The `projects.html` gallery |
-| `EXPERIENCE` | Experience list on the home page                          |
-| `BOOKS`      | Home preview (3) + the full `books.html` list             |
-| `HOBBIES`    | Hobby project skeleton cards on the home page             |
+| File | Drives |
+|------|--------|
+| `content/site.json` | Name, role, email, LinkedIn, GitHub, CV path, location |
+| `content/skills.json` | The six skill groups in the home page's **Work** section |
+| `content/projects.json` | The `projects.html` gallery |
+| `content/experience.json` | Experience list on the home page |
+| `content/books.json` | Home preview (3) + the full `books.html` list |
+| `content/side-projects.json` | Side project cards on the home page |
+
+JSON is used rather than JavaScript because it is far less punishing to
+hand-edit: every editor validates it as you type, and a stray comma is caught
+immediately instead of silently blanking the page.
+
+### Before you commit
+
+```sh
+npm run check      # validates every content file
+```
+
+This catches malformed JSON, missing or mistyped fields, unknown book
+statuses, and — importantly — any `company`/`client` field that would leak a
+client name into a public NDA-safe page.
+
+### Regenerating the CV
+
+```sh
+npm run cv         # writes assets/cv/cv.pdf from content/*.json
+```
+
+The CV is built from the **same** files that drive the site, so your experience
+and skills cannot drift between the page and the PDF. This is the project's only
+build step, and the site does not depend on it.
+
+### One caveat
+
+Content is fetched at runtime, so the site must be served over HTTP —
+`file://` will show a clear error banner rather than a blank page. Use:
+
+```sh
+npm run serve      # http://localhost:8000
+```
 
 ## Files
 
@@ -34,8 +68,11 @@ css/style.css     Layout and structure only — no colour/font literals
 css/themes/       Theme stylesheets — blueprint.css (active) + classic.css
 css/devbar.css    Dev-only theme switcher styling
 js/theme-switcher.js  Dev-only theme switcher (inert off localhost)
-js/data.js        >>> ALL CONTENT LIVES HERE <<<
+content/*.json    >>> ALL CONTENT LIVES HERE <<<
+js/content.js     Loads content/*.json and exposes it to the page scripts
 js/icons.js       Inline SVG brand marks for the skills matrix
+tools/check-content.js  Validates content before commit (npm run check)
+tools/build-cv.js       Generates the CV PDF from content (npm run cv)
 js/main.js        Theme, nav, card builders, carousel, CV download
 js/home.js        Home page rendering
 js/projects.js    Gallery filtering
@@ -237,3 +274,95 @@ details do the work:
 - **Restrained weights.** 400 body, 450–550 interface, 600–700 headings. SF's
   intermediate weights (450, 550, 590, 650) are used deliberately.
 - **Tabular figures** on years, periods and counts so numbers align.
+
+## How content becomes HTML
+
+The page scripts render from `content/*.json` at runtime, which alone would
+leave the HTML source empty — bad for search engines and for link previews on
+Slack, LinkedIn and X, none of which run JavaScript. So the content is also
+**prerendered into the HTML** between `<!-- build:… -->` markers.
+
+**You do not have to do this yourself.** A GitHub Action
+(`.github/workflows/build.yml`) validates and prerenders on every push that
+touches `content/`, then commits the regenerated HTML back to `main`. It runs
+on GitHub's servers, so it covers every way a commit can happen:
+
+- `git push` from your machine
+- editing a JSON file in the github.com web editor
+- the GitHub mobile app
+
+There is no local git hook to install or forget.
+
+### Editing from the web
+
+Edit `content/books.json` on github.com, commit, and you are done. The Action
+rebuilds within a minute and Pages redeploys. Human visitors see the change
+immediately (the JS renders it); crawlers see it once the rebuild lands.
+
+**After a web edit, `git pull` before your next local push** — the bot will have
+committed on top of your change.
+
+### Building locally (optional)
+
+Running the build yourself avoids the follow-up bot commit and lets you preview
+the exact HTML that will ship:
+
+```sh
+npm run check     # validate content
+npm run build     # prerender into HTML + sitemap/robots
+```
+
+If you commit the result, the Action finds nothing to do and exits quietly.
+
+### If validation fails
+
+The Action fails loudly in the Actions tab and skips the build, so malformed
+JSON never produces broken HTML. The site keeps serving the last good version.
+Fix the JSON and push again.
+
+## Project presentations
+
+Each project card in the gallery has a **Present** button (visible on hover;
+always visible on touch). It opens a fullscreen slideshow — plain HTML in a
+`<dialog>`, no slideshow library — with three slides:
+
+| Slide | Shows |
+|-------|-------|
+| `overview` | A lead paragraph, bullet points, and a row of facts (duration, team, sector) |
+| `architecture` | A left-to-right pipeline diagram plus explanatory notes |
+| `results` | Big metric tiles and supporting bullets |
+
+**Keyboard:** `→` `←` `Space` navigate · `Home`/`End` jump · `F` fullscreen ·
+`Esc` close.
+
+### Writing a deck
+
+Decks live on the project itself in `content/projects.json`, under `slides`:
+
+```json
+"slides": [
+  { "type": "overview", "title": "Project Overview",
+    "lead": "One or two sentences framing the problem.",
+    "points": ["A bullet", "Another bullet"],
+    "facts": [["Duration", "8 months"], ["Team", "1 engineer"]] },
+
+  { "type": "architecture", "title": "Architecture",
+    "lead": "How the system is shaped.",
+    "nodes": ["Producers", "Ingest", "Router", "Consumers"],
+    "notes": ["Something worth saying about the design"] },
+
+  { "type": "results", "title": "Key Results",
+    "lead": "What changed.",
+    "metrics": [["800", "msg/s sustained"], ["99.97%", "uptime"]],
+    "points": ["Supporting detail"] }
+]
+```
+
+A project with no `slides` array simply gets no Present button.
+
+Keep pipelines to about four nodes — `npm run check` warns above six, because
+more than that stops being readable at presentation size. The same NDA rule
+applies here as everywhere: describe the architecture, never the client.
+
+Two projects ship with hand-written decks (Event Router, Payments
+Reconciliation Engine); the rest have generic scaffolds to replace.

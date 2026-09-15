@@ -3,6 +3,10 @@
    ============================================================ */
 (function () {
   "use strict";
+
+  /* Content arrives asynchronously from content/*.json, so the render
+     pass waits on it. ContentReady is defined in js/content.js. */
+  function renderHome() {
   const el = Site.el;
 
   /* ---------- Skills matrix (Work section) ----------
@@ -10,6 +14,9 @@
      js/icons.js degrades to a text-only chip, so the data can name anything. */
   const matrix = document.getElementById("skill-matrix");
   if (matrix && typeof SKILL_GROUPS !== "undefined") {
+    /* The build step prerenders this markup for crawlers; clear it before
+       re-rendering or every entry would appear twice. */
+    matrix.textContent = "";
     SKILL_GROUPS.forEach(function (group) {
       const chips = group.items.map(function (name) {
         const icon = skillIcon(name);
@@ -32,6 +39,7 @@
   /* ---------- Experience ---------- */
   const xpList = document.getElementById("experience-list");
   if (xpList) {
+    xpList.textContent = "";
     EXPERIENCE.forEach(function (x) {
       xpList.appendChild(
         el("article", { class: "xp-item" }, [
@@ -52,6 +60,7 @@
   /* ---------- Books preview: 3 most relevant ---------- */
   const booksPreview = document.getElementById("books-preview");
   if (booksPreview) {
+    booksPreview.textContent = "";
     const order = { reading: 0, finished: 1, queued: 2 };
     BOOKS.slice()
       .sort(function (a, b) { return (order[a.status] ?? 3) - (order[b.status] ?? 3); })
@@ -62,6 +71,7 @@
   /* ---------- Hobby skeleton cards ---------- */
   const hobbyGrid = document.getElementById("hobby-grid");
   if (hobbyGrid) {
+    hobbyGrid.textContent = "";
     HOBBIES.forEach(function (h) {
       hobbyGrid.appendChild(
         el("article", { class: "hobby-card" }, [
@@ -72,18 +82,13 @@
         ])
       );
     });
-    /* One shimmering placeholder to make the "more coming" state explicit. */
-    hobbyGrid.appendChild(
-      el("article", { class: "hobby-card" }, [
-        el("div", { class: "skel", style: "width:34px;height:34px;border-radius:6px" }),
-        el("div", { class: "skel skel-line w-70", style: "height:14px" }),
-        el("div", { style: "display:flex;flex-direction:column;gap:7px;flex:1" }, [
-          el("div", { class: "skel skel-line" }),
-          el("div", { class: "skel skel-line w-70" }),
-          el("div", { class: "skel skel-line w-45" }),
-        ]),
-      ])
-    );
   }
 
+  }
+
+  if (window.ContentReady) {
+    window.ContentReady.then(renderHome).catch(function () { /* banner already shown */ });
+  } else {
+    renderHome();
+  }
 })();

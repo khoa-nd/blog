@@ -3,6 +3,10 @@
    ============================================================ */
 (function () {
   "use strict";
+
+  /* Content arrives asynchronously from content/*.json, so the render
+     pass waits on it. ContentReady is defined in js/content.js. */
+  function renderBooks() {
   const el = Site.el;
 
   const list   = document.getElementById("book-list");
@@ -60,4 +64,11 @@
   [status, sort].forEach(function (n) { n.addEventListener("change", render); });
 
   render();
+  }
+
+  if (window.ContentReady) {
+    window.ContentReady.then(renderBooks).catch(function () { /* banner already shown */ });
+  } else {
+    renderBooks();
+  }
 })();
