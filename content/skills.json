@@ -1,0 +1,82 @@
+[
+  {
+    "title": "AI & Agentic Software Engineering",
+    "items": [
+      "OpenAI API",
+      "LangChain",
+      "MCP",
+      "RAG",
+      "PyTorch",
+      "Prompt Engineering",
+      "Agent Orchestration",
+      "Evals"
+    ]
+  },
+  {
+    "title": "Software Architecture & Design",
+    "items": [
+      "System Design",
+      "Microservices",
+      "Design Patterns",
+      "REST API",
+      "GraphQL",
+      "Kafka",
+      "Domain-Driven Design",
+      "Event Sourcing"
+    ]
+  },
+  {
+    "title": "Programming Frameworks & Skills",
+    "items": [
+      "TypeScript",
+      "JavaScript",
+      "Python",
+      "Java",
+      "Go",
+      "React",
+      "Next.js",
+      "Node.js",
+      "Tailwind",
+      "HTML5",
+      "CSS3"
+    ]
+  },
+  {
+    "title": "Infrastructure & DevSecOps",
+    "items": [
+      "Docker",
+      "Kubernetes",
+      "AWS",
+      "Terraform",
+      "CI/CD",
+      "Git",
+      "Linux",
+      "DevSecOps",
+      "Observability"
+    ]
+  },
+  {
+    "title": "Software Solutions & Packages",
+    "items": [
+      "CMS",
+      "Postgres",
+      "MongoDB",
+      "Redis",
+      "Vector DB",
+      "Cloud",
+      "Mobile"
+    ]
+  },
+  {
+    "title": "Fundamental Skills",
+    "items": [
+      "Data Structures",
+      "Algorithms",
+      "Testing",
+      "Performance",
+      "Accessibility",
+      "Documentation",
+      "Agile"
+    ]
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "icon": "◈",
+    "title": "Placeholder One",
+    "status": "active",
+    "desc": "Short description goes here. Replace when the real content is ready."
+  },
+  {
+    "icon": "◐",
+    "title": "Placeholder Two",
+    "status": "paused",
+    "desc": "Short description goes here. Replace when the real content is ready."
+  },
+  {
+    "icon": "▲",
+    "title": "Placeholder Three",
+    "status": "active",
+    "desc": "Short description goes here. Replace when the real content is ready."
+  },
+  {
+    "icon": "◇",
+    "title": "Placeholder Four",
+    "status": "idea",
+    "desc": "Short description goes here. Replace when the real content is ready."
+  }
+]

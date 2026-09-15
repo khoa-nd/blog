@@ -1,0 +1,801 @@
+[
+  {
+    "title": "Component Library & Design Tokens",
+    "year": 2025,
+    "sector": "B2B SaaS",
+    "nda": true,
+    "category": "Design Systems",
+    "stack": [
+      "TypeScript",
+      "Web Components",
+      "Storybook"
+    ],
+    "arch": "Framework-agnostic web components · tokens compiled from one JSON source to CSS/iOS/Android",
+    "role": "Lead engineer · set the API conventions and the adoption path",
+    "impact": "48 components · adopted by 6 product teams",
+    "desc": "A themeable component library that let independent teams ship consistent UI without coordinating releases.",
+    "thumb": "#2f5ea8",
+    "url": "#",
+    "slides": [
+      {
+        "type": "overview",
+        "title": "Project Overview",
+        "lead": "A themeable component library that let independent teams ship consistent UI without coordinating releases.",
+        "points": [
+          "Role: Lead engineer · set the API conventions and the adoption path",
+          "Sector: B2B SaaS (under NDA)",
+          "Stack: TypeScript, Web Components, Storybook",
+          "Replace this dummy content with the real story."
+        ],
+        "facts": [
+          [
+            "Year",
+            "2025"
+          ],
+          [
+            "Category",
+            "Design Systems"
+          ],
+          [
+            "Sector",
+            "B2B SaaS"
+          ]
+        ]
+      },
+      {
+        "type": "architecture",
+        "title": "Architecture",
+        "lead": "Framework-agnostic web components · tokens compiled from one JSON source to CSS/iOS/Android",
+        "diagram": "pipeline",
+        "nodes": [
+          "Input",
+          "Process",
+          "Store",
+          "Serve"
+        ],
+        "notes": [
+          "Dummy diagram — describe the real shape of the system here.",
+          "Keep it structural; no client-identifying detail.",
+          "Three or four nodes usually reads better than ten."
+        ]
+      },
+      {
+        "type": "results",
+        "title": "Key Results",
+        "lead": "48 components · adopted by 6 product teams",
+        "metrics": [
+          [
+            "48 components",
+            "primary metric"
+          ],
+          [
+            "—",
+            "secondary metric"
+          ],
+          [
+            "—",
+            "third metric"
+          ],
+          [
+            "—",
+            "fourth metric"
+          ]
+        ],
+        "points": [
+          "Replace with real outcomes.",
+          "Numbers land harder than adjectives."
+        ]
+      }
+    ]
+  },
+  {
+    "title": "CI Telemetry Pipeline",
+    "year": 2025,
+    "sector": "Personal project",
+    "category": "Infrastructure",
+    "stack": [
+      "Go",
+      "ClickHouse",
+      "Grafana"
+    ],
+    "arch": "Event ingest → columnar store → rollup queries · flake detection over rolling windows",
+    "role": "Sole author, design through operation",
+    "impact": "2M events/day · surfaced flaky tests that cut build time 38%",
+    "desc": "Real-time build telemetry that finds slow and unreliable steps before they block a release.",
+    "thumb": "#8a5cf0",
+    "url": "#",
+    "slides": [
+      {
+        "type": "overview",
+        "title": "Project Overview",
+        "lead": "Real-time build telemetry that finds slow and unreliable steps before they block a release.",
+        "points": [
+          "Role: Sole author, design through operation",
+          "Sector: Personal project",
+          "Stack: Go, ClickHouse, Grafana",
+          "Replace this dummy content with the real story."
+        ],
+        "facts": [
+          [
+            "Year",
+            "2025"
+          ],
+          [
+            "Category",
+            "Infrastructure"
+          ],
+          [
+            "Sector",
+            "Personal project"
+          ]
+        ]
+      },
+      {
+        "type": "architecture",
+        "title": "Architecture",
+        "lead": "Event ingest → columnar store → rollup queries · flake detection over rolling windows",
+        "diagram": "pipeline",
+        "nodes": [
+          "Input",
+          "Process",
+          "Store",
+          "Serve"
+        ],
+        "notes": [
+          "Dummy diagram — describe the real shape of the system here.",
+          "Keep it structural; no client-identifying detail.",
+          "Three or four nodes usually reads better than ten."
+        ]
+      },
+      {
+        "type": "results",
+        "title": "Key Results",
+        "lead": "2M events/day · surfaced flaky tests that cut build time 38%",
+        "metrics": [
+          [
+            "2M events/day",
+            "primary metric"
+          ],
+          [
+            "—",
+            "secondary metric"
+          ],
+          [
+            "—",
+            "third metric"
+          ],
+          [
+            "—",
+            "fourth metric"
+          ]
+        ],
+        "points": [
+          "Replace with real outcomes.",
+          "Numbers land harder than adjectives."
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Payments Reconciliation Engine",
+    "year": 2024,
+    "sector": "Financial services",
+    "nda": true,
+    "category": "Backend",
+    "stack": [
+      "Python",
+      "Postgres",
+      "Airflow"
+    ],
+    "arch": "Scheduled DAG · idempotent matching across multiple provider feeds · exception queue for human review",
+    "role": "Designed the matching model and owned the rollout",
+    "impact": "1.4M transactions/cycle · 3 days of manual work → 20 minutes",
+    "desc": "Automated a month-end reconciliation process that previously occupied two analysts for three days.",
+    "thumb": "#0f9b8e",
+    "url": "#",
+    "slides": [
+      {
+        "type": "overview",
+        "title": "Project Overview",
+        "lead": "Automated a month-end reconciliation that previously occupied two analysts for three full days.",
+        "points": [
+          "Matching across multiple provider feeds with differing schemas",
+          "Exception queue for the genuinely ambiguous cases",
+          "Designed the matching model and owned the rollout",
+          "Ran in parallel with the manual process for two cycles before cutover"
+        ],
+        "facts": [
+          [
+            "Duration",
+            "6 months"
+          ],
+          [
+            "Team",
+            "3 engineers"
+          ],
+          [
+            "Sector",
+            "Financial services"
+          ]
+        ]
+      },
+      {
+        "type": "architecture",
+        "title": "Architecture",
+        "lead": "A scheduled DAG, deliberately idempotent so any cycle can be re-run safely.",
+        "diagram": "pipeline",
+        "nodes": [
+          "Provider feeds",
+          "Normalise",
+          "Match engine",
+          "Exception queue",
+          "Ledger"
+        ],
+        "notes": [
+          "Each stage writes to its own table; nothing mutates in place",
+          "Matching is deterministic — same inputs always produce the same result",
+          "Airflow retries are safe because every task is idempotent"
+        ]
+      },
+      {
+        "type": "results",
+        "title": "Key Results",
+        "lead": "The work moved from three days of spreadsheet comparison to a twenty-minute run.",
+        "metrics": [
+          [
+            "3 days → 20 min",
+            "cycle time"
+          ],
+          [
+            "1.4M",
+            "transactions per cycle"
+          ],
+          [
+            "~2%",
+            "routed to manual review"
+          ],
+          [
+            "2",
+            "analysts freed"
+          ]
+        ],
+        "points": [
+          "Analysts now review exceptions rather than hunting for them",
+          "Month-end close moved forward by two business days"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Headless Content Platform",
+    "year": 2024,
+    "sector": "B2B SaaS",
+    "nda": true,
+    "category": "Full-stack",
+    "stack": [
+      "Java",
+      "Magnolia",
+      "React"
+    ],
+    "arch": "Headless CMS · one editorial workspace fanning out to many regional front-ends · per-market publishing rules",
+    "role": "Platform lead · content model, publishing rules, front-end integration",
+    "impact": "12 regional sites · 4 languages from a single workspace",
+    "desc": "Let one editorial team serve a dozen markets without a separate CMS per region.",
+    "thumb": "#d9743f",
+    "url": "#",
+    "slides": [
+      {
+        "type": "overview",
+        "title": "Project Overview",
+        "lead": "Let one editorial team serve a dozen markets without a separate CMS per region.",
+        "points": [
+          "Role: Platform lead · content model, publishing rules, front-end integration",
+          "Sector: B2B SaaS (under NDA)",
+          "Stack: Java, Magnolia, React",
+          "Replace this dummy content with the real story."
+        ],
+        "facts": [
+          [
+            "Year",
+            "2024"
+          ],
+          [
+            "Category",
+            "Full-stack"
+          ],
+          [
+            "Sector",
+            "B2B SaaS"
+          ]
+        ]
+      },
+      {
+        "type": "architecture",
+        "title": "Architecture",
+        "lead": "Headless CMS · one editorial workspace fanning out to many regional front-ends · per-market publishing rules",
+        "diagram": "pipeline",
+        "nodes": [
+          "Input",
+          "Process",
+          "Store",
+          "Serve"
+        ],
+        "notes": [
+          "Dummy diagram — describe the real shape of the system here.",
+          "Keep it structural; no client-identifying detail.",
+          "Three or four nodes usually reads better than ten."
+        ]
+      },
+      {
+        "type": "results",
+        "title": "Key Results",
+        "lead": "12 regional sites · 4 languages from a single workspace",
+        "metrics": [
+          [
+            "12 regional si",
+            "primary metric"
+          ],
+          [
+            "—",
+            "secondary metric"
+          ],
+          [
+            "—",
+            "third metric"
+          ],
+          [
+            "—",
+            "fourth metric"
+          ]
+        ],
+        "points": [
+          "Replace with real outcomes.",
+          "Numbers land harder than adjectives."
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Local-First Analytics Notebook",
+    "year": 2023,
+    "sector": "Personal project",
+    "category": "Data",
+    "stack": [
+      "Rust",
+      "DuckDB",
+      "Svelte"
+    ],
+    "arch": "In-process OLAP engine compiled to WASM · query execution entirely client-side, no server round-trip",
+    "role": "Sole author",
+    "impact": "10GB local datasets · zero network calls by design",
+    "desc": "Query CSV and Parquet files in the browser without uploading anything anywhere.",
+    "thumb": "#c2417a",
+    "url": "#",
+    "slides": [
+      {
+        "type": "overview",
+        "title": "Project Overview",
+        "lead": "Query CSV and Parquet files in the browser without uploading anything anywhere.",
+        "points": [
+          "Role: Sole author",
+          "Sector: Personal project",
+          "Stack: Rust, DuckDB, Svelte",
+          "Replace this dummy content with the real story."
+        ],
+        "facts": [
+          [
+            "Year",
+            "2023"
+          ],
+          [
+            "Category",
+            "Data"
+          ],
+          [
+            "Sector",
+            "Personal project"
+          ]
+        ]
+      },
+      {
+        "type": "architecture",
+        "title": "Architecture",
+        "lead": "In-process OLAP engine compiled to WASM · query execution entirely client-side, no server round-trip",
+        "diagram": "pipeline",
+        "nodes": [
+          "Input",
+          "Process",
+          "Store",
+          "Serve"
+        ],
+        "notes": [
+          "Dummy diagram — describe the real shape of the system here.",
+          "Keep it structural; no client-identifying detail.",
+          "Three or four nodes usually reads better than ten."
+        ]
+      },
+      {
+        "type": "results",
+        "title": "Key Results",
+        "lead": "10GB local datasets · zero network calls by design",
+        "metrics": [
+          [
+            "10GB local dat",
+            "primary metric"
+          ],
+          [
+            "—",
+            "secondary metric"
+          ],
+          [
+            "—",
+            "third metric"
+          ],
+          [
+            "—",
+            "fourth metric"
+          ]
+        ],
+        "points": [
+          "Replace with real outcomes.",
+          "Numbers land harder than adjectives."
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Offline-First Field Data Capture",
+    "year": 2023,
+    "sector": "Non-profit",
+    "category": "Mobile",
+    "stack": [
+      "React Native",
+      "Expo",
+      "SQLite"
+    ],
+    "arch": "Local SQLite as source of truth · opportunistic sync with conflict resolution on reconnect",
+    "role": "Sole mobile engineer",
+    "impact": "200+ field users · fully functional with no connectivity",
+    "desc": "Data collection for volunteers working in places where a network connection is not a given.",
+    "thumb": "#3fa85f",
+    "url": "#",
+    "slides": [
+      {
+        "type": "overview",
+        "title": "Project Overview",
+        "lead": "Data collection for volunteers working in places where a network connection is not a given.",
+        "points": [
+          "Role: Sole mobile engineer",
+          "Sector: Non-profit",
+          "Stack: React Native, Expo, SQLite",
+          "Replace this dummy content with the real story."
+        ],
+        "facts": [
+          [
+            "Year",
+            "2023"
+          ],
+          [
+            "Category",
+            "Mobile"
+          ],
+          [
+            "Sector",
+            "Non-profit"
+          ]
+        ]
+      },
+      {
+        "type": "architecture",
+        "title": "Architecture",
+        "lead": "Local SQLite as source of truth · opportunistic sync with conflict resolution on reconnect",
+        "diagram": "pipeline",
+        "nodes": [
+          "Input",
+          "Process",
+          "Store",
+          "Serve"
+        ],
+        "notes": [
+          "Dummy diagram — describe the real shape of the system here.",
+          "Keep it structural; no client-identifying detail.",
+          "Three or four nodes usually reads better than ten."
+        ]
+      },
+      {
+        "type": "results",
+        "title": "Key Results",
+        "lead": "200+ field users · fully functional with no connectivity",
+        "metrics": [
+          [
+            "200+ field use",
+            "primary metric"
+          ],
+          [
+            "—",
+            "secondary metric"
+          ],
+          [
+            "—",
+            "third metric"
+          ],
+          [
+            "—",
+            "fourth metric"
+          ]
+        ],
+        "points": [
+          "Replace with real outcomes.",
+          "Numbers land harder than adjectives."
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Event Router",
+    "year": 2022,
+    "sector": "Financial services",
+    "nda": true,
+    "category": "Backend",
+    "stack": [
+      "Kotlin",
+      "Kafka",
+      "Kubernetes"
+    ],
+    "arch": "Event-driven · 3 services · at-least-once delivery with replay from offset",
+    "role": "Sole backend engineer on the service",
+    "impact": "800 msg/s sustained · 99.97% uptime over 14 months",
+    "desc": "Fans internal state changes out to downstream consumers with replay when a consumer falls behind.",
+    "thumb": "#5566c4",
+    "url": "#",
+    "slides": [
+      {
+        "type": "overview",
+        "title": "Project Overview",
+        "lead": "A routing layer that fans internal state changes out to downstream consumers, with replay when a consumer falls behind.",
+        "points": [
+          "Replaced a nightly batch export that left consumers up to 24h stale",
+          "Three services: ingest, router, replay coordinator",
+          "At-least-once delivery with idempotency keys on the consumer side",
+          "Sole backend engineer across design, build and operation"
+        ],
+        "facts": [
+          [
+            "Duration",
+            "8 months"
+          ],
+          [
+            "Team",
+            "1 engineer"
+          ],
+          [
+            "Sector",
+            "Financial services"
+          ]
+        ]
+      },
+      {
+        "type": "architecture",
+        "title": "Architecture",
+        "lead": "Producers publish once; the router owns fan-out, ordering guarantees and replay.",
+        "diagram": "pipeline",
+        "nodes": [
+          "Producers",
+          "Ingest API",
+          "Kafka",
+          "Router",
+          "Consumers"
+        ],
+        "notes": [
+          "Partitioned by entity id so per-entity ordering is preserved",
+          "Replay reads from a stored offset rather than re-publishing",
+          "Kubernetes HPA on consumer lag, not CPU"
+        ]
+      },
+      {
+        "type": "results",
+        "title": "Key Results",
+        "lead": "Steady-state throughput held while the failure modes got far less dramatic.",
+        "metrics": [
+          [
+            "800",
+            "msg/s sustained"
+          ],
+          [
+            "99.97%",
+            "uptime over 14 months"
+          ],
+          [
+            "24h → 2s",
+            "consumer staleness"
+          ],
+          [
+            "0",
+            "data-loss incidents"
+          ]
+        ],
+        "points": [
+          "Replay turned a 3-hour incident recovery into a 5-minute operation",
+          "Consumer teams onboarded themselves using the published contract"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Contrast-Checking Palette Tool",
+    "year": 2022,
+    "sector": "Open source",
+    "category": "Design Systems",
+    "stack": [
+      "JavaScript",
+      "Canvas",
+      "WASM"
+    ],
+    "arch": "Pairwise WCAG contrast computed on every drag · no build step, runs entirely in the browser",
+    "role": "Sole author",
+    "impact": "Checks every colour pair against AA and AAA in real time",
+    "desc": "Builds a palette while continuously verifying every foreground/background pair stays accessible.",
+    "thumb": "#e0a33e",
+    "url": "#",
+    "slides": [
+      {
+        "type": "overview",
+        "title": "Project Overview",
+        "lead": "Builds a palette while continuously verifying every foreground/background pair stays accessible.",
+        "points": [
+          "Role: Sole author",
+          "Sector: Open source",
+          "Stack: JavaScript, Canvas, WASM",
+          "Replace this dummy content with the real story."
+        ],
+        "facts": [
+          [
+            "Year",
+            "2022"
+          ],
+          [
+            "Category",
+            "Design Systems"
+          ],
+          [
+            "Sector",
+            "Open source"
+          ]
+        ]
+      },
+      {
+        "type": "architecture",
+        "title": "Architecture",
+        "lead": "Pairwise WCAG contrast computed on every drag · no build step, runs entirely in the browser",
+        "diagram": "pipeline",
+        "nodes": [
+          "Input",
+          "Process",
+          "Store",
+          "Serve"
+        ],
+        "notes": [
+          "Dummy diagram — describe the real shape of the system here.",
+          "Keep it structural; no client-identifying detail.",
+          "Three or four nodes usually reads better than ten."
+        ]
+      },
+      {
+        "type": "results",
+        "title": "Key Results",
+        "lead": "Checks every colour pair against AA and AAA in real time",
+        "metrics": [
+          [
+            "Checks every c",
+            "primary metric"
+          ],
+          [
+            "—",
+            "secondary metric"
+          ],
+          [
+            "—",
+            "third metric"
+          ],
+          [
+            "—",
+            "fourth metric"
+          ]
+        ],
+        "points": [
+          "Replace with real outcomes.",
+          "Numbers land harder than adjectives."
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Risk Exposure Dashboard",
+    "year": 2021,
+    "sector": "Financial services",
+    "nda": true,
+    "category": "Data",
+    "stack": [
+      "Python",
+      "pandas",
+      "FastAPI"
+    ],
+    "arch": "Streaming aggregation replacing a nightly batch · incremental recompute on position change",
+    "role": "Backend and data modelling",
+    "impact": "Nightly report → live view · used daily by 12 desks",
+    "desc": "Replaced an overnight batch report with a live view that traders actually kept open all day.",
+    "thumb": "#4a9ed4",
+    "url": "#",
+    "slides": [
+      {
+        "type": "overview",
+        "title": "Project Overview",
+        "lead": "Replaced an overnight batch report with a live view that traders actually kept open all day.",
+        "points": [
+          "Role: Backend and data modelling",
+          "Sector: Financial services (under NDA)",
+          "Stack: Python, pandas, FastAPI",
+          "Replace this dummy content with the real story."
+        ],
+        "facts": [
+          [
+            "Year",
+            "2021"
+          ],
+          [
+            "Category",
+            "Data"
+          ],
+          [
+            "Sector",
+            "Financial services"
+          ]
+        ]
+      },
+      {
+        "type": "architecture",
+        "title": "Architecture",
+        "lead": "Streaming aggregation replacing a nightly batch · incremental recompute on position change",
+        "diagram": "pipeline",
+        "nodes": [
+          "Input",
+          "Process",
+          "Store",
+          "Serve"
+        ],
+        "notes": [
+          "Dummy diagram — describe the real shape of the system here.",
+          "Keep it structural; no client-identifying detail.",
+          "Three or four nodes usually reads better than ten."
+        ]
+      },
+      {
+        "type": "results",
+        "title": "Key Results",
+        "lead": "Nightly report → live view · used daily by 12 desks",
+        "metrics": [
+          [
+            "Nightly report",
+            "primary metric"
+          ],
+          [
+            "—",
+            "secondary metric"
+          ],
+          [
+            "—",
+            "third metric"
+          ],
+          [
+            "—",
+            "fourth metric"
+          ]
+        ],
+        "points": [
+          "Replace with real outcomes.",
+          "Numbers land harder than adjectives."
+        ]
+      }
+    ]
+  }
+]

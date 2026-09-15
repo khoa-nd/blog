@@ -1,0 +1,49 @@
+[
+  {
+    "role": "Senior Software Engineer",
+    "company": "B2B SaaS company",
+    "period": "2023 — Present",
+    "desc": "Lead engineer on the platform team. Own the design system and the content infrastructure powering twelve regional sites. Mentor three engineers.",
+    "tags": [
+      "TypeScript",
+      "Java",
+      "Design Systems",
+      "Leadership"
+    ]
+  },
+  {
+    "role": "Software Engineer",
+    "company": "Financial services company",
+    "period": "2021 — 2023",
+    "desc": "Built and operated backend services for payments reconciliation and risk reporting. Took the reconciliation process from three days of manual work to twenty minutes.",
+    "tags": [
+      "Python",
+      "Kotlin",
+      "Kafka",
+      "Postgres"
+    ]
+  },
+  {
+    "role": "Full-stack Developer",
+    "company": "Digital agency",
+    "period": "2019 — 2021",
+    "desc": "Agency work across a dozen client projects — e-commerce, editorial sites, internal tools. Learned to ship fast and read someone else's codebase without complaining.",
+    "tags": [
+      "JavaScript",
+      "PHP",
+      "React",
+      "AWS"
+    ]
+  },
+  {
+    "role": "Junior Developer",
+    "company": "Software consultancy",
+    "period": "2018 — 2019",
+    "desc": "First engineering role. Maintained an internal reporting tool and wrote the integration tests nobody else wanted to write.",
+    "tags": [
+      "Java",
+      "Selenium",
+      "MySQL"
+    ]
+  }
+]

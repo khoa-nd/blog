@@ -1,0 +1,11 @@
+{
+  "name": "blog",
+  "private": true,
+  "description": "Personal site. No dependencies; the only script regenerates the CV PDF.",
+  "scripts": {
+    "build": "node tools/build.js",
+    "check": "node tools/check-content.js",
+    "cv": "node tools/build-cv.js",
+    "serve": "python3 -m http.server 8000"
+  }
+}

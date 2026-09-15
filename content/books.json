@@ -1,0 +1,96 @@
+[
+  {
+    "title": "Designing Data-Intensive Applications",
+    "author": "Martin Kleppmann",
+    "year": 2017,
+    "status": "finished",
+    "rating": 5,
+    "tags": [
+      "Systems",
+      "Distributed"
+    ],
+    "desc": "The reference I keep returning to. The chapter on consistency models finally made replication lag feel intuitive rather than terrifying."
+  },
+  {
+    "title": "The Pragmatic Programmer",
+    "author": "Andrew Hunt & David Thomas",
+    "year": 1999,
+    "status": "finished",
+    "rating": 4,
+    "tags": [
+      "Craft"
+    ],
+    "desc": "Dated in its examples, durable in its advice. Worth rereading every few years to see which parts you have quietly stopped doing."
+  },
+  {
+    "title": "Thinking, Fast and Slow",
+    "author": "Daniel Kahneman",
+    "year": 2011,
+    "status": "reading",
+    "rating": 4,
+    "tags": [
+      "Psychology",
+      "Decisions"
+    ],
+    "desc": "Slow going but rewarding. Changed how I write postmortems — most of what looks like a bad decision was a decision made under a bad frame."
+  },
+  {
+    "title": "A Philosophy of Software Design",
+    "author": "John Ousterhout",
+    "year": 2018,
+    "status": "finished",
+    "rating": 5,
+    "tags": [
+      "Craft",
+      "Architecture"
+    ],
+    "desc": "Short, opinionated, and the clearest argument I have read for deep modules over thin ones. Disagree with parts of it and you will still think better."
+  },
+  {
+    "title": "Shape Up",
+    "author": "Ryan Singer",
+    "year": 2019,
+    "status": "finished",
+    "rating": 4,
+    "tags": [
+      "Process",
+      "Product"
+    ],
+    "desc": "Free online and worth more than most paid books on process. The appetite-over-estimate framing stuck with me."
+  },
+  {
+    "title": "Crafting Interpreters",
+    "author": "Robert Nystrom",
+    "year": 2021,
+    "status": "reading",
+    "rating": 5,
+    "tags": [
+      "Languages",
+      "Compilers"
+    ],
+    "desc": "Working through the second half slowly. Writing a bytecode VM by hand demystifies a lot of things you otherwise take on faith."
+  },
+  {
+    "title": "The Design of Everyday Things",
+    "author": "Don Norman",
+    "year": 1988,
+    "status": "finished",
+    "rating": 4,
+    "tags": [
+      "Design"
+    ],
+    "desc": "Affordances and signifiers, applied to doors and then to everything else. I think about this book every time an error message says only 'invalid input'."
+  },
+  {
+    "title": "Staff Engineer",
+    "author": "Will Larson",
+    "year": 2021,
+    "status": "queued",
+    "rating": 0,
+    "tags": [
+      "Career",
+      "Leadership"
+    ],
+    "desc": "On the shelf. Picked it up after a conversation about what the next step looks like when it is no longer about writing more code."
+  }
+]
