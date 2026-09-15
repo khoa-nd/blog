@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reading — Your Name</title>
+<meta name="description" content="Books I've read, am reading, and have queued up.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>◈</text></svg>">
+<!-- Theme first: style.css reads the tokens it defines.
+     Swap this one href to re-skin the whole site. -->
+<link rel="stylesheet" href="css/themes/classic.css">
+<link rel="stylesheet" href="css/style.css">
+<!-- Dev-only theme switcher; inert on any non-local host. -->
+<link rel="stylesheet" href="css/devbar.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html"><span data-site="name">Your Name</span><span class="brand-dot">.</span></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <nav class="nav" id="primary-nav" aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="projects.html">Projects</a>
+      <a href="index.html#experience">Experience</a>
+      <a href="books.html" aria-current="page">Reading</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap page-header">
+    <p class="breadcrumb"><a href="index.html">Home</a> / Reading</p>
+    <h1>Reading</h1>
+    <p>What I&rsquo;ve read, what I&rsquo;m in the middle of, and what&rsquo;s waiting.
+       Notes are my own take, not summaries.</p>
+  </div>
+
+  <div class="gallery-toolbar">
+    <div class="wrap toolbar-row">
+      <div class="search-field">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" id="b-search" placeholder="Search by title, author, or topic…" aria-label="Search books">
+      </div>
+      <select id="b-status" aria-label="Filter by status">
+        <option value="">All statuses</option>
+        <option value="reading">Currently reading</option>
+        <option value="finished">Finished</option>
+        <option value="queued">Queued</option>
+      </select>
+      <select id="b-sort" aria-label="Sort books">
+        <option value="status">By status</option>
+        <option value="title-asc">Title A → Z</option>
+        <option value="year-desc">Newest first</option>
+        <option value="rating-desc">Highest rated</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <p class="result-count" id="b-count" role="status" aria-live="polite"></p>
+    <div class="book-list" id="book-list" style="padding-bottom:80px"></div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <span>&copy; <span data-year-now>2026</span> <span data-site="name">Your Name</span></span>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="projects.html">Projects</a>
+      <a data-site-href="email" href="#">Email</a>
+      <a data-site-href="linkedin" href="#" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/theme-switcher.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/books.js"></script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your Name — Engineer, notes &amp; projects</title>
+<meta name="description" content="Personal and career updates: projects, experience, reading, and side work.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>◈</text></svg>">
+<!-- Theme first: style.css reads the tokens it defines.
+     Swap this one href to re-skin the whole site. -->
+<link rel="stylesheet" href="css/themes/classic.css">
+<link rel="stylesheet" href="css/style.css">
+<!-- Dev-only theme switcher; inert on any non-local host. -->
+<link rel="stylesheet" href="css/devbar.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html"><span data-site="name">Your Name</span><span class="brand-dot">.</span></a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M3 6h18M3 12h18M3 18h18"/>
+      </svg>
+    </button>
+
+    <nav class="nav" id="primary-nav" aria-label="Primary">
+      <a href="index.html" aria-current="page">Home</a>
+      <a href="projects.html">Projects</a>
+      <a href="#experience">Experience</a>
+      <a href="books.html">Reading</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ============ Hero ============ -->
+  <section class="wrap hero">
+    <p class="hero-eyebrow">Personal &amp; career updates</p>
+    <h1>Hi, I&rsquo;m <span data-site="name">Your Name</span>.</h1>
+    <p class="hero-body">
+      I&rsquo;m a <strong data-site="role">Software Engineer</strong> working on design systems and
+      content infrastructure. This site is where I keep track of what I&rsquo;m building,
+      where I&rsquo;ve worked, and what I&rsquo;m reading &mdash; written mostly for myself,
+      published in case it&rsquo;s useful to you.
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" data-cv-download href="assets/cv/cv.pdf">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Download CV
+      </a>
+
+      <div class="social-row">
+        <a class="social-btn" data-site-href="github" href="#" target="_blank"
+           rel="noopener" data-tip="GitHub" aria-label="GitHub profile">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.6.5.5 5.6.5 12a11.5 11.5 0 0 0 7.9 10.9c.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.500-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7 0-.7 0-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .4.2.7.8.6A11.5 11.5 0 0 0 23.5 12C23.5 5.6 18.4.5 12 .5z"/></svg>
+        </a>
+
+        <a class="social-btn" data-site-href="linkedin" href="#" target="_blank"
+           rel="noopener" data-tip="LinkedIn" aria-label="LinkedIn profile">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-.95 1.83-1.95 3.76-1.95C20.3 8.75 21 11 21 14v7h-4v-6.2c0-1.48-.03-3.4-2.07-3.4-2.07 0-2.39 1.62-2.39 3.29V21H9z"/></svg>
+        </a>
+
+        <!-- Envelope drawn as a stacked/offset shape so it reads as "copy" too. -->
+        <button class="social-btn" type="button" id="copy-email"
+                aria-label="Copy email address to clipboard">
+          <svg class="icon-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M8 3h11a2 2 0 0 1 2 2v9" opacity=".45"/>
+            <rect x="3" y="7" width="15" height="12" rx="2"/>
+            <path d="m3.6 8.2 6.3 4.6a2 2 0 0 0 2.2 0l6.3-4.6"/>
+          </svg>
+          <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 6 9 17l-5-5"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Work teaser ============
+       Deliberately no project details here: the gallery is the place for
+       that, and it is written to be NDA-safe. This section only signals
+       range and sends people there. -->
+  <section class="wrap section" id="work">
+    <div class="section-head">
+      <h2>Work</h2>
+    </div>
+
+    <div class="work-teaser">
+      <div class="skill-matrix" id="skill-matrix"></div>
+      <div class="teaser-foot">
+        <a class="btn btn-primary" href="projects.html">
+          Browse the project gallery
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Experience ============ -->
+  <section class="wrap section" id="experience">
+    <div class="section-head">
+      <h2>Experience</h2>
+    </div>
+    <div class="experience-list" id="experience-list"></div>
+  </section>
+
+  <!-- ============ Reading ============ -->
+  <section class="wrap section" id="reading">
+    <div class="section-head">
+      <h2>Reading</h2>
+      <a class="link-more" href="books.html">View all</a>
+    </div>
+    <p class="section-lede">Books I&rsquo;ve finished or am part-way through. Mostly systems and craft, occasionally something else.</p>
+    <div class="book-list" id="books-preview"></div>
+  </section>
+
+  <!-- ============ Side projects ============ -->
+  <section class="wrap section" id="side-projects">
+    <div class="section-head">
+      <h2>Side projects</h2>
+      <span class="tag">Work in progress</span>
+    </div>
+    <p class="section-lede">Skeleton for now &mdash; the smaller things I tinker with outside work. Design and content coming later.</p>
+    <div class="hobby-grid" id="hobby-grid"></div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <span>&copy; <span data-year-now>2026</span> <span data-site="name">Your Name</span></span>
+    <div class="footer-links">
+      <a href="projects.html">Projects</a>
+      <a href="books.html">Reading</a>
+      <a data-site-href="email" href="#">Email</a>
+      <a data-site-href="linkedin" href="#" target="_blank" rel="noopener">LinkedIn</a>
+      <a data-site-href="github" href="#" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/theme-switcher.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/home.js"></script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+/* ============================================================
+   MANUSCRIPT
+   ------------------------------------------------------------
+   An editorial theme: warm cream paper, deep brown-black ink,
+   and a burnt-ochre accent. Serif headings against a sans body,
+   generous leading, and rules instead of boxes wherever a box
+   can be avoided.
+
+   Where Blueprint reads as a schematic and Classic as an app,
+   this reads as a well-set book or a letterpress CV. Best if
+   you want the writing to feel authored rather than generated.
+   ------------------------------------------------------------
+   This file owns every visual decision. style.css owns layout
+   and reads only from the tokens defined here.
+   ============================================================ */
+
+:root {
+  color-scheme: light;
+
+  /* Paper, not white — a warm ground that is easy on long reading. */
+  --bg:            #f6f2e9;
+  --bg-raised:     #fdfbf6;
+  --bg-sunken:     #ece6d9;
+  --bg-hover:      #f1ebde;
+
+  --fg:            #2b2620;
+  --fg-muted:      #5d5346;
+  --fg-subtle:     #8c8171;
+
+  --border:        #ddd4c2;
+  --border-strong: #bfb39c;
+
+  --accent:        #9a5518;
+  --accent-fg:     #fdfbf6;
+  --accent-soft:   #f3e7d6;
+
+  --tag-bg:        #ece6d9;
+  --tag-fg:        #5d5346;
+
+  /* Status colours: reading/active, paused, finished. */
+  --ok:            #4a7c3f;
+  --ok-ink:        #3d6834;
+  --warn:          #8f6113;
+
+  /* Ink on paper casts almost no shadow; depth comes from rules. */
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: 0 10px 32px rgba(43, 38, 32, .16);
+
+  --font-sans: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
+               ui-serif, serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+               "Liberation Mono", monospace;
+
+  --maxw: 1060px;
+  --radius: 2px;
+  --radius-sm: 2px;
+
+  --step-1: 0.8rem;
+  --step0:  0.92rem;
+  --step1:  1.02rem;
+  --step2:  1.3rem;
+  --step3:  1.75rem;
+  --step4:  2.4rem;
+  --step5:  3.2rem;
+}
+
+/* Base typography — style.css owns no type, so each theme supplies it. */
+h1, h2, h3, h4 { font-weight: 600; letter-spacing: -0.015em; }
+.hero-body strong { font-weight: 600; }
+.project-meta b   { font-weight: 500; }
+.view-switch button { font-weight: 500; }
+.book-cover       { font-weight: 600; }
+.book-rating      { letter-spacing: 1px; }
+.nda-badge        { letter-spacing: 0.03em; }
+.toast            { font-weight: 500; }
+.project-card h3, .book-title, .xp-role { letter-spacing: -0.018em; }
+.hero h1, .page-header h1 { letter-spacing: -0.03em; }
+
+/* ------------------------------------------------------------
+   Theme character
+   Serif for anything that carries voice; sans-ish mono only for
+   genuinely numeric or code-like values.
+   ------------------------------------------------------------ */
+
+/* The body is set in the serif itself — that is the whole point. */
+body { letter-spacing: 0.004em; }
+
+.mono,
+.tag,
+.skill-chip,
+.spec-label,
+.book-status,
+.hobby-status,
+.project-year,
+.project-meta,
+.xp-period,
+.result-count,
+.breadcrumb,
+.footer-inner,
+.stat-label,
+input[type="search"],
+select { font-family: var(--font-mono); }
+
+/* Headings: larger, looser, unmistakably set rather than styled. */
+h1, h2, h3 { letter-spacing: -0.012em; }
+
+.section-head h2 {
+  font-family: var(--font-sans);
+  font-size: var(--step3);
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: -0.012em;
+  color: var(--fg);
+}
+/* A thin rule trailing the heading, the way a chapter head sits. */
+.section-head::after { border-top: 1px solid var(--border); }
+.section-head .link-more { margin-left: 0; order: 3; }
+
+.brand {
+  font-family: var(--font-sans);
+  font-size: var(--step2);
+  font-weight: 600;
+  font-style: italic;
+  letter-spacing: -0.02em;
+  text-transform: none;
+}
+.brand .brand-dot { color: var(--accent); }
+
+.nav a {
+  font-family: var(--font-sans);
+  font-size: var(--step0);
+  letter-spacing: normal;
+}
+.nav a[aria-current="page"] { font-style: italic; }
+
+/* Buttons read as printed labels: small caps feel, no shouting. */
+.btn {
+  font-family: var(--font-mono);
+  font-size: var(--step-1);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 10px 16px;
+}
+.link-more {
+  font-family: var(--font-sans);
+  font-size: var(--step0);
+  font-style: italic;
+  letter-spacing: normal;
+  text-transform: none;
+  border-color: transparent;
+  padding-inline: 2px;
+}
+.link-more:hover { background: transparent; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  letter-spacing: 0.16em;
+}
+.hero h1 { font-weight: 600; }
+.hero-body { font-size: var(--step2); line-height: 1.62; }
+
+.skill-group-title {
+  font-family: var(--font-mono);
+  font-size: var(--step-1);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-subtle);
+}
+.skill-group-title::after { border-top: 1px solid var(--border); }
+
+.tag, .skill-chip { border-radius: 2px; background: transparent; }
+.skill-chip:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+.book-status { border-radius: 2px; }
+.spec-label { color: var(--accent); letter-spacing: 0.08em; }
+
+.project-card:hover, .book-card:hover { border-color: var(--border-strong); }
+.social-btn:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+.btn-primary:hover { background: var(--fg); border-color: var(--fg); }
+
+.site-header { background: var(--bg); border-bottom-color: var(--border-strong); }
+.gallery-toolbar { background: var(--bg); border-bottom-color: var(--border-strong); }
+.site-footer { border-top-color: var(--border-strong); }
+
+/* Books are the heart of an editorial theme — give them serif titles. */
+.book-title { font-family: var(--font-sans); font-size: var(--step2); }
+.book-author { font-style: italic; }
+.xp-role { font-family: var(--font-sans); }
+.xp-company b { color: var(--accent); font-weight: 600; }

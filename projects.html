@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Projects — Your Name</title>
+<meta name="description" content="A gallery of projects, filterable by category, year, and stack.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>◈</text></svg>">
+<!-- Theme first: style.css reads the tokens it defines.
+     Swap this one href to re-skin the whole site. -->
+<link rel="stylesheet" href="css/themes/classic.css">
+<link rel="stylesheet" href="css/style.css">
+<!-- Dev-only theme switcher; inert on any non-local host. -->
+<link rel="stylesheet" href="css/devbar.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html"><span data-site="name">Your Name</span><span class="brand-dot">.</span></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <nav class="nav" id="primary-nav" aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="projects.html" aria-current="page">Projects</a>
+      <a href="index.html#experience">Experience</a>
+      <a href="books.html">Reading</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap page-header">
+    <p class="breadcrumb"><a href="index.html">Home</a> / Projects</p>
+    <h1>Projects</h1>
+    <p>Everything I&rsquo;ve built that&rsquo;s worth showing &mdash; work projects, side projects, and a few experiments.
+       Filter by category, year, or search the stack.</p>
+  </div>
+
+  <div class="gallery-toolbar">
+    <div class="wrap toolbar-row">
+      <div class="search-field">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" id="f-search" placeholder="Search projects, stack, description…" aria-label="Search projects">
+      </div>
+      <select id="f-category" aria-label="Filter by category"><option value="">All categories</option></select>
+      <select id="f-year" aria-label="Filter by year"><option value="">Any year</option></select>
+      <select id="f-sort" aria-label="Sort projects">
+        <option value="year-desc">Newest first</option>
+        <option value="year-asc">Oldest first</option>
+        <option value="title-asc">A → Z</option>
+        <option value="title-desc">Z → A</option>
+      </select>
+      <div class="view-switch" role="group" aria-label="View density">
+        <button type="button" data-view="detailed" aria-pressed="true">Detailed</button>
+        <button type="button" data-view="compact" aria-pressed="false">Compact</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <p class="result-count" id="result-count" role="status" aria-live="polite"></p>
+    <div class="gallery-grid" id="gallery"></div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <span>&copy; <span data-year-now>2026</span> <span data-site="name">Your Name</span></span>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="books.html">Reading</a>
+      <a data-site-href="email" href="#">Email</a>
+      <a data-site-href="linkedin" href="#" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/theme-switcher.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/projects.js"></script>
+</body>
+</html>

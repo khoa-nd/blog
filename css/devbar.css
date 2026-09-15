@@ -1,0 +1,78 @@
+/* ============================================================
+   Dev theme switcher — LOCALHOST ONLY.
+
+   Deliberately uses hard-coded values rather than theme tokens:
+   the widget must look identical no matter which theme is being
+   previewed, otherwise it changes along with the thing you are
+   trying to compare.
+
+   The script that drives it (js/theme-switcher.js) exits on any
+   non-local host, so these styles simply never match anything
+   in production.
+   ============================================================ */
+.devbar {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 5px 5px 9px;
+
+  background: #16181d;
+  border: 1px solid #333842;
+  border-radius: 8px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, .3);
+
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.devbar-tag {
+  color: #6f7684;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  padding-right: 5px;
+}
+
+.devbar-btn {
+  font: inherit;
+  padding: 6px 11px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: #b6bcc8;
+  cursor: pointer;
+  transition: background .12s, color .12s;
+}
+.devbar-btn:hover { background: #22262e; color: #eef1f5; }
+.devbar-btn[aria-pressed="true"] {
+  background: #eef1f5;
+  color: #16181d;
+  font-weight: 600;
+}
+
+.devbar-hide {
+  font: inherit;
+  font-size: 15px;
+  width: 22px; height: 22px;
+  margin-left: 2px;
+  display: grid; place-items: center;
+  border: 0; border-radius: 5px;
+  background: transparent;
+  color: #6f7684;
+  cursor: pointer;
+}
+.devbar-hide:hover { background: #22262e; color: #eef1f5; }
+
+.devbar:focus-within { border-color: #4a5261; }
+.devbar button:focus-visible {
+  outline: 2px solid #4d9fff;
+  outline-offset: 1px;
+}
+
+@media print { .devbar { display: none; } }

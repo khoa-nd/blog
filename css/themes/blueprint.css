@@ -1,0 +1,119 @@
+/* ============================================================
+   BLUEPRINT
+   ------------------------------------------------------------
+   A technical-drawing theme: cool blue-grey ground, near-black
+   ink, and one electric blue reserved for interactive elements.
+   Depth comes from hairline rules rather than drop shadows, and
+   monospace is used structurally (labels, nav, buttons) rather
+   than decoratively.
+
+   This file owns every visual decision. style.css owns layout
+   and structure and reads only from the tokens defined here, so
+   swapping this one <link> re-skins the entire site.
+   ------------------------------------------------------------
+   To build another theme: copy this file, change the values,
+   and point the <link> in each page at it. Keep every token
+   name — style.css references them by name.
+   ============================================================ */
+
+:root {
+  color-scheme: light;
+
+  /* Blueprint palette: cool blue-grey ground, near-black ink, one
+     electric blue that is used sparingly and always means "interactive". */
+  --bg:            #eef1f5;
+  --bg-raised:     #f7f9fc;
+  --bg-sunken:     #e4e9f0;
+  --bg-hover:      #e8edf4;
+
+  --fg:            #10151c;
+  --fg-muted:      #4a5666;
+  --fg-subtle:     #7d8899;
+
+  --border:        #c8d0dc;
+  --border-strong: #a3aebe;
+
+  --accent:        #0047ff;
+  --accent-fg:     #ffffff;
+  --accent-soft:   #dfe6ff;
+
+  --tag-bg:        #e4e9f0;
+  --tag-fg:        #4a5666;
+
+  /* Status colours: reading/active, paused, finished. */
+  --ok:            #1f8a4c;
+  --ok-ink:        #17703d;
+  --warn:          #b07407;
+
+  /* Blueprints do not have soft drop shadows. Depth comes from rules. */
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: 0 8px 28px rgba(16, 21, 28, .13);
+
+  --font-sans: "Helvetica Neue", Helvetica, Arial, ui-sans-serif,
+               -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+               "Liberation Mono", monospace;
+
+  --maxw: 1180px;
+  --radius: 3px;
+  --radius-sm: 2px;
+
+  --step-1: 0.78rem;
+  --step0:  0.9rem;
+  --step1:  1.0rem;
+  --step2:  1.25rem;
+  --step3:  1.65rem;
+  --step4:  2.25rem;
+  --step5:  3rem;
+}
+
+/* Base typography — style.css owns no type, so each theme supplies it. */
+h1, h2, h3, h4 { font-weight: 600; letter-spacing: -0.015em; }
+.hero-body strong { font-weight: 600; }
+.project-meta b   { font-weight: 500; }
+.view-switch button { font-weight: 500; }
+.book-cover       { font-weight: 600; }
+.book-rating      { letter-spacing: 1px; }
+.nda-badge        { letter-spacing: 0.03em; }
+.toast            { font-weight: 500; }
+.project-card h3, .book-title, .xp-role { letter-spacing: -0.018em; }
+.hero h1, .page-header h1 { letter-spacing: -0.03em; }
+
+/* ------------------------------------------------------------
+   Theme character
+   Rules below express the Blueprint look specifically. A theme
+   that wanted rounded, shadowed, all-sans styling would simply
+   not include this block.
+   ------------------------------------------------------------ */
+
+/* Structural monospace: nav, buttons, labels and headings read
+   as annotations on a drawing rather than as web UI chrome. */
+.brand,
+.nav a,
+.btn,
+.link-more,
+.section-head h2,
+.skill-group-title,
+.skill-chip,
+.tag,
+.spec-label,
+.book-status,
+.hobby-status,
+.footer-inner,
+.breadcrumb,
+.hero-eyebrow,
+.project-year,
+.project-meta,
+.xp-period,
+.result-count,
+.stat-label { font-family: var(--font-mono); }
+
+/* Tracked-out uppercase for anything acting as a label. */
+.brand,
+.btn,
+.link-more,
+.section-head h2,
+.skill-group-title,
+.spec-label,
+.hero-eyebrow { text-transform: uppercase; }

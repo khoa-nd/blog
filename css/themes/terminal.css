@@ -1,0 +1,175 @@
+/* ============================================================
+   TERMINAL
+   ------------------------------------------------------------
+   High-contrast and unapologetically digital: near-black ground,
+   bone-white text, and a phosphor green that does the work of an
+   accent. Monospace everywhere, zero rounding, hard 1px borders
+   and no soft shadows at all.
+
+   This is the only dark theme in the set, and the loudest. It
+   suits an engineer's site and is very hard to mistake for a
+   default — but it is a strong opinion, so preview it before
+   shipping it.
+   ------------------------------------------------------------
+   This file owns every visual decision. style.css owns layout
+   and reads only from the tokens defined here.
+   ============================================================ */
+
+:root {
+  color-scheme: dark;
+
+  --bg:            #0b0d0c;
+  --bg-raised:     #131614;
+  --bg-sunken:     #080a09;
+  --bg-hover:      #1b1f1d;
+
+  --fg:            #e6e8e4;
+  --fg-muted:      #9aa39b;
+  --fg-subtle:     #6b756e;
+
+  --border:        #262b28;
+  --border-strong: #3d453f;
+
+  --accent:        #4ade80;
+  --accent-fg:     #06210f;
+  --accent-soft:   #12291b;
+
+  --tag-bg:        #131614;
+  --tag-fg:        #9aa39b;
+
+  /* Status colours: reading/active, paused, finished. */
+  --ok:            #4ade80;
+  --ok-ink:        #6ee79b;
+  --warn:          #e0b341;
+
+  /* A terminal has no drop shadows. Only the floating chrome gets one. */
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: 0 10px 34px rgba(0, 0, 0, .7);
+
+  /* Mono is the body face here, not an accent face. */
+  --font-sans: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+               "Liberation Mono", monospace;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+               "Liberation Mono", monospace;
+
+  --maxw: 1120px;
+  --radius: 0px;
+  --radius-sm: 0px;
+
+  /* Mono runs wide, so the scale is pulled in slightly. */
+  --step-1: 0.72rem;
+  --step0:  0.82rem;
+  --step1:  0.92rem;
+  --step2:  1.1rem;
+  --step3:  1.4rem;
+  --step4:  1.95rem;
+  --step5:  2.5rem;
+}
+
+/* Base typography — style.css owns no type, so each theme supplies it. */
+h1, h2, h3, h4 { font-weight: 600; letter-spacing: -0.015em; }
+.hero-body strong { font-weight: 600; }
+.project-meta b   { font-weight: 500; }
+.view-switch button { font-weight: 500; }
+.book-cover       { font-weight: 600; }
+.book-rating      { letter-spacing: 1px; }
+.nda-badge        { letter-spacing: 0.03em; }
+.toast            { font-weight: 500; }
+.project-card h3, .book-title, .xp-role { letter-spacing: -0.018em; }
+.hero h1, .page-header h1 { letter-spacing: -0.03em; }
+
+/* ------------------------------------------------------------
+   Theme character
+   Everything is mono already; the work here is in the chrome —
+   prompts, brackets, and hard edges.
+   ------------------------------------------------------------ */
+
+body { letter-spacing: -0.01em; }
+
+/* Section headings as shell prompts. */
+.section-head h2 {
+  font-size: var(--step1);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+.section-head h2::before {
+  content: "$ ";
+  color: var(--fg-subtle);
+}
+.section-head::after { border-top: 1px solid var(--border); }
+
+.brand {
+  font-size: var(--step0);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.brand .brand-dot { color: var(--accent); }
+/* A blinking cursor after the wordmark. */
+.brand::after {
+  content: "_";
+  color: var(--accent);
+  animation: term-blink 1.2s steps(1) infinite;
+}
+@keyframes term-blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .brand::after { animation: none; }
+}
+
+.nav a { font-size: var(--step-1); letter-spacing: 0.02em; }
+.nav a[aria-current="page"] { color: var(--accent); }
+.nav a[aria-current="page"]::before { content: "> "; }
+
+.btn {
+  font-size: var(--step-1);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px 16px;
+}
+.btn-primary { font-weight: 600; }
+.btn-primary:hover { background: var(--ok-ink); border-color: var(--ok-ink); }
+.btn:not(.btn-primary):hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+
+.link-more { font-size: var(--step-1); letter-spacing: 0.06em; text-transform: uppercase; }
+.link-more:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+
+.hero-eyebrow { letter-spacing: 0.18em; }
+.hero-eyebrow::after { border-top-color: var(--accent); }
+.hero h1 { letter-spacing: -0.03em; font-weight: 600; }
+
+/* Skill chips as bracketed tokens. */
+.skill-chip { background: var(--bg-raised); }
+.skill-chip::before { content: "["; color: var(--fg-subtle); margin-right: 1px; }
+.skill-chip::after  { content: "]"; color: var(--fg-subtle); margin-left: 1px; }
+.skill-chip:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+
+.skill-group-title {
+  font-size: var(--step-1);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-subtle);
+}
+.skill-group-title::before { content: "// "; color: var(--border-strong); }
+.skill-group-title::after { border-top: 1px solid var(--border); }
+
+.tag { background: var(--bg-sunken); }
+.spec-label { color: var(--accent); letter-spacing: 0.08em; }
+
+.project-card:hover, .book-card:hover { border-color: var(--accent); }
+.social-btn:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+
+.site-header { background: var(--bg); border-bottom-color: var(--border-strong); }
+.gallery-toolbar { background: var(--bg); border-bottom-color: var(--border-strong); }
+.site-footer { border-top-color: var(--border-strong); }
+.work-teaser { border-color: var(--border-strong); }
+
+.xp-period { color: var(--accent); }
+.xp-company b { color: var(--fg); font-weight: 600; }
+.book-status[data-status="reading"] { color: var(--accent); border-color: var(--accent); }
+
+/* The knockout marks need the chip ground, which is dark here. */
+.skill-icon { --icon-knockout: var(--bg-raised); }

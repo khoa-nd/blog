@@ -1,0 +1,255 @@
+/* ============================================================
+   CLASSIC
+   ------------------------------------------------------------
+   The original light theme: warm off-white ground, near-black
+   ink, and a muted slate blue accent. Soft drop shadows give
+   depth, corners are generously rounded, and the type is a
+   system sans throughout — monospace appears only for genuinely
+   numeric or code-like values.
+
+   Calmer and more familiar than Blueprint. Use whichever suits.
+   ------------------------------------------------------------
+   This file owns every visual decision. style.css owns layout
+   and reads only from the tokens defined here.
+   ============================================================ */
+
+:root {
+  color-scheme: light;
+
+  /* Warm neutral ground — a touch of yellow keeps it off clinical white. */
+  --bg:            #fbfbfa;
+  --bg-raised:     #ffffff;
+  --bg-sunken:     #f2f2f0;
+  --bg-hover:      #f6f6f4;
+
+  --fg:            #16161a;
+  --fg-muted:      #55555f;
+  --fg-subtle:     #86868f;
+
+  --border:        #e2e2de;
+  --border-strong: #c9c9c3;
+
+  --accent:        #2f5ea8;
+  --accent-fg:     #ffffff;
+  --accent-soft:   #eaf0fa;
+
+  --tag-bg:        #f0f0ed;
+  --tag-fg:        #55555f;
+
+  /* Status colours: reading/active, paused, finished. */
+  --ok:            #3fa85f;
+  --ok-ink:        #3a9457;
+  --warn:          #d9a441;
+
+  /* Soft, layered shadows — this theme gets its depth from light. */
+  --shadow-sm: 0 1px 2px rgba(20, 20, 25, .05);
+  --shadow-md: 0 4px 14px rgba(20, 20, 25, .08);
+  --shadow-lg: 0 12px 40px rgba(20, 20, 25, .14);
+
+  /* Apple system typography. -apple-system resolves to SF Pro on Apple
+     platforms and picks the optical size automatically (SF Pro Text below
+     ~20px, SF Pro Display above), which is why Apple UI reads so evenly
+     across sizes. The rest of the stack is a graceful fallback elsewhere. */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+               "SF Pro Display", "Helvetica Neue", "Segoe UI", Roboto,
+               system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas,
+               "Liberation Mono", monospace;
+
+  --maxw: 1180px;
+  --radius: 10px;
+  --radius-sm: 6px;
+
+  /* Comfortable reading scale: body sits at 17px rather than 16px, and
+     the small-label step is lifted well clear of the 12px range so tags,
+     chips and statuses stay readable rather than decorative. */
+  --step-1: 0.875rem;   /* 14px — tags, chips, badges, statuses */
+  --step0:  0.9688rem;  /* 15.5px — secondary text, nav, buttons */
+  --step1:  1.0625rem;  /* 17px — body */
+  --step2:  1.3125rem;  /* 21px — card titles, lede */
+  --step3:  1.75rem;    /* 28px — section headings */
+  --step4:  2.375rem;   /* 38px — page titles */
+  --step5:  3.15rem;    /* 50px — hero */
+}
+
+/* ------------------------------------------------------------
+   Theme character
+   Classic deliberately does NOT apply the structural monospace
+   or uppercase treatments that Blueprint uses. Monospace is
+   limited to values that are genuinely numeric or code-like.
+   ------------------------------------------------------------ */
+
+/* ------------------------------------------------------------
+   Apple typography
+
+   Three things make Apple type feel like Apple, beyond the face:
+
+   1. Optical tracking. Large text is tracked TIGHT (negative) and
+      small text is tracked LOOSE (positive). SF does this in its
+      own UI via optical sizing; we approximate it per step.
+   2. Restrained weights. Apple leans on 400/500/600 and reserves
+      700 for genuine emphasis — it rarely shouts.
+   3. Generous line-height on body copy, tight on headlines.
+   ------------------------------------------------------------ */
+
+/* Base heading weight — style.css sets none, so the theme must.
+   The rules below refine specific headings on top of this. */
+h1, h2, h3, h4 { font-weight: 600; letter-spacing: -0.015em; }
+
+body {
+  font-weight: 400;
+  letter-spacing: -0.011em;   /* SF Pro Text at ~17px */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Headlines: progressively tighter tracking as size increases. */
+.hero h1        { font-weight: 700; letter-spacing: -0.028em; line-height: 1.06; }
+.page-header h1 { font-weight: 700; letter-spacing: -0.024em; line-height: 1.1; }
+.section-head h2{ font-weight: 650; letter-spacing: -0.019em; line-height: 1.15; }
+.xp-role,
+.book-title,
+.project-card h3,
+.hobby-card h3  { font-weight: 600; letter-spacing: -0.014em; }
+
+/* Body copy: comfortable leading, near-neutral tracking. */
+.hero-body      { font-weight: 400; letter-spacing: -0.012em; line-height: 1.47; }
+.section-lede,
+.project-desc,
+.book-desc,
+.xp-desc        { letter-spacing: -0.008em; line-height: 1.5; }
+
+/* Small text tracks POSITIVE — the inverse of headlines. This is the
+   detail most often missed, and the one that reads most Apple. */
+.tag,
+.skill-chip,
+.book-status,
+.hobby-status,
+.nda-badge,
+.project-meta,
+.result-count,
+.breadcrumb,
+.footer-inner   { letter-spacing: 0.004em; }
+
+.spec-label,
+.hero-eyebrow   { letter-spacing: 0.06em; font-weight: 590; }
+
+/* Interface text: SF's UI weight is 500, not 400. */
+.nav a          { font-weight: 450; letter-spacing: -0.004em; }
+.nav a[aria-current="page"] { font-weight: 590; }
+.btn            { font-weight: 550; letter-spacing: -0.008em; }
+.brand          { font-weight: 640; letter-spacing: -0.021em; }
+.link-more      { font-weight: 500; letter-spacing: -0.006em; }
+
+/* Emphasis and small UI bits that lost their styling when typography
+   moved out of style.css. */
+.hero-body strong { font-weight: 600; }
+.project-meta b   { font-weight: 500; }
+.xp-company b     { font-weight: 550; }
+.view-switch button { font-weight: 500; }
+.book-cover       { font-weight: 600; letter-spacing: -0.01em; }
+.book-rating      { letter-spacing: 1px; }
+.skill-name       { letter-spacing: -0.005em; }
+.nda-badge        { letter-spacing: 0.03em; }
+.mono             { letter-spacing: -0.01em; }
+.toast            { font-weight: 500; letter-spacing: -0.01em; }
+
+/* Tabular figures wherever numbers should align. */
+.project-year,
+.xp-period,
+.result-count,
+.stat-num       { font-variant-numeric: tabular-nums; }
+
+
+.mono,
+.tag,
+.skill-chip,
+.spec-label,
+.book-status,
+.hobby-status,
+.hero-eyebrow,
+.project-year,
+.project-meta,
+.xp-period,
+.result-count,
+.breadcrumb,
+.footer-inner { font-family: var(--font-mono); }
+
+/* Section headings read as headings here, not as drawing labels. */
+.section-head h2 {
+  font-family: var(--font-sans);
+  font-size: var(--step3);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  text-transform: none;
+  color: var(--fg);
+}
+.section-head::after { display: none; }
+.section-head .link-more { margin-left: auto; order: 0; }
+
+/* Softer, rounder chrome. */
+.brand {
+  font-family: var(--font-sans);
+  font-size: var(--step1);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  text-transform: none;
+}
+.nav a {
+  font-family: var(--font-sans);
+  font-size: var(--step0);
+  letter-spacing: normal;
+}
+.btn {
+  font-family: var(--font-sans);
+  font-size: var(--step0);
+  font-weight: 550;
+  letter-spacing: normal;
+  text-transform: none;
+  padding: 9px 15px;
+}
+.link-more {
+  font-family: var(--font-sans);
+  font-size: var(--step0);
+  letter-spacing: normal;
+  text-transform: none;
+}
+/* Skill group headings — the six category labels. Bold and in full ink
+   so they read as headings for the chips beneath them, not as captions. */
+.skill-group-title {
+  font-family: var(--font-sans);
+  font-size: var(--step0);
+  font-weight: 700;
+  letter-spacing: -0.012em;
+  text-transform: none;
+  color: var(--fg);
+}
+.skill-group-title::after { border-top: 1px solid var(--border); }
+
+.tag { background: var(--tag-bg); border-color: transparent; border-radius: 4px; }
+.skill-chip { border-radius: 999px; background: var(--bg); }
+.book-status { border-radius: 99px; }
+.spec-label { color: var(--fg-subtle); letter-spacing: 0.04em; }
+
+/* Lift on hover, rather than shifting to the accent. */
+.project-card:hover { border-color: var(--border-strong); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.book-card:hover    { border-color: var(--border-strong); box-shadow: var(--shadow-sm); }
+.skill-chip:hover   { color: var(--fg); border-color: var(--border-strong); background: var(--bg-hover); transform: translateY(-1px); }
+.social-btn:hover   { color: var(--fg); border-color: var(--border-strong); background: var(--bg-hover); transform: translateY(-1px); }
+.btn-primary:hover  {
+  background: color-mix(in srgb, var(--accent) 86%, var(--fg));
+  border-color: color-mix(in srgb, var(--accent) 86%, var(--fg));
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+/* Translucent, blurred chrome. */
+.site-header    { background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: saturate(1.6) blur(10px); border-bottom-color: var(--border); }
+.gallery-toolbar{ background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: saturate(1.6) blur(10px); border-bottom-color: var(--border); }
+.site-footer    { border-top-color: var(--border); }
+.work-teaser    { border-color: var(--border); }
+
+.hero-eyebrow { letter-spacing: 0.06em; }
+.hero-eyebrow::after { display: none; }
+.xp-company b { color: var(--accent); font-weight: 550; }
