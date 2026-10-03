@@ -27,6 +27,7 @@ const PROJECTS = read("projects");
 const EXPERIENCE = read("experience");
 const BOOKS = read("books");
 const SIDE = read("side-projects");
+const HIGHLIGHTS = read("highlights");
 
 const SITE_URL = (SITE.url || "https://nguyendangkhoa.info").replace(/\/$/, "");
 
@@ -61,6 +62,41 @@ function thumbSVG(p) {
   }
   return `<svg viewBox="0 0 100 72" preserveAspectRatio="xMidYMid slice" role="img" aria-label=""><rect width="100" height="72" fill="${c}" opacity="0.06"/>${parts.join("")}</svg>`;
 }
+
+
+  /* Highlight card. Mirrored in js/home.js — keep the two identical. */
+  function highlightArt(kind) {
+    if (kind !== "graph") return "";
+    const L = [[60, 120, 180], [36, 92, 148, 204], [60, 120, 180], [90, 150]];
+    const Y = [14, 52, 90, 128];
+    const E = [[0,0,0],[0,0,1],[0,1,1],[0,1,2],[0,2,2],[0,2,3],[1,0,0],[1,1,0],[1,1,1],[1,2,1],[1,2,2],[1,3,2],[2,0,0],[2,1,0],[2,1,1],[2,2,1]];
+    const HOT = ["0-1-1", "1-1-1", "2-1-1"], ON = ["0-1", "1-1", "2-1", "3-1"];
+    const edges = E.map(function (e) {
+      const x1 = L[e[0]][e[1]], x2 = L[e[0] + 1][e[2]], y1 = Y[e[0]] + 14, y2 = Y[e[0] + 1], ym = (y1 + y2) / 2;
+      const hot = HOT.indexOf(e.join("-")) !== -1 ? " hot" : "";
+      return '<path class="hl-edge' + hot + '" d="M' + x1 + "," + y1 + " C" + x1 + "," + ym + " " + x2 + "," + ym + " " + x2 + "," + y2 + '"/>';
+    }).join("");
+    const nodes = L.map(function (row, r) {
+      return row.map(function (x, c) {
+        const on = ON.indexOf(r + "-" + c) !== -1 ? " on" : "";
+        return '<rect class="hl-node' + on + '" x="' + (x - 20) + '" y="' + Y[r] + '" width="40" height="14" rx="3"/>';
+      }).join("");
+    }).join("");
+    return '<svg viewBox="0 0 240 156" role="img" aria-label="">' + edges + nodes + "</svg>";
+  }
+  function highlightCard(h, i, esc) {
+    const art = highlightArt(h.art);
+    const meta = [h.kicker, h.date].filter(Boolean).map(esc).join(" · ");
+    return '<a class="highlight-card' + (i === 0 ? " is-featured" : "") + (art ? "" : " no-art") + '" href="' + esc(h.url) + '">' +
+      (art ? '<div class="highlight-art" aria-hidden="true">' + art + "</div>" : "") +
+      '<div class="highlight-body">' +
+      '<p class="highlight-kicker">' + (h.badge ? '<span class="highlight-badge">' + esc(h.badge) + "</span>" : "") + "<span>" + meta + "</span></p>" +
+      '<h3 class="highlight-title">' + esc(h.title) + "</h3>" +
+      (h.desc ? '<p class="highlight-desc">' + esc(h.desc) + "</p>" : "") +
+      '<span class="highlight-cta">' + esc(h.cta || "Read more") +
+      ' <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>' +
+      "</div></a>";
+  }
 
 /* ---------- fragment builders ---------- */
 function projectCard(p) {
@@ -118,10 +154,12 @@ const regions = {
     const tags = (x.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join("");
     return `<article class="xp-item"><div class="xp-period">${esc(x.period)}</div><div>
 <h3 class="xp-role">${esc(x.role)}</h3>
-<p class="xp-company"><b>${esc(x.company)}</b></p>
-<p class="xp-desc">${esc(x.desc)}</p>
-<div class="tags">${tags}</div></div></article>`;
+<p class="xp-company"><b>${esc(x.company)}</b></p>${
+x.desc ? `\n<p class="xp-desc">${esc(x.desc)}</p>` : ""}${
+tags ? `\n<div class="tags">${tags}</div>` : ""}</div></article>`;
   }).join("\n"),
+
+  "highlight-list": HIGHLIGHTS.map((h, i) => highlightCard(h, i, esc)).join("\n"),
 
   "books-preview": BOOKS.slice()
     .sort((a, b) => (STATUS_ORDER[a.status] ?? 3) - (STATUS_ORDER[b.status] ?? 3))

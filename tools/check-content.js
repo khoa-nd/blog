@@ -102,7 +102,7 @@ if (Array.isArray(projects)) {
 const experience = load("experience");
 if (Array.isArray(experience)) {
   experience.forEach(function (x, i) {
-    need("experience.json", x, i, ["role", "company", "period", "desc"]);
+    need("experience.json", x, i, ["role", "company", "period"]);  /* desc is optional */
     if (x.tags && !Array.isArray(x.tags)) err("experience.json", `entry ${i} "tags" must be an array`);
   });
 }
@@ -145,6 +145,16 @@ if (Array.isArray(skills)) {
     console.log(`  INFO   ${noIcon.length} skill(s) render as text (no icon): ${noIcon.join(", ")}`);
   }
 }
+
+/* ---------- highlights ---------- */
+const highlights = load("highlights");
+if (Array.isArray(highlights)) {
+  highlights.forEach(function (h, i) {
+    need("highlights.json", h, i, ["title", "url"]);
+    if (h.url && /^\//.test(h.url)) err("highlights.json", `entry ${i} "url" must be relative (no leading slash) or it breaks under /repo-name/`);
+    if (h.art !== undefined && h.art !== "graph") warn("highlights.json", `entry ${i} art "${h.art}" is unknown — only "graph" draws artwork`);
+  });
+} else if (highlights) err("highlights.json", "must be an array");
 
 /* ---------- side projects ---------- */
 const side = load("side-projects");

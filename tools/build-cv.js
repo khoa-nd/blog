@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* ============================================================
-   Generate assets/cv/cv.pdf from the same content/*.json files
+   Generate assets/cv/cv-generated.pdf from the same content/*.json files
    that drive the site, so the CV can never drift from the page.
 
    Run:  node tools/build-cv.js
@@ -244,7 +244,9 @@ tail += "trailer\n<< /Size " + (objects.length + 1) + " /Root " + catalogObj + "
         "startxref\n" + xref + "\n%%EOF\n";
 out = Buffer.concat([out, Buffer.from(tail, "latin1")]);
 
-const dest = path.join(ROOT, SITE.cvPath || "assets/cv/cv.pdf");
+/* Always a separate file: SITE.cvPath now points at a hand-made PDF
+   that this generator must never overwrite. */
+const dest = path.join(ROOT, "assets/cv/cv-generated.pdf");
 fs.mkdirSync(path.dirname(dest), { recursive: true });
 fs.writeFileSync(dest, out);
 

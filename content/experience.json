@@ -1,49 +1,32 @@
 [
   {
+    "role": "Solution Architect",
+    "company": "mis.studio",
+    "period": "Aug 2021 — Present"
+  },
+  {
+    "role": "Tech Lead",
+    "company": "POPS Worldwide",
+    "period": "Jul 2019 — Jul 2021"
+  },
+  {
+    "role": "Solution Architect / Tech Lead",
+    "company": "FPT Software",
+    "period": "Jan 2018 — Jul 2019"
+  },
+  {
+    "role": "Tech Lead",
+    "company": "Aleph Labs",
+    "period": "Jan 2017 — Jan 2018"
+  },
+  {
     "role": "Senior Software Engineer",
-    "company": "B2B SaaS company",
-    "period": "2023 — Present",
-    "desc": "Lead engineer on the platform team. Own the design system and the content infrastructure powering twelve regional sites. Mentor three engineers.",
-    "tags": [
-      "TypeScript",
-      "Java",
-      "Design Systems",
-      "Leadership"
-    ]
+    "company": "Navigos Group",
+    "period": "Aug 2014 — Dec 2016"
   },
   {
-    "role": "Software Engineer",
-    "company": "Financial services company",
-    "period": "2021 — 2023",
-    "desc": "Built and operated backend services for payments reconciliation and risk reporting. Took the reconciliation process from three days of manual work to twenty minutes.",
-    "tags": [
-      "Python",
-      "Kotlin",
-      "Kafka",
-      "Postgres"
-    ]
-  },
-  {
-    "role": "Full-stack Developer",
-    "company": "Digital agency",
-    "period": "2019 — 2021",
-    "desc": "Agency work across a dozen client projects — e-commerce, editorial sites, internal tools. Learned to ship fast and read someone else's codebase without complaining.",
-    "tags": [
-      "JavaScript",
-      "PHP",
-      "React",
-      "AWS"
-    ]
-  },
-  {
-    "role": "Junior Developer",
-    "company": "Software consultancy",
-    "period": "2018 — 2019",
-    "desc": "First engineering role. Maintained an internal reporting tool and wrote the integration tests nobody else wanted to write.",
-    "tags": [
-      "Java",
-      "Selenium",
-      "MySQL"
-    ]
+    "role": "Senior Java Engineer",
+    "company": "PYCOGROUP",
+    "period": "Aug 2011 — Jul 2014"
   }
 ]

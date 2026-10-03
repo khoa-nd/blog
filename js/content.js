@@ -21,6 +21,7 @@
     EXPERIENCE:   "experience",
     BOOKS:        "books",
     HOBBIES:      "side-projects",
+    HIGHLIGHTS:   "highlights",
   };
 
   /* Pages live at the site root, so content/ is always one level down.

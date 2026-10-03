@@ -24,6 +24,7 @@ there is no build step for the site.
 | `content/experience.json` | Experience list on the home page |
 | `content/books.json` | Home preview (3) + the full `books.html` list |
 | `content/side-projects.json` | Side project cards on the home page |
+| `content/highlights.json` | **Highlights** on the home page (first entry is featured) |
 
 JSON is used rather than JavaScript because it is far less punishing to
 hand-edit: every editor validates it as you type, and a stray comma is caught
@@ -39,15 +40,15 @@ This catches malformed JSON, missing or mistyped fields, unknown book
 statuses, and — importantly — any `company`/`client` field that would leak a
 client name into a public NDA-safe page.
 
-### Regenerating the CV
+### The CV
 
-```sh
-npm run cv         # writes assets/cv/cv.pdf from content/*.json
-```
+The **Download CV** button serves `assets/cv/Khoa-Nguyen-CV.pdf` (set by
+`cvPath` in `content/site.json`). It is maintained by hand — replace the file
+to update it.
 
-The CV is built from the **same** files that drive the site, so your experience
-and skills cannot drift between the page and the PDF. This is the project's only
-build step, and the site does not depend on it.
+`npm run cv` still exists but now writes a separate draft,
+`assets/cv/cv-generated.pdf`, built from `content/*.json`. It never touches the
+hand-made CV.
 
 ### One caveat
 
