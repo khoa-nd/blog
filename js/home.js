@@ -16,13 +16,13 @@
     const HOT = ["0-1-1", "1-1-1", "2-1-1"], ON = ["0-1", "1-1", "2-1", "3-1"];
     const edges = E.map(function (e) {
       const x1 = L[e[0]][e[1]], x2 = L[e[0] + 1][e[2]], y1 = Y[e[0]] + 14, y2 = Y[e[0] + 1], ym = (y1 + y2) / 2;
-      const hot = HOT.indexOf(e.join("-")) !== -1 ? " hot" : "";
+      const hot = HOT.indexOf(e.join("-")) !== -1 ? " hot l" + e[0] : "";
       return '<path class="hl-edge' + hot + '" d="M' + x1 + "," + y1 + " C" + x1 + "," + ym + " " + x2 + "," + ym + " " + x2 + "," + y2 + '"/>';
     }).join("");
     const nodes = L.map(function (row, r) {
       return row.map(function (x, c) {
         const on = ON.indexOf(r + "-" + c) !== -1 ? " on" : "";
-        return '<rect class="hl-node' + on + '" x="' + (x - 20) + '" y="' + Y[r] + '" width="40" height="14" rx="3"/>';
+        return '<rect class="hl-node l' + r + on + '" x="' + (x - 20) + '" y="' + Y[r] + '" width="40" height="14" rx="3"/>';
       }).join("");
     }).join("");
     return '<svg viewBox="0 0 240 156" role="img" aria-label="">' + edges + nodes + "</svg>";

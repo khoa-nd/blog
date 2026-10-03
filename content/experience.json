@@ -2,31 +2,82 @@
   {
     "role": "Solution Architect",
     "company": "mis.studio",
-    "period": "Aug 2021 — Present"
+    "period": "Aug 2021 — Present",
+    "tags": [
+      "Magnolia CMS",
+      "Hybrid Cloud",
+      "Multi-tenant",
+      "Commerce Layer",
+      "Generative AI",
+      "Salesforce Marketing Cloud",
+      "CI/CD",
+      "Digital Signage"
+    ]
   },
   {
     "role": "Tech Lead",
     "company": "POPS Worldwide",
-    "period": "Jul 2019 — Jul 2021"
+    "period": "Jul 2019 — Jul 2021",
+    "tags": [
+      "GCP",
+      "Pub/Sub",
+      "Redis",
+      "Kubernetes",
+      "Microservices",
+      "Event-Driven",
+      "OTT Streaming",
+      "CMS"
+    ]
   },
   {
     "role": "Solution Architect / Tech Lead",
     "company": "FPT Software",
-    "period": "Jan 2018 — Jul 2019"
+    "period": "Jan 2018 — Jul 2019",
+    "tags": [
+      "AWS",
+      "Adobe",
+      "Cloud Migration",
+      "Adobe Target",
+      "Adobe Analytics",
+      "WBS & Estimation",
+      "Offshore Delivery"
+    ]
   },
   {
     "role": "Tech Lead",
     "company": "Aleph Labs",
-    "period": "Jan 2017 — Jan 2018"
+    "period": "Jan 2017 — Jan 2018",
+    "tags": [
+      "Adobe Experience Manager",
+      "Adobe Target",
+      "Adobe Analytics",
+      "Adobe DTM",
+      "DevSecOps",
+      "Static Analysis"
+    ]
   },
   {
     "role": "Senior Software Engineer",
     "company": "Navigos Group",
-    "period": "Aug 2014 — Dec 2016"
+    "period": "Aug 2014 — Dec 2016",
+    "tags": [
+      "Elasticsearch",
+      "Spring Boot",
+      "Spring Data",
+      "Spring MVC",
+      "AngularJS",
+      "Resume Parsing"
+    ]
   },
   {
     "role": "Senior Java Engineer",
     "company": "PYCOGROUP",
-    "period": "Aug 2011 — Jul 2014"
+    "period": "Aug 2011 — Jul 2014",
+    "tags": [
+      "Java",
+      "Spring",
+      "Microservices",
+      "Adobe Experience Manager"
+    ]
   }
 ]

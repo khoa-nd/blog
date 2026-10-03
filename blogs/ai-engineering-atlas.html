@@ -3,7 +3,28 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>AI Engineering Atlas</title>
+<title>The AI Engineering Atlas — Nguyễn Đăng Khoa</title>
+<meta name="description" content="78 core AI engineering concepts mapped into one dependency graph across 18 learning layers. Click any concept to see what to learn first and what it unlocks.">
+<meta name="author" content="Nguyễn Đăng Khoa">
+<meta name="theme-color" content="#0B1220">
+<link rel="canonical" href="https://nguyendangkhoa.info/blogs/ai-engineering-atlas.html">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>◈</text></svg>">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nguyễn Đăng Khoa">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="The AI Engineering Atlas">
+<meta property="og:description" content="78 core AI engineering concepts mapped into one dependency graph across 18 learning layers. Click any concept to see what to learn first and what it unlocks.">
+<meta property="og:url" content="https://nguyendangkhoa.info/blogs/ai-engineering-atlas.html">
+<meta property="og:image" content="https://nguyendangkhoa.info/blogs/ai-engineering-atlas-og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The AI Engineering Atlas: a layered dependency graph of AI engineering concepts">
+<meta property="article:modified_time" content="2026-10-03">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The AI Engineering Atlas">
+<meta name="twitter:description" content="78 core AI engineering concepts mapped into one dependency graph across 18 learning layers. Click any concept to see what to learn first and what it unlocks.">
+<meta name="twitter:image" content="https://nguyendangkhoa.info/blogs/ai-engineering-atlas-og.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "The AI Engineering Atlas", "description": "78 core AI engineering concepts mapped into one dependency graph across 18 learning layers. Click any concept to see what to learn first and what it unlocks.", "url": "https://nguyendangkhoa.info/blogs/ai-engineering-atlas.html", "image": "https://nguyendangkhoa.info/blogs/ai-engineering-atlas-og.png", "dateModified": "2026-10-03", "inLanguage": "en", "author": {"@type": "Person", "name": "Nguyễn Đăng Khoa", "url": "https://nguyendangkhoa.info/"}}</script>
 <style>
 </style>
 <style>
@@ -24,6 +45,9 @@ h1{font-family:inherit;font-weight:700;font-size:clamp(30px,5.2vw,52px);
   line-height:1.02;margin:0 0 12px;letter-spacing:-.02em;text-wrap:balance}
 h1 em{font-style:italic;color:var(--amber)}
 .sub{color:var(--fg2);max-width:66ch;margin:0 0 20px;font-size:13.5px}
+.sub a{color:var(--amber);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--amber) 45%,transparent)}
+.sub a:hover{border-bottom-color:var(--amber)}
+.sub a:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 .stats{display:flex;flex-wrap:wrap;gap:10px}
 .stat{background:var(--ink2);border:1px solid var(--line);border-radius:3px;padding:9px 13px;
   display:flex;gap:9px;align-items:baseline}
@@ -107,7 +131,7 @@ footer{color:var(--fg3);font-size:11px;padding-block:20px 40px;border-top:1px so
 <div class="wrap">
 <header>
   <h1>The AI Engineering <em>Atlas</em></h1>
-  <p class="sub">Last updated on 3 Oct 2026</p>
+  <p class="sub">Last updated on 3 Oct 2026 by <a href="https://nguyendangkhoa.info/">nguyendangkhoa.info</a></p>
   <div class="stats">
     <div class="stat"><b>78</b><span>unique concepts</span></div>
     <div class="stat"><b>18</b><span>learning layers</span></div>
@@ -131,10 +155,6 @@ footer{color:var(--fg3);font-size:11px;padding-block:20px 40px;border-top:1px so
   <div class="chain" id="chain"></div>
 </div>
 
-<footer>
-  Depth = longest prerequisite chain to a root. Dependents = concepts that transitively require this one.
-  Built as a directed acyclic graph; validated for cycles and depth monotonicity.
-</footer>
 </div>
 
 <aside id="panel" aria-live="polite">

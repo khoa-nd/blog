@@ -73,13 +73,13 @@ function thumbSVG(p) {
     const HOT = ["0-1-1", "1-1-1", "2-1-1"], ON = ["0-1", "1-1", "2-1", "3-1"];
     const edges = E.map(function (e) {
       const x1 = L[e[0]][e[1]], x2 = L[e[0] + 1][e[2]], y1 = Y[e[0]] + 14, y2 = Y[e[0] + 1], ym = (y1 + y2) / 2;
-      const hot = HOT.indexOf(e.join("-")) !== -1 ? " hot" : "";
+      const hot = HOT.indexOf(e.join("-")) !== -1 ? " hot l" + e[0] : "";
       return '<path class="hl-edge' + hot + '" d="M' + x1 + "," + y1 + " C" + x1 + "," + ym + " " + x2 + "," + ym + " " + x2 + "," + y2 + '"/>';
     }).join("");
     const nodes = L.map(function (row, r) {
       return row.map(function (x, c) {
         const on = ON.indexOf(r + "-" + c) !== -1 ? " on" : "";
-        return '<rect class="hl-node' + on + '" x="' + (x - 20) + '" y="' + Y[r] + '" width="40" height="14" rx="3"/>';
+        return '<rect class="hl-node l' + r + on + '" x="' + (x - 20) + '" y="' + Y[r] + '" width="40" height="14" rx="3"/>';
       }).join("");
     }).join("");
     return '<svg viewBox="0 0 240 156" role="img" aria-label="">' + edges + nodes + "</svg>";
@@ -215,7 +215,9 @@ function headFor(page) {
   return `<title>${esc(meta.title)}</title>
 <meta name="description" content="${esc(meta.desc)}">
 <link rel="canonical" href="${esc(meta.url)}">
+<meta name="author" content="${esc(SITE.name)}">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="${esc(SITE.name)}">
 <meta property="og:title" content="${esc(meta.title)}">
 <meta property="og:description" content="${esc(meta.desc)}">
@@ -259,7 +261,7 @@ const today = new Date().toISOString().slice(0, 10);
 fs.writeFileSync(path.join(ROOT, "sitemap.xml"),
 `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${["/", "/projects.html", "/books.html"].map(u =>
+${["/", "/projects.html", "/books.html", "/blogs/ai-engineering-atlas.html"].map(u =>
 `  <url><loc>${SITE_URL}${u}</loc><lastmod>${today}</lastmod></url>`).join("\n")}
 </urlset>
 `);

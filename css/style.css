@@ -624,16 +624,19 @@ select { cursor: pointer; padding-right: 30px;
 }
 
 /* ============================================================
-   Highlights — featured work and articles
+   Highlights — compact cards: thumbnail left, text right.
+   auto-fill keeps a single card at half width on desktop, so the
+   section stays short and the Work section is not pushed down.
    ============================================================ */
 .highlight-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr));
+  gap: 12px;
 }
 .highlight-card {
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-columns: 150px 1fr;
+  align-items: stretch;
   color: inherit;
   text-decoration: none;
   background: var(--bg-raised);
@@ -643,59 +646,71 @@ select { cursor: pointer; padding-right: 30px;
   overflow: hidden;
   transition: border-color .15s, box-shadow .15s, transform .15s;
 }
+.highlight-card.no-art { grid-template-columns: 1fr; }
 .highlight-card:hover { border-color: var(--accent); box-shadow: var(--shadow-md); transform: translateY(-1px); }
 .highlight-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.highlight-card.is-featured { grid-column: 1 / -1; grid-template-columns: minmax(220px, 2fr) 3fr; grid-template-rows: none; }
-.highlight-card.is-featured.no-art { grid-template-columns: 1fr; }
-@media (max-width: 720px) { .highlight-card.is-featured { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .highlight-card { grid-template-columns: 108px 1fr; } }
 
+/* The artwork keeps the Atlas page's own dark palette in every theme,
+   matching the social share image (blogs/ai-engineering-atlas-og.png). */
 .highlight-art {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 150px;
-  padding: 20px;
-  background: var(--accent-soft);
+  padding: 10px;
+  background: #0b1220;
 }
-.highlight-art svg { width: 100%; max-width: 300px; height: auto; }
-.hl-edge { fill: none; stroke: var(--accent); stroke-opacity: .28; stroke-width: 1.4; }
-.hl-edge.hot { stroke-opacity: 1; stroke-width: 2.2; }
-.hl-node { fill: var(--bg-raised); stroke: var(--accent); stroke-opacity: .55; stroke-width: 1.2; }
-.hl-node.on { fill: var(--accent); stroke-opacity: 1; }
+.highlight-art svg { width: 100%; height: auto; }
+.hl-edge { fill: none; stroke: #9aa9c4; stroke-opacity: .3; stroke-width: 1.5; }
+.hl-edge.hot { stroke-opacity: 1; stroke-width: 2.6; }
+.hl-node { fill: #16213a; stroke-width: 1.4; }
+.hl-node.on { stroke-width: 0; }
+.l0 { --hl: #f2a93b; } .l1 { --hl: #e2725b; } .l2 { --hl: #b86fa8; } .l3 { --hl: #8b7fd4; }
+.hl-node { stroke: var(--hl); }
+.hl-node.on { fill: var(--hl); }
+.hl-edge.hot { stroke: var(--hl); }
 .highlight-card:hover .hl-edge.hot { stroke-dasharray: 5 4; animation: hl-flow 1s linear infinite; }
 @keyframes hl-flow { to { stroke-dashoffset: -18; } }
 @media (prefers-reduced-motion: reduce) { .highlight-card:hover .hl-edge.hot { animation: none; } }
 
-.highlight-body { display: flex; flex-direction: column; gap: 8px; padding: 20px 22px; }
+.highlight-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; padding: 11px 14px 12px; }
 .highlight-kicker {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
-  font-size: var(--step-1);
+  gap: 6px;
+  font-size: .8rem;
   color: var(--fg-subtle);
 }
 .highlight-badge {
-  padding: 2px 9px;
+  padding: 1px 7px;
   border-radius: 999px;
   background: var(--accent);
   color: var(--accent-fg);
   font-weight: 600;
   letter-spacing: .02em;
 }
-.highlight-title { font-size: var(--step2); line-height: 1.2; color: var(--fg); text-wrap: balance; }
-.highlight-desc { color: var(--fg-muted); font-size: var(--step0); max-width: 62ch; }
+.highlight-title { font-size: var(--step1); line-height: 1.25; color: var(--fg); }
+.highlight-desc {
+  color: var(--fg-muted);
+  font-size: var(--step-1);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 .highlight-cta {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   margin-top: auto;
-  padding-top: 6px;
+  padding-top: 4px;
   color: var(--accent);
-  font-size: var(--step0);
+  font-size: var(--step-1);
   font-weight: 600;
 }
-.highlight-cta svg { width: 15px; height: 15px; transition: transform .15s; }
+.highlight-cta svg { width: 14px; height: 14px; transition: transform .15s; }
 .highlight-card:hover .highlight-cta svg { transform: translateX(3px); }
 
 /* ============================================================
