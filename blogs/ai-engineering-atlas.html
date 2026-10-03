@@ -107,11 +107,9 @@ footer{color:var(--fg3);font-size:11px;padding-block:20px 40px;border-top:1px so
 <div class="wrap">
 <header>
   <h1>The AI Engineering <em>Atlas</em></h1>
-  <p class="sub">446 overlapping lessons from 20 phases, deduplicated into 78 distinct concepts and wired into a dependency graph. Everything flows downward: a concept sits below every concept it requires. The widest columns at the top are the foundations — the things almost everything else quietly rests on.</p>
+  <p class="sub">Last updated on 3 Oct 2026</p>
   <div class="stats">
-    <div class="stat"><b>446</b><span>raw lessons</span></div>
     <div class="stat"><b>78</b><span>unique concepts</span></div>
-    <div class="stat"><b>152</b><span>dependencies</span></div>
     <div class="stat"><b>18</b><span>learning layers</span></div>
   </div>
 </header>
@@ -119,11 +117,7 @@ footer{color:var(--fg3);font-size:11px;padding-block:20px 40px;border-top:1px so
 <div class="bar">
   <div class="seg">
     <button id="m-all" aria-pressed="true">Full graph</button>
-    <button id="m-core" aria-pressed="false">Core spine</button>
-  </div>
-  <div class="seg">
-    <button id="s-dep" aria-pressed="true">Size = dependents</button>
-    <button id="s-raw" aria-pressed="false">Size = lessons</button>
+    <button id="m-core" aria-pressed="false">Critical Path</button>
   </div>
   <span class="hint">Click any concept to trace its prerequisites</span>
 </div>
@@ -168,7 +162,7 @@ const pre={},post={};
 D.nodes.forEach(n=>{pre[n.i]=[];post[n.i]=[]});
 D.edges.forEach(([a,b])=>{pre[a].push(b);post[b].push(a)});
 
-let mode="all", sizeBy="dep", sel=null, off=new Set();
+let mode="all", sel=null, off=new Set();
 
 // ---- longest path (critical chain) ----
 const memo={};
@@ -244,10 +238,10 @@ function draw(){
   });
   svg.appendChild(eg);
 
-  const maxDep=Math.max(...vis.map(n=>n.dep),1), maxRaw=Math.max(...vis.map(n=>n.raw),1);
+  const maxDep=Math.max(...vis.map(n=>n.dep),1);
   vis.forEach(n=>{
     const P=pos[n.i];
-    const metric = sizeBy==="dep" ? n.dep/maxDep : n.raw/maxRaw;
+    const metric = n.dep/maxDep;
     const g=el("g",{class:"node"+(sel&&sel!==n.i&&!pre[sel].includes(n.i)&&!post[sel].includes(n.i)?" dim":"")+(sel===n.i?" sel":""),tabindex:"0",role:"button"});
     g.setAttribute("aria-label",n.l);
     const fill=AC[n.a];
@@ -257,7 +251,7 @@ function draw(){
     const pw=26;
     g.appendChild(el("rect",{x:P.x+P.w-pw-5,y:P.y+8,width:pw,height:18,rx:2,fill:fill,opacity:.92}));
     const c=el("text",{x:P.x+P.w-pw/2-5,y:P.y+21,"text-anchor":"middle",class:"cnt"});
-    c.textContent = sizeBy==="dep"? n.dep : n.raw; g.appendChild(c);
+    c.textContent = n.dep; g.appendChild(c);
 
     const label=el("text",{x:P.x+9,y:P.y+21});
     let s=n.l; const lim=Math.floor((P.w-pw-22)/5.75);
@@ -276,7 +270,7 @@ const P=document.getElementById("panel");
 function panel(n){
   document.getElementById("p-title").textContent=n.l;
   document.getElementById("p-tags").innerHTML=
-    `<span class="tag">${D.areas[n.a]}</span><span class="tag">layer ${n.d}</span><span class="tag">${n.raw} source lessons</span>`;
+    `<span class="tag">${D.areas[n.a]}</span><span class="tag">layer ${n.d}</span>`;
   document.getElementById("p-why").textContent=n.w;
   document.getElementById("p-dep").textContent=n.dep;
   document.getElementById("p-pre").textContent=n.pre;
@@ -301,12 +295,9 @@ const tog=(a,b,set)=>{
 function sync(){
   document.getElementById("m-all").setAttribute("aria-pressed",mode==="all");
   document.getElementById("m-core").setAttribute("aria-pressed",mode==="core");
-  document.getElementById("s-dep").setAttribute("aria-pressed",sizeBy==="dep");
-  document.getElementById("s-raw").setAttribute("aria-pressed",sizeBy==="raw");
   draw();
 }
 tog("m-all","m-core",id=>mode=(id==="m-all"?"all":"core"));
-tog("s-dep","s-raw",id=>sizeBy=(id==="s-dep"?"dep":"raw"));
 
 draw();
 </script>
