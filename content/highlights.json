@@ -4,9 +4,11 @@
     "title": "The AI Engineering Atlas",
     "kicker": "Interactive map",
     "date": "Oct 2026",
-    "desc": "78 core AI engineering concepts in one dependency graph. Click any concept to see what to learn first.",
+    "desc": "78 core AI engineering concepts, deduplicated from a 20-phase curriculum and wired into one dependency graph. Click any concept to see what to learn first and what it unlocks.",
     "url": "blogs/ai-engineering-atlas.html",
     "cta": "Explore the Atlas",
-    "art": "graph"
+    "art": "graph",
+    "image": "blogs/ai-engineering-atlas-og.png",
+    "imageAlt": "The AI Engineering Atlas: a layered dependency graph of AI engineering concepts"
   }
 ]

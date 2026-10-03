@@ -152,6 +152,7 @@ if (Array.isArray(highlights)) {
   highlights.forEach(function (h, i) {
     need("highlights.json", h, i, ["title", "url"]);
     if (h.url && /^\//.test(h.url)) err("highlights.json", `entry ${i} "url" must be relative (no leading slash) or it breaks under /repo-name/`);
+    if (h.image && /^\//.test(h.image)) err("highlights.json", `entry ${i} "image" must be relative (no leading slash)`);
     if (h.art !== undefined && h.art !== "graph") warn("highlights.json", `entry ${i} art "${h.art}" is unknown — only "graph" draws artwork`);
   });
 } else if (highlights) err("highlights.json", "must be an array");

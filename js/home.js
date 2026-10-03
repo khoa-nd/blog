@@ -28,10 +28,12 @@
     return '<svg viewBox="0 0 240 156" role="img" aria-label="">' + edges + nodes + "</svg>";
   }
   function highlightCard(h, i, esc) {
-    const art = highlightArt(h.art);
+    const art = h.image
+      ? '<img src="' + esc(h.image) + '" alt="' + esc(h.imageAlt || "") + '" width="1200" height="630" loading="lazy">'
+      : highlightArt(h.art);
     const meta = [h.kicker, h.date].filter(Boolean).map(esc).join(" · ");
     return '<a class="highlight-card' + (i === 0 ? " is-featured" : "") + (art ? "" : " no-art") + '" href="' + esc(h.url) + '">' +
-      (art ? '<div class="highlight-art" aria-hidden="true">' + art + "</div>" : "") +
+      (art ? '<div class="highlight-art' + (h.image ? " has-image" : "") + '"' + (h.image ? "" : ' aria-hidden="true"') + ">" + art + "</div>" : "") +
       '<div class="highlight-body">' +
       '<p class="highlight-kicker">' + (h.badge ? '<span class="highlight-badge">' + esc(h.badge) + "</span>" : "") + "<span>" + meta + "</span></p>" +
       '<h3 class="highlight-title">' + esc(h.title) + "</h3>" +
