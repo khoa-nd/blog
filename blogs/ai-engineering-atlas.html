@@ -87,6 +87,18 @@ svg{display:block}
 .tl-key .lead{font-size:11px;color:var(--fg2);margin-right:4px}
 .tl-key .chip{border-color:color-mix(in srgb,var(--amber) 55%,var(--line));color:var(--fg)}
 .tag.tl{border-color:var(--amber);color:var(--amber)}
+.seg #m-app[aria-pressed=true]{background:var(--green);color:#06140C}
+.node.app rect{stroke:var(--green);stroke-width:2;filter:drop-shadow(0 0 7px rgba(95,184,138,.55))}
+.node.app text{fill:#fff}
+.app-key{display:none;flex-wrap:wrap;gap:7px;align-items:center;padding-block:12px 14px}
+.app-key.on{display:flex}
+.app-key .lead{font-size:11px;color:var(--fg2);margin-right:4px}
+.app-key .chip{border-color:color-mix(in srgb,var(--green) 55%,var(--line));color:var(--fg)}
+.app-key .chip b{color:var(--green)}
+.tag.app{border-color:var(--green);color:var(--green)}
+.appnote{margin:-6px 0 18px;padding:10px 12px;background:var(--ink2);border-left:2px solid var(--green);
+  border-radius:0 3px 3px 0;font-size:12.5px;color:var(--fg2)}
+.appnote b{display:block;color:var(--green);font-size:12.5px;margin-bottom:4px}
 .node.sel rect{stroke:var(--amber);stroke-width:2.4}
 .legend{display:flex;flex-wrap:wrap;gap:7px;padding-bottom:22px}
 .lg{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--fg2);
@@ -150,10 +162,12 @@ footer{color:var(--fg3);font-size:11px;padding-block:20px 40px;border-top:1px so
     <button id="m-all" aria-pressed="true">Full graph</button>
     <button id="m-core" aria-pressed="false">Critical Path</button>
     <button id="m-timeless" aria-pressed="false" title="Concepts that stay valid whatever replaces LLMs">Timeless</button>
+    <button id="m-app" aria-pressed="false" title="Application-tier abilities worth learning now">Application</button>
   </div>
   <span class="hint" id="hint">Click any concept to trace its prerequisites</span>
 </div>
 <div class="tl-key" id="tl-key" aria-live="polite"></div>
+<div class="app-key" id="app-key" aria-live="polite"></div>
 
 <div class="legend" id="legend"></div>
 
@@ -171,6 +185,7 @@ footer{color:var(--fg3);font-size:11px;padding-block:20px 40px;border-top:1px so
   <h2 id="p-title"></h2>
   <div class="tagrow" id="p-tags"></div>
   <p class="why" id="p-why"></p>
+  <div class="appnote" id="p-app" hidden><b id="p-app-t"></b><span id="p-app-w"></span></div>
   <div class="mrow">
     <div class="m"><b id="p-dep"></b><span>dependents</span></div>
     <div class="m"><b id="p-pre"></b><span>prereqs</span></div>
@@ -203,6 +218,34 @@ const tlTotal=Object.keys(TL).length;
 document.getElementById("tl-key").innerHTML =
   `<span class="lead"><b style="color:var(--amber)">${tlTotal}</b> of ${D.nodes.length} concepts stay valid whatever replaces LLMs:</span>` +
   TL_CATS.map((c,k)=>`<span class="chip">${c} <b>${tlCount[k]}</b></span>`).join("");
+
+// ---- Application: the application-tier core worth learning now ----
+// Abilities that outlast any one model, vendor or framework. Several nodes can share one ability.
+const APP_ABIL=[
+  {t:"Evaluating AI systems",d:"eval sets, error analysis, judge calibration, regression gates",
+   w:"Every model swap, prompt change or new framework has to prove it's better. Whoever can measure that decides what ships. This is the highest-value skill on the list."},
+  {t:"Context engineering",d:"what the model sees, in what order, with what constraints, plus structured outputs",
+   w:"Models will change. The job of giving one the right information and a checkable output contract won't."},
+  {t:"Retrieval",d:"lexical plus dense search, chunking, reranking, measuring recall",
+   w:"Information retrieval is decades older than LLMs and will outlive them. Most enterprise AI is grounding answers in company data."},
+  {t:"Tool interfaces",d:"typed schemas, idempotency, error contracts, permissions",
+   w:"This is API design for a non-human caller. MCP is today's protocol for it. Learn the concept and treat MCP as the current instance."},
+  {t:"Workflow versus agent design",d:"choosing deterministic steps or an adaptive loop, managing state, placing human approval gates",
+   w:"Choosing between a retrieval-assisted draft, a deterministic multi-step workflow and an adaptive tool-using agent is the core architecture decision of the application tier."},
+  {t:"Embeddings as a tool",d:"similarity, clustering, dedup, classification",
+   w:"One mechanism behind search, recommendations, routing and anomaly detection."},
+  {t:"Running it in production",d:"tracing, cost, latency, caching, model routing",
+   w:"Often treated as work surrounding AI rather than AI itself, but this is where job value shows: the person who makes a system cheaper and observable gets trusted with the next one."},
+  {t:"AI application security",d:"prompt injection, least-privilege tools, data boundaries",
+   w:"Every company deploying agents hits this problem, and it doesn't go away with better models."},
+  {t:"Working with coding agents",d:"scoping tasks, verification gates, review",
+   w:"It multiplies everything else on this list, and it's how the job is now done day to day."}
+];
+const APP={llmeval:0,prompting:1,retrieval:2,rag:2,toolcalling:3,agentloop:4,orchestration:4,
+  embeddings:5,obs:6,costperf:6,redteam:7,agenteng:8};
+document.getElementById("app-key").innerHTML =
+  `<span class="lead"><b style="color:var(--green)">${APP_ABIL.length}</b> application-tier abilities across ${Object.keys(APP).length} concepts:</span>` +
+  APP_ABIL.map((a,k)=>`<span class="chip"><b>${k+1}</b> ${a.t}</span>`).join("");
 
 const byId={}; D.nodes.forEach(n=>byId[n.i]=n);
 const pre={},post={};
@@ -289,7 +332,7 @@ function draw(){
   vis.forEach(n=>{
     const P=pos[n.i];
     const metric = n.dep/maxDep;
-    const g=el("g",{class:"node"+(sel&&sel!==n.i&&!pre[sel].includes(n.i)&&!post[sel].includes(n.i)?" dim":"")+(sel===n.i?" sel":"")+(mode==="timeless"?(TL[n.i]?" tl":" dim"):""),tabindex:"0",role:"button"});
+    const g=el("g",{class:"node"+(sel&&sel!==n.i&&!pre[sel].includes(n.i)&&!post[sel].includes(n.i)?" dim":"")+(sel===n.i?" sel":"")+(mode==="timeless"?(TL[n.i]?" tl":" dim"):"")+(mode==="app"?(n.i in APP?" app":" dim"):""),tabindex:"0",role:"button"});
     g.setAttribute("aria-label",n.l);
     const fill=AC[n.a];
     g.appendChild(el("rect",{x:P.x,y:P.y,width:P.w,height:P.h,
@@ -318,7 +361,14 @@ function panel(n){
   document.getElementById("p-title").textContent=n.l;
   document.getElementById("p-tags").innerHTML=
     `<span class="tag">${D.areas[n.a]}</span><span class="tag">layer ${n.d}</span>`+
-    (TL[n.i]?TL[n.i].map(k=>`<span class="tag tl">Timeless · ${TL_CATS[k]}</span>`).join(""):"");
+    (TL[n.i]?TL[n.i].map(k=>`<span class="tag tl">Timeless · ${TL_CATS[k]}</span>`).join(""):"")+
+    (n.i in APP?`<span class="tag app">Application · ${APP[n.i]+1}. ${APP_ABIL[APP[n.i]].t}</span>`:"");
+  const ab=n.i in APP?APP_ABIL[APP[n.i]]:null;
+  document.getElementById("p-app").hidden=!ab;
+  if(ab){
+    document.getElementById("p-app-t").textContent=`${ab.t}: ${ab.d}`;
+    document.getElementById("p-app-w").textContent=ab.w;
+  }
   document.getElementById("p-why").textContent=n.w;
   document.getElementById("p-dep").textContent=n.dep;
   document.getElementById("p-pre").textContent=n.pre;
@@ -336,13 +386,15 @@ P.addEventListener("click",e=>{const li=e.target.closest("[data-go]");if(!li)ret
   const n=byId[li.dataset.go]; sel=n.i; draw(); panel(n); });
 document.addEventListener("keydown",e=>{if(e.key==="Escape")close();});
 
-const MODES={"m-all":"all","m-core":"core","m-timeless":"timeless"};
+const MODES={"m-all":"all","m-core":"core","m-timeless":"timeless","m-app":"app"};
 const HINTS={all:"Click any concept to trace its prerequisites",
   core:"Click any concept to trace its prerequisites",
-  timeless:"Glowing concepts stay valid whatever replaces LLMs"};
+  timeless:"Glowing concepts stay valid whatever replaces LLMs",
+  app:"Glowing concepts are the application-tier core to learn now"};
 function sync(){
   for(const id in MODES) document.getElementById(id).setAttribute("aria-pressed",mode===MODES[id]);
   document.getElementById("tl-key").classList.toggle("on",mode==="timeless");
+  document.getElementById("app-key").classList.toggle("on",mode==="app");
   document.getElementById("hint").textContent=HINTS[mode];
   draw();
 }
