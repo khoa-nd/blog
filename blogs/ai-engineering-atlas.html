@@ -19,7 +19,7 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="The AI Engineering Atlas: a layered dependency graph of AI engineering concepts">
-<meta property="article:modified_time" content="2026-10-03">
+<meta property="article:modified_time" content="2026-10-12">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The AI Engineering Atlas">
 <meta name="twitter:description" content="78 core AI engineering concepts mapped into one dependency graph across 18 learning layers. Click any concept to see what to learn first and what it unlocks.">
@@ -80,6 +80,15 @@ svg{display:block}
 .node .cnt{font-size:9px;fill:var(--ink);font-weight:700}
 .node{cursor:pointer}
 .node.dim{opacity:.17}
+.node.tl rect{stroke:var(--amber);stroke-width:2;filter:drop-shadow(0 0 7px var(--glow))}
+.node.tl text{fill:#fff}
+.edge.tl{stroke:var(--amber);stroke-width:1.5;opacity:.6}
+.edge.faint{opacity:.3}
+.tl-key{display:none;flex-wrap:wrap;gap:7px;align-items:center;padding-block:12px 0}
+.tl-key.on{display:flex}
+.tl-key .lead{font-size:11px;color:var(--fg2);margin-right:4px}
+.tl-key .chip{border-color:color-mix(in srgb,var(--amber) 55%,var(--line));color:var(--fg)}
+.tag.tl{border-color:var(--amber);color:var(--amber)}
 .node.sel rect{stroke:var(--amber);stroke-width:2.4}
 .legend{display:flex;flex-wrap:wrap;gap:7px;padding-bottom:22px}
 .lg{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--fg2);
@@ -131,7 +140,7 @@ footer{color:var(--fg3);font-size:11px;padding-block:20px 40px;border-top:1px so
 <div class="wrap">
 <header>
   <h1>The AI Engineering <em>Atlas</em></h1>
-  <p class="sub">Last updated on 3 Oct 2026 by <a href="https://nguyendangkhoa.info/">nguyendangkhoa.info</a></p>
+  <p class="sub">Last updated on 12 Oct 2026 by <a href="https://nguyendangkhoa.info/">nguyendangkhoa.info</a></p>
   <div class="stats">
     <div class="stat"><b>78</b><span>unique concepts</span></div>
     <div class="stat"><b>18</b><span>learning layers</span></div>
@@ -142,9 +151,11 @@ footer{color:var(--fg3);font-size:11px;padding-block:20px 40px;border-top:1px so
   <div class="seg">
     <button id="m-all" aria-pressed="true">Full graph</button>
     <button id="m-core" aria-pressed="false">Critical Path</button>
+    <button id="m-timeless" aria-pressed="false" title="Concepts that stay valid whatever replaces LLMs">Timeless</button>
   </div>
-  <span class="hint">Click any concept to trace its prerequisites</span>
+  <span class="hint" id="hint">Click any concept to trace its prerequisites</span>
 </div>
+<div class="tl-key" id="tl-key" aria-live="polite"></div>
 
 <div class="legend" id="legend"></div>
 
@@ -177,6 +188,24 @@ footer{color:var(--fg3);font-size:11px;padding-block:20px 40px;border-top:1px so
 <script>const AC={found:"#F2A93B",math:"#F2A93B",ml:"#E2725B",dl:"#E2725B",repr:"#E2725B",
  vision:"#8B7FD4",nlp:"#8B7FD4",arch:"#8B7FD4",llm:"#8B7FD4",rl:"#8B7FD4",gen:"#8B7FD4",audio:"#8B7FD4",
  eng:"#3FB8C4",multi:"#3FB8C4",agent:"#3FB8C4",prod:"#5FB88A",safety:"#5FB88A",craft:"#5FB88A"};
+// ---- Timeless: concepts that stay valid if LLMs (or transformers) are replaced ----
+// A concept can belong to several categories. Judgement call, not a measurement:
+// methods named after a current model family or product (RLHF/DPO, MCP, PyTorch, ViT) are left out.
+const TL_CATS=["Math","ML fundamentals","Deep learning core","Evaluation","Optimization & generalization","Safety & alignment","Systems tradeoffs"];
+const TL={
+  linalg:[0],calc:[0],prob:[0],infotheory:[0],numerics:[0],graphtheory:[0],signals:[0],opt:[0,4],
+  mlbasics:[1],unsup:[1],dimred:[1],featureeng:[1],ensembles:[1,4],timeseries:[1],expttrack:[1],modeleval:[1,3,4],
+  nnbasics:[2],backprop:[2],trainingdyn:[2,4],nndebug:[2],
+  llmeval:[3],agenteval:[3],rlbasics:[4],
+  safetyalign:[5],redteam:[5],guardrails:[5],fairness:[5],governance:[5],secops:[5],
+  costperf:[6],serving:[6],deploy:[6],obs:[6]
+};
+const tlCount=TL_CATS.map((_,k)=>Object.values(TL).filter(v=>v.includes(k)).length);
+const tlTotal=Object.keys(TL).length;
+document.getElementById("tl-key").innerHTML =
+  `<span class="lead"><b style="color:var(--amber)">${tlTotal}</b> of ${D.nodes.length} concepts stay valid whatever replaces LLMs:</span>` +
+  TL_CATS.map((c,k)=>`<span class="chip">${c} <b>${tlCount[k]}</b></span>`).join("");
+
 const byId={}; D.nodes.forEach(n=>byId[n.i]=n);
 const pre={},post={};
 D.nodes.forEach(n=>{pre[n.i]=[];post[n.i]=[]});
@@ -252,6 +281,7 @@ function draw(){
     const ax=A.x+A.w/2, ay=A.y, bx=B.x+B.w/2, by=B.y+B.h;
     const my=(ay+by)/2;
     let cls="edge";
+    if(mode==="timeless") cls+= (TL[a]&&TL[b]?" tl":" faint");
     if(sel){ if(a===sel||b===sel) cls+= (b===sel?" cool":" hot"); }
     const p=el("path",{d:`M${ax},${ay} C${ax},${my} ${bx},${my} ${bx},${by}`,class:cls});
     eg.appendChild(p);
@@ -262,7 +292,7 @@ function draw(){
   vis.forEach(n=>{
     const P=pos[n.i];
     const metric = n.dep/maxDep;
-    const g=el("g",{class:"node"+(sel&&sel!==n.i&&!pre[sel].includes(n.i)&&!post[sel].includes(n.i)?" dim":"")+(sel===n.i?" sel":""),tabindex:"0",role:"button"});
+    const g=el("g",{class:"node"+(sel&&sel!==n.i&&!pre[sel].includes(n.i)&&!post[sel].includes(n.i)?" dim":"")+(sel===n.i?" sel":"")+(mode==="timeless"?(TL[n.i]?" tl":" dim"):""),tabindex:"0",role:"button"});
     g.setAttribute("aria-label",n.l);
     const fill=AC[n.a];
     g.appendChild(el("rect",{x:P.x,y:P.y,width:P.w,height:P.h,
@@ -290,7 +320,8 @@ const P=document.getElementById("panel");
 function panel(n){
   document.getElementById("p-title").textContent=n.l;
   document.getElementById("p-tags").innerHTML=
-    `<span class="tag">${D.areas[n.a]}</span><span class="tag">layer ${n.d}</span>`;
+    `<span class="tag">${D.areas[n.a]}</span><span class="tag">layer ${n.d}</span>`+
+    (TL[n.i]?TL[n.i].map(k=>`<span class="tag tl">Timeless · ${TL_CATS[k]}</span>`).join(""):"");
   document.getElementById("p-why").textContent=n.w;
   document.getElementById("p-dep").textContent=n.dep;
   document.getElementById("p-pre").textContent=n.pre;
@@ -308,16 +339,17 @@ P.addEventListener("click",e=>{const li=e.target.closest("[data-go]");if(!li)ret
   const n=byId[li.dataset.go]; sel=n.i; draw(); panel(n); });
 document.addEventListener("keydown",e=>{if(e.key==="Escape")close();});
 
-const tog=(a,b,set)=>{
-  document.getElementById(a).addEventListener("click",()=>{set(a);sync()});
-  document.getElementById(b).addEventListener("click",()=>{set(b);sync()});
-};
+const MODES={"m-all":"all","m-core":"core","m-timeless":"timeless"};
+const HINTS={all:"Click any concept to trace its prerequisites",
+  core:"Click any concept to trace its prerequisites",
+  timeless:"Glowing concepts stay valid whatever replaces LLMs"};
 function sync(){
-  document.getElementById("m-all").setAttribute("aria-pressed",mode==="all");
-  document.getElementById("m-core").setAttribute("aria-pressed",mode==="core");
+  for(const id in MODES) document.getElementById(id).setAttribute("aria-pressed",mode===MODES[id]);
+  document.getElementById("tl-key").classList.toggle("on",mode==="timeless");
+  document.getElementById("hint").textContent=HINTS[mode];
   draw();
 }
-tog("m-all","m-core",id=>mode=(id==="m-all"?"all":"core"));
+for(const id in MODES) document.getElementById(id).addEventListener("click",()=>{mode=MODES[id];sync()});
 
 draw();
 </script>
