@@ -80,8 +80,7 @@ footer{color:var(--fg3);font-size:13px;padding-block:28px 56px;margin-top:40px;b
 <header class="wrap">
   <p class="kicker"><b>Market report</b> · Vietnam · AI-era tech jobs · October 2026</p>
   <h1>What Vietnam hires AI people <em>to actually do</em></h1>
-  <p class="lede"><span data-k="jds"></span> JDs</p>
-  <p class="small" style="margin:-10px 0 18px">Report created <time datetime="2026-10-26">26 Oct 2026</time></p>
+  <p class="small" style="margin:0 0 18px">Report created <time datetime="2026-10-26">26 Oct 2026</time></p>
   <div class="kpis" id="kpis"></div>
 </header>
 <nav class="toc" aria-label="Sections"><div class="wrap">
@@ -157,8 +156,6 @@ footer{color:var(--fg3);font-size:13px;padding-block:28px 56px;margin-top:40px;b
   <h2><span class="n">7</span>Where demand is heading (2027–2028)</h2>
   <p class="sub">Predictions combine this snapshot (where demand clusters by seniority and pay), the gap with the US market, and published Vietnamese surveys. Confidence reflects how much evidence supports each one.</p>
   <div class="pred" id="pred"></div>
-  <h3>What this means if you are building a career</h3>
-  <div class="callout green" id="career"></div>
 </section>
 
 </main>
@@ -274,7 +271,6 @@ const PRED=[
  ['md','Problem-framers and AI solution architects rise at senior levels',`Translating business needs into AI solutions climbs from ${Math.round(D.level_heat.rows.find(r=>r[0]==='R14')[1][0])}% of intern-level to ${Math.round(D.level_heat.rows.find(r=>r[0]==='R14')[1][3])}% of lead-level job descriptions, and ${D.vague_work}% of AI postings cannot yet name their own problem. That gap is a role: the US "forward-deployed engineer" trend is the same pattern.`],
  ['lo','Model training and GPU optimization stay a well-paid niche',`Only ${R('R4')}% of Vietnamese AI job descriptions ask for training or fine-tuning, and ${R('R18')}% for hardware optimization, against 14% and 12% in US AI companies. Expect growth mainly at foreign R&D centres and large local tech groups, not across the broad market.`]];
 $('#pred').innerHTML=PRED.map(([c,h,p])=>`<div><h4>${h}<span class="conf ${c}">${c==='hi'?'High':c==='md'?'Medium':'Lower'} confidence</span></h4><p>${p}</p></div>`).join('');
-$('#career').innerHTML=`<b>Aim for the overlap of volume and scarcity.</b> The volume is in <em>integrating</em> AI (RAG, agents, LLM features in real products). The scarcity is in what comes after: <em>evaluating</em> quality, <em>deploying</em> reliably, and <em>framing the business problem</em>. A portfolio that shows one AI feature taken from a vague business need to a measured, deployed, governed service covers the top responsibilities at every level in this data. Training models from scratch, such as speech recognition (${R('R7')}% of job descriptions), is a strong differentiator, but pair it with integration, evaluation and deployment skills to match where Vietnamese demand actually is.`;
 
 </script>
 </body>
