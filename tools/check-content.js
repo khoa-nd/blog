@@ -157,6 +157,20 @@ if (Array.isArray(highlights)) {
   });
 } else if (highlights) err("highlights.json", "must be an array");
 
+/* ---------- blogs (the /blogs/ listing) ---------- */
+const blogs = load("blogs");
+if (Array.isArray(blogs)) {
+  blogs.forEach(function (b, i) {
+    need("blogs.json", b, i, ["title", "date", "desc", "file"]);
+    if (b.date && !/^\d{4}-\d{2}-\d{2}$/.test(b.date)) err("blogs.json", `entry ${i} "date" must be YYYY-MM-DD`);
+    ["file", "image"].forEach(function (k) {
+      if (!b[k]) return;
+      if (/^\/|^https?:/.test(b[k])) err("blogs.json", `entry ${i} "${k}" must be relative to blogs/`);
+      else if (!fs.existsSync(path.join(ROOT, "blogs", b[k]))) err("blogs.json", `entry ${i} "${k}" blogs/${b[k]} does not exist`);
+    });
+  });
+} else if (blogs) err("blogs.json", "must be an array");
+
 /* ---------- side projects ---------- */
 const side = load("side-projects");
 if (Array.isArray(side)) {

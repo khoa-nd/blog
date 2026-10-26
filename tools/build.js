@@ -28,6 +28,7 @@ const EXPERIENCE = read("experience");
 const BOOKS = read("books");
 const SIDE = read("side-projects");
 const HIGHLIGHTS = read("highlights");
+const BLOGS = read("blogs");
 
 const SITE_URL = (SITE.url || "https://nguyendangkhoa.info").replace(/\/$/, "");
 
@@ -143,6 +144,18 @@ function bookCard(b) {
 </article>`;
 }
 
+/* Blog listing card on /blogs/. Reuses the highlight-card styles; paths in
+   content/blogs.json are relative to the blogs/ folder, where the page lives. */
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const fmtDate = (d) => { const [y, m, day] = d.split("-").map(Number); return `${day} ${MONTHS[m - 1]} ${y}`; };
+const blogsByDate = () => BLOGS.slice().sort((a, b) => b.date.localeCompare(a.date));
+function blogCard(b) {
+  return highlightCard({ title: b.title, kicker: b.kicker, date: fmtDate(b.date), desc: b.desc, url: b.file,
+    cta: b.cta || "Read", image: b.image, imageAlt: b.imageAlt }, 1, esc)
+    .replace('<a class="highlight-card', '<a class="highlight-card blog-card')
+    .replace(/<span>([^<]*)<\/span><\/p>/, (m, meta) => `<span>${meta.replace(/ · (\d+ \w+ \d{4})$/, ' · <time datetime="' + b.date + '">$1</time>')}</span></p>`);
+}
+
 /* ---------- regions ---------- */
 const STATUS_ORDER = { reading: 0, finished: 1, queued: 2 };
 
@@ -178,6 +191,9 @@ tags ? `\n<div class="tags">${tags}</div>` : ""}</div></article>`;
     .sort((a, b) => (STATUS_ORDER[a.status] ?? 3) - (STATUS_ORDER[b.status] ?? 3) || a.title.localeCompare(b.title))
     .map(bookCard).join("\n"),
 
+  "blog-list": blogsByDate().map(blogCard).join("\n"),
+  "blog-count": String(BLOGS.length),
+
   "hero-intro": rich(SITE.intro || ""),
   "site-name": esc(SITE.name),
 };
@@ -194,6 +210,11 @@ function headFor(page) {
       title: `Projects — ${SITE.name}`,
       desc: `${PROJECTS.length} selected projects: architecture, role and measurable outcomes. Client names withheld.`,
       url: SITE_URL + "/projects.html",
+    },
+    "blogs/index.html": {
+      title: `Using AI to Learn AI — ${SITE.name}`,
+      desc: `AI Learning Collection: ${BLOGS.length} interactive maps, course radars and market reports on learning AI engineering, built with AI.`,
+      url: SITE_URL + "/blogs/",
     },
     "books.html": {
       title: `Reading — ${SITE.name}`,
@@ -242,7 +263,7 @@ function replaceRegion(html, id, content) {
 }
 
 let changed = 0;
-["index.html", "projects.html", "books.html"].forEach(function (page) {
+["index.html", "projects.html", "books.html", "blogs/index.html"].forEach(function (page) {
   const file = path.join(ROOT, page);
   const before = fs.readFileSync(file, "utf8");
   let html = before;
@@ -263,7 +284,7 @@ const today = new Date().toISOString().slice(0, 10);
 fs.writeFileSync(path.join(ROOT, "sitemap.xml"),
 `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${["/", "/projects.html", "/books.html", "/blogs/ai-engineering-atlas.html", "/blogs/ai-infrastructure-atlas.html"].map(u =>
+${["/", "/projects.html", "/books.html", "/blogs/"].concat(blogsByDate().map(b => "/blogs/" + b.file)).map(u =>
 `  <url><loc>${SITE_URL}${u}</loc><lastmod>${today}</lastmod></url>`).join("\n")}
 </urlset>
 `);

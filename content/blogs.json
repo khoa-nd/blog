@@ -1,0 +1,52 @@
+[
+  {
+    "title": "The AI Infrastructure Atlas",
+    "kicker": "Interactive map",
+    "date": "2026-10-26",
+    "desc": "A 12-stage dependency graph from GPU fundamentals to cluster-scale inference, the learning path for running open models on your own GPUs, course routes through Stanford and DeepLearning.AI, and 14 hands-on labs.",
+    "file": "ai-infrastructure-atlas.html",
+    "image": "thumbs/ai-infrastructure-atlas.jpg",
+    "imageAlt": "The AI Infrastructure Atlas: a layered dependency graph of AI infrastructure concepts",
+    "cta": "Explore the Atlas"
+  },
+  {
+    "title": "What Vietnam Hires AI People to Do",
+    "kicker": "Market report",
+    "date": "2026-10-26",
+    "desc": "Job descriptions from three Vietnamese job sites, read and coded: what employers expect AI-era engineers to do, which business problems they pay to solve, and what it pays.",
+    "file": "vietnam-ai-jobs-2026.html",
+    "image": "thumbs/vietnam-ai-jobs-2026.jpg",
+    "imageAlt": "What Vietnam Hires AI People to Do: report summary charts",
+    "cta": "Read the report"
+  },
+  {
+    "title": "How Stanford Is Transforming CS in the AI Era",
+    "kicker": "Course radar",
+    "date": "2026-10-22",
+    "desc": "What Stanford's CS department added, renamed and retired for 2026–27, what that says about where AI is heading, the fundamentals to learn first, and curated learning paths.",
+    "file": "stanford-cs-radar.html",
+    "image": "thumbs/stanford-cs-radar.jpg",
+    "imageAlt": "How Stanford Is Transforming CS in the AI Era: course radar",
+    "cta": "Read the radar"
+  },
+  {
+    "title": "Stanford CS Full Courses 2026–27",
+    "kicker": "Course catalog",
+    "date": "2026-10-22",
+    "desc": "Every active Stanford Computer Science course for 2026–27, searchable by title, description, domain and status. The companion catalog to the course radar.",
+    "file": "stanford-cs-full-courses.html",
+    "image": "thumbs/stanford-cs-full-courses.jpg",
+    "imageAlt": "Stanford CS Full Courses 2026–27: searchable course table",
+    "cta": "Search the catalog"
+  },
+  {
+    "title": "The AI Engineering Atlas",
+    "kicker": "Interactive map",
+    "date": "2026-10-03",
+    "desc": "78 core AI engineering concepts, deduplicated from a 20-phase curriculum and wired into one dependency graph. Click any concept to see what to learn first and what it unlocks.",
+    "file": "ai-engineering-atlas.html",
+    "image": "ai-engineering-atlas-og.png",
+    "imageAlt": "The AI Engineering Atlas: a layered dependency graph of AI engineering concepts",
+    "cta": "Explore the Atlas"
+  }
+]

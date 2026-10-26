@@ -24,9 +24,10 @@
     HIGHLIGHTS:   "highlights",
   };
 
-  /* Pages live at the site root, so content/ is always one level down.
+  /* Most pages live at the site root, so content/ is one level down. A page
+     in a subfolder (blogs/index.html) sets <html data-root="../">.
      Relative on purpose: works at a domain root and under /repo-name/. */
-  const BASE = "content/";
+  const BASE = (document.documentElement.getAttribute("data-root") || "") + "content/";
 
   function fail(message, detail) {
     console.error("[content] " + message, detail || "");
