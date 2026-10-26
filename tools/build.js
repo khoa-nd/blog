@@ -263,7 +263,7 @@ const today = new Date().toISOString().slice(0, 10);
 fs.writeFileSync(path.join(ROOT, "sitemap.xml"),
 `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${["/", "/projects.html", "/books.html", "/blogs/ai-engineering-atlas.html"].map(u =>
+${["/", "/projects.html", "/books.html", "/blogs/ai-engineering-atlas.html", "/blogs/ai-infrastructure-atlas.html"].map(u =>
 `  <url><loc>${SITE_URL}${u}</loc><lastmod>${today}</lastmod></url>`).join("\n")}
 </urlset>
 `);

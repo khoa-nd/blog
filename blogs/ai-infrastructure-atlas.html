@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The AI Infrastructure Atlas — Nguyễn Đăng Khoa</title>
+<meta name="description" content="A 12-stage dependency graph of AI infrastructure engineering, the learning path for running AI locally on your own GPUs, and a curated Stanford course route.">
+<link rel="canonical" href="https://nguyendangkhoa.info/blogs/ai-infrastructure-atlas.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The AI Infrastructure Atlas">
+<meta property="og:description" content="57 concepts in one dependency graph, the learning path for running local AI, and a Stanford course route.">
+<meta property="og:url" content="https://nguyendangkhoa.info/blogs/ai-infrastructure-atlas.html">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#0B1220">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>◈</text></svg>">
+<style>
+:root{--ink:#0B1220;--ink2:#121B2C;--panel:#16213A;--line:#24314E;--fg:#E8EDF7;--fg2:#9AA9C4;--fg3:#65748F;
+ --amber:#F2A93B;--rose:#E2725B;--violet:#8B7FD4;--cyan:#3FB8C4;--green:#5FB88A;color-scheme:dark}
+*{box-sizing:border-box}html{color-scheme:dark;scroll-behavior:smooth}
+body{margin:0;background:var(--ink);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:16px;line-height:1.65}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:16px}
+a{color:var(--amber);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--amber) 40%,transparent)}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+header{padding-block:48px 20px}
+.kicker{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg3);margin:0 0 12px}.kicker b{color:var(--amber)}
+h1{font-size:clamp(32px,6vw,52px);line-height:1.05;margin:0 0 14px;letter-spacing:-.02em}h1 em{font-style:italic;color:var(--amber)}
+.lede{color:var(--fg2);font-size:18px;max-width:76ch;margin:0 0 10px}
+.small{font-size:13px;color:var(--fg3)}
+nav.toc{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--ink) 93%,transparent);backdrop-filter:blur(6px);border-block:1px solid var(--line);margin-top:22px}
+nav.toc .wrap{display:flex;gap:6px;overflow-x:auto;padding-block:9px}
+nav.toc a{flex:none;font-size:12.5px;border:1px solid var(--line);border-radius:99px;padding:4px 11px;color:var(--fg2);background:var(--ink2)}
+section{padding-block:44px 6px;scroll-margin-top:52px}
+h2{font-size:clamp(22px,3.8vw,30px);margin:0 0 6px;letter-spacing:-.01em;line-height:1.2}h2 .n{color:var(--fg3);font-weight:500;margin-right:10px}
+h3{font-size:18px;margin:26px 0 10px}
+.sub{color:var(--fg2);margin:0 0 20px;max-width:80ch}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--ink2)}
+table.t{width:100%;border-collapse:collapse;font-size:14.5px;min-width:760px}
+table.t th,table.t td{border-bottom:1px solid var(--line);padding:11px 14px;text-align:left;vertical-align:top}
+table.t tr:last-child td{border-bottom:0}
+table.t th{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--fg3);font-weight:600;background:#0e1626}
+table.t td:first-child{font-weight:600;white-space:nowrap}
+table.t td.what{color:var(--fg2)}
+.callout{border-left:3px solid var(--amber);background:var(--ink2);padding:13px 17px;border-radius:0 6px 6px 0;margin:16px 0;color:var(--fg2)}.callout b{color:var(--fg)}
+.callout.cyan{border-left-color:var(--cyan)}
+.phase{display:grid;grid-template-columns:170px 1fr;gap:16px;margin-bottom:18px}
+.phase-h{border-right:2px solid var(--c);padding-right:12px}
+.phase-h b{display:block;color:var(--c);font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+.phase-h span{font-size:13px;color:var(--fg3)}
+.courses{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.course{background:var(--ink2);border:1px solid var(--line);border-radius:8px;padding:13px 15px;display:flex;flex-direction:column;gap:6px}
+.course .top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.course .code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--fg2)}
+.course h4{margin:0;font-size:15.5px;line-height:1.3}
+.course p{margin:0;font-size:14px;color:var(--fg2)}
+.course .meta{font-size:12.5px;color:var(--fg3);margin-top:auto}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.schip{font-size:11.5px;border:1px solid color-mix(in srgb,var(--c,var(--cyan)) 55%,var(--line));color:var(--c,var(--cyan));border-radius:99px;padding:1px 8px;white-space:nowrap}
+.tag{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:3px;padding:2px 6px;white-space:nowrap}
+.off{background:color-mix(in srgb,var(--green) 25%,var(--ink2));color:var(--green);border:1px solid var(--green)}
+.noff{background:color-mix(in srgb,var(--rose) 18%,var(--ink2));color:#f0a493;border:1px solid var(--rose)}
+.lvl{background:color-mix(in srgb,var(--cyan) 16%,var(--ink2));color:var(--cyan);border:1px solid color-mix(in srgb,var(--cyan) 60%,var(--line))}
+.ev{font-size:11px;color:var(--fg3)}
+.cov{display:inline-block;margin-bottom:5px;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border-radius:3px;padding:2px 7px;white-space:nowrap}
+table.cmp{min-width:980px;font-size:13.5px}table.cmp td:not(:first-child){width:29%}table.cmp td:first-child{white-space:normal;width:13%}
+.full{background:var(--green);color:#06140C}.part{background:var(--amber);color:#1A1206}.gap{background:var(--rose);color:#1d0b07}
+footer{color:var(--fg3);font-size:13px;padding-block:28px 56px;margin-top:40px;border-top:1px solid var(--line)}
+@media (max-width:760px){.phase{grid-template-columns:1fr}.phase-h{border-right:0;border-bottom:2px solid var(--c);padding:0 0 6px}}
+
+/* ---- atlas graph, scoped ---- */
+#atlas{--glow:rgba(242,169,59,.5);--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;line-height:1.55}
+#atlas{margin:0;background:var(--ink);color:var(--fg);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+#atlas .wrap{padding-inline:20px;max-width:1440px;margin:0 auto}
+#atlas header{padding-block:44px 26px;border-bottom:1px solid var(--line)}
+#atlas h1{font-family:inherit;font-weight:700;font-size:clamp(30px,5.2vw,52px);
+  line-height:1.02;margin:0 0 12px;letter-spacing:-.02em;text-wrap:balance}
+#atlas h1 em{font-style:italic;color:var(--amber)}
+#atlas .sub{color:var(--fg2);max-width:66ch;margin:0 0 20px;font-size:13.5px}
+#atlas .sub a{color:var(--amber);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--amber) 45%,transparent)}
+#atlas .sub a:hover{border-bottom-color:var(--amber)}
+#atlas .sub a:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+#atlas .stats{display:flex;flex-wrap:wrap;gap:10px}
+#atlas .stat{background:var(--ink2);border:1px solid var(--line);border-radius:3px;padding:9px 13px;
+  display:flex;gap:9px;align-items:baseline}
+#atlas .stat b{font-family:inherit;font-size:21px;color:var(--amber);font-variant-numeric:tabular-nums}
+#atlas .stat span{font-size:10.5px;color:var(--fg3);text-transform:uppercase;letter-spacing:.09em}
+#atlas .bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-block:16px;
+  border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);
+  background:var(--ink);z-index:20}
+#atlas .seg{display:flex;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+#atlas .seg button{font:inherit;font-size:11.5px;background:var(--ink2);color:var(--fg2);border:0;
+  padding:7px 13px;cursor:pointer;letter-spacing:.05em}
+#atlas .lg{font:inherit}
+#atlas button+button{border-left:1px solid var(--line)}
+#atlas .seg button[aria-pressed=true]{background:var(--amber);color:#1A1206;font-weight:700}
+#atlas button:focus-visible{outline:2px solid var(--cyan);outline-offset:-2px}
+#atlas .hint{color:var(--fg3);font-size:11px;margin-left:auto}
+#atlas .stage{position:relative;overflow:auto;border:1px solid var(--line);border-radius:4px;
+  background:
+    radial-gradient(1100px 420px at 12% 0%,rgba(242,169,59,.09),transparent 62%),
+    linear-gradient(180deg,var(--ink2),var(--ink));
+  margin-block:18px;max-height:76vh}
+#atlas svg{display:block}
+#atlas .lane{fill:var(--fg3);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase}
+#atlas .lane-rule{stroke:var(--line);stroke-width:1;stroke-dasharray:2 5}
+#atlas .edge{stroke:var(--line);fill:none;stroke-width:1}
+#atlas .edge.hot{stroke:var(--amber);stroke-width:1.9;opacity:.95}
+#atlas .edge.cool{stroke:var(--cyan);stroke-width:1.6;opacity:.85}
+#atlas .node rect{stroke-width:1.2;rx:3}
+#atlas .node text{font-size:10.5px;fill:var(--fg);pointer-events:none}
+#atlas .node .cnt{font-size:9px;fill:var(--ink);font-weight:700}
+#atlas .node{cursor:pointer}
+#atlas .node.dim{opacity:.17}
+#atlas .node.tl rect{stroke:var(--amber);stroke-width:2;filter:drop-shadow(0 0 7px var(--glow))}
+#atlas .node.tl text{fill:#fff}
+#atlas .tl-key{display:none;flex-wrap:wrap;gap:7px;align-items:center;padding-block:12px 14px}
+#atlas .tl-key.on{display:flex}
+#atlas .tl-key .lead{font-size:11px;color:var(--fg2);margin-right:4px}
+#atlas .tl-key .chip{border-color:color-mix(in srgb,var(--amber) 55%,var(--line));color:var(--fg)}
+#atlas .tag.tl{border-color:var(--amber);color:var(--amber)}
+#atlas .seg #m-app[aria-pressed=true]{background:var(--green);color:#06140C}
+#atlas .node.app rect{stroke:var(--green);stroke-width:2;filter:drop-shadow(0 0 7px rgba(95,184,138,.55))}
+#atlas .node.app text{fill:#fff}
+#atlas .app-key{display:none;flex-wrap:wrap;gap:7px;align-items:center;padding-block:12px 14px}
+#atlas .app-key.on{display:flex}
+#atlas .app-key .lead{font-size:11px;color:var(--fg2);margin-right:4px}
+#atlas .app-key .chip{border-color:color-mix(in srgb,var(--green) 55%,var(--line));color:var(--fg)}
+#atlas .app-key .chip b{color:var(--green)}
+#atlas .tag.app{border-color:var(--green);color:var(--green)}
+#atlas .appnote{margin:-6px 0 18px;padding:10px 12px;background:var(--ink2);border-left:2px solid var(--green);
+  border-radius:0 3px 3px 0;font-size:12.5px;color:var(--fg2)}
+#atlas .appnote b{display:block;color:var(--green);font-size:12.5px;margin-bottom:4px}
+#atlas .node.sel rect{stroke:var(--amber);stroke-width:2.4}
+#atlas .legend{display:flex;flex-wrap:wrap;gap:7px;padding-bottom:22px}
+#atlas .lg{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--fg2);
+  border:1px solid var(--line);border-radius:99px;padding:4px 10px;cursor:pointer;background:var(--ink2)}
+#atlas .lg i{width:9px;height:9px;border-radius:2px;display:block}
+#atlas .lg{background:var(--ink2);color:var(--fg2)}
+#atlas .lg[aria-pressed=true]{border-color:var(--fg2);color:var(--fg)}
+#atlas .lg[aria-pressed=false]{opacity:.42}
+#atlas .lg[aria-pressed=false] i{filter:grayscale(1)}
+#atlas #panel{position:fixed;right:0;top:0;height:100%;width:min(390px,92vw);background:var(--panel);
+  border-left:1px solid var(--line);padding:24px 22px;overflow:auto;z-index:40;
+  transform:translateX(100%);transition:transform .22s ease;box-shadow:-18px 0 44px rgba(0,0,0,.45)}
+#atlas #panel.open{transform:none}
+#atlas #panel h2{font-family:inherit;font-size:23px;margin:0 0 6px;line-height:1.15;text-wrap:balance}
+#atlas .tagrow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+#atlas .tag{font-size:10px;padding:3px 8px;border-radius:99px;border:1px solid var(--line);color:var(--fg2)}
+#atlas .why{color:var(--fg2);font-size:12.5px;margin:0 0 18px}
+#atlas .mrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
+#atlas .m{background:var(--ink2);border:1px solid var(--line);border-radius:3px;padding:9px}
+#atlas .m b{display:block;font-family:inherit;font-size:19px;color:var(--amber);font-variant-numeric:tabular-nums}
+#atlas .m span{font-size:9.5px;color:var(--fg3);text-transform:uppercase;letter-spacing:.07em}
+#atlas h3{font-size:10.5px;text-transform:uppercase;letter-spacing:.11em;color:var(--fg3);
+  margin:0 0 9px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+#atlas .list{list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:5px}
+#atlas .list li{font-size:12px;color:var(--fg2);padding:6px 9px;background:var(--ink2);
+  border-left:2px solid var(--line);border-radius:0 3px 3px 0;cursor:pointer}
+#atlas .list li:hover{color:var(--fg);border-left-color:var(--amber)}
+#atlas .empty{color:var(--fg3);font-size:12px;font-style:italic}
+#atlas #close{position:absolute;top:14px;right:16px;background:0;border:1px solid var(--line);
+  border-radius:3px;color:var(--fg2);width:28px;height:28px;padding:0;cursor:pointer}
+#atlas .path{margin-block:14px 30px;padding:18px;border:1px solid var(--line);border-radius:4px;background:var(--ink2)}
+#atlas .path h3{border:0;padding:0;margin-bottom:12px}
+#atlas .chain{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+#atlas .chip{font-size:11px;padding:5px 10px;border-radius:3px;background:var(--panel);
+  border:1px solid var(--line);color:var(--fg2)}
+#atlas .chip b{color:var(--amber);font-weight:700}
+#atlas .arrow{color:var(--fg3);font-size:11px}
+#atlas footer{color:var(--fg3);font-size:11px;padding-block:20px 40px;border-top:1px solid var(--line)}
+@media (max-width:640px){#atlas header{padding-block:30px 20px}
+#atlas .hint{display:none}}
+@media (prefers-reduced-motion:reduce){#atlas #panel{transition:none}}
+#atlas .seg #m-labs[aria-pressed=true]{background:var(--green);color:#06140C}
+#atlas .app-key .chip[data-go]{cursor:pointer}
+#atlas .app-key .chip[data-go]:hover{border-color:var(--green)}
+#atlas .appnote .lbl{display:block;margin-top:8px;font-size:9.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--fg3)}
+#atlas .stages{margin:0;padding-left:22px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px 28px}
+#atlas .stages li{color:var(--fg3);font-size:12px;padding-left:2px}
+#atlas .stages li b{display:block;font-size:13px;margin-bottom:4px}
+#atlas .stages li span{display:block;color:var(--fg2);margin-bottom:3px}
+#atlas .stages li i{font-style:normal;font-size:9.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--fg3);margin-right:5px}
+#atlas .stats{margin:4px 0 6px}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <p class="kicker"><b>Interactive map</b> · AI infrastructure · local AI learning path · Stanford &amp; DeepLearning.AI routes</p>
+  <h1>The AI Infrastructure <em>Atlas</em></h1>
+  <p class="lede">A 12-stage path from GPU fundamentals to cluster-scale inference, mapped into one dependency graph, followed by the learning path for running AI locally on your own GPUs and curated routes through Stanford and DeepLearning.AI courses.</p>
+  <p class="small">Created <time datetime="2026-10-26">26 Oct 2026</time> · Companion to <a href="ai-engineering-atlas.html">The AI Engineering Atlas</a></p>
+</header>
+<nav class="toc" aria-label="Sections"><div class="wrap">
+  <a href="#atlas">Atlas graph</a><a href="#core">1 · Local AI path</a><a href="#optional">2 · Optional stages</a><a href="#route">3 · Stanford route</a><a href="#dlai">4 · DeepLearning.AI route</a><a href="#coverage">5 · Coverage map</a>
+</div></nav>
+
+<main class="wrap">
+<section id="atlas">
+  <h2>The atlas graph</h2>
+  <p class="sub">Click any concept to see what to learn first, what it unlocks, and its stage's hands-on lab.</p>
+  <div class="stats">
+    <div class="stat"><b id="s-nodes"></b><span>concepts</span></div>
+    <div class="stat"><b>12</b><span>stages</span></div>
+    <div class="stat"><b id="s-layers"></b><span>learning layers</span></div>
+    <div class="stat"><b>12</b><span>hands-on labs</span></div>
+  </div>
+<div class="bar">
+  <div class="seg">
+    <button id="m-all" aria-pressed="true">Full graph</button>
+    <button id="m-core" aria-pressed="false">Critical Path</button>
+    <button id="m-labs" aria-pressed="false" title="The concept each stage's hands-on lab exercises">Labs</button>
+  </div>
+  <span class="hint" id="hint">Click any concept to trace its prerequisites</span>
+</div>
+<div class="app-key" id="labs-key" aria-live="polite"></div>
+
+<div class="legend" id="legend"></div>
+
+<div class="stage"><svg id="svg" role="img" aria-label="Dependency graph of AI infrastructure engineering concepts"></svg></div>
+
+<div class="path">
+  <h3>The critical path — longest prerequisite chain in the graph</h3>
+  <div class="chain" id="chain"></div>
+</div>
+
+<aside id="panel" aria-live="polite">
+  <button id="close" aria-label="Close details">&times;</button>
+  <h2 id="p-title"></h2>
+  <div class="tagrow" id="p-tags"></div>
+  <p class="why" id="p-why"></p>
+  <div class="mrow">
+    <div class="m"><b id="p-dep"></b><span>dependents</span></div>
+    <div class="m"><b id="p-pre"></b><span>prereqs</span></div>
+    <div class="m"><b id="p-lay"></b><span>layer</span></div>
+  </div>
+  <div class="appnote" id="p-stage" hidden>
+    <b id="p-stage-t"></b>
+    <span class="lbl">Lab</span><span id="p-stage-lab"></span>
+    <span class="lbl">Why it matters</span><span id="p-stage-why"></span>
+  </div>
+  <h3>Learn these first</h3>
+  <ul class="list" id="p-before"></ul>
+  <h3>Unlocks directly</h3>
+  <ul class="list" id="p-after"></ul>
+</aside>
+</section>
+
+<section id="core">
+  <h2><span class="n">1</span>Learning path of running local AI</h2>
+  <p class="sub">The core path for running AI privately: make an open-weight model fit, run fast, serve many users, follow the rules, and justify its cost.</p>
+  <div class="scroll"><table class="t">
+    <thead><tr><th>Atlas stage</th><th>Specific concepts (atlas nodes)</th><th>What you'd actually do at the bank</th></tr></thead>
+    <tbody>
+      <tr><td>2 · Inference mechanics</td><td>Prefill vs decode, memory-bandwidth bottleneck, KV-cache sizing</td><td class="what">Estimate how many concurrent users a GPU can serve before buying hardware</td></tr>
+      <tr><td>3 · Serving engines</td><td>vLLM/SGLang, PagedAttention, continuous batching, chunked prefill</td><td class="what">Stand up the model server and tune it so 200 employees don't wait in a queue</td></tr>
+      <tr><td>4 · KV-cache &amp; memory</td><td>Prefix caching, cache-aware routing</td><td class="what">Reuse the long shared system prompt and policy text across every request, which cuts latency and cost</td></tr>
+      <tr><td>5 · Quantization</td><td>Number formats (FP8/INT4), weight quantization (AWQ/GPTQ), measuring quantization impact</td><td class="what">Fit a 70B model onto the GPUs you have, and prove to the business that quality held</td></tr>
+      <tr><td>7 · Distributed inference (tensor parallelism only)</td><td>Splitting one model across 2–8 GPUs in a server</td><td class="what">Run a model bigger than one GPU's memory</td></tr>
+      <tr><td>10 · Cluster orchestration</td><td>Kubernetes GPU Operator, MIG partitioning, queue-based autoscaling</td><td class="what">Share scarce GPUs fairly across teams; run small models on GPU slices</td></tr>
+      <tr><td>11 · AI gateway &amp; observability</td><td>TTFT/ITL SLOs, semantic routing, OpenTelemetry, DCGM GPU telemetry</td><td class="what">Send simple questions to a small cheap model and hard ones to the big one, and monitor every request for audit and incidents</td></tr>
+      <tr><td>12 · Benchmarking &amp; cost</td><td>Reproducible benchmarking, latency–throughput curves, cost per token</td><td class="what">Show management that running privately costs X versus a cloud API at the same quality, which decides whether the project lives</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><b>Stage 11 matters most for a moat.</b> The gateway is where enterprise rules live: authentication, PII redaction, audit logs, per-department quotas and routing. That's exactly the "encode regulation into controls" work no US platform does for a Vietnamese bank.</div>
+</section>
+
+<section id="optional">
+  <h2><span class="n">2</span>Stages you can treat as optional for this goal</h2>
+  <p class="sub">Real, well-paid skills, but they belong to AI labs and inference providers more than to enterprise on-prem teams.</p>
+  <div class="scroll"><table class="t">
+    <thead><tr><th>Stage</th><th>Why it's lower priority for enterprise on-premises work</th></tr></thead>
+    <tbody>
+      <tr><td>1 · CUDA kernel writing (C++, writing kernels)</td><td class="what">Understand the memory hierarchy (your CUDA page covers it), but banks don't write kernels</td></tr>
+      <tr><td>6 · Kernel optimization (Triton, FlashAttention internals)</td><td class="what">You <em>use</em> FlashAttention through vLLM; building kernels is AI-lab or NVIDIA work</td></tr>
+      <tr><td>8 · Speculative decoding</td><td class="what">A nice speedup, but serving engines increasingly ship it built-in; turn it on rather than build it</td></tr>
+      <tr><td>9 · Multi-node &amp; InfiniBand</td><td class="what">Needed for serving 400B+ models across machines; most Vietnamese enterprises will run one or two servers</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="route">
+  <h2><span class="n">3</span>A Stanford route that covers every topic</h2>
+  <p class="sub">Sixteen Stanford CS courses in five phases, chosen from the 2026–27 catalog. Each card shows which atlas stages it covers and how solid that mapping is: <b>syllabus</b> means the course's published topic list names the subject; <b>catalog</b> means only the official course description does.</p>
+  <div id="phases"></div>
+</section>
+
+<section id="dlai">
+  <h2><span class="n">4</span>A DeepLearning.AI route that covers 9 of the 12 stages</h2>
+  <p class="sub">Sixteen courses in five phases, picked from all 132 in the DeepLearning.AI catalog and mapped to the same stages as tables 1 and 2. Each card shows how solid the mapping is: <b>outline</b> means a lesson title in the course outline names the subject; <b>summary</b> means only the course's “What you'll learn” does.</p>
+  <div class="callout cyan"><b>Where DeepLearning.AI stops.</b> No course in the catalog teaches stage 1 (CUDA kernels), stage 9 (multi-node &amp; InfiniBand) or stage 10 (cluster orchestration), and stage 7 appears only as one optional training-side video. Fill those from the Stanford route above: CS 149 for kernels, CS 111 and CS 40 for orchestration, CS 144 and CS 244C for networking.</div>
+  <div id="dl-phases"></div>
+</section>
+
+<section id="coverage">
+  <h2><span class="n">5</span>Coverage map: Stanford, DeepLearning.AI and Fanout.sh</h2>
+  <p class="sub">Each atlas stage from tables 1 and 2 against the three sources. Stanford gives the theory, DeepLearning.AI gives short hands-on courses, and <a href="https://fanout.sh/inference-eng" target="_blank" rel="noopener">Fanout.sh Inference Engineering</a> is a single 226-lesson track built around measuring and operating real serving engines. A stage is <b>covered</b> when the source names every concept in its table row, and <b>partly</b> when some are missing.</p>
+  <div class="scroll"><table class="t cmp" id="covtable"></table></div>
+  <div class="callout cyan"><b>Taken together, the three cover almost every concept.</b> Each source fills another's gap: Fanout carries the production and economics detail Stanford leaves to papers; DeepLearning.AI and Stanford's security courses carry the guardrails, PII and governance work Fanout skips; Stanford is the only source for InfiniBand fabrics and CUDA C++. Stage 10's MIG partitioning is the one concept no source names: use the NVIDIA GPU Operator and MIG documentation.</div>
+</section>
+
+</main>
+<footer class="wrap">Course data: Stanford ExploreCourses catalog for 2026–27 and the courses' public sites, read 22 Oct 2026. DeepLearning.AI course pages and outlines, and the Fanout.sh Inference Engineering curriculum (lesson titles), read 26 Oct 2026. Independent study plan, not affiliated with Stanford University, DeepLearning.AI or Fanout. · Source: <a href="https://nguyendangkhoa.info/">nguyendangkhoa.info</a></footer>
+
+<script>
+const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const STAGE={1:'CUDA kernels',2:'Inference mechanics',3:'Serving engines',4:'KV-cache & memory',5:'Quantization',6:'Kernel optimization',7:'Tensor parallelism',8:'Speculative decoding',9:'Multi-node & InfiniBand',10:'Cluster orchestration',11:'Gateway & observability',12:'Benchmarking & cost'};
+const CORE=new Set([2,3,4,5,7,10,11,12]);
+// [code, title, offered 2026-27, terms, stages, evidence, why, url]
+const PHASES=[
+ ['Foundations','systems & models','#9AA9C4',[
+  ['CS 107','Computer Organization and Systems',true,'Aut · Win · Spr',[1,2],'syllabus','C, pointers, memory layout and x86 assembly: the mental model behind every memory-bandwidth argument later.','https://web.stanford.edu/class/cs107/'],
+  ['CS 111','Operating Systems Principles',true,'Aut · Win · Spr',[10],'syllabus','Processes, threads, concurrency and virtual memory: what a model server and a GPU scheduler are built on.','https://web.stanford.edu/class/cs111/'],
+  ['CS 144','Introduction to Computer Networking',true,'Aut',[9,11],'syllabus','How requests move between machines: the base for gateways, routing and, later, GPU interconnects.','https://cs144.github.io'],
+  ['CS 224N','NLP with Deep Learning',true,'Win',[2],'syllabus','Transformers, pretraining and post-training: you must know the model you are serving.','https://web.stanford.edu/class/cs224n/']]],
+ ['Hardware & parallelism','how GPUs actually work','#5FB88A',[
+  ['CS 149','Parallel Computing',false,'usually Aut',[1,6,7],'syllabus','GPU architecture, CUDA programming, data-parallel thinking and locality. Not scheduled in 2026–27; the Fall 2025 site is public.','https://gfxcourses.stanford.edu/cs149/fall25'],
+  ['CS 217','Hardware Accelerators for Machine Learning',true,'Spr',[2,5,12],'catalog','Dataflow, memory hierarchies, and how batch size, precision, sparsity and compression change performance.',null]]],
+ ['Core inference','the heart of the path','#F2A93B',[
+  ['CS 336','Language Modeling from Scratch',true,'Spr',[2,6,7,12],'syllabus','Resource accounting (FLOPs, memory, arithmetic intensity), GPUs and Triton kernels, parallelism and inference, built by hand.','https://cs336.stanford.edu/'],
+  ['CS 349E','Efficient ML Inference at Scale',true,'Aut',[2,3,4,5,7,8,12],'syllabus','The single closest course to this path: rooflines, quantization and sparsity, distributed serving and sharding, disaggregated prefill/decode, speculative decoding, continuous batching.','https://cs349e.github.io/']]],
+ ['Production & enterprise','serve it safely in a real company','#E2725B',[
+  ['CS 40','Cloud Infrastructure and Scalable Application Deployment',false,'usually Win',[10,11],'catalog','Containers, infrastructure as code, observability and CI/CD for AI/ML pipelines. Not scheduled in 2026–27.',null],
+  ['CS 349D','AI Inference Infrastructure',true,'Spr',[11,12],'catalog','Research seminar on the infrastructure for compound AI systems: models, retrievers and tools deployed at scale.',null],
+  ['CS 253','Securing AI Systems',true,'Spr',[11],'catalog','Attacks on AI systems and their defenses: the security half of the gateway (guardrails, isolation, abuse).',null],
+  ['CS 155','Computer and Network Security',true,'Spr',[11],'syllabus','Isolation, sandboxing and web security: the controls an on-prem AI platform inherits.','https://cs155.stanford.edu/syllabus.html']]],
+ ['Optional deep dives','lab-level skills','#8B7FD4',[
+  ['CS 349F','Fabric Architectures for AI Systems',true,'Aut',[9,12],'catalog','Network fabrics that interconnect large GPU clusters: topologies, protocols, near-100% goodput.',null],
+  ['CS 244C','Advanced Networking and Distributed Systems',true,'Win',[9],'syllabus','Consensus, congestion control and distributed-systems fundamentals behind multi-node serving.','https://www.scs.stanford.edu/26wi-cs244c/'],
+  ['CS 282','Computer Systems Architecture',true,'Spr',[1,12],'catalog','Processor technology, advanced memory hierarchy, power and virtualization in data-center systems.',null],
+  ['CS 315B','Parallel Computing Research Project',true,'Win',[1,6],'catalog','A research project in parallel computing: the place to write your own kernels for real. Requires instructor consent.',null]]]];
+$('#phases').innerHTML=PHASES.map(([name,sub,col,list])=>`<div class="phase" style="--c:${col}"><div class="phase-h"><b>${name}</b><span>${sub}</span></div><div class="courses">${list.map(([code,title,off,terms,st,ev,why,url])=>`
+  <div class="course"><div class="top"><span class="code">${code}</span><span class="tag ${off?'off':'noff'}">${off?'Offered 2026–27':'Not offered 2026–27'}</span></div>
+  <h4>${esc(title)}</h4><p>${esc(why)}</p>
+  <div class="chips">${st.map(s=>`<span class="schip" style="--c:${CORE.has(s)?'var(--cyan)':'var(--violet)'}">${s} · ${STAGE[s]}</span>`).join('')}</div>
+  <div class="meta">${terms} · <span class="ev">evidence: ${ev}</span>${url?` · <a href="${url}" target="_blank" rel="noopener">course site ↗</a>`:''}</div></div>`).join('')}</div></div>`).join('')
+ +`<p class="small"><span class="schip" style="--c:var(--cyan)">core stage</span> &nbsp; <span class="schip" style="--c:var(--violet)">optional stage</span></p>`;
+// [partner, title, level, kind · length, updated, stages, evidence, why, url]
+const DL='https://www.deeplearning.ai/';
+const DLPHASES=[
+ ['Foundations','the model you are serving','#9AA9C4',[
+  ['DeepLearning.AI','PyTorch for Deep Learning','Intermediate','Professional certificate · 87h42m','Oct 2026',[5],'summary','Tensors, training loops and Transformers in PyTorch, ending with deployment prep: ONNX, MLflow, pruning and quantization.',DL+'specializations/pytorch-for-deep-learning-professional-certificate'],
+  ['Jay Alammar, Maarten Grootendorst','How Transformer LLMs Work','Beginner','Short course · 1h44m','Jul 2026',[2,4],'summary','Tokenizers, attention and the transformer block, then the inference-era changes: KV cache, multi-query and grouped-query attention, mixture of experts.',DL+'courses/how-transformer-llms-work'],
+  ['AWS','Generative AI with Large Language Models','Intermediate','Course · 13h18m','Jul 2026',[2,5,7],'outline','The full LLM lifecycle. For this path: the compute challenges of LLMs, an optional video on multi-GPU strategies, and model optimizations for deployment.',DL+'courses/generative-ai-with-llms']]],
+ ['Make it fit','quantization','#5FB88A',[
+  ['Hugging Face','Quantization Fundamentals with Hugging Face','Beginner','Short course · 1h14m','Oct 2025',[5],'outline','Data types and sizes, loading models by precision, and linear quantization of open language and multimodal models.',DL+'courses/quantization-fundamentals'],
+  ['Hugging Face','Quantization in Depth','Intermediate','Short course · 2h20m','Oct 2025',[5],'outline','Build your own quantizer: symmetric vs asymmetric, per-channel and per-group, quantize any open PyTorch model, pack 2-bit weights.',DL+'courses/quantization-in-depth']]],
+ ['Core inference','the heart of the path','#F2A93B',[
+  ['Predibase','Efficiently Serving LLMs','Intermediate','Short course · 2h9m','Aug 2026',[2,3,4,5,12],'outline','Build the inference stack by hand: text generation with a KV cache, batching, continuous batching and quantization, benchmarked for throughput and latency; then serve many LoRA adapters at once.',DL+'courses/efficiently-serving-llms'],
+  ['Red Hat','Fast & Efficient LLM Inference with vLLM','Intermediate','Short course · 1h38m','Jun 2026',[2,3,5,12],'outline','Inference and memory fundamentals, quantize with LLM Compressor, serve with vLLM (PagedAttention, continuous batching), then benchmark speed, cost and accuracy.',DL+'courses/fast-and-efficient-llm-inference-with-vllm'],
+  ['RadixArk, LMSys','Efficient Inference with SGLang: Text and Image Generation','Intermediate','Short course · 1h19m','Apr 2026',[2,3,4],'outline','Token-by-token inference and the KV cache, then SGLang’s RadixAttention: prefix caching shared across users and requests, with measured speedups.',DL+'courses/efficient-inference-with-sglang-text-and-image-generation'],
+  ['AMD','Transformers in Practice','Intermediate','Course · 11h1m','Jun 2026',[2,4,5,6,8],'outline','The closest single course to this path: the autoregressive loop and decoding, then a production module on quantization, KV cache, FlashAttention and speculative decoding.',DL+'courses/transformers-in-practice']]],
+ ['Production & enterprise','serve it safely in a real company','#E2725B',[
+  ['Redis','Semantic Caching for AI Agents','Intermediate','Short course · 1h24m','Jul 2026',[11,12],'outline','Reuse answers by meaning instead of exact text, then measure hit rate, precision and latency: a gateway feature that cuts cost per request.',DL+'courses/semantic-caching-for-ai-agents'],
+  ['GuardrailsAI','Safe and Reliable AI via Guardrails','Beginner','Short course · 1h42m','Jul 2026',[11],'outline','Input and output guards for hallucinations, off-topic answers and PII leaks: the controls a bank puts in its gateway.',DL+'courses/safe-and-reliable-ai-via-guardrails'],
+  ['WhyLabs','Quality and Safety for LLM Applications','Beginner','Short course · 2h16m','Aug 2026',[11],'outline','Detect hallucinations, data leakage, refusals and prompt injections, with passive and active monitoring over time.',DL+'courses/quality-safety-llm-applications'],
+  ['Databricks','Governing AI Agents','Beginner','Short course · 1h30m','Jul 2026',[11],'outline','Lifecycle, risk, security and observability: give an agent an identity, restrict its data access, and log its inputs, outputs and decisions.',DL+'courses/governing-ai-agents'],
+  ['Nvidia','NeMo Agent Toolkit: Making Agents Reliable','Intermediate','Short course · 1h20m','Apr 2026',[11],'outline','Observability with Phoenix tracing, systematic evaluation, and production deployment with authentication and rate limiting.',DL+'courses/nvidia-nat-making-agents-reliable']]],
+ ['Optional deep dives','beyond the GPU server','#8B7FD4',[
+  ['Cerebras','Fast LLM Inference with Cerebras','Intermediate','Short course · 1h41m','Jul 2026',[2],'outline','Why inference is slow (moving weights from memory to compute) and how wafer-scale chips, GPUs and TPUs attack it differently.',DL+'courses/fast-llm-inference-with-cerebras'],
+  ['Qualcomm','Introduction to On-Device AI','Beginner','Short course · 1h19m','Oct 2025',[5],'outline','Convert and quantize models for phones and edge devices, and see how CPU, GPU and NPU compute units change performance.',DL+'courses/introduction-to-on-device-ai']]]];
+$('#dl-phases').innerHTML=DLPHASES.map(([name,sub,col,list])=>`<div class="phase" style="--c:${col}"><div class="phase-h"><b>${name}</b><span>${sub}</span></div><div class="courses">${list.map(([who,title,lvl,kind,upd,st,ev,why,url])=>`
+  <div class="course"><div class="top"><span class="code">${esc(who)}</span><span class="tag lvl">${lvl}</span></div>
+  <h4>${esc(title)}</h4><p>${esc(why)}</p>
+  <div class="chips">${st.map(s=>`<span class="schip" style="--c:${CORE.has(s)?'var(--cyan)':'var(--violet)'}">${s} · ${STAGE[s]}</span>`).join('')}</div>
+  <div class="meta">${kind} · updated ${upd} · <span class="ev">evidence: ${ev}</span> · <a href="${url}" target="_blank" rel="noopener">course page ↗</a></div></div>`).join('')}</div></div>`).join('')
+ +`<p class="small"><span class="schip" style="--c:var(--cyan)">core stage</span> &nbsp; <span class="schip" style="--c:var(--violet)">optional stage</span></p>`;
+
+// coverage map: [stage, [level, Stanford], [level, DeepLearning.AI], [level, Fanout.sh modules]]
+const COV=[
+ [2,['full','CS 349E (rooflines, prefill/decode) · CS 336 (arithmetic intensity, inference) · CS 217 · CS 107'],['full','Efficiently Serving LLMs · vLLM course (inference & memory fundamentals) · SGLang course · Transformers in Practice · How Transformer LLMs Work'],['full','02 Understand One Token · 03 Prefill, Decode, KV Cache & Memory · 12.07 Roofline model']],
+ [3,['part','CS 349E (continuous batching, distributed and disaggregated serving); PagedAttention and chunked prefill not named'],['full','vLLM course (PagedAttention, continuous batching) · Efficiently Serving LLMs (continuous batching) · SGLang course; chunked prefill not named'],['full','06 Move to a Real Inference Engine · 07 Continuous Batching & Scheduling · 08 PagedAttention · 10.02 Chunked Prefill · 17 Compare Inference Engines']],
+ [4,['part','CS 349E (KV cache in disaggregated serving); prefix caching and cache-aware routing not named'],['part','SGLang course (RadixAttention prefix caching) · Transformers in Practice (KV cache); no cache-aware routing'],['full','10 Prefill & Prefix Optimization (prefix caching, RadixAttention) · 20 Long-Context & Tiered KV · 23.03 Prefix- & Cache-Aware Routing']],
+ [5,['full','CS 349E (accuracy, quantization, sparsity) · CS 217 (precision, compression)'],['full','Quantization Fundamentals · Quantization in Depth · vLLM course (LLM Compressor, accuracy trade-off)'],['full','11 Quantization & KV Compression (FP8/INT8/4-bit, AWQ, GPTQ, SmoothQuant, quality regression)']],
+ [7,['full','CS 349E (sharding) · CS 336 (parallelism) · CS 149 (foundation)'],['part','Generative AI with LLMs: one optional video on multi-GPU strategies, training-side'],['full','18 Multi-GPU & Distributed Parallelism (tensor, pipeline, data, context parallelism; NVLink, NCCL)']],
+ [10,['part','CS 40 (containers, infrastructure as code; not offered 2026–27) · CS 111 (foundation); no GPU-specific orchestration'],['gap','No course'],['part','23 Routing, Autoscaling & Orchestration (queue-pressure autoscaling, Kubernetes GPU scheduling, KServe, Ray Serve); MIG not named']],
+ [11,['part','CS 349D (compound AI infrastructure) · CS 253 and CS 155 (security) · CS 40 (observability)'],['part','Guardrails (PII) · Quality and Safety · Governing AI Agents · NeMo Agent Toolkit (tracing, auth, rate limits) · Semantic Caching; no latency SLOs or GPU telemetry'],['part','04.01 TTFT/TPOT/ITL · 24 Observability, Reliability & Security (Prometheus, GPU metrics, tracing, load shedding) · 22 Production Serving; no guardrails, PII or governance']],
+ [12,['full','CS 349E (performance modelling) · CS 336 (resource accounting) · CS 217 · CS 349F (goodput)'],['part','vLLM course and Efficiently Serving LLMs (benchmark latency and throughput); no cost per token'],['full','04 Benchmark Inference Correctly · 05 Break One GPU · 25 Inference Economics & Capacity Planning (cost per million tokens, goodput per dollar)']],
+ [1,['full','CS 149 (GPU architecture, CUDA) · CS 107 · CS 315B (project)'],['gap','No course'],['part','12.06 GPU execution & memory hierarchy · 13.01 threads, warps, blocks; kernels are written in Triton, not CUDA C++']],
+ [6,['full','CS 336 (GPUs, kernels and Triton) · CS 349E (kernel writing) · CS 149'],['part','Transformers in Practice (one FlashAttention lesson)'],['full','13 Triton & Kernel Engineering · 14 Attention Optimization (FlashAttention) · 15 Compilation & CUDA Graphs · 12 Profiling (Nsight)']],
+ [8,['full','CS 349E (speculative decoding)'],['part','Transformers in Practice (one lesson)'],['full','16 Speculative Decoding (draft models, n-gram, Medusa, EAGLE, multi-token prediction)']],
+ [9,['full','CS 349F (AI cluster fabrics) · CS 244C (distributed systems) · CS 144 (foundation)'],['gap','No course'],['part','18.02 GPU topology, NVLink & NCCL · 21.04 KV transfer between workers; InfiniBand and RDMA not named']]];
+const LV={full:'Covered',part:'Partly',gap:'Gap'};
+const cell=([l,t])=>`<td class="what"><span class="cov ${l}">${LV[l]}</span><br>${esc(t)}</td>`;
+$('#covtable').innerHTML='<thead><tr><th>Atlas stage</th><th>Stanford courses</th><th>DL.AI courses</th><th>Fanout.sh courses</th></tr></thead><tbody>'+
+ COV.map(([s,a,b,c])=>`<tr><td>${s} · ${STAGE[s]}${CORE.has(s)?'':' <span class="small">(optional)</span>'}</td>${cell(a)}${cell(b)}${cell(c)}</tr>`).join('')+'</tbody>';
+
+</script>
+<script>
+// ---- stages: Learn / Lab / Why for each of the 12 stages ----
+// fam picks the colour family: hw = hardware, gpu = single-GPU inference,
+// eff = model efficiency, scale = scale-out, ops = operations.
+const STAGES=[
+  {n:"GPU & Systems Foundations",fam:"hw",
+   learn:"C++, Rust, the CUDA memory hierarchy, PCIe and NVLink, thread blocks and warp scheduling.",
+   lab:"Write a matrix-multiplication CUDA kernel from scratch, then profile it and compare it against cuBLAS.",
+   why:"You can't optimize what you don't understand at the hardware level."},
+  {n:"Transformer Inference Mechanics",fam:"gpu",
+   learn:"The prefill and decode phases, arithmetic intensity, memory-bandwidth bottlenecks and KV-cache sizing.",
+   lab:"Profile a Hugging Face model with Nsight Systems and pinpoint the memory bottleneck during token generation.",
+   why:"LLM inference is usually limited by memory bandwidth rather than compute."},
+  {n:"Serving Engines & Modern Batching",fam:"gpu",
+   learn:"vLLM, SGLang, PagedAttention, continuous batching and chunked prefill.",
+   lab:"Deploy a 70B-parameter model and tune the prefill chunk size to maximize throughput without stalling token generation when long-context requests arrive.",
+   why:"Naive batching wastes VRAM. PagedAttention manages KV-cache memory far more flexibly."},
+  {n:"KV-Cache & Memory Optimization",fam:"gpu",
+   learn:"Prefix caching, KV-cache quantization, offloading to CPU RAM and cache reuse across conversation turns.",
+   lab:"Build a routing proxy that sends requests sharing a system prompt to the same model replica, raising KV-cache reuse.",
+   why:"Cache reuse can sharply cut time to first token, especially for requests with long, identical prefixes."},
+  {n:"Quantization & Compression",fam:"eff",
+   learn:"FP8, INT4, AWQ, GPTQ, sparsity and the TensorRT-LLM calibration workflow.",
+   lab:"Deploy the same model in FP8 and FP16, then measure the change in perplexity, latency and VRAM use.",
+   why:"Quantization lowers memory needs and inference cost, and lets models run on resource-constrained hardware."},
+  {n:"Kernel-Level Optimization",fam:"hw",
+   learn:"Triton, FlashAttention, CUDA Graphs and operator fusion.",
+   lab:"Write a fused Triton kernel for RMSNorm or Softmax and benchmark it against the PyTorch baseline.",
+   why:"Launch overhead and intermediate memory traffic slow inference. Fused kernels cut that cost and improve performance at scale."},
+  {n:"Distributed Inference & Parallelism",fam:"scale",
+   learn:"Tensor parallelism, pipeline parallelism, and expert parallelism for Mixture-of-Experts models.",
+   lab:"Shard a 405B-parameter model across 8 nodes and measure inter-GPU communication cost.",
+   why:"Frontier models can exceed a single GPU's capacity. Partitioning models and optimizing GPU-to-GPU communication is key to serving them."},
+  {n:"Speculative Decoding",fam:"eff",
+   learn:"Draft and target models, Medusa heads, token acceptance rate and n-gram prediction.",
+   lab:"Build a pipeline where a local 3B model proposes tokens and a cloud 70B model verifies several of them in parallel.",
+   why:"Speculative decoding can speed up generation without changing accepted output quality, if verification is implemented correctly. Real speedup depends on the model and the acceptance rate."},
+  {n:"Multi-Node Systems & Interconnect",fam:"scale",
+   learn:"NCCL, RDMA, InfiniBand, NVLink and prefill/decode disaggregation.",
+   lab:"Set up a multi-node cluster, then measure network latency for tensor parallelism within one server versus across servers.",
+   why:"At scale, inter-GPU communication and network latency become critical bottlenecks. Separating prefill and decode resources is a notable optimization."},
+  {n:"Cluster Orchestration & GPU Scheduling",fam:"ops",
+   learn:"Kubernetes GPU Operator, Ray, Slurm, MIG and KEDA.",
+   lab:"Build a queue-based autoscaler that launches spot GPUs when inference demand rises and releases them when the queue empties.",
+   why:"Idle GPUs waste money. Resource management, scheduling and cost optimization are becoming core infrastructure duties."},
+  {n:"AI Gateway, Routing & Observability",fam:"ops",
+   learn:"TTFT and ITL SLOs, semantic routing, DCGM metrics and OpenTelemetry for LLM systems.",
+   lab:"Build a gateway that routes simple questions to a local quantized model and sends complex reasoning requests to a frontier model API, based on prompt complexity.",
+   why:"Smart routing controls cost, while DCGM metrics expose GPU degradation that ordinary monitoring misses."},
+  {n:"Benchmarking & Systems Analysis",fam:"ops",
+   learn:"Reproducible benchmarking methodology, latency–throughput tradeoff curves and cost per token.",
+   lab:"Publish an analysis comparing vLLM, SGLang and TensorRT-LLM on specific hardware, with full configurations and methodology.",
+   why:"Real evidence of hardware and systems optimization builds professional credibility when applying to top AI labs."}
+];
+const FAM={pre:"#65748F",hw:"#F2A93B",gpu:"#E2725B",eff:"#8B7FD4",scale:"#3FB8C4",ops:"#5FB88A"};
+
+// ---- concepts: s = stage index (0-11), or -1 for a prerequisite from the AI Engineering Atlas ----
+const NODES=[
+  ["linalg","Linear Algebra & Matmul",-1,"Matrix multiply is the operation every kernel, layer and parallelism scheme is built around."],
+  ["transformer","Transformer Architecture",-1,"Attention, MLP blocks and the layer stack whose inference you will be optimizing."],
+  ["cpp","C++",0,"The language of CUDA host code and of most inference engines' hot paths."],
+  ["rust","Rust",0,"Memory-safe systems language for routers, gateways, tokenizers and proxies."],
+  ["gpuarch","GPU Execution Model",0,"Threads, warps of 32, thread blocks and streaming multiprocessors; how the warp scheduler hides latency."],
+  ["memhier","CUDA Memory Hierarchy",0,"Registers, shared memory, L2 and HBM, and the bandwidth and latency of each level."],
+  ["interconnect","PCIe & NVLink",0,"Host-to-GPU and GPU-to-GPU links. Their bandwidth sets the cost of moving every tensor."],
+  ["cudakernel","Writing CUDA Kernels",0,"Tiling, memory coalescing and occupancy, learned by building matmul by hand."],
+  ["prefilldecode","Prefill vs Decode",1,"Prefill processes the whole prompt in parallel and is compute-bound. Decode emits one token at a time and is memory-bound."],
+  ["arith","Arithmetic Intensity & Roofline",1,"FLOPs per byte moved. Tells you whether an operation is limited by compute or by memory bandwidth."],
+  ["membw","Memory-Bandwidth Bottleneck",1,"Each decode step streams every weight from HBM, so bandwidth caps tokens per second."],
+  ["kvcache","KV-Cache Sizing",1,"2 × layers × KV heads × head dim × sequence length × bytes. Dominates memory at long context and large batch."],
+  ["nsight","Profiling with Nsight Systems",1,"Timelines of kernels, copies and idle gaps that locate the real bottleneck instead of the guessed one."],
+  ["paged","PagedAttention",2,"Stores the KV-cache in fixed-size blocks, like virtual-memory pages, removing fragmentation and over-reservation."],
+  ["contbatch","Continuous Batching",2,"Admits and retires requests at every iteration instead of waiting for a whole batch to finish."],
+  ["chunked","Chunked Prefill",2,"Splits long prompts into chunks so they don't stall in-flight decodes. Trades time to first token against inter-token latency."],
+  ["engines","Serving Engines (vLLM, SGLang)",2,"Production runtimes that combine paged KV memory, scheduling and batching behind an API."],
+  ["prefix","Prefix Caching",3,"Reuses KV blocks for shared prefixes such as system prompts and few-shot examples."],
+  ["kvquant","KV-Cache Quantization",3,"Stores keys and values in FP8 or INT8 to fit longer contexts or bigger batches."],
+  ["offload","KV-Cache Offloading",3,"Spills cold KV blocks to CPU RAM or SSD and pages them back on demand."],
+  ["multiturn","Multi-Turn Cache Reuse",3,"Keeps a conversation's KV-cache alive between turns instead of recomputing the history."],
+  ["cacheroute","Cache-Aware Routing",3,"Sends requests that share a prefix to the replica that already holds it."],
+  ["formats","Number Formats (FP16, BF16, FP8, INT4)",4,"Range versus precision, and which formats each GPU generation accelerates."],
+  ["wquant","Weight Quantization (AWQ, GPTQ)",4,"Post-training methods that shrink weights while protecting the channels that matter most."],
+  ["sparsity","Sparsity & Pruning",4,"Removing weights, including the structured 2:4 pattern that tensor cores can accelerate."],
+  ["calib","Calibration & TensorRT-LLM",4,"Calibration datasets and building optimized engines from a quantized checkpoint."],
+  ["qeval","Measuring Quantization Impact",4,"Perplexity, latency and VRAM measured side by side, so the saving is shown to be worth the quality cost."],
+  ["triton","Triton",5,"A Python-embedded language for writing block-level GPU kernels without hand-managing threads."],
+  ["fusion","Operator Fusion",5,"Merges consecutive operations such as RMSNorm or Softmax so intermediates never round-trip through HBM."],
+  ["flash","FlashAttention",5,"Tiled, IO-aware attention that never materializes the full attention-score matrix."],
+  ["graphs","CUDA Graphs",5,"Captures a sequence of kernel launches once and replays it, removing CPU launch overhead from decode."],
+  ["collectives","Collective Communication (NCCL)",8,"All-reduce, all-gather and all-to-all: the primitives every parallelism scheme is built on."],
+  ["tp","Tensor Parallelism",6,"Splits each weight matrix across GPUs, with an all-reduce per layer. Needs very fast links."],
+  ["pp","Pipeline Parallelism",6,"Splits the layer stack across GPUs or nodes. Cheaper communication, but pipeline bubbles."],
+  ["moe","Mixture of Experts",6,"Sparse layers where a router activates only a few experts per token."],
+  ["ep","Expert Parallelism",6,"Places experts on different GPUs and exchanges tokens between them with all-to-all."],
+  ["shard","Sharding Frontier Models",6,"Combining tensor, pipeline and expert parallelism to fit a model too big for any single node."],
+  ["specdec","Draft & Target Speculative Decoding",7,"A small model proposes several tokens and the large model verifies them in one parallel pass."],
+  ["medusa","Medusa Heads",7,"Extra decoding heads on the target model that predict several future tokens without a separate draft model."],
+  ["accept","Token Acceptance Rate",7,"The share of drafted tokens the target accepts. It decides whether speculation pays off."],
+  ["ngram","N-gram & Prompt-Lookup Drafting",7,"Drafts tokens by matching n-grams already in the context. No draft model needed."],
+  ["rdma","RDMA & InfiniBand",8,"Kernel-bypass networking and GPUDirect, moving data between nodes without the CPU."],
+  ["multinode","Multi-Node Clusters",8,"Where intra-node NVLink meets inter-node networking, and latency jumps."],
+  ["disagg","Prefill/Decode Disaggregation",8,"Runs prefill and decode on separate GPU pools and ships the KV-cache between them."],
+  ["k8sgpu","Kubernetes GPU Operator",9,"Drivers, device plugins and GPU-aware scheduling on Kubernetes."],
+  ["mig","MIG GPU Partitioning",9,"Slices one GPU into isolated instances with dedicated memory and compute."],
+  ["ray","Ray",9,"A distributed Python runtime used for multi-node serving and batch inference."],
+  ["slurm","Slurm",9,"The HPC batch scheduler behind most research GPU clusters."],
+  ["autoscale","Queue-Based Autoscaling (KEDA)",9,"Scales GPU replicas on queue depth, uses spot capacity and scales to zero when idle."],
+  ["slo","Latency SLOs: TTFT & ITL",10,"Time to first token and inter-token latency: the two numbers users actually feel."],
+  ["otel","OpenTelemetry for LLMs",10,"Traces and spans across gateway, engine and model for every request."],
+  ["dcgm","GPU Telemetry (DCGM)",10,"SM utilization, memory, clocks, thermals and XID errors. Catches silently degraded GPUs."],
+  ["semroute","Semantic Routing & AI Gateway",10,"Routes each prompt by complexity: a cheap local quantized model or a frontier API."],
+  ["bench","Reproducible Benchmarking",11,"Fixed configurations, warm-up, realistic load patterns and published settings."],
+  ["latthru","Latency–Throughput Curves",11,"The Pareto front of throughput against latency under rising load."],
+  ["costtok","Cost per Token",11,"GPU cost per hour divided by tokens per hour served within the SLO."],
+  ["publish","Published Engine Comparison",11,"A public, reproducible comparison of serving engines on named hardware."]
+];
+// [concept, prerequisite]
+const EDGES=[
+  ["transformer","linalg"],
+  ["gpuarch","cpp"],["memhier","gpuarch"],["interconnect","memhier"],
+  ["cudakernel","cpp"],["cudakernel","gpuarch"],["cudakernel","memhier"],["cudakernel","linalg"],
+  ["prefilldecode","transformer"],["arith","memhier"],["arith","linalg"],
+  ["membw","prefilldecode"],["membw","arith"],["kvcache","prefilldecode"],
+  ["nsight","cudakernel"],["nsight","membw"],
+  ["paged","kvcache"],["contbatch","prefilldecode"],["chunked","contbatch"],["chunked","membw"],
+  ["engines","paged"],["engines","contbatch"],["engines","chunked"],
+  ["prefix","paged"],["kvquant","kvcache"],["kvquant","formats"],["offload","kvcache"],["offload","interconnect"],
+  ["multiturn","prefix"],["multiturn","offload"],["cacheroute","prefix"],["cacheroute","engines"],["cacheroute","rust"],
+  ["formats","gpuarch"],["wquant","formats"],["wquant","linalg"],["sparsity","wquant"],["sparsity","gpuarch"],
+  ["calib","wquant"],["calib","engines"],["qeval","calib"],["qeval","nsight"],
+  ["triton","cudakernel"],["fusion","triton"],["fusion","membw"],
+  ["flash","fusion"],["flash","transformer"],["graphs","cudakernel"],["graphs","prefilldecode"],
+  ["collectives","interconnect"],
+  ["tp","collectives"],["tp","transformer"],["pp","collectives"],["pp","transformer"],
+  ["moe","transformer"],["ep","moe"],["ep","collectives"],
+  ["specdec","membw"],["specdec","prefilldecode"],["medusa","specdec"],["accept","specdec"],["ngram","specdec"],
+  ["rdma","interconnect"],["multinode","rdma"],["multinode","tp"],
+  ["shard","pp"],["shard","ep"],["shard","multinode"],
+  ["disagg","kvcache"],["disagg","rdma"],["disagg","engines"],
+  ["k8sgpu","gpuarch"],["mig","gpuarch"],["ray","engines"],["slurm","multinode"],
+  ["autoscale","k8sgpu"],["autoscale","engines"],
+  ["slo","chunked"],["otel","engines"],["dcgm","k8sgpu"],
+  ["semroute","slo"],["semroute","wquant"],["semroute","cacheroute"],
+  ["bench","nsight"],["bench","slo"],["latthru","bench"],["latthru","contbatch"],
+  ["costtok","latthru"],["costtok","autoscale"],
+  ["publish","costtok"],["publish","qeval"],["publish","engines"]
+];
+// the concept each stage's lab exercises, in stage order
+const LABS=["cudakernel","nsight","engines","cacheroute","qeval","fusion","shard","specdec","multinode","autoscale","semroute","publish"];
+</script>
+<script>
+const D={nodes:NODES.map(([i,l,s,w])=>({i,l,s,w})),edges:EDGES};
+const byId={}; D.nodes.forEach(n=>byId[n.i]=n);
+const pre={},post={};
+D.nodes.forEach(n=>{pre[n.i]=[];post[n.i]=[]});
+D.edges.forEach(([a,b])=>{
+  if(!byId[a]||!byId[b]) throw new Error("unknown node in edge "+a+" → "+b);
+  pre[a].push(b);post[b].push(a);
+});
+const area=n=>n.s<0?"pre":"s"+n.s;
+const color=n=>n.s<0?FAM.pre:FAM[STAGES[n.s].fam];
+const areaName=a=>a==="pre"?"Prerequisites":`${+a.slice(1)+1}. ${STAGES[+a.slice(1)].n}`;
+
+// layer = longest prerequisite chain below a node; dep = every concept it eventually unlocks
+const depth={};
+function layer(id){ if(id in depth)return depth[id];
+  return depth[id]=pre[id].length?1+Math.max(...pre[id].map(layer)):0; }
+function downstream(id,seen=new Set()){ for(const c of post[id]) if(!seen.has(c)){seen.add(c);downstream(c,seen);} return seen; }
+D.nodes.forEach(n=>{n.d=layer(n.i); n.dep=downstream(n.i).size; n.pre=pre[n.i].length;});
+document.getElementById("s-nodes").textContent=D.nodes.length;
+document.getElementById("s-layers").textContent=Math.max(...D.nodes.map(n=>n.d))+1;
+
+let mode="all", sel=null, off=new Set();
+
+// ---- longest path (critical chain) ----
+const memo={};
+function longest(id){ if(memo[id])return memo[id];
+  if(!pre[id].length) return memo[id]=[id];
+  let best=[]; for(const p of pre[id]){const c=longest(p); if(c.length>best.length)best=c;}
+  return memo[id]=best.concat(id); }
+let chain=[]; D.nodes.forEach(n=>{const c=longest(n.i); if(c.length>chain.length)chain=c;});
+const chainSet=new Set(chain);
+const CORE_MIN=Math.ceil(D.nodes.length*0.3);
+document.getElementById("chain").innerHTML = chain.map((id,k)=>
+  `<span class="chip"><b>${k+1}</b> ${byId[id].l}</span>` +
+  (k<chain.length-1?'<span class="arrow">&rarr;</span>':'')).join("");
+
+
+// ---- labs key ----
+document.getElementById("labs-key").innerHTML =
+  `<span class="lead">One hands-on lab per stage:</span>` +
+  LABS.map((id,k)=>`<span class="chip" data-go="${id}"><b>${k+1}</b> ${byId[id].l}</span>`).join("");
+document.getElementById("labs-key").addEventListener("click",e=>{
+  const c=e.target.closest("[data-go]"); if(!c)return;
+  const n=byId[c.dataset.go]; sel=n.i; draw(); panel(n);
+});
+
+// ---- legend ----
+const areaOrder=["pre",...STAGES.map((_,k)=>"s"+k)];
+const areaColor=a=>a==="pre"?FAM.pre:FAM[STAGES[+a.slice(1)].fam];
+document.getElementById("legend").innerHTML = areaOrder.map(a=>
+  `<button class="lg" data-a="${a}" aria-pressed="true"><i style="background:${areaColor(a)}"></i>${areaName(a)}</button>`).join("");
+document.getElementById("legend").addEventListener("click",e=>{
+  const b=e.target.closest(".lg"); if(!b)return;
+  const a=b.dataset.a;
+  if(off.has(a)){off.delete(a);b.setAttribute("aria-pressed","true");}
+  else{off.add(a);b.setAttribute("aria-pressed","false");}
+  draw();
+});
+
+const svg=document.getElementById("svg");
+const NS="http://www.w3.org/2000/svg";
+const el=(t,at)=>{const e=document.createElementNS(NS,t);for(const k in at)e.setAttribute(k,at[k]);return e;};
+const labSet=new Set(LABS);
+
+function visible(){
+  return D.nodes.filter(n=>{
+    if(off.has(area(n)))return false;
+    if(mode==="core") return n.dep>=CORE_MIN || chainSet.has(n.i);
+    return true;
+  });
+}
+
+function draw(){
+  const vis=visible(), vset=new Set(vis.map(n=>n.i));
+  const layers={}; vis.forEach(n=>(layers[n.d]=layers[n.d]||[]).push(n));
+  const depths=Object.keys(layers).map(Number).sort((a,b)=>a-b);
+
+  const ROW=74, PADT=34, PADL=64, CW=158, GAP=12;
+  const widest=Math.max(...depths.map(d=>layers[d].length),1);
+  const W=Math.max(PADL+widest*(CW+GAP)+28, 900);
+  const H=PADT+depths.length*ROW+40;
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  svg.setAttribute("width",W); svg.setAttribute("height",H);
+  svg.innerHTML="";
+
+  const pos={};
+  depths.forEach((d,ri)=>{
+    const row=layers[d].slice().sort((a,b)=>b.dep-a.dep);
+    const y=PADT+ri*ROW;
+    const totalW=row.length*CW+(row.length-1)*GAP;
+    const x0=PADL+((widest*(CW+GAP)-GAP)-totalW)/2;
+    row.forEach((n,ci)=>{pos[n.i]={x:x0+ci*(CW+GAP),y,w:CW,h:34};});
+    svg.appendChild(el("line",{x1:PADL-12,y1:y+17,x2:W-16,y2:y+17,class:"lane-rule"}));
+    const t=el("text",{x:12,y:y+21,class:"lane"}); t.textContent="L"+d; svg.appendChild(t);
+  });
+
+  const eg=el("g",{});
+  D.edges.forEach(([a,b])=>{
+    if(!vset.has(a)||!vset.has(b))return;
+    const A=pos[a],B=pos[b]; if(!A||!B)return;
+    const ax=A.x+A.w/2, ay=A.y, bx=B.x+B.w/2, by=B.y+B.h;
+    const my=(ay+by)/2;
+    let cls="edge";
+    if(sel){ if(a===sel||b===sel) cls+= (b===sel?" cool":" hot"); }
+    eg.appendChild(el("path",{d:`M${ax},${ay} C${ax},${my} ${bx},${my} ${bx},${by}`,class:cls}));
+  });
+  svg.appendChild(eg);
+
+  const maxDep=Math.max(...vis.map(n=>n.dep),1);
+  vis.forEach(n=>{
+    const P=pos[n.i];
+    const metric=n.dep/maxDep;
+    const g=el("g",{class:"node"+(sel&&sel!==n.i&&!pre[sel].includes(n.i)&&!post[sel].includes(n.i)?" dim":"")+(sel===n.i?" sel":"")+(mode==="labs"?(labSet.has(n.i)?" app":" dim"):""),tabindex:"0",role:"button"});
+    g.setAttribute("aria-label",n.l);
+    const fill=color(n);
+    g.appendChild(el("rect",{x:P.x,y:P.y,width:P.w,height:P.h,
+      fill:`color-mix(in srgb, ${fill} ${8+metric*30}%, #16213A)`,stroke:fill,opacity:.96}));
+    const pw=26;
+    g.appendChild(el("rect",{x:P.x+P.w-pw-5,y:P.y+8,width:pw,height:18,rx:2,fill:fill,opacity:.92}));
+    const c=el("text",{x:P.x+P.w-pw/2-5,y:P.y+21,"text-anchor":"middle",class:"cnt"});
+    c.textContent=n.dep; g.appendChild(c);
+
+    const label=el("text",{x:P.x+9,y:P.y+21});
+    let s=n.l; const lim=Math.floor((P.w-pw-22)/5.75);
+    if(s.length>lim) s=s.slice(0,lim-1)+"…";
+    label.textContent=s; g.appendChild(label);
+    const title=el("title"); title.textContent=n.l+" — "+n.dep+" dependents"; g.appendChild(title);
+
+    const open=()=>{sel=(sel===n.i?null:n.i); draw(); if(sel)panel(n);else close();};
+    g.addEventListener("click",open);
+    g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open();}});
+    svg.appendChild(g);
+  });
+}
+
+const P=document.getElementById("panel");
+function panel(n){
+  document.getElementById("p-title").textContent=n.l;
+  const lab=LABS.indexOf(n.i);
+  document.getElementById("p-tags").innerHTML=
+    `<span class="tag">${areaName(area(n))}</span><span class="tag">layer ${n.d}</span>`+
+    (lab>=0?`<span class="tag app">Lab ${lab+1}</span>`:"");
+  document.getElementById("p-why").textContent=n.w;
+  document.getElementById("p-dep").textContent=n.dep;
+  document.getElementById("p-pre").textContent=n.pre;
+  document.getElementById("p-lay").textContent=n.d;
+  const st=n.s>=0?STAGES[n.s]:null;
+  document.getElementById("p-stage").hidden=!st;
+  if(st){
+    document.getElementById("p-stage-t").textContent=`Stage ${n.s+1}: ${st.n}`;
+    document.getElementById("p-stage-lab").textContent=st.lab;
+    document.getElementById("p-stage-why").textContent=st.why;
+  }
+  const mk=(arr,empty)=>arr.length
+    ? arr.map(id=>`<li data-go="${id}">${byId[id].l}</li>`).join("")
+    : `<li class="empty">${empty}</li>`;
+  document.getElementById("p-before").innerHTML=mk(pre[n.i],"Nothing — this is a root concept.");
+  document.getElementById("p-after").innerHTML=mk(post[n.i],"Nothing — this is a destination.");
+  P.classList.add("open");
+}
+function close(){P.classList.remove("open");sel=null;draw();}
+document.getElementById("close").addEventListener("click",close);
+P.addEventListener("click",e=>{const li=e.target.closest("[data-go]");if(!li)return;
+  const n=byId[li.dataset.go]; sel=n.i; draw(); panel(n); });
+document.addEventListener("keydown",e=>{if(e.key==="Escape")close();});
+
+const MODES={"m-all":"all","m-core":"core","m-labs":"labs"};
+const HINTS={all:"Click any concept to trace its prerequisites",
+  core:"Click any concept to trace its prerequisites",
+  labs:"Glowing concepts are the ones each stage's lab exercises"};
+function sync(){
+  for(const id in MODES) document.getElementById(id).setAttribute("aria-pressed",mode===MODES[id]);
+  document.getElementById("labs-key").classList.toggle("on",mode==="labs");
+  document.getElementById("hint").textContent=HINTS[mode];
+  draw();
+}
+for(const id in MODES) document.getElementById(id).addEventListener("click",()=>{mode=MODES[id];sync()});
+
+draw();
+</script>
+</body>
+</html>
