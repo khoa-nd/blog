@@ -99,6 +99,53 @@ a { color: inherit; }
 .nav a:hover { color: var(--fg); background: var(--bg-hover); }
 .nav a[aria-current="page"] { color: var(--fg); }
 
+/* "New" badge on a nav link: a shimmering pill with a twinkling sparkle and
+   a soft pulse ring. Remove class="nav-new" and the badge span to retire it. */
+.nav a.nav-new { display: inline-flex; align-items: center; gap: 7px; color: var(--fg); }
+.nav-badge {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 3px 7px 3px 5px;
+  border-radius: 999px;
+  font-size: 10px; font-weight: 700; line-height: 1;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--accent-fg);
+  background: linear-gradient(110deg, var(--accent) 38%, color-mix(in srgb, var(--accent) 50%, #fff) 50%, var(--accent) 62%);
+  background-size: 260% 100%;
+  animation: nav-shine 3.4s ease-in-out infinite;
+}
+.nav-badge::before {
+  content: "";
+  position: absolute; inset: -3px;
+  border-radius: inherit;
+  border: 1.5px solid var(--accent);
+  animation: nav-ping 2.2s cubic-bezier(0, 0, .2, 1) infinite;
+  pointer-events: none;
+}
+.nav-badge svg { width: 10px; height: 10px; animation: nav-twinkle 2.2s ease-in-out infinite; }
+@keyframes nav-shine { 0% { background-position: 100% 0; } 55%, 100% { background-position: -60% 0; } }
+@keyframes nav-ping { 0% { transform: scale(.92); opacity: .75; } 75%, 100% { transform: scale(1.35, 1.7); opacity: 0; } }
+@keyframes nav-twinkle { 0%, 100% { transform: scale(1) rotate(0); } 50% { transform: scale(1.3) rotate(45deg); } }
+
+/* On phones the nav hides behind the toggle, so the toggle carries a dot. */
+.nav-toggle.has-new { position: relative; }
+.nav-toggle.has-new::after {
+  content: "";
+  position: absolute; top: -3px; right: -3px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 2px var(--bg);
+  animation: nav-dot 2.2s ease-out infinite;
+}
+@keyframes nav-dot {
+  0% { box-shadow: 0 0 0 2px var(--bg), 0 0 0 2px color-mix(in srgb, var(--accent) 60%, transparent); }
+  75%, 100% { box-shadow: 0 0 0 2px var(--bg), 0 0 0 9px transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-badge, .nav-badge::before, .nav-badge svg, .nav-toggle.has-new::after { animation: none; }
+  .nav-badge::before { opacity: 0; }
+}
+
 .nav-toggle { display: none; }
 
 @media (max-width: 720px) {
