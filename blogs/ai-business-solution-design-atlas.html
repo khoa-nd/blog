@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The AI Business Solution Design Atlas — Nguyễn Đăng Khoa</title>
+<meta name="description" content="A 14-stage dependency graph for turning business needs into AI solutions and building the agents that automate business workflows, with Stanford, DeepLearning.AI and AI Engineering from Scratch learning routes.">
+<link rel="canonical" href="https://nguyendangkhoa.info/blogs/ai-business-solution-design-atlas.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The AI Business Solution Design Atlas">
+<meta property="og:description" content="67 concepts in one dependency graph: discovery, solution design, business cases, AI agents and workflow automation, with three learning routes.">
+<meta property="og:url" content="https://nguyendangkhoa.info/blogs/ai-business-solution-design-atlas.html">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#0B1220">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>◈</text></svg>">
+<style>
+:root{--ink:#0B1220;--ink2:#121B2C;--panel:#16213A;--line:#24314E;--fg:#E8EDF7;--fg2:#9AA9C4;--fg3:#65748F;
+ --amber:#F2A93B;--rose:#E2725B;--violet:#8B7FD4;--cyan:#3FB8C4;--green:#5FB88A;color-scheme:dark}
+*{box-sizing:border-box}html{color-scheme:dark;scroll-behavior:smooth}
+body{margin:0;background:var(--ink);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:16px;line-height:1.65}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:16px}
+a{color:var(--amber);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--amber) 40%,transparent)}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+header{padding-block:48px 20px}
+.kicker{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg3);margin:0 0 12px}.kicker b{color:var(--amber)}
+h1{font-size:clamp(32px,6vw,52px);line-height:1.05;margin:0 0 14px;letter-spacing:-.02em}h1 em{font-style:italic;color:var(--amber)}
+.lede{color:var(--fg2);font-size:18px;max-width:76ch;margin:0 0 10px}
+.small{font-size:13px;color:var(--fg3)}
+nav.toc{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--ink) 93%,transparent);backdrop-filter:blur(6px);border-block:1px solid var(--line);margin-top:22px}
+nav.toc .wrap{display:flex;gap:6px;overflow-x:auto;padding-block:9px}
+nav.toc a{flex:none;font-size:12.5px;border:1px solid var(--line);border-radius:99px;padding:4px 11px;color:var(--fg2);background:var(--ink2)}
+section{padding-block:44px 6px;scroll-margin-top:52px}
+h2{font-size:clamp(22px,3.8vw,30px);margin:0 0 6px;letter-spacing:-.01em;line-height:1.2}h2 .n{color:var(--fg3);font-weight:500;margin-right:10px}
+h3{font-size:18px;margin:26px 0 10px}
+.sub{color:var(--fg2);margin:0 0 20px;max-width:80ch}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--ink2)}
+table.t{width:100%;border-collapse:collapse;font-size:14.5px;min-width:760px}
+table.t th,table.t td{border-bottom:1px solid var(--line);padding:11px 14px;text-align:left;vertical-align:top}
+table.t tr:last-child td{border-bottom:0}
+table.t th{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--fg3);font-weight:600;background:#0e1626}
+table.t td:first-child{font-weight:600;white-space:nowrap}
+table.t td.what{color:var(--fg2)}
+.callout{border-left:3px solid var(--amber);background:var(--ink2);padding:13px 17px;border-radius:0 6px 6px 0;margin:16px 0;color:var(--fg2)}.callout b{color:var(--fg)}
+.callout.cyan{border-left-color:var(--cyan)}
+.phase{display:grid;grid-template-columns:170px 1fr;gap:16px;margin-bottom:18px}
+.phase-h{border-right:2px solid var(--c);padding-right:12px}
+.phase-h b{display:block;color:var(--c);font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+.phase-h span{font-size:13px;color:var(--fg3)}
+.courses{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.course{background:var(--ink2);border:1px solid var(--line);border-radius:8px;padding:13px 15px;display:flex;flex-direction:column;gap:6px}
+.course .top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.course .code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--fg2)}
+.course h4{margin:0;font-size:15.5px;line-height:1.3}
+.course p{margin:0;font-size:14px;color:var(--fg2)}
+.course .meta{font-size:12.5px;color:var(--fg3);margin-top:auto}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.schip{font-size:11.5px;border:1px solid color-mix(in srgb,var(--c,var(--cyan)) 55%,var(--line));color:var(--c,var(--cyan));border-radius:99px;padding:1px 8px;white-space:nowrap}
+.tag{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:3px;padding:2px 6px;white-space:nowrap}
+.off{background:color-mix(in srgb,var(--green) 25%,var(--ink2));color:var(--green);border:1px solid var(--green)}
+.noff{background:color-mix(in srgb,var(--rose) 18%,var(--ink2));color:#f0a493;border:1px solid var(--rose)}
+.lvl{background:color-mix(in srgb,var(--cyan) 16%,var(--ink2));color:var(--cyan);border:1px solid color-mix(in srgb,var(--cyan) 60%,var(--line))}
+.ev{font-size:11px;color:var(--fg3)}
+.cov{display:inline-block;margin-bottom:5px;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border-radius:3px;padding:2px 7px;white-space:nowrap}
+table.cmp{min-width:980px;font-size:13.5px}table.cmp td:not(:first-child){width:29%}table.cmp td:first-child{white-space:normal;width:13%}
+.full{background:var(--green);color:#06140C}.part{background:var(--amber);color:#1A1206}.gap{background:var(--rose);color:#1d0b07}
+footer{color:var(--fg3);font-size:13px;padding-block:28px 56px;margin-top:40px;border-top:1px solid var(--line)}
+@media (max-width:760px){.phase{grid-template-columns:1fr}.phase-h{border-right:0;border-bottom:2px solid var(--c);padding:0 0 6px}}
+
+/* ---- atlas graph, scoped ---- */
+#atlas{--glow:rgba(242,169,59,.5);--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;line-height:1.55}
+#atlas{margin:0;background:var(--ink);color:var(--fg);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+#atlas .wrap{padding-inline:20px;max-width:1440px;margin:0 auto}
+#atlas header{padding-block:44px 26px;border-bottom:1px solid var(--line)}
+#atlas h1{font-family:inherit;font-weight:700;font-size:clamp(30px,5.2vw,52px);
+  line-height:1.02;margin:0 0 12px;letter-spacing:-.02em;text-wrap:balance}
+#atlas h1 em{font-style:italic;color:var(--amber)}
+#atlas .sub{color:var(--fg2);max-width:66ch;margin:0 0 20px;font-size:13.5px}
+#atlas .sub a{color:var(--amber);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--amber) 45%,transparent)}
+#atlas .sub a:hover{border-bottom-color:var(--amber)}
+#atlas .sub a:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+#atlas .stats{display:flex;flex-wrap:wrap;gap:10px}
+#atlas .stat{background:var(--ink2);border:1px solid var(--line);border-radius:3px;padding:9px 13px;
+  display:flex;gap:9px;align-items:baseline}
+#atlas .stat b{font-family:inherit;font-size:21px;color:var(--amber);font-variant-numeric:tabular-nums}
+#atlas .stat span{font-size:10.5px;color:var(--fg3);text-transform:uppercase;letter-spacing:.09em}
+#atlas .bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-block:16px;
+  border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);
+  background:var(--ink);z-index:20}
+#atlas .seg{display:flex;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+#atlas .seg button{font:inherit;font-size:11.5px;background:var(--ink2);color:var(--fg2);border:0;
+  padding:7px 13px;cursor:pointer;letter-spacing:.05em}
+#atlas .lg{font:inherit}
+#atlas button+button{border-left:1px solid var(--line)}
+#atlas .seg button[aria-pressed=true]{background:var(--amber);color:#1A1206;font-weight:700}
+#atlas button:focus-visible{outline:2px solid var(--cyan);outline-offset:-2px}
+#atlas .hint{color:var(--fg3);font-size:11px;margin-left:auto}
+#atlas .stage{position:relative;overflow:auto;border:1px solid var(--line);border-radius:4px;
+  background:
+    radial-gradient(1100px 420px at 12% 0%,rgba(242,169,59,.09),transparent 62%),
+    linear-gradient(180deg,var(--ink2),var(--ink));
+  margin-block:18px;max-height:76vh}
+#atlas svg{display:block}
+#atlas .lane{fill:var(--fg3);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase}
+#atlas .lane-rule{stroke:var(--line);stroke-width:1;stroke-dasharray:2 5}
+#atlas .edge{stroke:var(--line);fill:none;stroke-width:1}
+#atlas .edge.hot{stroke:var(--amber);stroke-width:1.9;opacity:.95}
+#atlas .edge.cool{stroke:var(--cyan);stroke-width:1.6;opacity:.85}
+#atlas .node rect{stroke-width:1.2;rx:3}
+#atlas .node text{font-size:10.5px;fill:var(--fg);pointer-events:none}
+#atlas .node .cnt{font-size:9px;fill:var(--ink);font-weight:700}
+#atlas .node{cursor:pointer}
+#atlas .node.dim{opacity:.17}
+#atlas .node.tl rect{stroke:var(--amber);stroke-width:2;filter:drop-shadow(0 0 7px var(--glow))}
+#atlas .node.tl text{fill:#fff}
+#atlas .tl-key{display:none;flex-wrap:wrap;gap:7px;align-items:center;padding-block:12px 14px}
+#atlas .tl-key.on{display:flex}
+#atlas .tl-key .lead{font-size:11px;color:var(--fg2);margin-right:4px}
+#atlas .tl-key .chip{border-color:color-mix(in srgb,var(--amber) 55%,var(--line));color:var(--fg)}
+#atlas .tag.tl{border-color:var(--amber);color:var(--amber)}
+#atlas .seg #m-app[aria-pressed=true]{background:var(--green);color:#06140C}
+#atlas .node.app rect{stroke:var(--green);stroke-width:2;filter:drop-shadow(0 0 7px rgba(95,184,138,.55))}
+#atlas .node.app text{fill:#fff}
+#atlas .app-key{display:none;flex-wrap:wrap;gap:7px;align-items:center;padding-block:12px 14px}
+#atlas .app-key.on{display:flex}
+#atlas .app-key .lead{font-size:11px;color:var(--fg2);margin-right:4px}
+#atlas .app-key .chip{border-color:color-mix(in srgb,var(--green) 55%,var(--line));color:var(--fg)}
+#atlas .app-key .chip b{color:var(--green)}
+#atlas .tag.app{border-color:var(--green);color:var(--green)}
+#atlas .appnote{margin:-6px 0 18px;padding:10px 12px;background:var(--ink2);border-left:2px solid var(--green);
+  border-radius:0 3px 3px 0;font-size:12.5px;color:var(--fg2)}
+#atlas .appnote b{display:block;color:var(--green);font-size:12.5px;margin-bottom:4px}
+#atlas .node.sel rect{stroke:var(--amber);stroke-width:2.4}
+#atlas .legend{display:flex;flex-wrap:wrap;gap:7px;padding-bottom:22px}
+#atlas .lg{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--fg2);
+  border:1px solid var(--line);border-radius:99px;padding:4px 10px;cursor:pointer;background:var(--ink2)}
+#atlas .lg i{width:9px;height:9px;border-radius:2px;display:block}
+#atlas .lg{background:var(--ink2);color:var(--fg2)}
+#atlas .lg[aria-pressed=true]{border-color:var(--fg2);color:var(--fg)}
+#atlas .lg[aria-pressed=false]{opacity:.42}
+#atlas .lg[aria-pressed=false] i{filter:grayscale(1)}
+#atlas #panel{position:fixed;right:0;top:0;height:100%;width:min(390px,92vw);background:var(--panel);
+  border-left:1px solid var(--line);padding:24px 22px;overflow:auto;z-index:40;
+  transform:translateX(100%);transition:transform .22s ease;box-shadow:-18px 0 44px rgba(0,0,0,.45)}
+#atlas #panel.open{transform:none}
+#atlas #panel h2{font-family:inherit;font-size:23px;margin:0 0 6px;line-height:1.15;text-wrap:balance}
+#atlas .tagrow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+#atlas .tag{font-size:10px;padding:3px 8px;border-radius:99px;border:1px solid var(--line);color:var(--fg2)}
+#atlas .why{color:var(--fg2);font-size:12.5px;margin:0 0 18px}
+#atlas .mrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
+#atlas .m{background:var(--ink2);border:1px solid var(--line);border-radius:3px;padding:9px}
+#atlas .m b{display:block;font-family:inherit;font-size:19px;color:var(--amber);font-variant-numeric:tabular-nums}
+#atlas .m span{font-size:9.5px;color:var(--fg3);text-transform:uppercase;letter-spacing:.07em}
+#atlas h3{font-size:10.5px;text-transform:uppercase;letter-spacing:.11em;color:var(--fg3);
+  margin:0 0 9px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+#atlas .list{list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:5px}
+#atlas .list li{font-size:12px;color:var(--fg2);padding:6px 9px;background:var(--ink2);
+  border-left:2px solid var(--line);border-radius:0 3px 3px 0;cursor:pointer}
+#atlas .list li:hover{color:var(--fg);border-left-color:var(--amber)}
+#atlas .empty{color:var(--fg3);font-size:12px;font-style:italic}
+#atlas #close{position:absolute;top:14px;right:16px;background:0;border:1px solid var(--line);
+  border-radius:3px;color:var(--fg2);width:28px;height:28px;padding:0;cursor:pointer}
+#atlas .path{margin-block:14px 30px;padding:18px;border:1px solid var(--line);border-radius:4px;background:var(--ink2)}
+#atlas .path h3{border:0;padding:0;margin-bottom:12px}
+#atlas .chain{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+#atlas .chip{font-size:11px;padding:5px 10px;border-radius:3px;background:var(--panel);
+  border:1px solid var(--line);color:var(--fg2)}
+#atlas .chip b{color:var(--amber);font-weight:700}
+#atlas .arrow{color:var(--fg3);font-size:11px}
+#atlas footer{color:var(--fg3);font-size:11px;padding-block:20px 40px;border-top:1px solid var(--line)}
+@media (max-width:640px){#atlas header{padding-block:30px 20px}
+#atlas .hint{display:none}}
+@media (prefers-reduced-motion:reduce){#atlas #panel{transition:none}}
+#atlas .seg #m-labs[aria-pressed=true]{background:var(--green);color:#06140C}
+#atlas .app-key .chip[data-go]{cursor:pointer}
+#atlas .app-key .chip[data-go]:hover{border-color:var(--green)}
+#atlas .appnote .lbl{display:block;margin-top:8px;font-size:9.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--fg3)}
+#atlas .stages{margin:0;padding-left:22px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px 28px}
+#atlas .stages li{color:var(--fg3);font-size:12px;padding-left:2px}
+#atlas .stages li b{display:block;font-size:13px;margin-bottom:4px}
+#atlas .stages li span{display:block;color:var(--fg2);margin-bottom:3px}
+#atlas .stages li i{font-style:normal;font-size:9.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--fg3);margin-right:5px}
+#atlas .stats{margin:4px 0 6px}
+
+.labs{display:flex;flex-direction:column;gap:10px;min-width:0}
+.lab{background:var(--ink2);border:1px solid var(--line);border-radius:8px;min-width:0}
+.lab[open]{border-color:color-mix(in srgb,var(--c) 45%,var(--line))}
+.lab summary{display:flex;align-items:baseline;gap:10px;padding:11px 14px;cursor:pointer;list-style:none;flex-wrap:wrap}
+.lab summary::-webkit-details-marker{display:none}
+.labn{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--c);min-width:46px}
+.labt{font-weight:650;flex:1 1 240px}
+.labm{font-size:12.5px;color:var(--fg3)}
+.done{font-size:12px;color:var(--fg3);display:flex;align-items:center;gap:4px;cursor:pointer}
+.lab.is-done .labt{color:var(--fg3);text-decoration:line-through}
+.labb{padding:0 14px 14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.labb .goal{margin:0;color:var(--fg)}
+.labb ol{margin:0;padding-left:20px;color:var(--fg2);font-size:14.5px;display:flex;flex-direction:column;gap:8px}
+.labb li{min-width:0}
+.code{position:relative;margin-top:6px;min-width:0}
+.code pre{margin:0;background:#0a1120;border:1px solid var(--line);border-radius:6px;padding:10px 12px;overflow-x:auto;font-size:12.5px;line-height:1.5;color:#cfe0f5}
+.code code,.callout code{font-family:ui-monospace,Menlo,monospace}
+.copy{position:absolute;top:6px;right:6px;font-size:11px;border:1px solid var(--line);background:var(--ink2);color:var(--fg2);border-radius:4px;padding:2px 8px;cursor:pointer}
+.check,.fan{margin:0;font-size:14px;color:var(--fg2)}
+.check b{color:var(--green)}.fan b{color:var(--amber)}
+.stan{font-size:14px;color:var(--fg2)}.stan b{color:var(--cyan);margin-right:6px;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.stan ul{margin:4px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:3px}.stan a{white-space:nowrap;font-weight:600}
+.check b,.fan b{margin-right:6px;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <p class="kicker"><b>Interactive map</b> · AI business solution design · agents &amp; workflow automation · Stanford, DeepLearning.AI &amp; AI Engineering from Scratch routes</p>
+  <h1>The AI Business Solution Design <em>Atlas</em></h1>
+  <p class="lede">A 14-stage path for turning business needs into AI solutions and building the agents that automate the work, mapped into one dependency graph, with learning routes through Stanford, DeepLearning.AI and AI Engineering from Scratch.</p>
+  <p class="small">Created <time datetime="2026-10-27">27 Oct 2026</time> · Companion to <a href="ai-engineering-atlas.html">The AI Engineering Atlas</a> and <a href="ai-infrastructure-atlas.html">The AI Infrastructure Atlas</a></p>
+</header>
+<nav class="toc" aria-label="Sections"><div class="wrap">
+  <a href="#atlas">Atlas graph</a><a href="#biz">1 · Business → AI</a><a href="#agents">2 · Agents &amp; automation</a><a href="#deliver">3 · Deliver &amp; lead</a><a href="#route">4 · Stanford</a><a href="#dlai">5 · DeepLearning.AI</a><a href="#aiefs">6 · AI Eng. from Scratch</a><a href="#coverage">7 · Coverage map</a>
+</div></nav>
+
+<main class="wrap">
+<section id="atlas">
+  <h2>The atlas graph</h2>
+  <p class="sub">Click any concept to see what to learn first, what it unlocks, and the portfolio deliverable for its stage.</p>
+  <div class="stats">
+    <div class="stat"><b id="s-nodes"></b><span>concepts</span></div>
+    <div class="stat"><b>14</b><span>stages</span></div>
+    <div class="stat"><b id="s-layers"></b><span>learning layers</span></div>
+    <div class="stat"><b>14</b><span>deliverables</span></div>
+  </div>
+<div class="bar">
+  <div class="seg">
+    <button id="m-all" aria-pressed="true">Full graph</button>
+    <button id="m-core" aria-pressed="false">Critical Path</button>
+    <button id="m-labs" aria-pressed="false" title="The concept each stage's portfolio deliverable exercises">Deliverables</button>
+  </div>
+  <span class="hint" id="hint">Click any concept to trace its prerequisites</span>
+</div>
+<div class="app-key" id="labs-key" aria-live="polite"></div>
+
+<div class="legend" id="legend"></div>
+
+<div class="stage"><svg id="svg" role="img" aria-label="Dependency graph of AI business solution design concepts"></svg></div>
+
+<div class="path">
+  <h3>The critical path — longest prerequisite chain in the graph</h3>
+  <div class="chain" id="chain"></div>
+</div>
+
+<aside id="panel" aria-live="polite">
+  <button id="close" aria-label="Close details">&times;</button>
+  <h2 id="p-title"></h2>
+  <div class="tagrow" id="p-tags"></div>
+  <p class="why" id="p-why"></p>
+  <div class="mrow">
+    <div class="m"><b id="p-dep"></b><span>dependents</span></div>
+    <div class="m"><b id="p-pre"></b><span>prereqs</span></div>
+    <div class="m"><b id="p-lay"></b><span>layer</span></div>
+  </div>
+  <div class="appnote" id="p-stage" hidden>
+    <b id="p-stage-t"></b>
+    <span class="lbl">Deliverable</span><span id="p-stage-lab"></span>
+    <span class="lbl">Why it matters</span><span id="p-stage-why"></span>
+  </div>
+  <h3>Learn these first</h3>
+  <ul class="list" id="p-before"></ul>
+  <h3>Unlocks directly</h3>
+  <ul class="list" id="p-after"></ul>
+</aside>
+</section>
+
+<section id="biz">
+  <h2><span class="n">1</span>Turn business needs into AI solutions</h2>
+  <p class="sub">The most important theme: find the problem worth solving, choose the simplest design that solves it, prove the value, and win the work.</p>
+  <div class="scroll"><table class="t"><thead><tr><th>Atlas stage</th><th>Specific concepts (atlas nodes)</th><th>What you'd actually do with a client</th></tr></thead><tbody><tr><td>1 · AI literacy</td><td>AI capability map, limits and failure modes, model and vendor landscape</td><td class="what">Tell a bank&#x27;s leadership, in plain words, what AI can do for them this year and what it can&#x27;t</td></tr><tr><td>2 · Discovery &amp; framing</td><td>Outcome framing, workflow discovery, feasibility and data readiness, requirements and SLAs, success metrics</td><td class="what">Run discovery workshops on a process such as loan applications, and turn &quot;we want AI&quot; into a signed discovery brief</td></tr><tr><td>3 · Solution patterns</td><td>Pattern selection, build vs buy vs partner, human handoff design, reference architecture</td><td class="what">Recommend RAG plus a reviewed workflow instead of a fully autonomous agent, and explain why</td></tr><tr><td>4 · Business case</td><td>Token and inference cost, ROI and value model, total cost of ownership, pricing</td><td class="what">Show the cost per processed application against today&#x27;s manual cost, with a payback period</td></tr><tr><td>5 · Strategy &amp; roadmap</td><td>Assumption and risk mapping, use-case portfolio, roadmap, AI operating model</td><td class="what">Turn ten requested use cases into a phased 12-month roadmap the CIO can fund</td></tr><tr><td>6 · Prototype &amp; pre-sales</td><td>Smallest testable slice, specifications for agents, rapid prototype, PoC with exit criteria, proposal</td><td class="what">Build a two-week PoC that answers the riskiest question, then pitch it together with the business case</td></tr></tbody></table></div>
+  <div class="callout"><b>Discovery and the business case win the deal.</b> Most competitors jump straight to a demo. Stages 2 and 4 are where you show a client you understand their process and their money, and that is what turns a PoC into a program.</div>
+</section>
+
+<section id="agents">
+  <h2><span class="n">2</span>Build AI agents and automate business workflows</h2>
+  <p class="sub">The other most important theme: the building blocks, the agent patterns, the protocols that connect agents to company systems, and the production shape that makes them safe to run.</p>
+  <div class="scroll"><table class="t"><thead><tr><th>Atlas stage</th><th>Specific concepts (atlas nodes)</th><th>What you'd actually do with a client</th></tr></thead><tbody><tr><td>7 · LLM building blocks</td><td>Prompting and task decomposition, structured output, function calling, RAG, context engineering</td><td class="what">Build a policy assistant grounded in the bank&#x27;s documents that cites its sources and returns structured answers</td></tr><tr><td>8 · Agent patterns</td><td>Agent loop, reflection, planning, memory, multi-agent orchestration</td><td class="what">Design a triage agent that classifies customer emails, drafts replies, and sends hard cases to a reviewer</td></tr><tr><td>9 · Frameworks &amp; protocols</td><td>Agent frameworks and SDKs, MCP, A2A, enterprise integration</td><td class="what">Expose the CRM and ticketing system to agents through MCP servers, with read and write tools kept separate</td></tr><tr><td>10 · Workflow automation</td><td>Production runtimes, human-in-the-loop approvals, document workflows, agent observability, cost governors</td><td class="what">Run invoice processing on an event trigger, with human approval above a threshold, tracing, and a monthly spend cap</td></tr></tbody></table></div>
+  <div class="callout cyan"><b>Start with a workflow, graduate to an agent.</b> When the steps are known, a fixed workflow with an LLM in a few of them is cheaper, faster and easier to audit. Use an autonomous agent only where the path can't be predicted, and put a person in front of every irreversible action.</div>
+</section>
+
+<section id="deliver">
+  <h2><span class="n">3</span>Evaluate, govern, deliver and lead</h2>
+  <p class="sub">The supporting stages that decide whether a solution is trusted, allowed to ship, delivered on time and actually adopted.</p>
+  <div class="scroll"><table class="t"><thead><tr><th>Atlas stage</th><th>Specific concepts (atlas nodes)</th><th>What you'd actually do with a client</th></tr></thead><tbody><tr><td>11 · Evaluation &amp; quality</td><td>Eval datasets, LLM-as-judge, error analysis, A/B testing, evals as release gates</td><td class="what">Prove to the client&#x27;s risk team, with evidence, how often the assistant answers policy questions correctly</td></tr><tr><td>12 · Governance &amp; risk</td><td>Data classification, guardrails and PII masking, prompt-injection defense, least privilege, compliance, audit</td><td class="what">Produce the control matrix the bank&#x27;s compliance and audit teams need before go-live</td></tr><tr><td>13 · Project delivery</td><td>Decision records, pilot-to-production rollout, SLA operations and runbooks, feedback loop</td><td class="what">Take the PoC to production through gated rollout, with an SLA, a runbook and a decision log</td></tr><tr><td>14 · Leading AI teams</td><td>AI team design and roles, change management and adoption, learning culture</td><td class="what">Plan the roles, training and adoption measures so branch staff actually use the new system</td></tr></tbody></table></div>
+  <div class="callout"><b>Your CCAR-P study fits here.</b> The Claude Certified Architect – Professional track covers discovery, architecture tradeoffs, governance, observability and stakeholder communication. Section 6 marks those lessons so you can study both at once.</div>
+</section>
+
+<section id="route">
+  <h2><span class="n">4</span>A Stanford route</h2>
+  <p class="sub">23 courses in five phases, chosen from a scan of 1,204 AI-related courses across every Stanford department in the 2026–27 catalog, not only Computer Science. Business courses come from the Graduate School of Business (GSB), Management Science &amp; Engineering and Electrical Engineering. Mappings come from the official course descriptions.</p>
+  <div class="callout cyan"><b>Studying from outside Stanford?</b> GSB electives are normally limited to MBA and MSx students, and several project courses take applications. Treat their descriptions, cases and guest speakers as a reading list, and use the DeepLearning.AI and AI Engineering from Scratch routes for the hands-on work.</div>
+  <div id="phases"></div>
+</section>
+
+<section id="dlai">
+  <h2><span class="n">5</span>A DeepLearning.AI route</h2>
+  <p class="sub">25 courses in six phases, picked from all 132 in the DeepLearning.AI catalog. Each card shows how solid the mapping is: <b>outline</b> means a lesson title in the course outline names the subject; <b>summary</b> means only the course's “What you'll learn” does.</p>
+  <div id="dl-phases"></div>
+</section>
+
+<section id="aiefs">
+  <h2><span class="n">6</span>An AI Engineering from Scratch route</h2>
+  <p class="sub">27 lessons from <a href="https://aiengineeringfromscratch.com/" target="_blank" rel="noopener">AI Engineering from Scratch</a>, an open, independent community curriculum. Lessons tagged <b>CCAR-P</b> belong to its Claude Certified Architect – Professional study track, and their links open inside that track. Mappings come from each lesson's learning objectives.</p>
+  <div id="aie-phases"></div>
+</section>
+
+<section id="coverage">
+  <h2><span class="n">7</span>Coverage map: Stanford, DeepLearning.AI and AI Engineering from Scratch</h2>
+  <p class="sub">Each atlas stage against the three sources. A stage is <b>covered</b> when the source names the stage's core concepts, and <b>partly</b> when some are missing.</p>
+  <div class="scroll"><table class="t cmp" id="covtable"></table></div>
+  <div class="callout cyan"><b>Use the three together.</b> Stanford is strongest on strategy, organizations and leadership; DeepLearning.AI on building agents and workflows hands-on; AI Engineering from Scratch on the architect's method, from discovery to governance. All three are thinnest on pricing an AI service and writing a winning proposal. Learn those by doing: write a business case and a proposal for every PoC you build.</div>
+</section>
+
+</main>
+<footer class="wrap">Course data: Stanford ExploreCourses catalog for 2026–27 (a keyword scan of 1,204 AI-related courses across all departments), DeepLearning.AI course pages and outlines, and the AI Engineering from Scratch curriculum (lesson objectives), read 26–27 Oct 2026. Independent study plan, not affiliated with Stanford University, DeepLearning.AI, AI Engineering from Scratch or Anthropic. · Source: <a href="https://nguyendangkhoa.info/">nguyendangkhoa.info</a></footer>
+
+<script>
+const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const STAGE={"1": "AI literacy", "2": "Discovery & framing", "3": "Solution patterns", "4": "Business case", "5": "Strategy & roadmap", "6": "Prototype & pre-sales", "7": "LLM building blocks", "8": "Agent patterns", "9": "Frameworks & protocols", "10": "Workflow automation", "11": "Evaluation & quality", "12": "Governance & risk", "13": "Project delivery", "14": "Leading AI teams"};
+const SFAM={"1": "#F2A93B", "2": "#F2A93B", "3": "#F2A93B", "4": "#F2A93B", "5": "#F2A93B", "6": "#F2A93B", "7": "#E2725B", "8": "#E2725B", "9": "#E2725B", "10": "#E2725B", "11": "#8B7FD4", "12": "#8B7FD4", "13": "#5FB88A", "14": "#5FB88A"};
+const chips=st=>st.map(s=>`<span class="schip" style="--c:${SFAM[s]}">${s} · ${STAGE[s]}</span>`).join('');
+const legend=`<p class="small"><span class="schip" style="--c:#F2A93B">business → AI</span> &nbsp; <span class="schip" style="--c:#E2725B">agents &amp; automation</span> &nbsp; <span class="schip" style="--c:#8B7FD4">quality &amp; governance</span> &nbsp; <span class="schip" style="--c:#5FB88A">delivery &amp; leadership</span></p>`;
+const phase=(name,sub,col,cards)=>`<div class="phase" style="--c:${col}"><div class="phase-h"><b>${name}</b><span>${sub}</span></div><div class="courses">${cards}</div></div>`;
+// Stanford: [code, title, offered, terms, stages, gsb, why, url]
+const STAN=[["Foundations", "AI for decision-makers", "#9AA9C4", [["CS 106EA", "Exploring Artificial Intelligence", true, "Aut · Win", [1], false, "The machine-learning pipeline, neural networks, generative AI and common failures such as overfitting, drift and bias, taught conceptually. Not a programming class.", "https://explorecourses.stanford.edu/search?q=CS106EA"], ["MKTG 321", "Understanding AI Technology for Business Problems", true, "Win", [1, 2, 3], true, "Demystifies AI and ML for future product managers and founders: recommender systems, platforms, human-centered and generative AI, and LLMs, applied to specific business problems.", "https://explorecourses.stanford.edu/search?q=MKTG321"], ["OIT 367", "Business Intelligence from Big Data and AI", true, "Win", [1, 2, 11], true, "Predictive modelling and ML as the basis for knowing when to trust an AI agent's output, plus experimental design and turning data into business questions.", "https://explorecourses.stanford.edu/search?q=OIT367"]]], ["Business needs → AI solutions", "the most important theme", "#F2A93B", [["EE 205", "Product Management for Engineers in the AI Age", true, "Win", [2, 4, 6], false, "The closest course to consulting: customer jobs, testing solutions, technical feasibility and value sizing, then a recommendation and an MVP for a real corporate partner.", "https://explorecourses.stanford.edu/search?q=EE205"], ["MS&E 219", "AI Applications Lab", true, "Spr", [2, 3, 6, 11], false, "How AI moves from model to working product: problem formulation, data and evaluation design, deployment constraints, and the organizational choices that decide success.", "https://explorecourses.stanford.edu/search?q=MS%26E219"], ["CS 177", "Introduction to Product Management with AI", true, "Aut", [2, 5, 6, 13], false, "Customer discovery, prioritization, metrics, roadmapping and prototyping, using generative AI throughout and learning to check its work.", "https://explorecourses.stanford.edu/search?q=CS177"], ["OIT 551", "AI and Data Science: Strategy and Entrepreneurship", true, "Spr", [4, 5, 14], true, "How companies at every stage put AI to work: the costs and benefits of building an AI capability, managing data-science teams, and value creation as investors see it.", "https://explorecourses.stanford.edu/search?q=OIT551"], ["STRAMGT 221", "Strategy and Disruption", true, "Spr", [4, 5], true, "Strategy for disruptive technologies: value-chain analysis, make-or-buy decisions, partnerships, and how value is created and captured.", "https://explorecourses.stanford.edu/search?q=STRAMGT221"], ["STRAMGT 356", "Startup Garage: Design", true, "Aut · Spr", [2, 6], true, "Design thinking, lean startup and weekly customer interviews to test whether a problem and a solution really fit. Team application required.", "https://explorecourses.stanford.edu/search?q=STRAMGT356"]]], ["Build agents & automate workflows", "the other most important theme", "#E2725B", [["CS 329Z", "Engineering AI Agents", true, "Aut", [3, 7, 8, 9, 11], false, "The closest single course to this theme: decompose problems, choose components, build RAG, tools and agent loops from scratch, then DSPy, evaluations and design tradeoffs.", "https://explorecourses.stanford.edu/search?q=CS329Z"], ["MS&E 103", "Fundamentals of Agentic Systems", true, "Win", [8, 10, 11], false, "Agents that plan, use tools and coordinate with people inside organizations; build, align and evaluate an enterprise agentic workflow.", "https://explorecourses.stanford.edu/search?q=MS%26E103"], ["CS 224V", "Agentic AI", true, "Aut", [7, 8, 9], false, "Reducing hallucination with RAG and formal task descriptions, reasoning over databases and documents, and a quarter-long agent project.", "https://explorecourses.stanford.edu/search?q=CS224V"], ["CS 224G", "Apps With LLMs Inside", true, "Win", [6, 7], false, "Building apps around LLMs in two-week sprints that mimic a startup, with industry guest lectures.", "https://explorecourses.stanford.edu/search?q=CS224G"], ["OIT 523", "AI Operations", true, "Win", [10, 11, 12, 14], true, "Agentic system design, routing AI workflows, human-in-the-loop designs, evaluation and safety, and how AI changes the way an organization runs.", "https://explorecourses.stanford.edu/search?q=OIT523"], ["MS&E 203", "Building and Evaluating AI Products", true, "Aut", [3, 4, 6, 11, 13], false, "Build a real AI product or agent end to end: justify AI fit, trade off latency, quality and cost, evaluate it rigorously, and finish at Demo Day.", "https://explorecourses.stanford.edu/search?q=MS%26E203"]]], ["Quality, safety & governance", "make it trustworthy", "#8B7FD4", [["CS 321M", "AI Measurement Science", true, "Spr", [11], false, "Validity theory and rigorous methods for evaluating and benchmarking AI systems, so the claims you make about quality hold up.", "https://explorecourses.stanford.edu/search?q=CS321M"], ["CS 329T", "Trustworthy Machine Learning: Building and Evaluating Agentic Systems", false, "not scheduled", [7, 8, 11], false, "From prototype to reliable system: improving RAG and agent applications step by step against clear evaluation metrics. Not scheduled in 2026–27.", "https://explorecourses.stanford.edu/search?q=CS329T"], ["CS 120", "Introduction to AI Safety", true, "Aut", [12, 11], false, "Threat models, evaluation and auditability, from sycophancy and security to how risk is measured and governed.", "https://explorecourses.stanford.edu/search?q=CS120"], ["CS 283", "Governing Artificial Intelligence: Law, Policy, and Institutions", true, "Aut", [12], false, "The EU AI Act, U.S. policy, and how privacy, intellectual-property and civil-rights law apply to AI.", "https://explorecourses.stanford.edu/search?q=CS283"]]], ["Delivery & leadership", "ship it and lead the change", "#5FB88A", [["GSBGID 316", "Product Management", true, "Aut", [13, 5], true, "Framing product problems, prioritizing under constraints and aligning stakeholders, including managing agents and how AI changes the product manager's role.", "https://explorecourses.stanford.edu/search?q=GSBGID316"], ["OB 301", "The AI-powered Org: Evolution, Rebirth or Death?", true, "Spr", [14, 5], true, "Organization theory meets AI: what foundation models mean for work, careers and how organizations are structured.", "https://explorecourses.stanford.edu/search?q=OB301"], ["OB 310", "Designing Organizations with Analytics and AI", true, "Spr", [14], true, "Using ML, network analysis, NLP and agentic systems to diagnose and redesign organizations, people decisions and processes.", "https://explorecourses.stanford.edu/search?q=OB310"], ["CS 183E", "Effective Leadership in High-Tech", true, "Aut", [14], false, "From individual contributor to leader: communication, conflict, team culture, hiring and onboarding.", "https://explorecourses.stanford.edu/search?q=CS183E"]]]];
+$('#phases').innerHTML=STAN.map(([n,s,c,list])=>phase(n,s,c,list.map(([code,title,off,terms,st,gsb,why,url])=>`
+  <div class="course"><div class="top"><span class="code">${code}</span><span class="tag ${off?'off':'noff'}">${off?'Offered 2026–27':'Not offered 2026–27'}</span></div>
+  <h4>${esc(title)}</h4><p>${esc(why)}</p><div class="chips">${chips(st)}</div>
+  <div class="meta">${terms}${gsb?' · GSB':''} · <span class="ev">evidence: catalog</span> · <a href="${url}" target="_blank" rel="noopener">catalog ↗</a></div></div>`).join(''))).join('')+legend;
+// DeepLearning.AI: [partner, title, level, kind, updated, stages, evidence, why, url]
+const DLR=[["Foundations", "AI for everyone in the room", "#9AA9C4", [["DeepLearning.AI · Andrew Ng", "AI for Everyone", "Beginner", "Course · 6h54m", "Jul 2026", [1, 2, 5, 13, 14], "outline", "Four weeks: what AI is, building AI projects, building AI in your company (the AI transformation playbook and team roles), and AI and society.", "https://www.deeplearning.ai/courses/ai-for-everyone"], ["DeepLearning.AI · Andrew Ng", "Generative AI for Everyone", "Beginner", "Course · 5h1m", "Oct 2026", [1, 2, 5], "summary", "What generative AI can and can't do, real-world use cases, and its impact on business, so you can shape an AI strategy for work and business.", "https://www.deeplearning.ai/courses/generative-ai-for-everyone"], ["DeepLearning.AI", "AI Prompting for Everyone", "Beginner", "Course · 7h4m", "Jul 2026", [1, 7], "outline", "Using AI tools well: research, context, reasoning, sycophancy, and writing and critiquing with AI.", "https://www.deeplearning.ai/courses/ai-prompting-for-everyone"]]], ["Prototype & pre-sales", "show it working, fast", "#F2A93B", [["Snowflake", "Fast Prototyping of GenAI Apps with Streamlit", "Intermediate", "Course · 9h21m", "Jul 2026", [6], "summary", "A rapid-prototyping framework to scope, build and deploy an interactive generative-AI app, then iterate toward a product.", "https://www.deeplearning.ai/courses/fast-prototyping-of-genai-apps-with-streamlit"], ["JetBrains", "Spec-Driven Development with Coding Agents", "Beginner", "Short course · 1h16m", "Apr 2026", [6, 13], "outline", "Write a project constitution and feature specs, then plan, implement and validate features with coding agents until you reach an MVP.", "https://www.deeplearning.ai/courses/spec-driven-development-with-coding-agents"], ["Anthropic", "Claude Code: A Highly Agentic Coding Assistant", "Intermediate", "Short course · 2h", "Aug 2026", [6], "outline", "Use an agentic coding assistant to explore codebases, add features, refactor, and build a web app from a Figma mockup: the speed you need for a pre-sales demo.", "https://www.deeplearning.ai/courses/claude-code-a-highly-agentic-coding-assistant"]]], ["LLM building blocks", "the parts every agent uses", "#E2725B", [["OpenAI", "Building Systems with the ChatGPT API", "Beginner", "Short course · 1h55m", "Oct 2025", [7, 11], "outline", "Classification, moderation, chain-of-thought and chained prompts, then checking and evaluating the outputs of a multi-step system.", "https://www.deeplearning.ai/courses/chatgpt-building-system"], ["DeepLearning.AI", "Retrieval Augmented Generation (RAG)", "Intermediate", "Course · 26h3m", "Jul 2026", [7, 3], "summary", "Design each RAG component for real applications: keyword, semantic and hybrid search, chunking and vector databases.", "https://www.deeplearning.ai/courses/retrieval-augmented-generation"], ["Chroma", "Context Engineering", "Intermediate", "Course · 18h56m", "Oct 2026", [7, 8], "outline", "Context failure modes and context rot, the parts of an agent harness, and shaping a customer-support agent's context.", "https://www.deeplearning.ai/courses/context-engineering"]]], ["Agents & protocols", "design the agent", "#E2725B", [["DeepLearning.AI · Andrew Ng", "Agentic AI", "Intermediate", "Course · 9h55m", "Aug 2026", [3, 4, 8, 11], "outline", "The closest single course to this theme: task decomposition, reflection, tool use, planning and multi-agent patterns, plus evals, error analysis, and latency and cost optimization.", "https://www.deeplearning.ai/courses/agentic-ai"], ["crewAI", "Multi AI Agent Systems with crewAI", "Beginner", "Short course · 3h1m", "Oct 2026", [8, 9, 10], "outline", "Teams of agents that automate business processes: customer-support automation, outreach campaigns, event planning and financial analysis.", "https://www.deeplearning.ai/courses/multi-ai-agent-systems-with-crewai"], ["LangChain, Tavily", "AI Agents in LangGraph", "Intermediate", "Short course · 1h42m", "Oct 2026", [9, 10], "outline", "Build an agent from scratch, then rebuild it in LangGraph with agentic search, persistence, streaming and human-in-the-loop.", "https://www.deeplearning.ai/courses/ai-agents-in-langgraph"], ["Anthropic", "MCP: Build Rich-Context AI Apps with Anthropic", "Intermediate", "Short course · 1h58m", "Aug 2026", [9], "outline", "Why MCP exists, its architecture, and building, connecting and deploying MCP servers and clients.", "https://www.deeplearning.ai/courses/mcp-build-rich-context-ai-apps-with-anthropic"], ["Google Cloud, IBM Research", "A2A: The Agent2Agent Protocol", "Intermediate", "Short course · 1h27m", "Apr 2026", [9], "outline", "Wrap agents as A2A servers and orchestrate agents built with different frameworks into sequential and hierarchical workflows.", "https://www.deeplearning.ai/courses/a2a-the-agent2agent-protocol"], ["Anthropic", "Agent Skills with Anthropic", "Beginner", "Short course · 2h19m", "Jul 2026", [9], "outline", "Reusable skills compared with tools, MCP and subagents, and how to compose them into larger workflows.", "https://www.deeplearning.ai/courses/agent-skills-with-anthropic"]]], ["Workflow automation in production", "make it run the business", "#E2725B", [["CrewAI", "Design, Develop, and Deploy Multi-Agent Systems with CrewAI", "Beginner", "Course · 13h8m", "Jul 2026", [8, 9, 10, 11], "outline", "Agent use cases, planning and building multi-agent systems, then production: debugging, observing and optimizing them at scale.", "https://www.deeplearning.ai/courses/design-develop-and-deploy-multi-agent-systems-with-crewai"], ["LlamaIndex", "Event-Driven Agentic Document Workflows", "Beginner", "Short course · 1h19m", "Jul 2026", [10], "outline", "Event-driven workflows that parse forms, retrieve answers with RAG and pause for a person to review.", "https://www.deeplearning.ai/courses/event-driven-agentic-document-workflows"], ["Astronomer", "Orchestrating Workflows for GenAI Applications", "Intermediate", "Short course · 1h48m", "Jul 2026", [10, 13], "outline", "Turn a notebook prototype into a scheduled, retrying production pipeline with Airflow.", "https://www.deeplearning.ai/courses/orchestrating-workflows-for-genai-applications"], ["Redis", "Semantic Caching for AI Agents", "Intermediate", "Short course · 1h24m", "Jul 2026", [4, 10], "outline", "Reuse answers by meaning, then measure hit rate, precision and latency: a direct lever on cost per request.", "https://www.deeplearning.ai/courses/semantic-caching-for-ai-agents"]]], ["Quality, safety & delivery", "prove it, govern it, ship it", "#8B7FD4", [["Arize AI", "Evaluating AI Agents", "Beginner", "Short course · 2h36m", "Jul 2026", [11, 10], "outline", "Tracing agents, router and skill evaluations, trajectory evaluations, structured experiments, and improving the LLM judge.", "https://www.deeplearning.ai/courses/evaluating-ai-agents"], ["Snowflake", "Building and Evaluating Data Agents", "Intermediate", "Short course · 1h59m", "Aug 2026", [10, 11], "outline", "A planner, executor and sub-agents over company data, then measuring and improving how well the agent's goal, plan and actions line up.", "https://www.deeplearning.ai/courses/building-and-evaluating-data-agents"], ["Databricks", "DSPy: Build and Optimize Agentic Apps", "Intermediate", "Short course · 59m", "Jul 2026", [11], "outline", "Program agents with signatures and modules, trace them with MLflow, and optimize them automatically.", "https://www.deeplearning.ai/courses/dspy-build-optimize-agentic-apps"], ["Databricks", "Governing AI Agents", "Beginner", "Short course · 1h30m", "Jul 2026", [12], "outline", "Lifecycle, risk, security and observability: give an agent an identity, restrict its data access, and log its inputs, outputs and decisions.", "https://www.deeplearning.ai/courses/governing-ai-agents"], ["GuardrailsAI", "Safe and Reliable AI via Guardrails", "Beginner", "Short course · 1h42m", "Jul 2026", [12], "outline", "Input and output guards for hallucinations, off-topic answers and PII leaks, added to a customer-service chatbot.", "https://www.deeplearning.ai/courses/safe-and-reliable-ai-via-guardrails"], ["DeepLearning.AI", "Machine Learning in Production", "Intermediate", "Course · 10h59m", "Aug 2026", [13], "summary", "Project scoping, data needs, modelling and deployment of production ML systems, with baselines, concept drift and continuous improvement.", "https://www.deeplearning.ai/courses/machine-learning-in-production"]]]];
+$('#dl-phases').innerHTML=DLR.map(([n,s,c,list])=>phase(n,s,c,list.map(([who,title,lvl,kind,upd,st,ev,why,url])=>`
+  <div class="course"><div class="top"><span class="code">${esc(who)}</span><span class="tag lvl">${lvl}</span></div>
+  <h4>${esc(title)}</h4><p>${esc(why)}</p><div class="chips">${chips(st)}</div>
+  <div class="meta">${kind} · updated ${upd} · <span class="ev">evidence: ${ev}</span> · <a href="${url}" target="_blank" rel="noopener">course page ↗</a></div></div>`).join(''))).join('')+legend;
+// AI Engineering from Scratch: [label, title, tag, url, stages, why]
+const AIE=[["Discover & frame", "start from the business", "#F2A93B", [["Claude certification · lesson 22", "Business Discovery, Requirements, and SLAs", "CCAR-P", "https://aiengineeringfromscratch.com/lesson?path=certifications%2Fclaude%2Flessons%2F22-business-discovery-requirements-and-slas&track=claude-ccar-p", [2, 13], "Turn a broad AI request into a measurable problem, requirement categories, SLOs and a discovery brief stakeholders can approve."], ["Phase 14 · lesson 47", "Define the Outcome Before You Choose the Output", "Agent Engineering", "https://aiengineeringfromscratch.com/lesson?path=phases%2F14-agent-engineering%2F47-outcomes-before-output", [2], "An outcome frame covering the user, situation, behavior change, constraints and non-goals; spot a solution named too early."], ["Claude certification · lesson 7", "Design the Handoff Before the Automation", "Certification", "https://aiengineeringfromscratch.com/lesson?path=certifications%2Fclaude%2Flessons%2F07-workflow-design-and-human-handoffs", [2, 10], "Decide for each step whether to assist, automate, redesign or reject, and measure value net of review and maintenance cost."], ["Phase 14 · lesson 52", "Design Success Metrics Before the Result Exists", "Agent Engineering", "https://aiengineeringfromscratch.com/lesson?path=phases%2F14-agent-engineering%2F52-design-success-metrics", [2, 11, 13], "Work from goals to questions to metrics, with thresholds and guardrail metrics set before any result exists."]]], ["Architect & justify", "choose the design, defend the cost", "#F2A93B", [["Claude certification · lesson 23", "End-to-End Architecture and Value Tradeoffs", "CCAR-P", "https://aiengineeringfromscratch.com/lesson?path=certifications%2Fclaude%2Flessons%2F23-end-to-end-architecture-and-value-tradeoffs&track=claude-ccar-p", [3, 4, 5], "Choose between a single augmented call, a workflow, an agent and a multi-agent system, and defend the cost, latency, quality and safety tradeoffs."], ["Phase 14 · lesson 12", "Anthropic's Workflow Patterns: Simple Over Complex", "Agent Engineering", "https://aiengineeringfromscratch.com/lesson?path=phases%2F14-agent-engineering%2F12-anthropic-workflow-patterns", [3, 8], "Workflows versus agents, the five workflow patterns, and when to use which."], ["Claude certification · lesson 2", "Spend Capability Where Failure Is Expensive", "CCAR-P", "https://aiengineeringfromscratch.com/lesson?path=certifications%2Fclaude%2Flessons%2F02-model-selection-and-token-economics&track=claude-ccar-p", [1, 4], "Model choice as an allocation of cost, speed and quality, and how to tell model failure from prompt or context failure."], ["Phase 17 · lesson 27", "FinOps for LLMs — Unit Economics and Multi-Tenant Attribution", "Infrastructure and Production", "https://aiengineeringfromscratch.com/lesson?path=phases%2F17-infrastructure-and-production%2F27-finops-llms", [4], "Unit economics for LLM features: cost attribution per tenant and an enforcement ladder from rate limit to kill switch."], ["Claude certification · lesson 24", "RAG, Retrieval, and Data Pipelines", "CCAR-P", "https://aiengineeringfromscratch.com/lesson?path=certifications%2Fclaude%2Flessons%2F24-rag-retrieval-and-data-pipelines&track=claude-ccar-p", [3, 7], "Data readiness for RAG: ingestion, chunking, retrieval choice, freshness, access control and provenance."]]], ["Prototype & sell", "de-risk, then present", "#F2A93B", [["Phase 14 · lesson 49", "Map Assumptions and Resolve the Riskiest One First", "Agent Engineering", "https://aiengineeringfromscratch.com/lesson?path=phases%2F14-agent-engineering%2F49-map-assumptions-and-risk", [2, 5, 6], "Score assumptions on impact, uncertainty and irreversibility, then pick the next experiment by risk."], ["Phase 14 · lesson 50", "Choose the Smallest Slice That Can Change the Decision", "Agent Engineering", "https://aiengineeringfromscratch.com/lesson?path=phases%2F14-agent-engineering%2F50-choose-the-smallest-testable-slice", [5, 6], "Prioritize work by outcome value, uncertainty reduction, effort and consequence."], ["Phase 14 · lesson 53", "Choose Prototype, Pilot, or Production Deliberately", "Agent Engineering", "https://aiengineeringfromscratch.com/lesson?path=phases%2F14-agent-engineering%2F53-prototype-pilot-or-production", [6, 13], "Exit criteria for prototype, pilot and production, so prototypes don't quietly become production."], ["Claude certification · lesson 28", "Stakeholder Communication, ADRs, and Lifecycle Ownership", "CCAR-P", "https://aiengineeringfromscratch.com/lesson?path=certifications%2Fclaude%2Flessons%2F28-stakeholder-communication-adrs-and-lifecycle&track=claude-ccar-p", [5, 13, 14], "Present one architecture to executive, product and engineering audiences, with decision records, rollout gates and change management."], ["Claude certification · lesson 32", "Architect Professional System Capstone", "CCAR-P", "https://aiengineeringfromscratch.com/lesson?path=certifications%2Fclaude%2Flessons%2F32-architect-professional-system-capstone&track=claude-ccar-p", [6, 13], "A full discovery-to-operations evidence packet, presented to executive, engineering and control audiences."]]], ["Build agents & automate", "from loop to production runtime", "#E2725B", [["Phase 14 · lesson 1", "The Agent Loop: Observe, Think, Act", "Agent Engineering", "https://aiengineeringfromscratch.com/lesson?path=phases%2F14-agent-engineering%2F01-the-agent-loop", [8], "The observe, think, act loop that every agent harness is built on."], ["Claude certification · lesson 16", "Multi-Agent Orchestration and Delegation", "CCAR-P", "https://aiengineeringfromscratch.com/lesson?path=certifications%2Fclaude%2Flessons%2F16-multi-agent-orchestration-and-delegation&track=claude-ccar-p", [8, 9], "Single-agent, coordinator, pipeline, parallel and reviewer patterns, with delegation contracts."], ["Phase 11 · lesson 17", "Agent Framework Tradeoffs — Graph, Role, and Actor Orchestration", "Llm Engineering", "https://aiengineeringfromscratch.com/lesson?path=phases%2F11-llm-engineering%2F17-agent-framework-tradeoffs", [9], "LangGraph, CrewAI, AutoGen and Agno compared by their mental model."], ["Claude certification · lesson 11", "MCP Separates Capability From Host", "CCAR-P", "https://aiengineeringfromscratch.com/lesson?path=certifications%2Fclaude%2Flessons%2F11-mcp-server-design-and-integration&track=claude-ccar-p", [9, 3], "Host, client and server roles, and how to design an MCP server for an internal system."], ["Phase 14 · lesson 29", "Production Runtimes: Queue, Event, Cron", "Agent Engineering", "https://aiengineeringfromscratch.com/lesson?path=phases%2F14-agent-engineering%2F29-production-runtimes", [10], "Six runtime shapes (queue, event, cron and more): choose the shape before the framework."], ["Phase 15 · lesson 15", "Human-in-the-Loop: Propose-Then-Commit", "Autonomous Systems", "https://aiengineeringfromscratch.com/lesson?path=phases%2F15-autonomous-systems%2F15-propose-then-commit", [10, 12], "A durable approval queue: intent, blast radius, rollback and idempotency for every risky action."]]], ["Evaluate & govern", "evidence and controls", "#8B7FD4", [["Phase 14 · lesson 30", "Eval-Driven Agent Development", "Agent Engineering", "https://aiengineeringfromscratch.com/lesson?path=phases%2F14-agent-engineering%2F30-eval-driven-agent-development", [11], "Three eval layers (benchmarks, offline and production) and evals that gate continuous integration."], ["Claude certification · lesson 14", "Evals Turn Agent Behavior Into Engineering Evidence", "CCAR-P", "https://aiengineeringfromscratch.com/lesson?path=certifications%2Fclaude%2Flessons%2F14-evals-testing-debugging-and-observability&track=claude-ccar-p", [11], "Eval layers, checking model graders against human judgment, and sorting failures by type."], ["Claude certification · lesson 27", "Enterprise Governance, Compliance, and Human Review", "CCAR-P", "https://aiengineeringfromscratch.com/lesson?path=certifications%2Fclaude%2Flessons%2F27-enterprise-governance-compliance-and-hitl&track=claude-ccar-p", [12, 10], "Turn policy into owned controls, with fairness, transparency and audit evidence."], ["Claude certification · lesson 13", "Security Lives Outside the Prompt", "CCAR-P", "https://aiengineeringfromscratch.com/lesson?path=certifications%2Fclaude%2Flessons%2F13-application-security-and-secrets&track=claude-ccar-p", [12], "Prompt-injection threat models, secrets, least privilege and redacted logs."]]], ["Lead the change", "make it stick", "#5FB88A", [["Claude certification · lesson 15", "Claude Code Scales Through Shared Constraints", "CCAR-P", "https://aiengineeringfromscratch.com/lesson?path=certifications%2Fclaude%2Flessons%2F15-claude-code-for-development-teams&track=claude-ccar-p", [14], "Team-wide conventions for AI coding: onboarding, scoped configuration, versioning and CI boundaries."], ["Phase 14 · lesson 46", "Turn Every Agent Correction into a System Improvement", "Agent Engineering", "https://aiengineeringfromscratch.com/lesson?path=phases%2F14-agent-engineering%2F46-turn-feedback-into-system", [14], "Turn individual corrections into lasting team controls."], ["Phase 14 · lesson 54", "Build a Feedback Ratchet with Ownership and Retirement", "Agent Engineering", "https://aiengineeringfromscratch.com/lesson?path=phases%2F14-agent-engineering%2F54-build-the-feedback-ratchet", [5, 13], "Turn incidents and evals into owned, prioritized actions, with ownership and retirement."]]]];
+$('#aie-phases').innerHTML=AIE.map(([n,s,c,list])=>phase(n,s,c,list.map(([label,title,tag,url,st,why])=>`
+  <div class="course"><div class="top"><span class="code">${esc(label)}</span><span class="tag ${tag==='CCAR-P'?'off':'lvl'}">${esc(tag)}</span></div>
+  <h4>${esc(title)}</h4><p>${esc(why)}</p><div class="chips">${chips(st)}</div>
+  <div class="meta"><span class="ev">evidence: objectives</span> · <a href="${url}" target="_blank" rel="noopener">lesson ↗</a></div></div>`).join(''))).join('')+legend;
+// coverage map: [stage, [level, Stanford], [level, DeepLearning.AI], [level, AI Engineering from Scratch]]
+const COV=[[1, ["full", "CS 106EA · MKTG 321 · OIT 367"], ["full", "AI for Everyone · Generative AI for Everyone · AI Prompting for Everyone"], ["part", "Certification lessons 1–2 (product landscape, model selection) and capability-trend lessons; no plain-language primer"]], [2, ["full", "EE 205 (customer jobs, feasibility, value) · CS 177 · STRAMGT 356 (customer discovery) · MS&E 219 (problem formulation)"], ["part", "AI for Everyone (building AI projects) · Generative AI for Everyone; no structured discovery or requirements method"], ["full", "Certification lesson 22 (discovery, requirements, SLAs) · phase 14 lessons 47 and 52 · certification lesson 7 (handoffs)"]], [3, ["full", "CS 329Z (decompose, choose components, tradeoffs) · MS&E 203 (AI fit) · MS&E 219"], ["part", "Agentic AI (task decomposition) · RAG; no build-vs-buy or architecture-tradeoff course"], ["full", "Certification lesson 23 (architecture and value tradeoffs) · phase 14 lesson 12 (workflow patterns) · certification lesson 24"]], [4, ["part", "OIT 551 (cost and benefit of an AI capability) · STRAMGT 221 (make or buy, value capture) · EE 205 (value sizing); no token cost modelling"], ["part", "Agentic AI (latency and cost) · Semantic Caching; no ROI or pricing"], ["part", "Certification lessons 2 and 23 · phase 17 lesson 27 (FinOps); no ROI, TCO or pricing lesson"]], [5, ["full", "OIT 551 · STRAMGT 221 · CS 177 (roadmapping) · OB 301"], ["part", "AI for Everyone (AI transformation playbook) · Generative AI for Everyone (AI strategy)"], ["part", "Phase 14 lessons 49–50 (risk-first slicing) · certification lesson 28; no portfolio or roadmap lesson"]], [6, ["full", "EE 205 (MVP for a corporate partner) · MS&E 203 (Demo Day) · CS 177 · STRAMGT 356 · CS 224G"], ["full", "Fast Prototyping with Streamlit · Spec-Driven Development · Claude Code"], ["full", "Phase 14 lessons 50 and 53 · certification lesson 32 (capstone evidence packet)"]], [7, ["full", "CS 329Z (RAG and tools from scratch) · CS 224V · CS 224G · CS 329T"], ["full", "Building Systems with the ChatGPT API · RAG · Context Engineering"], ["full", "Phase 11 (prompting, structured output, RAG, function calling) · certification lesson 24"]], [8, ["full", "CS 329Z · CS 224V · MS&E 103"], ["full", "Agentic AI (reflection, tools, planning, multi-agent) · crewAI courses"], ["full", "Phase 14 lessons 1 and 12 · certification lesson 16 (multi-agent)"]], [9, ["part", "CS 329Z (DSPy) · CS 224V; MCP and A2A not named"], ["full", "AI Agents in LangGraph · MCP · A2A · Agent Skills · crewAI"], ["full", "Phase 11 lesson 17 (framework tradeoffs) · certification lesson 11 (MCP) · phase 13 (A2A, skills)"]], [10, ["part", "OIT 523 (routing AI workflows, human-in-the-loop) · MS&E 103 (enterprise workflows)"], ["full", "Deploy Multi-Agent Systems with CrewAI · Event-Driven Document Workflows · Orchestrating Workflows · LangGraph (human-in-the-loop)"], ["full", "Phase 14 lesson 29 (runtimes) · phase 15 lesson 15 (propose then commit) · certification lessons 7 and 26"]], [11, ["full", "CS 321M (measurement science) · MS&E 203 · CS 329T · OIT 367 (experimental design)"], ["full", "Evaluating AI Agents · Building and Evaluating Data Agents · DSPy · Agentic AI (error analysis)"], ["full", "Phase 14 lesson 30 (eval-driven development) · certification lesson 14 · phase 14 lesson 52"]], [12, ["full", "CS 120 · CS 283 (EU AI Act) · OIT 523 (safety)"], ["part", "Governing AI Agents · Guardrails; no regulation or compliance course"], ["full", "Certification lessons 27 (governance, compliance) and 13 (security) · phase 17–18 compliance lessons"]], [13, ["part", "GSBGID 316 · CS 177 · MS&E 203; no AI-specific rollout or delivery course"], ["part", "Machine Learning in Production (lifecycle) · Spec-Driven Development · Orchestrating Workflows; no stakeholder or rollout course"], ["full", "Certification lessons 22 (SLAs), 28 (decision records, lifecycle) and 32 · phase 14 lessons 53–54"]], [14, ["full", "OIT 551 (managing data-science teams) · OB 301 · OB 310 · CS 183E"], ["part", "AI for Everyone (AI team roles, transformation playbook) only"], ["part", "Certification lesson 15 (team conventions) · phase 14 lesson 46 · certification lesson 28; no team-design lesson"]]];
+const LV={full:'Covered',part:'Partly',gap:'Gap'};
+const cell=([l,t])=>`<td class="what"><span class="cov ${l}">${LV[l]}</span><br>${esc(t)}</td>`;
+$('#covtable').innerHTML='<thead><tr><th>Atlas stage</th><th>Stanford courses</th><th>DL.AI courses</th><th>AI Engineering from Scratch</th></tr></thead><tbody>'+
+ COV.map(([s,a,b,c])=>`<tr><td>${s} · ${STAGE[s]}</td>${cell(a)}${cell(b)}${cell(c)}</tr>`).join('')+'</tbody>';
+</script>
+<script>
+// ---- stages: Learn / Deliverable / Why for each of the 14 stages ----
+// fam picks the colour family: biz = business to AI, agent = agents & automation,
+// quality = evaluation & governance, lead = delivery & leadership.
+const STAGES=[{"n": "AI Literacy & Capability Map", "fam": "biz", "learn": "What machine learning, generative AI and agents can and can't do; hallucination, sycophancy and non-determinism; the model and vendor landscape.", "lab": "A one-page capability-and-limits brief for a client's leadership: three things AI can do for them this year, three it can't, and why.", "why": "Clients buy from the person who can say no credibly. Knowing the limits is what makes your yes believable."}, {"n": "Discovery & Use-Case Framing", "fam": "biz", "learn": "Outcome framing, mapping the real workflow, use-case identification, feasibility and data readiness, requirements, SLAs and success metrics.", "lab": "A discovery brief for one real business process: the outcome, the current workflow, the AI opportunity, data readiness, requirements, SLAs and the success metric.", "why": "Most failed AI projects solved the wrong problem. Discovery is where a solution architect earns trust."}, {"n": "Solution Patterns & Architecture", "fam": "biz", "learn": "Choosing between a prompt, RAG, a workflow, an agent or fine-tuning; build, buy or partner; reference architectures; where people hand off.", "lab": "An options analysis for the same use case: two or three candidate architectures compared on quality, cost, latency, risk and effort, with a recommendation.", "why": "The simplest pattern that meets the requirement usually wins. Clients pay for that judgment, not for the most complex diagram."}, {"n": "Business Case & AI Economics", "fam": "biz", "learn": "Token and inference cost models, ROI and value models, total cost of ownership, and pricing for AI services.", "lab": "A business case: cost per successful outcome, annual run cost, expected value, payback period, and the assumptions that would change the decision.", "why": "Pre-sales lives or dies on the business case. A credible cost model is what separates a proposal from a demo."}, {"n": "AI Strategy & Roadmap", "fam": "biz", "learn": "Use-case portfolios and prioritization, assumption and risk mapping, roadmaps, and the AI operating model.", "lab": "A 12-month AI roadmap for a client: a prioritized portfolio of use cases, sequenced by value and risk, with the capabilities each phase needs.", "why": "One use case is a project. A roadmap turns it into a program and a long-term client relationship."}, {"n": "Prototyping, PoC & Pre-Sales", "fam": "biz", "learn": "The smallest testable slice, rapid prototyping with AI coding tools, specifications for agents, PoCs with exit criteria, and the solution pitch.", "lab": "A working PoC with written exit criteria, plus a 10-minute pitch that ties the demo to the business case.", "why": "A prototype that answers the riskiest question in two weeks beats a polished demo that answers none."}, {"n": "LLM App Building Blocks", "fam": "agent", "learn": "Prompting and task decomposition, structured output, function calling, RAG over company knowledge, and context engineering.", "lab": "A grounded assistant over a client's documents that answers with citations and returns structured output another system can use.", "why": "Every agent is built from these parts. Knowing them lets you scope work accurately and catch vendor overclaims."}, {"n": "Agent Design Patterns", "fam": "agent", "learn": "The agent loop, reflection, planning, memory and multi-agent orchestration.", "lab": "An agentic workflow for one business process, such as invoice handling or support-ticket triage, using planning, tools and a reviewer step.", "why": "Patterns, not frameworks, decide whether an agent is reliable. Frameworks change every quarter; the patterns don't."}, {"n": "Agent Frameworks, Tools & Protocols", "fam": "agent", "learn": "LangGraph, CrewAI and agent SDKs; MCP for tools and data; A2A for agent-to-agent calls; integration with enterprise systems.", "lab": "An MCP server that exposes one internal system, such as a CRM or ticketing tool, safely to an agent, with read and write tools kept separate.", "why": "Integration is where enterprise automation actually happens, and where most of the effort and risk sit."}, {"n": "Workflow Automation in Production", "fam": "agent", "learn": "Production runtimes (queue, event, schedule), human-in-the-loop approvals, document workflows, agent observability and cost governors.", "lab": "A production-shaped automation: event-triggered, with a human approval step for risky actions, tracing on every step and a spend cap.", "why": "A demo agent becomes a business system only when it is triggered, supervised, observed and budgeted."}, {"n": "Evaluation & Quality Improvement", "fam": "quality", "learn": "Eval datasets, LLM-as-judge, error analysis, A/B testing and evals as release gates.", "lab": "An eval suite for your agent: a labelled test set, a judge checked against human ratings, an error analysis and a pass threshold that gates release.", "why": "Evals turn 'it seems to work' into evidence a client can sign off on, and show you where to improve next."}, {"n": "Governance, Safety & Risk", "fam": "quality", "learn": "Data classification, guardrails and PII masking, prompt-injection defense, identity and least privilege, regulation such as the EU AI Act, and audit.", "lab": "A control matrix for the solution: each risk, the control that addresses it, who owns it, and the evidence an auditor would see.", "why": "In banking and other regulated industries, the governance design often decides whether a project is allowed to ship."}, {"n": "AI Project Delivery End to End", "fam": "lead", "learn": "Decision records and stakeholder communication, rollout from pilot to production, SLA operations and incident runbooks, and feedback loops.", "lab": "A delivery plan: milestones from PoC to production, rollout gates, an SLA and runbook, and the decision log stakeholders approve.", "why": "AI projects fail in delivery more often than in modelling. Gates, owners and runbooks keep them alive after launch."}, {"n": "Leading AI Teams & Transformation", "fam": "lead", "learn": "AI team design and roles, change management and adoption, and turning every correction into a lasting team practice.", "lab": "An adoption plan: who is affected, the new roles and skills, training, success measures, and how feedback flows back into the system.", "why": "Technology is the easy part. Adoption and team design decide whether the value shows up in the business."}];
+const FAM={"pre": "#65748F", "biz": "#F2A93B", "agent": "#E2725B", "quality": "#8B7FD4", "lead": "#5FB88A"};
+// ---- concepts: s = stage index (0-13), or -1 for a prerequisite ----
+const NODES=[["llm", "How LLMs Work", -1, "Tokens, context windows and next-token prediction: the base for judging what any AI solution can do."], ["python", "Python & APIs", -1, "Enough code to prototype, call model APIs and read what engineers build."], ["biz", "Business & Finance Basics", -1, "Processes, P&L and unit economics: the language every business case is written in."], ["stats", "Data & Statistics Basics", -1, "Samples, variance and significance: needed to trust an eval or an A/B test."], ["capmap", "AI Capability Map", 0, "What ML, generative AI and agents are good at today, mapped to business tasks."], ["limits", "Limits & Failure Modes", 0, "Hallucination, sycophancy, non-determinism and stale knowledge: why AI needs guardrails and review."], ["landscape", "Model & Vendor Landscape", 0, "Frontier and open models, cloud platforms and vendors: what a client can actually buy or run."], ["outcome", "Outcome Framing", 1, "Name the user, the behavior change and the measure before naming a solution."], ["workflow", "Workflow Discovery", 1, "Map how the work really happens: steps, handoffs, hidden state and who has authority."], ["usecase", "Use-Case Identification", 1, "Spot the steps where AI adds value: assist, automate, redesign or leave alone."], ["feasibility", "Feasibility & Data Readiness", 1, "Check the data exists, is accessible and good enough, and that the task suits AI at all."], ["requirements", "Requirements & SLAs", 1, "Functional, quality, latency, safety and operational requirements a stakeholder can sign."], ["metrics", "Success Metrics", 1, "Business and quality measures with thresholds, agreed before any result exists."], ["patterns", "Pattern Selection", 2, "Prompt, RAG, workflow, agent or fine-tune: the simplest pattern that meets the requirement."], ["buildbuy", "Build vs Buy vs Partner", 2, "When to use a vendor product, a platform or a custom build."], ["handoff", "Human Handoff Design", 2, "Where people review, approve or take over, designed before the automation."], ["refarch", "Reference Architecture", 2, "The end-to-end design: data, models, tools, integration points, controls and operations."], ["tokencost", "Token & Inference Cost", 3, "Cost per request from tokens, caching, batching and model routing."], ["roi", "ROI & Value Model", 3, "Value per outcome against cost per outcome, with the assumptions made explicit."], ["tco", "Total Cost of Ownership", 3, "Build, run, review and maintenance costs over the life of the solution."], ["pricing", "Pricing & Commercial Model", 3, "How to price an AI service: fixed fee, per outcome, per seat or usage-based."], ["riskmap", "Assumption & Risk Mapping", 4, "Score assumptions by impact and uncertainty, and test the riskiest one first."], ["portfolio", "Use-Case Portfolio", 4, "Rank opportunities across the business by value, feasibility and risk."], ["roadmap", "AI Roadmap", 4, "Sequence use cases and capabilities into phases leadership can fund."], ["opmodel", "AI Operating Model", 4, "Who owns AI decisions, platforms and controls: central, federated or embedded."], ["slice", "Smallest Testable Slice", 5, "The cheapest experiment that can change the decision."], ["spec", "Specifications for Agents", 5, "Specs that lock what must not change, bound what may, and delegate the rest."], ["prototype", "Rapid Prototype", 5, "A working demo built in days with AI coding tools."], ["poc", "PoC with Exit Criteria", 5, "A pilot whose pass, fail and stop conditions are agreed up front."], ["proposal", "Proposal & Solution Pitch", 5, "Architecture, business case and evidence presented as one recommendation."], ["prompting", "Prompting & Task Decomposition", 6, "Turn a request into a testable contract and break the work into steps."], ["structured", "Structured Output", 6, "Schema-checked output that downstream systems can trust."], ["tools", "Function Calling", 6, "The model requests an action; your code decides whether to run it."], ["rag", "RAG over Company Knowledge", 6, "Ground answers in the client's own documents, with citations and access control."], ["context", "Context Engineering", 6, "Decide what goes into the context window, in what order, within a token budget."], ["loop", "Agent Loop", 7, "Observe, think, act, repeat: the core of every agent."], ["reflection", "Reflection", 7, "The agent critiques and revises its own output."], ["planning", "Planning", 7, "Break a goal into steps before acting."], ["memory", "Agent Memory", 7, "What the agent keeps across steps and sessions, and what it should forget."], ["multiagent", "Multi-Agent Orchestration", 7, "Coordinator, pipeline and reviewer patterns, and when one agent is enough."], ["mcp", "MCP", 8, "The standard way to plug tools and data into agents."], ["frameworks", "Agent Frameworks & SDKs", 8, "LangGraph, CrewAI and agent SDKs: state, checkpoints and orchestration."], ["a2a", "A2A Protocol", 8, "Agents calling other agents across teams and vendors."], ["integration", "Enterprise Integration", 8, "Connect agents to CRM, ERP, ticketing and document systems."], ["runtime", "Production Runtimes", 9, "Queue, event and schedule triggers: how automations run without a chat window."], ["hitl", "Human-in-the-Loop Approvals", 9, "Propose, then commit: risky actions wait for a person to approve."], ["docflow", "Document & Form Workflows", 9, "Extract, check and route invoices, forms and contracts."], ["observability", "Agent Observability", 9, "Trace every step, tool call and cost so failures can be found."], ["costgov", "Cost Governors", 9, "Budgets, iteration caps and kill switches that stop runaway spend."], ["evalset", "Eval Datasets", 10, "Labelled examples drawn from real cases, including the hard ones."], ["judge", "LLM-as-Judge", 10, "A model grades outputs, checked against human ratings."], ["erroranalysis", "Error Analysis", 10, "Read the failures, tag their causes, and fix the most frequent first."], ["abtest", "A/B & Online Evaluation", 10, "Do users and the business actually benefit in production?"], ["evalgate", "Evals as Release Gates", 10, "No release unless the eval suite passes its threshold."], ["dataclass", "Data Classification & Privacy", 11, "Which data may reach which model, and on what terms."], ["guardrails", "Guardrails & PII Masking", 11, "Input and output checks that block leaks, abuse and off-topic answers."], ["injection", "Prompt-Injection Defense", 11, "Stop instructions hidden in documents or web pages from hijacking an agent."], ["leastpriv", "Identity & Least Privilege", 11, "Agents act with the user's identity and only the permissions they need."], ["compliance", "Regulation & Compliance", 11, "EU AI Act risk tiers, sector rules, and frameworks such as ISO 42001."], ["governance", "Governance & Audit", 11, "Owned controls, audit evidence and an incident path."], ["adr", "Decision Records & Stakeholders", 12, "Architecture decisions written down and explained to executives, product and engineering."], ["rollout", "Pilot-to-Production Rollout", 12, "Shadow, canary and staged rollout, with a gate at each step."], ["slaops", "SLA Operations & Runbooks", 12, "Monitoring, incident response and runbooks against the agreed SLA."], ["feedback", "Feedback Loop", 12, "Incidents and eval failures become owned, prioritized fixes."], ["team", "AI Team Design & Roles", 13, "The roles an AI program needs and how they work together."], ["change", "Change Management & Adoption", 13, "Training, communication and incentives so people actually use the system."], ["culture", "Learning Culture", 13, "Every correction becomes a lasting team practice, not a one-off fix."]];
+// ---- edges: [concept, prerequisite] ----
+const EDGES=[["capmap", "llm"], ["limits", "llm"], ["landscape", "capmap"], ["outcome", "biz"], ["workflow", "outcome"], ["usecase", "capmap"], ["usecase", "workflow"], ["feasibility", "usecase"], ["feasibility", "limits"], ["requirements", "feasibility"], ["metrics", "outcome"], ["metrics", "stats"], ["patterns", "feasibility"], ["patterns", "prompting"], ["patterns", "rag"], ["buildbuy", "patterns"], ["buildbuy", "landscape"], ["handoff", "workflow"], ["refarch", "patterns"], ["refarch", "buildbuy"], ["refarch", "handoff"], ["tokencost", "landscape"], ["roi", "metrics"], ["roi", "biz"], ["roi", "tokencost"], ["tco", "tokencost"], ["tco", "buildbuy"], ["pricing", "roi"], ["pricing", "tco"], ["riskmap", "feasibility"], ["portfolio", "usecase"], ["portfolio", "roi"], ["roadmap", "portfolio"], ["roadmap", "riskmap"], ["opmodel", "roadmap"], ["slice", "riskmap"], ["slice", "metrics"], ["spec", "requirements"], ["prototype", "slice"], ["prototype", "prompting"], ["prototype", "spec"], ["poc", "prototype"], ["poc", "evalset"], ["proposal", "poc"], ["proposal", "roi"], ["proposal", "refarch"], ["prompting", "llm"], ["structured", "prompting"], ["structured", "python"], ["tools", "structured"], ["rag", "prompting"], ["rag", "python"], ["context", "rag"], ["loop", "tools"], ["reflection", "loop"], ["planning", "loop"], ["memory", "context"], ["memory", "loop"], ["multiagent", "planning"], ["multiagent", "reflection"], ["mcp", "tools"], ["frameworks", "multiagent"], ["frameworks", "memory"], ["a2a", "multiagent"], ["a2a", "mcp"], ["integration", "mcp"], ["runtime", "frameworks"], ["runtime", "integration"], ["hitl", "handoff"], ["hitl", "runtime"], ["docflow", "rag"], ["docflow", "structured"], ["docflow", "runtime"], ["observability", "runtime"], ["costgov", "tokencost"], ["costgov", "runtime"], ["evalset", "metrics"], ["judge", "evalset"], ["erroranalysis", "judge"], ["erroranalysis", "observability"], ["abtest", "evalset"], ["abtest", "stats"], ["evalgate", "erroranalysis"], ["dataclass", "requirements"], ["guardrails", "dataclass"], ["guardrails", "prompting"], ["injection", "tools"], ["injection", "guardrails"], ["leastpriv", "integration"], ["compliance", "dataclass"], ["governance", "compliance"], ["governance", "hitl"], ["governance", "leastpriv"], ["adr", "refarch"], ["rollout", "poc"], ["rollout", "evalgate"], ["slaops", "requirements"], ["slaops", "observability"], ["feedback", "erroranalysis"], ["feedback", "slaops"], ["team", "opmodel"], ["change", "roadmap"], ["change", "rollout"], ["culture", "feedback"], ["culture", "team"]];
+// one portfolio deliverable per stage: the concept each deliverable exercises
+const LABS=["limits", "requirements", "patterns", "roi", "roadmap", "proposal", "rag", "multiagent", "mcp", "hitl", "erroranalysis", "governance", "rollout", "change"];
+</script>
+<script>
+const D={nodes:NODES.map(([i,l,s,w])=>({i,l,s,w})),edges:EDGES};
+const byId={}; D.nodes.forEach(n=>byId[n.i]=n);
+const pre={},post={};
+D.nodes.forEach(n=>{pre[n.i]=[];post[n.i]=[]});
+D.edges.forEach(([a,b])=>{
+  if(!byId[a]||!byId[b]) throw new Error("unknown node in edge "+a+" → "+b);
+  pre[a].push(b);post[b].push(a);
+});
+const area=n=>n.s<0?"pre":"s"+n.s;
+const color=n=>n.s<0?FAM.pre:FAM[STAGES[n.s].fam];
+const areaName=a=>a==="pre"?"Prerequisites":`${+a.slice(1)+1}. ${STAGES[+a.slice(1)].n}`;
+
+// layer = longest prerequisite chain below a node; dep = every concept it eventually unlocks
+const depth={};
+function layer(id){ if(id in depth)return depth[id];
+  return depth[id]=pre[id].length?1+Math.max(...pre[id].map(layer)):0; }
+function downstream(id,seen=new Set()){ for(const c of post[id]) if(!seen.has(c)){seen.add(c);downstream(c,seen);} return seen; }
+D.nodes.forEach(n=>{n.d=layer(n.i); n.dep=downstream(n.i).size; n.pre=pre[n.i].length;});
+document.getElementById("s-nodes").textContent=D.nodes.length;
+document.getElementById("s-layers").textContent=Math.max(...D.nodes.map(n=>n.d))+1;
+
+let mode="all", sel=null, off=new Set();
+
+// ---- longest path (critical chain) ----
+const memo={};
+function longest(id){ if(memo[id])return memo[id];
+  if(!pre[id].length) return memo[id]=[id];
+  let best=[]; for(const p of pre[id]){const c=longest(p); if(c.length>best.length)best=c;}
+  return memo[id]=best.concat(id); }
+let chain=[]; D.nodes.forEach(n=>{const c=longest(n.i); if(c.length>chain.length)chain=c;});
+const chainSet=new Set(chain);
+const CORE_MIN=Math.ceil(D.nodes.length*0.3);
+document.getElementById("chain").innerHTML = chain.map((id,k)=>
+  `<span class="chip"><b>${k+1}</b> ${byId[id].l}</span>` +
+  (k<chain.length-1?'<span class="arrow">&rarr;</span>':'')).join("");
+
+
+// ---- labs key ----
+document.getElementById("labs-key").innerHTML =
+  `<span class="lead">One portfolio deliverable per stage:</span>` +
+  LABS.map((id,k)=>`<span class="chip" data-go="${id}"><b>${k+1}</b> ${byId[id].l}</span>`).join("");
+document.getElementById("labs-key").addEventListener("click",e=>{
+  const c=e.target.closest("[data-go]"); if(!c)return;
+  const n=byId[c.dataset.go]; sel=n.i; draw(); panel(n);
+});
+
+// ---- legend ----
+const areaOrder=["pre",...STAGES.map((_,k)=>"s"+k)];
+const areaColor=a=>a==="pre"?FAM.pre:FAM[STAGES[+a.slice(1)].fam];
+document.getElementById("legend").innerHTML = areaOrder.map(a=>
+  `<button class="lg" data-a="${a}" aria-pressed="true"><i style="background:${areaColor(a)}"></i>${areaName(a)}</button>`).join("");
+document.getElementById("legend").addEventListener("click",e=>{
+  const b=e.target.closest(".lg"); if(!b)return;
+  const a=b.dataset.a;
+  if(off.has(a)){off.delete(a);b.setAttribute("aria-pressed","true");}
+  else{off.add(a);b.setAttribute("aria-pressed","false");}
+  draw();
+});
+
+const svg=document.getElementById("svg");
+const NS="http://www.w3.org/2000/svg";
+const el=(t,at)=>{const e=document.createElementNS(NS,t);for(const k in at)e.setAttribute(k,at[k]);return e;};
+const labSet=new Set(LABS);
+
+function visible(){
+  return D.nodes.filter(n=>{
+    if(off.has(area(n)))return false;
+    if(mode==="core") return n.dep>=CORE_MIN || chainSet.has(n.i);
+    return true;
+  });
+}
+
+function draw(){
+  const vis=visible(), vset=new Set(vis.map(n=>n.i));
+  const layers={}; vis.forEach(n=>(layers[n.d]=layers[n.d]||[]).push(n));
+  const depths=Object.keys(layers).map(Number).sort((a,b)=>a-b);
+
+  const ROW=74, PADT=34, PADL=64, CW=158, GAP=12;
+  const widest=Math.max(...depths.map(d=>layers[d].length),1);
+  const W=Math.max(PADL+widest*(CW+GAP)+28, 900);
+  const H=PADT+depths.length*ROW+40;
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  svg.setAttribute("width",W); svg.setAttribute("height",H);
+  svg.innerHTML="";
+
+  const pos={};
+  depths.forEach((d,ri)=>{
+    const row=layers[d].slice().sort((a,b)=>b.dep-a.dep);
+    const y=PADT+ri*ROW;
+    const totalW=row.length*CW+(row.length-1)*GAP;
+    const x0=PADL+((widest*(CW+GAP)-GAP)-totalW)/2;
+    row.forEach((n,ci)=>{pos[n.i]={x:x0+ci*(CW+GAP),y,w:CW,h:34};});
+    svg.appendChild(el("line",{x1:PADL-12,y1:y+17,x2:W-16,y2:y+17,class:"lane-rule"}));
+    const t=el("text",{x:12,y:y+21,class:"lane"}); t.textContent="L"+d; svg.appendChild(t);
+  });
+
+  const eg=el("g",{});
+  D.edges.forEach(([a,b])=>{
+    if(!vset.has(a)||!vset.has(b))return;
+    const A=pos[a],B=pos[b]; if(!A||!B)return;
+    const ax=A.x+A.w/2, ay=A.y, bx=B.x+B.w/2, by=B.y+B.h;
+    const my=(ay+by)/2;
+    let cls="edge";
+    if(sel){ if(a===sel||b===sel) cls+= (b===sel?" cool":" hot"); }
+    eg.appendChild(el("path",{d:`M${ax},${ay} C${ax},${my} ${bx},${my} ${bx},${by}`,class:cls}));
+  });
+  svg.appendChild(eg);
+
+  const maxDep=Math.max(...vis.map(n=>n.dep),1);
+  vis.forEach(n=>{
+    const P=pos[n.i];
+    const metric=n.dep/maxDep;
+    const g=el("g",{class:"node"+(sel&&sel!==n.i&&!pre[sel].includes(n.i)&&!post[sel].includes(n.i)?" dim":"")+(sel===n.i?" sel":"")+(mode==="labs"?(labSet.has(n.i)?" app":" dim"):""),tabindex:"0",role:"button"});
+    g.setAttribute("aria-label",n.l);
+    const fill=color(n);
+    g.appendChild(el("rect",{x:P.x,y:P.y,width:P.w,height:P.h,
+      fill:`color-mix(in srgb, ${fill} ${8+metric*30}%, #16213A)`,stroke:fill,opacity:.96}));
+    const pw=26;
+    g.appendChild(el("rect",{x:P.x+P.w-pw-5,y:P.y+8,width:pw,height:18,rx:2,fill:fill,opacity:.92}));
+    const c=el("text",{x:P.x+P.w-pw/2-5,y:P.y+21,"text-anchor":"middle",class:"cnt"});
+    c.textContent=n.dep; g.appendChild(c);
+
+    const label=el("text",{x:P.x+9,y:P.y+21});
+    let s=n.l; const lim=Math.floor((P.w-pw-22)/5.75);
+    if(s.length>lim) s=s.slice(0,lim-1)+"…";
+    label.textContent=s; g.appendChild(label);
+    const title=el("title"); title.textContent=n.l+" — "+n.dep+" dependents"; g.appendChild(title);
+
+    const open=()=>{sel=(sel===n.i?null:n.i); draw(); if(sel)panel(n);else close();};
+    g.addEventListener("click",open);
+    g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open();}});
+    svg.appendChild(g);
+  });
+}
+
+const P=document.getElementById("panel");
+function panel(n){
+  document.getElementById("p-title").textContent=n.l;
+  const lab=LABS.indexOf(n.i);
+  document.getElementById("p-tags").innerHTML=
+    `<span class="tag">${areaName(area(n))}</span><span class="tag">layer ${n.d}</span>`+
+    (lab>=0?`<span class="tag app">Deliverable ${lab+1}</span>`:"");
+  document.getElementById("p-why").textContent=n.w;
+  document.getElementById("p-dep").textContent=n.dep;
+  document.getElementById("p-pre").textContent=n.pre;
+  document.getElementById("p-lay").textContent=n.d;
+  const st=n.s>=0?STAGES[n.s]:null;
+  document.getElementById("p-stage").hidden=!st;
+  if(st){
+    document.getElementById("p-stage-t").textContent=`Stage ${n.s+1}: ${st.n}`;
+    document.getElementById("p-stage-lab").textContent=st.lab;
+    document.getElementById("p-stage-why").textContent=st.why;
+  }
+  const mk=(arr,empty)=>arr.length
+    ? arr.map(id=>`<li data-go="${id}">${byId[id].l}</li>`).join("")
+    : `<li class="empty">${empty}</li>`;
+  document.getElementById("p-before").innerHTML=mk(pre[n.i],"Nothing — this is a root concept.");
+  document.getElementById("p-after").innerHTML=mk(post[n.i],"Nothing — this is a destination.");
+  P.classList.add("open");
+}
+function close(){P.classList.remove("open");sel=null;draw();}
+document.getElementById("close").addEventListener("click",close);
+P.addEventListener("click",e=>{const li=e.target.closest("[data-go]");if(!li)return;
+  const n=byId[li.dataset.go]; sel=n.i; draw(); panel(n); });
+document.addEventListener("keydown",e=>{if(e.key==="Escape")close();});
+
+const MODES={"m-all":"all","m-core":"core","m-labs":"labs"};
+const HINTS={all:"Click any concept to trace its prerequisites",
+  core:"Click any concept to trace its prerequisites",
+  labs:"Glowing concepts are the ones each stage's deliverable exercises"};
+function sync(){
+  for(const id in MODES) document.getElementById(id).setAttribute("aria-pressed",mode===MODES[id]);
+  document.getElementById("labs-key").classList.toggle("on",mode==="labs");
+  document.getElementById("hint").textContent=HINTS[mode];
+  draw();
+}
+for(const id in MODES) document.getElementById(id).addEventListener("click",()=>{mode=MODES[id];sync()});
+
+draw();
+</script>
+</body>
+</html>
