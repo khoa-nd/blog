@@ -1,5 +1,15 @@
 [
   {
+    "title": "The AI Business Solution Design Atlas",
+    "kicker": "Interactive map",
+    "date": "2026-10-27",
+    "desc": "A 14-stage dependency graph for turning business needs into AI solutions and building the agents that automate business workflows, with learning routes through Stanford, DeepLearning.AI and AI Engineering from Scratch.",
+    "file": "ai-business-solution-design-atlas.html",
+    "image": "thumbs/ai-business-solution-design-atlas.jpg",
+    "imageAlt": "The AI Business Solution Design Atlas: a layered dependency graph of business and agent concepts",
+    "cta": "Explore the Atlas"
+  },
+  {
     "title": "The AI Infrastructure Atlas",
     "kicker": "Interactive map",
     "date": "2026-10-26",
