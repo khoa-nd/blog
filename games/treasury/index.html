@@ -104,6 +104,11 @@ svg.map{width:100%;height:auto;display:block;margin-top:-14px;border-radius:30px
 .grp i.gone{filter:grayscale(1);opacity:.45}
 .grp i.gone::after{content:"✖";position:absolute;inset:0;color:#e11d48;font-size:24px;font-weight:900;display:grid;place-items:center}
 .grp.sm i{font-size:20px}
+.pv{display:inline-flex;flex-wrap:wrap;gap:3px;align-items:flex-end;justify-content:center;max-width:300px;background:rgba(255,255,255,.7);border-radius:16px;padding:8px 10px}
+.pv .t{width:9px;height:46px;border-radius:3px;background:repeating-linear-gradient(#ffc83d 0 3.6px,#b8860b 3.6px 4.6px)}
+.pv .o{width:9px;height:9px;border-radius:2px;background:#ff8a1f}
+.pvkey{font-size:15px;font-weight:700;opacity:.75;margin-top:4px}
+svg.shape.sm{width:58px;height:58px}
 .gbox{display:flex;flex-direction:column;align-items:center;background:rgba(255,255,255,.7);border:3px dashed #e3c98a;border-radius:16px;padding:4px 8px;max-width:150px}
 .gbox .gi{font-size:26px}
 .gbox .grp{background:none;padding:0}
@@ -213,7 +218,7 @@ const sfx = {
   coin() { tone(988, 0, .08, 'square', .06); tone(1319, .08, .25, 'square', .06); }
 };
 function speakable(html) {
-  return html.replace(/×/g, ' times ').replace(/−/g, ' minus ').replace(/□/g, ' what number ')
+  return html.replace(/×/g, ' times ').replace(/÷/g, ' divided by ').replace(/−/g, ' minus ').replace(/□/g, ' what number ')
     .replace(/<[^>]+>/g, ' ').replace(/[^\x20-\x7E]/g, ' ').replace(/\s+/g, ' ').trim();
 }
 function speak(text) {
@@ -258,119 +263,139 @@ const clampT = (i, n) => Math.max(0, Math.min(1, i / (n - 1)));
 
 function numOptions(ans, extra = []) {
   const set = new Set([ans]);
-  const cand = [...shuffle([ans - 1, ans + 1, ans - 2, ans + 2]), ...shuffle(extra), ans + 10, ans - 10, ans + 3, ans + 4];
+  const cand = [...shuffle([ans - 1, ans + 1, ans - 2, ans + 2, ...extra]), ans + 10, ans - 10, ans + 3, ans + 4];
   for (const c of cand) { if (set.size >= 4) break; if (c >= 0) set.add(c); }
   let k = 5; while (set.size < 4) set.add(ans + k++);
   return [...set].sort((a, b) => a - b);
 }
 
-// ---- Stage 1: adding ----
+// Place-value blocks: 1 bar = 10, 1 square = 1
+const tensOf = x => x - x % 10;
+const blocks = n => `<span class="pv">${'<b class="t"></b>'.repeat(Math.floor(n / 10))}${'<b class="o"></b>'.repeat(n % 10)}</span>`;
+const PV_KEY = '<div class="pvkey">1 bar = 10 · 1 square = 1</div>';
+const steps = list => list.map((s, k) => `<span class="step"><b>Step ${k + 1}:</b> ${s}</span>`).join('');
+
+// ---- Stage 1: adding (two- and three-digit, with carrying) ----
 function genAdd(i, n) {
-  const t = clampT(i, n), max = 6 + Math.round(t * 14);
-  const a = rnd(1, max - 1), b = rnd(1, max - a), th = pick(THINGS), ans = a + b;
-  const seq = Array.from({ length: b }, (_, k) => a + k + 1).join(' → ');
-  const vis = `<div class="vis">${grp(th.e, a)}<b class="op">+</b>${grp(th.e, b)}</div>`;
+  const t = clampT(i, n), th = pick(THINGS);
+  let a, b;
+  if (t < .25) { a = rnd(1, 4) * 10 + rnd(2, 9); b = rnd(Math.max(2, 10 - a % 10), 9); }   // ones spill into a new ten
+  else if (t < .6) { a = rnd(15, 59); b = rnd(12, 39); }
+  else { a = rnd(48, 175); b = rnd(26, 99); }
+  const ans = a + b, at = tensOf(a), bt = tensOf(b), ao = a % 10, bo = b % 10;
+  const vis = `<div class="vis">${blocks(a)}<b class="op">+</b>${blocks(b)}</div>${PV_KEY}`;
   return {
-    numeric: true, answer: ans, options: numOptions(ans),
+    numeric: true, answer: ans, options: numOptions(ans, [ans + 10, ans - 10]),
     prompt: `You find <b>${a}</b> ${th.n} ${th.e} … and then <b>${b}</b> more!<br>How many now?<span class="eq">${a} + ${b} = ?</span>`,
-    visual: t < .5 ? vis : '', hintVisual: vis,
-    hint: `Start at <b>${a}</b> and count up <b>${b}</b> more:<span class="seq">${a} → ${seq}</span>`,
-    explain: `${a} + ${b} = ${ans}`
+    visual: t < .25 ? vis : '', hintVisual: vis,
+    hint: `Add the tens, then the ones:<span class="step"><b>Tens:</b> ${at} + ${bt} = ${at + bt}</span><span class="step"><b>Ones:</b> ${ao} + ${bo} = ${ao + bo}</span><span class="step"><b>Together:</b> ${at + bt} + ${ao + bo} = ?</span>`,
+    explain: `${at + bt} + ${ao + bo} = ${ans}, so ${a} + ${b} = ${ans}`
   };
 }
 
-// ---- Stage 2: taking away ----
+// ---- Stage 2: taking away (with breaking a ten) ----
 function genSub(i, n) {
-  const t = clampT(i, n), max = 8 + Math.round(t * 12);
-  const a = rnd(Math.max(4, max - 6), max), b = rnd(1, a - 1), th = pick(THINGS), ans = a - b;
-  const plain = `<div class="vis">${grp(th.e, a)}</div>`;
-  const crossed = `<div class="vis"><span class="grp">${Array.from({ length: a }, (_, k) => `<i class="${k >= a - b ? 'gone' : ''}">${th.e}</i>`).join('')}</span></div>`;
-  const hops = Array.from({ length: b }, (_, k) => a - k - 1);
-  const seq = hops.length > 7 ? [...hops.slice(0, 3), '…', ...hops.slice(-2)].join(' → ') : hops.join(' → ');
+  const t = clampT(i, n), th = pick(THINGS);
+  let a, b;
+  if (t < .25) { a = rnd(2, 6) * 10 + rnd(1, 4); b = rnd(a % 10 + 1, 9); }
+  else if (t < .6) { a = rnd(5, 9) * 10 + rnd(0, 5); b = rnd(1, Math.floor(a / 10) - 2) * 10 + rnd(a % 10 + 1, 9); }
+  else { a = rnd(120, 300); b = rnd(35, a - 20); }
+  const ans = a - b, bt = tensOf(b), bo = b % 10;
+  const vis = `<div class="vis">${blocks(a)}<b class="op">−</b>${blocks(b)}</div>${PV_KEY}`;
+  const hint = bt === 0
+    ? `Jump back to the ten first, then take the rest:${steps([`${a} − ${a % 10} = ${tensOf(a)}`, `${tensOf(a)} − ${b - a % 10} = ?`])}`
+    : bo === 0 ? `Take away the tens:${steps([`${a} − ${bt} = ?`])}`
+    : `Take away the tens first, then the ones:${steps([`${a} − ${bt} = ${a - bt}`, `${a - bt} − ${bo} = ?`])}`;
   return {
-    numeric: true, answer: ans, options: numOptions(ans),
+    numeric: true, answer: ans, options: numOptions(ans, [ans + 10, ans - 10]),
     prompt: `There are <b>${a}</b> ${th.n} ${th.e} on the ship. Oh no! <b>${b}</b> fall into the sea!<br>How many are left?<span class="eq">${a} − ${b} = ?</span>`,
-    visual: t < .5 ? plain : '', hintVisual: crossed,
-    hint: `Start at <b>${a}</b> and hop back <b>${b}</b> times:<span class="seq">${a} → ${seq}</span>Count the ones that are NOT crossed out!`,
+    visual: t < .25 ? vis : '', hintVisual: vis, hint,
     explain: `${a} − ${b} = ${ans}`
   };
 }
 
-// ---- Stage 3: shapes ----
-const SHAPES = { circle: 0, square: 4, triangle: 3, rectangle: 4, pentagon: 5, hexagon: 6 };
+// ---- Stage 3: shapes (names, sides, and sides of many shapes) ----
+const SHAPES = { circle: 0, triangle: 3, square: 4, rectangle: 4, pentagon: 5, hexagon: 6, octagon: 8 };
 const SHAPE_CLUE = {
   circle: 'Round like a coin 🪙. No corners, no straight sides!',
   square: '4 straight sides, and they are <b>all the same length</b>.',
   rectangle: '4 straight sides: 2 long and 2 short, like a door 🚪.',
   triangle: '3 straight sides and 3 corners, like a pizza slice 🍕.',
   pentagon: '5 sides, like a little house 🏠.',
-  hexagon: '6 sides, like a honeycomb 🍯.'
+  hexagon: '6 sides, like a honeycomb 🍯.',
+  octagon: '8 sides, like a stop sign 🛑.'
 };
+const SIDED = ['triangle', 'square', 'rectangle', 'pentagon', 'hexagon', 'octagon'];
 const COLS = ['#ff9b9b', '#ffd166', '#7ee8b8', '#8fd6ff', '#c9b6ff', '#ffb3d1'];
 function poly(n, r = 46, rot = -90) {
   return Array.from({ length: n }, (_, k) => { const a = (rot + k * 360 / n) * Math.PI / 180; return [60 + r * Math.cos(a), 60 + r * Math.sin(a)]; });
 }
-function shapeSVG(name, dots) {
+function shapeSVG(name, dots, cls = 'shape') {
   const col = pick(COLS);
   const pts = { square: [[20, 20], [100, 20], [100, 100], [20, 100]], rectangle: [[8, 30], [112, 30], [112, 90], [8, 90]],
-    triangle: [[60, 14], [108, 100], [12, 100]], pentagon: poly(5), hexagon: poly(6, 46, 0) }[name];
+    triangle: [[60, 14], [108, 100], [12, 100]], pentagon: poly(5), hexagon: poly(6, 46, 0), octagon: poly(8, 46, -67.5) }[name];
   const style = `fill="${col}" stroke="#4a2c0f" stroke-width="5" stroke-linejoin="round"`;
   const body = name === 'circle' ? `<circle cx="60" cy="60" r="46" ${style}/>`
     : `<polygon points="${pts.map(p => p.map(v => v.toFixed(1)).join(',')).join(' ')}" ${style}/>`;
   const marks = dots && pts ? pts.map((p, k) => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="9" fill="#e11d48" stroke="#fff" stroke-width="2"/><text class="dn" x="${p[0].toFixed(1)}" y="${p[1].toFixed(1)}">${k + 1}</text>`).join('') : '';
-  return `<svg viewBox="0 0 120 120" class="shape">${body}${marks}</svg>`;
+  return `<svg viewBox="0 0 120 120" class="${cls}">${body}${marks}</svg>`;
 }
-const SHAPE_OBJECTS = [['🚪', 'door', 'rectangle'], ['🍪', 'cookie', 'circle'], ['🍕', 'pizza slice', 'triangle'],
-  ['⏰', 'clock', 'circle'], ['🖼️', 'picture frame', 'rectangle'], ['🪙', 'coin', 'circle'], ['⛵', 'sail', 'triangle'], ['🧱', 'brick', 'rectangle']];
+const plural = (c, w) => `${c} ${w}${c === 1 ? '' : 's'}`;
 function genShape(i, n) {
-  const SEQ = ['name', 'object', 'sides', 'corners'];
-  const type = i < SEQ.length ? SEQ[i] : pick(SEQ);
-  const simple = ['circle', 'square', 'triangle', 'rectangle'];
-  const pool = i < 2 ? simple : Object.keys(SHAPES);
-  if (type === 'object') {
-    const [e, nm, ans] = pick(SHAPE_OBJECTS);
-    return { numeric: false, answer: ans, options: shuffle(simple),
-      prompt: `Squawk spots a ${nm} on the beach.<br>What <b>shape</b> is it?`,
-      visual: `<div class="bigemoji">${e}</div>`, hint: SHAPE_CLUE[ans], hintVisual: shapeSVG(ans, false),
-      explain: `A ${nm} is a ${ans}. ${SHAPE_CLUE[ans]}` };
-  }
+  const SEQ = ['name', 'sides', 'total', 'total'];
+  const type = i < SEQ.length ? SEQ[i] : pick(['name', 'corners', 'total', 'total']);
   if (type === 'name') {
-    const ans = pick(pool), opts = shuffle([ans, ...shuffle(pool.filter(s => s !== ans)).slice(0, 3)]);
+    const ans = pick(['pentagon', 'hexagon', 'octagon']);
+    const opts = shuffle([ans, ...shuffle(SIDED.filter(s => s !== ans)).slice(0, 3)]);
     return { numeric: false, answer: ans, options: opts,
       prompt: `Mermaid Marina holds up a shape.<br>What is its <b>name</b>?`,
-      visual: shapeSVG(ans, false), hint: SHAPE_CLUE[ans], explain: `It is a ${ans}! ${SHAPE_CLUE[ans]}` };
+      visual: shapeSVG(ans, false), hintVisual: shapeSVG(ans, true),
+      hint: `Count the red dots, one for each corner. ${SHAPE_CLUE[ans]}`, explain: `It is a ${ans}! ${SHAPE_CLUE[ans]}` };
   }
-  const poly_ = Object.keys(SHAPES).filter(s => s !== 'circle' && (i >= 2 || simple.includes(s)));
-  const ans = type === 'corners' && Math.random() < .25 ? 'circle' : pick(i < 3 ? poly_.filter(s => simple.includes(s)) : poly_);
-  const k = SHAPES[ans], word = type === 'sides' ? 'straight sides' : 'corners';
-  const opts = [k, ...shuffle([0, 3, 4, 5, 6].filter(x => x !== k)).slice(0, 3)].sort((a, b) => a - b);
-  return { numeric: true, answer: k, options: opts,
-    prompt: `Marina draws a <b>${ans}</b>.<br>How many <b>${word}</b> does it have?`,
-    visual: shapeSVG(ans, false),
-    hint: ans === 'circle' ? 'A circle is perfectly round. It has <b>no</b> corners and no straight sides!' : `Count the red dots, one for each corner. A ${ans} has as many sides as corners!`,
-    hintVisual: shapeSVG(ans, true),
-    explain: ans === 'circle' ? 'A circle has 0 corners and 0 straight sides.' : `A ${ans} has ${k} ${word}.` };
+  if (type === 'sides' || type === 'corners') {
+    const ans = pick(['pentagon', 'hexagon', 'octagon']), k = SHAPES[ans], word = type === 'sides' ? 'straight sides' : 'corners';
+    return { numeric: true, answer: k, options: [5, 6, 7, 8],
+      prompt: `Marina is thinking of a <b>${ans}</b>, but she won't show it!<br>How many <b>${word}</b> does it have?`,
+      visual: '', hintVisual: shapeSVG(ans, true),
+      hint: `${SHAPE_CLUE[ans]} Count the red dots: a ${ans} has as many sides as corners!`,
+      explain: `A ${ans} has ${k} ${word}.` };
+  }
+  const [s1, s2] = shuffle(SIDED.filter(s => s !== 'rectangle')).slice(0, 2);
+  const t = clampT(i, n), c1 = rnd(2, t < .5 ? 3 : 4), c2 = rnd(1, 3), k1 = SHAPES[s1], k2 = SHAPES[s2], ans = c1 * k1 + c2 * k2;
+  const draw = dots => `<div class="vis">${Array.from({ length: c1 }, () => shapeSVG(s1, dots, 'shape sm')).join('')}<b class="op">+</b>${Array.from({ length: c2 }, () => shapeSVG(s2, dots, 'shape sm')).join('')}</div>`;
+  return { numeric: true, answer: ans, options: numOptions(ans, [c1 * k1, ans + k2]),
+    prompt: `Marina draws <b>${plural(c1, s1)}</b> and <b>${plural(c2, s2)}</b>.<br>How many <b>sides</b> altogether?`,
+    visual: draw(false), hintVisual: draw(true),
+    hint: `Work out each kind, then add:${steps([`A ${s1} has ${k1} sides: ${c1} × ${k1} = ${c1 * k1}`, `A ${s2} has ${k2} sides: ${c2} × ${k2} = ${c2 * k2}`, `${c1 * k1} + ${c2 * k2} = ?`])}`,
+    explain: `${c1 * k1} + ${c2 * k2} = ${ans}` };
 }
 
-// ---- Stage 4: lines ----
-const KINDS = ['Straight', 'Curved', 'Zigzag'];
+// ---- Stage 4: lines (compare, join, perimeter, area) ----
 const DIRS = ['Horizontal ↔', 'Vertical ↕', 'Diagonal ↗'];
-const LONGER = ['The red line', 'The blue line', 'They are the same'];
 const lineSVG = inner => `<svg viewBox="0 0 240 120" class="lines" style="max-width:380px">${inner}</svg>`;
 const rope = 'fill="none" stroke="#a0522d" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"';
+const CELL = 22, gx = c => 10 + c * CELL, gy = r => 20 + r * CELL;
+function grid(rows = 4) {
+  let g = '';
+  for (let c = 0; c <= 10; c++) g += `<line x1="${gx(c)}" y1="${gy(0)}" x2="${gx(c)}" y2="${gy(rows)}" stroke="#e3d2a3" stroke-width="2"/>`;
+  for (let r = 0; r <= rows; r++) g += `<line x1="${gx(0)}" y1="${gy(r)}" x2="${gx(10)}" y2="${gy(r)}" stroke="#e3d2a3" stroke-width="2"/>`;
+  return g;
+}
+function plank(row, len, col, marks) {
+  const y = gy(row);
+  let m = '';
+  if (marks) for (let c = 1; c <= len; c++) m += `<text x="${gx(c) - CELL / 2}" y="${y - 7}" text-anchor="middle" font-size="13" font-weight="800" fill="${col}">${c}</text>`;
+  return `<line x1="${gx(0)}" y1="${y}" x2="${gx(len)}" y2="${y}" stroke="${col}" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="${gx(0)}" cy="${y}" r="5" fill="${col}"/><circle cx="${gx(len)}" cy="${y}" r="5" fill="${col}"/>${m}`;
+}
+function raft(w, h, labels) {
+  return `<rect x="${gx(0)}" y="${gy(0)}" width="${w * CELL}" height="${h * CELL}" fill="#c68642" fill-opacity=".3" stroke="#a0522d" stroke-width="6" stroke-linejoin="round"/>` +
+    (labels ? `<text x="${gx(w / 2)}" y="${gy(0) + 15}" text-anchor="middle" font-size="14" font-weight="800" fill="#c2410c">${w}</text>
+      <text x="${gx(0) + 11}" y="${gy(h / 2) + 5}" text-anchor="middle" font-size="14" font-weight="800" fill="#c2410c">${h}</text>` : '');
+}
 function genLine(i, n) {
-  const SEQ = ['kind', 'dir', 'longer', 'measure'];
-  const type = i < SEQ.length ? SEQ[i] : pick(SEQ);
-  if (type === 'kind') {
-    const ans = pick(KINDS);
-    const d = { Straight: `<line x1="24" y1="${rnd(40, 80)}" x2="216" y2="${rnd(40, 80)}" ${rope}/>`,
-      Curved: `<path d="M24 90 Q120 ${rnd(-20, 10)} 216 90" ${rope}/>`,
-      Zigzag: `<polyline points="24,90 64,30 104,90 144,30 184,90 216,40" ${rope}/>` }[ans];
-    return { numeric: false, answer: ans, options: KINDS,
-      prompt: `A rope on the bridge looks like this.<br>What <b>kind of line</b> is it?`, visual: lineSVG(d),
-      hint: { Straight: 'A straight line does not bend at all, like a ruler 📏.', Curved: 'A curved line bends smoothly, like a rainbow 🌈.', Zigzag: 'A zigzag has sharp turns, like lightning ⚡.' }[ans],
-      explain: `It is a ${ans.toLowerCase()} line.` };
-  }
+  const SEQ = ['diff', 'sum', 'perimeter', 'area'];
+  const type = i < SEQ.length ? SEQ[i] : pick(['diff', 'sum', 'perimeter', 'area', 'dir']);
   if (type === 'dir') {
     const ans = pick(DIRS);
     const d = { 'Horizontal ↔': `<line x1="24" y1="60" x2="216" y2="60" ${rope}/>`, 'Vertical ↕': `<line x1="120" y1="8" x2="120" y2="112" ${rope}/>`,
@@ -380,76 +405,92 @@ function genLine(i, n) {
       hint: { 'Horizontal ↔': 'Horizontal lies flat like the sea 🌅, left to right.', 'Vertical ↕': 'Vertical stands tall like a ship\'s mast ⛵, up and down.', 'Diagonal ↗': 'Diagonal is slanted like a slide 🛝.' }[ans],
       explain: `It is ${ans.split(' ')[0].toLowerCase()}.` };
   }
-  if (type === 'longer') {
-    const same = Math.random() < .25, l1 = rnd(70, 200), l2 = same ? l1 : (Math.random() < .5 ? l1 + rnd(30, 60) : Math.max(50, l1 - rnd(30, 60)));
-    const ans = same ? LONGER[2] : (l1 > l2 ? LONGER[0] : LONGER[1]);
-    const draw = guide => lineSVG(`<line x1="20" y1="38" x2="${20 + l1}" y2="38" stroke="#e11d48" stroke-width="9" stroke-linecap="round"/>
-      <line x1="20" y1="84" x2="${20 + l2}" y2="84" stroke="#2563eb" stroke-width="9" stroke-linecap="round"/>
-      ${guide ? `<line x1="${20 + l1}" y1="10" x2="${20 + l1}" y2="110" stroke="#4a2c0f" stroke-dasharray="5 5" stroke-width="2"/><line x1="${20 + l2}" y1="10" x2="${20 + l2}" y2="110" stroke="#4a2c0f" stroke-dasharray="5 5" stroke-width="2"/>` : ''}`);
-    return { numeric: false, answer: ans, options: LONGER,
-      prompt: `Two ropes hang from the mast.<br>Which one is <b>longer</b>?`, visual: draw(false), hintVisual: draw(true),
-      hint: 'Look where each line ends (the dotted lines help). The one that reaches farther is longer!',
-      explain: same ? 'Both end in the same place, so they are the same length.' : `${ans} reaches farther, so it is longer.` };
+  if (type === 'diff' || type === 'sum') {
+    const diff = type === 'diff';
+    const p = diff ? rnd(5, 10) : rnd(4, 9), q = diff ? rnd(2, p - 2) : rnd(3, 9), ans = diff ? p - q : p + q;
+    const draw = marks => lineSVG(grid() + plank(1, p, '#e11d48', marks) + plank(3, q, '#2563eb', marks));
+    return { numeric: true, answer: ans, options: numOptions(ans, [p, q]),
+      prompt: diff ? `Two ropes lie on the squares.<br>How many squares <b>longer</b> is the red rope than the blue one?`
+        : `Two planks lie on the squares.<br>If you join them <b>end to end</b>, how many squares long is the new plank?`,
+      visual: draw(false), hintVisual: draw(true),
+      hint: `Count the squares along each one (the numbers help), then ${diff ? 'take the short one away from the long one' : 'add them together'}.`,
+      explain: diff ? `${p} − ${q} = ${ans}` : `${p} + ${q} = ${ans}` };
   }
-  const k = rnd(2, 9);
-  const grid = marks => {
-    let g = ''; for (let c = 0; c <= 10; c++) g += `<line x1="${10 + c * 22}" y1="20" x2="${10 + c * 22}" y2="90" stroke="#e3d2a3" stroke-width="2"/>`;
-    for (let r = 0; r <= 3; r++) g += `<line x1="10" y1="${20 + r * 70 / 3}" x2="230" y2="${20 + r * 70 / 3}" stroke="#e3d2a3" stroke-width="2"/>`;
-    let m = ''; if (marks) for (let c = 1; c <= k; c++) m += `<text x="${10 + c * 22 - 11}" y="14" text-anchor="middle" font-size="14" font-weight="800" fill="#c2410c">${c}</text>`;
-    return lineSVG(`${g}<line x1="10" y1="55" x2="${10 + k * 22}" y2="55" stroke="#a0522d" stroke-width="9" stroke-linecap="round"/>
-      <circle cx="10" cy="55" r="6" fill="#e11d48"/><circle cx="${10 + k * 22}" cy="55" r="6" fill="#e11d48"/>${m}`);
-  };
-  return { numeric: true, answer: k, options: numOptions(k, [k + 3]),
-    prompt: `This plank is drawn on squares.<br>How many <b>squares long</b> is it?`, visual: grid(false), hintVisual: grid(true),
-    hint: 'Start at the first red dot and count each square along the line. The numbers help!',
-    explain: `The plank is ${k} squares long.` };
+  const area = type === 'area', w = rnd(3, 8), h = rnd(2, 4), ans = area ? w * h : 2 * (w + h);
+  const draw = labels => lineSVG(grid() + raft(w, h, labels));
+  return { numeric: true, answer: ans, options: numOptions(ans, area ? [2 * (w + h), ans + w] : [w * h, w + h]),
+    prompt: area ? `The pirates build a raft on the squares.<br>How many <b>squares</b> does the raft cover?`
+      : `A crab walks all the way around the raft.<br>How many square sides long is its walk? That's the <b>perimeter</b>!`,
+    visual: draw(false), hintVisual: draw(true),
+    hint: area ? `The raft has <b>${h}</b> rows of <b>${w}</b> squares:<span class="seq">${h} × ${w} = ?</span>` : `Add all four sides:<span class="seq">${w} + ${h} + ${w} + ${h} = ?</span>`,
+    explain: area ? `${h} × ${w} = ${ans}` : `${w} + ${h} + ${w} + ${h} = ${ans}` };
 }
 
-// ---- Stage 5: multiplying ----
+// ---- Stage 5: multiplying and sharing ----
 const MULT_SCENES = [
   { g: 'baskets', gi: '🧺', e: '🍌', n: 'bananas' }, { g: 'palm trees', gi: '🌴', e: '🥥', n: 'coconuts' },
   { g: 'boats', gi: '⛵', e: '🛢️', n: 'barrels' }, { g: 'bags', gi: '👜', e: '🪙', n: 'coins' }
 ];
 function genMult(i, n) {
   const t = clampT(i, n), sc = pick(MULT_SCENES);
-  const b = pick(t < .4 ? [2, 5] : t < .75 ? [2, 3, 5, 10] : [2, 3, 4, 5, 10]);
-  const a = b === 10 ? rnd(2, 3) : rnd(2, t > .7 ? 6 : 5), ans = a * b;
+  const b = t < .3 ? pick([3, 4, 5]) : pick([4, 6, 7, 8, 9]);
+  const a = rnd(3, 9), total = a * b;
+  const vis = total <= 40 ? `<div class="vis">${Array.from({ length: a }, () => `<div class="gbox"><span class="gi">${sc.gi}</span>${grp(sc.e, b, 'sm')}</div>`).join('')}</div>` : '';
+  if (i === 3 || (i > 3 && Math.random() < .5)) {
+    const jumps = Array.from({ length: b }, (_, k) => a * (k + 1)).join(', ');
+    return { numeric: true, answer: b, options: numOptions(b, [a, b + 2]),
+      prompt: `The monkeys share <b>${total}</b> ${sc.n} ${sc.e} equally into <b>${a}</b> ${sc.g}.<br>How many in each?<span class="eq">${total} ÷ ${a} = ?</span>`,
+      visual: '', hintVisual: vis,
+      hint: `Think: ${a} × <b>?</b> = ${total}. Skip count by ${a} and count the jumps:<span class="seq">${jumps}</span>`,
+      explain: `${a} × ${b} = ${total}, so ${total} ÷ ${a} = ${b}` };
+  }
   const run = Array.from({ length: a }, (_, k) => b * (k + 1)).join(', ');
-  const vis = `<div class="vis">${Array.from({ length: a }, () => `<div class="gbox"><span class="gi">${sc.gi}</span>${grp(sc.e, b, 'sm')}</div>`).join('')}</div>`;
-  return { numeric: true, answer: ans, options: numOptions(ans, [ans + b, ans - b, a + b]),
+  return { numeric: true, answer: total, options: numOptions(total, [total + b, total - b, a + b]),
     prompt: `There are <b>${a}</b> ${sc.g}. Each one has <b>${b}</b> ${sc.n} ${sc.e}.<br>How many ${sc.n} in all?<span class="eq">${a} × ${b} = ?</span>`,
-    visual: t < .6 ? vis : '', hintVisual: vis,
-    hint: `${a} × ${b} means <b>${a} groups of ${b}</b>. Add ${b} again and again:<span class="seq">${Array(a).fill(b).join(' + ')}</span><span class="seq">Skip count: ${run}</span>`,
-    explain: `${a} × ${b} = ${ans}` };
+    visual: '', hintVisual: vis,
+    hint: `${a} × ${b} means <b>${a} groups of ${b}</b>. Skip count by ${b}:<span class="seq">${run}</span>`,
+    explain: `${a} × ${b} = ${total}` };
 }
 
-// ---- Stage 6: two-step puzzles ----
+// ---- Stage 6: two- and three-step puzzles ----
 function genMixed(i, n) {
-  const SEQ = ['addsub', 'subadd', 'mulplus', 'missing'];
-  const type = i < SEQ.length ? SEQ[i] : pick(['addsub', 'subadd', 'mulplus', 'mulsub', 'missing']);
-  const steps = (s1, op1, s2, op2, ans) => ({
-    hint: `Go step by step!<span class="step"><b>Step 1:</b> ${op1} = ${s1}</span><span class="step"><b>Step 2:</b> ${op2} = ?</span>`,
-    explain: `${op1} = ${s1}, then ${op2} = ${ans}` });
-  let a, b, c, p, q, r, ans, s1, q_;
+  const SEQ = ['addsub', 'mulplus', 'missing', 'missingmul'];
+  const type = i < SEQ.length ? SEQ[i] : pick(['addsub', 'subadd', 'mulplus', 'mulsub', 'missing', 'missingmul', 'three']);
+  const multi = (prompt, list, explain) => ({ prompt, hint: `Go step by step!${steps(list)}`, explain });
+  let a, b, c, p, q, r, s, ans, q_;
   if (type === 'addsub') {
-    a = rnd(4, 10); b = rnd(3, 9); c = rnd(2, Math.min(a + b - 1, 9)); s1 = a + b; ans = s1 - c;
-    q_ = { prompt: `You grab <b>${a}</b> gold coins 🪙, then find <b>${b}</b> more. A sneaky skeleton 💀 steals <b>${c}</b>!<br>How many coins now?<span class="eq">${a} + ${b} − ${c} = ?</span>`, ...steps(s1, `${a} + ${b}`, 0, `${s1} − ${c}`, ans) };
+    a = rnd(25, 60); b = rnd(15, 45); c = rnd(12, a + b - 10); ans = a + b - c;
+    q_ = multi(`You grab <b>${a}</b> gold coins 🪙, then find <b>${b}</b> more. A sneaky skeleton 💀 steals <b>${c}</b>!<br>How many coins now?<span class="eq">${a} + ${b} − ${c} = ?</span>`,
+      [`${a} + ${b} = ${a + b}`, `${a + b} − ${c} = ?`], `${a} + ${b} = ${a + b}, then ${a + b} − ${c} = ${ans}`);
   } else if (type === 'subadd') {
-    a = rnd(8, 16); b = rnd(2, a - 2); c = rnd(2, 8); s1 = a - b; ans = s1 + c;
-    q_ = { prompt: `Your chest has <b>${a}</b> coins. You spend <b>${b}</b> on a torch 🔥. Then you find <b>${c}</b> more!<br>How many coins now?<span class="eq">${a} − ${b} + ${c} = ?</span>`, ...steps(s1, `${a} − ${b}`, 0, `${s1} + ${c}`, ans) };
+    a = rnd(50, 99); b = rnd(15, a - 10); c = rnd(12, 40); ans = a - b + c;
+    q_ = multi(`Your chest has <b>${a}</b> coins. You spend <b>${b}</b> on a torch 🔥. Then you find <b>${c}</b> more!<br>How many coins now?<span class="eq">${a} − ${b} + ${c} = ?</span>`,
+      [`${a} − ${b} = ${a - b}`, `${a - b} + ${c} = ?`], `${a} − ${b} = ${a - b}, then ${a - b} + ${c} = ${ans}`);
   } else if (type === 'mulplus') {
-    p = rnd(2, 5); q = pick([2, 3, 4, 5]); r = rnd(1, 9); s1 = p * q; ans = s1 + r;
-    q_ = { prompt: `<b>${p}</b> bags with <b>${q}</b> gems 💎 in each, plus <b>${r}</b> gems on the floor.<br>How many gems?<span class="eq">${p} × ${q} + ${r} = ?</span>`, ...steps(s1, `${p} × ${q}`, 0, `${s1} + ${r}`, ans) };
+    p = rnd(3, 9); q = rnd(3, 9); r = rnd(8, 35); ans = p * q + r;
+    q_ = multi(`<b>${p}</b> bags with <b>${q}</b> gems 💎 in each, plus <b>${r}</b> gems on the floor.<br>How many gems?<span class="eq">${p} × ${q} + ${r} = ?</span>`,
+      [`${p} × ${q} = ${p * q}`, `${p * q} + ${r} = ?`], `${p} × ${q} = ${p * q}, then ${p * q} + ${r} = ${ans}`);
   } else if (type === 'mulsub') {
-    p = rnd(2, 5); q = pick([2, 3, 4, 5]); s1 = p * q; r = rnd(1, Math.min(9, s1 - 1)); ans = s1 - r;
-    q_ = { prompt: `<b>${p}</b> bags with <b>${q}</b> gems 💎 in each. A bat 🦇 snatches <b>${r}</b> gems!<br>How many gems are left?<span class="eq">${p} × ${q} − ${r} = ?</span>`, ...steps(s1, `${p} × ${q}`, 0, `${s1} − ${r}`, ans) };
+    p = rnd(3, 9); q = rnd(4, 9); r = rnd(5, p * q - 3); ans = p * q - r;
+    q_ = multi(`<b>${p}</b> bags with <b>${q}</b> gems 💎 in each. A bat 🦇 snatches <b>${r}</b> gems!<br>How many gems are left?<span class="eq">${p} × ${q} − ${r} = ?</span>`,
+      [`${p} × ${q} = ${p * q}`, `${p * q} − ${r} = ?`], `${p} × ${q} = ${p * q}, then ${p * q} − ${r} = ${ans}`);
+  } else if (type === 'three') {
+    p = rnd(3, 6); q = rnd(3, 9); r = rnd(10, 25); s = rnd(5, p * q + r - 5); ans = p * q + r - s;
+    q_ = multi(`<b>${p}</b> chests hold <b>${q}</b> coins each. You find <b>${r}</b> more coins, then pay <b>${s}</b> coins for the ferry ⛴️.<br>How many coins now?<span class="eq">${p} × ${q} + ${r} − ${s} = ?</span>`,
+      [`${p} × ${q} = ${p * q}`, `${p * q} + ${r} = ${p * q + r}`, `${p * q + r} − ${s} = ?`], `${p * q} + ${r} = ${p * q + r}, then ${p * q + r} − ${s} = ${ans}`);
+  } else if (type === 'missingmul') {
+    q = rnd(3, 9); ans = rnd(3, 9); c = q * ans;
+    q_ = { prompt: `Each treasure bag holds <b>${q}</b> gems 💎. You need <b>${c}</b> gems.<br>How many bags do you need?<span class="eq">□ × ${q} = ${c}</span>`,
+      hint: `Skip count by ${q} until you reach ${c}, and count the jumps:<span class="seq">${Array.from({ length: ans }, (_, k) => q * (k + 1)).join(', ')}</span>`,
+      explain: `${ans} × ${q} = ${c}` };
   } else {
-    c = rnd(10, 20); b = rnd(3, c - 3); ans = c - b;
+    c = rnd(50, 100); b = rnd(15, c - 12); if (b % 10 === 0) b++; ans = c - b;
+    const nt = tensOf(b) + 10;
     q_ = { prompt: `The cave door needs <b>${c}</b> coins. You have <b>${b}</b> 🪙.<br>How many more do you need?<span class="eq">${b} + □ = ${c}</span>`,
-      hint: `Count up from <b>${b}</b> until you reach <b>${c}</b>:<span class="seq">${b} → ${Array.from({ length: ans }, (_, k) => b + k + 1).slice(0, 8).join(' → ')}${ans > 8 ? ' → …' : ''}</span>Or do the opposite: ${c} − ${b} = ?`,
+      hint: `Jump to the next ten, then on to ${c}:${steps([`${b} → ${nt} is ${nt - b}`, `${nt} → ${c} is ${c - nt}`, `${nt - b} + ${c - nt} = ?`])}Or do the opposite: ${c} − ${b} = ?`,
       explain: `${b} + ${ans} = ${c}, because ${c} − ${b} = ${ans}` };
   }
-  return { numeric: true, answer: ans, options: numOptions(ans), visual: '', ...q_ };
+  return { numeric: true, answer: ans, options: numOptions(ans, [ans + 10, ans - 10]), visual: '', ...q_ };
 }
 
 // ---- Boss: everything mixed ----
@@ -464,25 +505,25 @@ function genBoss() {
 //  STAGES, STORY, BADGES
 // ============================================================
 const STAGES = [
-  { id: 1, name: 'Coconut Beach', icon: '🏖️', skill: 'Adding', gen: genAdd, count: 5, numFrom: 99, item: { icon: '🧭', name: 'Magic Compass' },
+  { id: 1, name: 'Coconut Beach', icon: '🏖️', skill: 'Adding', gen: genAdd, count: 5, numFrom: 1, item: { icon: '🧭', name: 'Magic Compass' },
     story: ['Sneaky crabs 🦀 buried the <b>Magic Compass</b> under a pile of coconuts! Add the things up to dig it out.'],
     after: 'The compass spins and points toward the Parrot Cliffs!' },
-  { id: 2, name: 'Parrot Cliffs', icon: '🦜', skill: 'Taking away', gen: genSub, count: 5, numFrom: 3, item: { icon: '🔭', name: 'Brass Telescope' },
+  { id: 2, name: 'Parrot Cliffs', icon: '🦜', skill: 'Taking away', gen: genSub, count: 5, numFrom: 1, item: { icon: '🔭', name: 'Brass Telescope' },
     story: ['The cliff parrots stole our <b>Brass Telescope</b>! They only give it back if you can take away correctly.'],
     after: 'Through the telescope you can see a glittering cove!' },
-  { id: 3, name: 'Shape Cove', icon: '🔷', skill: 'Shapes', gen: genShape, count: 5, numFrom: 99, item: { icon: '🗝️', name: 'Shell Key' },
-    story: ['Mermaid Marina keeps the <b>Shell Key</b>. She is a shape-shifter! Tell her the names of her shapes, and count their sides and corners.'],
+  { id: 3, name: 'Shape Cove', icon: '🔷', skill: 'Shapes', gen: genShape, count: 5, numFrom: 2, item: { icon: '🗝️', name: 'Shell Key' },
+    story: ['Mermaid Marina keeps the <b>Shell Key</b>. She is a shape-shifter! Name her tricky shapes, and count <b>all</b> the sides, even when she draws lots of shapes at once.'],
     after: 'Marina smiles and hands you the shiny key!' },
-  { id: 4, name: 'Line Bridge', icon: '🌉', skill: 'Lines', gen: genLine, count: 5, numFrom: 3, item: { icon: '🪢', name: 'Magic Rope' },
-    story: ['The old bridge is held together by ropes, but they are all tangled! Straight, curved, long, short… sort out the lines to win the <b>Magic Rope</b>.'],
+  { id: 4, name: 'Line Bridge', icon: '🌉', skill: 'Lines', gen: genLine, count: 5, numFrom: 1, item: { icon: '🪢', name: 'Magic Rope' },
+    story: ['The old bridge is held together by ropes and rafts, but everything is tangled! Measure the ropes, then walk around and cover the rafts to win the <b>Magic Rope</b>.'],
     after: 'The bridge is fixed, and you can cross to the jungle!' },
-  { id: 5, name: 'Monkey Jungle', icon: '🌴', skill: 'Multiplying', gen: genMult, count: 5, numFrom: 2, item: { icon: '🏮', name: 'Glow Lantern' },
-    story: ['The monkeys 🐒 pack everything in <b>equal groups</b>. Count the groups with multiplying and they will give you the <b>Glow Lantern</b>!'],
+  { id: 5, name: 'Monkey Jungle', icon: '🌴', skill: 'Multiply & divide', gen: genMult, count: 5, numFrom: 1, item: { icon: '🏮', name: 'Glow Lantern' },
+    story: ['The monkeys 🐒 pack everything in <b>equal groups</b>. Multiply the groups and share them out fairly, and they will give you the <b>Glow Lantern</b>!'],
     after: 'The lantern lights up the way to a dark cave…' },
-  { id: 6, name: 'Skeleton Cave', icon: '💀', skill: 'Two-step puzzles', gen: genMixed, count: 5, numFrom: 1, item: { icon: '⛏️', name: 'Golden Shovel' },
-    story: ['The skeleton guard loves tricky puzzles with <b>two steps</b>. Do step 1, then step 2, and the <b>Golden Shovel</b> is yours!'],
+  { id: 6, name: 'Skeleton Cave', icon: '💀', skill: 'Multi-step puzzles', gen: genMixed, count: 5, numFrom: 0, item: { icon: '⛏️', name: 'Golden Shovel' },
+    story: ['The skeleton guard loves tricky puzzles with <b>two or three steps</b>. Do one step at a time, and the <b>Golden Shovel</b> is yours!'],
     after: 'You have all six treasure tools! Time to find the X!' },
-  { id: 7, name: 'Treasure Bay', icon: '💰', skill: 'Everything!', gen: genBoss, count: 6, numFrom: 1, boss: true, item: { icon: '💰', name: 'Mathoria Treasure' },
+  { id: 7, name: 'Treasure Bay', icon: '💰', skill: 'Everything!', gen: genBoss, count: 6, numFrom: 0, boss: true, item: { icon: '💰', name: 'Mathoria Treasure' },
     story: ['The <b>X</b> marks the spot, but Crabzilla the Crab Guardian 🦀 blocks the chest! Every right answer is a hit. Use <b>everything</b> you learned!'],
     after: 'Crabzilla scuttles away. The treasure is yours!' }
 ];
