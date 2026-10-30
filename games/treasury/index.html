@@ -1,0 +1,953 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Captain Math and the Lost Treasure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#4a2c0f;--parch:#fff6dc;--edge:#d9b96a;--good:#34c759;--bad:#ff6b6b;--r:22px}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:"Baloo 2","Fredoka","Comic Sans MS","Chalkboard SE",system-ui,sans-serif;color:var(--ink);
+  background:linear-gradient(180deg,#7fd6ff 0%,#3aa6dc 55%,#1d6fa8 100%) fixed;min-height:100vh;-webkit-tap-highlight-color:transparent;
+  -webkit-user-select:none;user-select:none}
+#app{max-width:720px;margin:0 auto;padding:12px 14px 48px}
+button{font:inherit;color:inherit;cursor:pointer;border:0}
+h1,h2,h3,p{margin:0}
+.card{background:var(--parch);border:4px solid var(--edge);border-radius:var(--r);padding:18px;box-shadow:0 8px 0 rgba(0,0,0,.15);margin-top:12px}
+.center{text-align:center}
+
+/* HUD */
+.hud{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center}
+.chip{background:rgba(255,255,255,.92);border-radius:999px;padding:4px 14px;font-weight:800;font-size:17px;box-shadow:0 3px 0 rgba(0,0,0,.15)}
+button.chip:active{transform:translateY(2px)}
+
+/* buttons */
+.big{display:block;width:100%;padding:14px 20px;font-size:26px;font-weight:800;color:#fff;
+  background:linear-gradient(#ffb347,#ff8a1f);border-radius:18px;box-shadow:0 6px 0 #c2610a;margin-top:14px;text-shadow:0 2px 0 rgba(0,0,0,.2)}
+.big:active{transform:translateY(4px);box-shadow:0 2px 0 #c2610a}
+.big.alt{background:linear-gradient(#6ec6ff,#2f95e6);box-shadow:0 6px 0 #1b66a8}
+.big.alt:active{box-shadow:0 2px 0 #1b66a8}
+.mini{background:#fff;border:3px solid #e3c98a;border-radius:14px;padding:6px 14px;font-weight:800;font-size:17px;box-shadow:0 3px 0 #d9b96a}
+.mini:active{transform:translateY(2px)}
+
+/* title / story */
+.logo{font-size:84px;line-height:1;animation:bob 2.4s ease-in-out infinite}
+h1{font-size:44px;line-height:1.05;margin-top:6px}
+h2{font-size:24px}
+.sub{font-size:20px;margin-top:6px;opacity:.85}
+input#nm{font:inherit;font-size:26px;font-weight:800;text-align:center;width:100%;margin-top:16px;padding:12px;border-radius:16px;border:4px solid var(--edge);background:#fff;color:var(--ink);-webkit-user-select:text;user-select:text}
+.parrot{font-size:58px;line-height:1;flex:none}
+.parrot.happy{animation:hop .6s}
+.pbox{display:flex;gap:10px;align-items:center}
+.bubble{position:relative;background:#fff;border:3px solid #e3c98a;border-radius:18px;padding:10px 14px;font-size:20px;font-weight:700;line-height:1.25;flex:1}
+.bubble::before{content:"";position:absolute;left:-12px;top:50%;margin-top:-9px;border:9px solid transparent;border-right-color:#e3c98a;border-left:0}
+.storytext{font-size:24px;line-height:1.3;font-weight:700;margin:16px 0 4px}
+.bigicon{font-size:96px;line-height:1}
+
+/* map */
+.mapwrap{margin-top:12px}
+.maptitle{display:table;margin:14px auto 0;padding:4px 26px;font-size:24px;font-weight:800;color:#fff;background:linear-gradient(#c0392b,#962d22);
+  border-radius:12px;box-shadow:0 4px 0 #6e1f17,0 6px 14px rgba(0,0,0,.25);text-shadow:0 2px 0 rgba(0,0,0,.3);position:relative;z-index:1}
+svg.map{width:100%;height:auto;display:block;margin-top:-14px;border-radius:30px;border:6px solid #7a4a1e;
+  box-shadow:inset 0 0 0 3px #f3dfa2,0 10px 0 rgba(0,0,0,.18),0 14px 30px rgba(0,0,0,.25);background:#1e88c8}
+.node{cursor:pointer}
+.node.locked{cursor:not-allowed}
+.node:not(.locked):hover .base{filter:brightness(1.08)}
+.node .ni{text-anchor:middle;dominant-baseline:central}
+.node .nlk{font-size:11px;text-anchor:middle;dominant-baseline:central}
+.node .nl{font:800 12.5px "Baloo 2",system-ui,sans-serif;text-anchor:middle;dominant-baseline:central;fill:#4a2c0f}
+.node .nk{font:800 11px "Baloo 2",system-ui,sans-serif;text-anchor:middle;fill:#fff;paint-order:stroke;stroke:#b45309;stroke-width:3px;stroke-linejoin:round}
+.node .glow,.xglow,.twinkle{transform-box:fill-box;transform-origin:center}
+.node .glow{animation:glow 1.6s ease-in-out infinite}
+.xglow{animation:glow 2.4s ease-in-out infinite}
+.waves{animation:drift 7s linear infinite}
+.foam{animation:foam 5s linear infinite}
+.flow{animation:foam 3s linear infinite}
+.twinkle{animation:tw 2.6s ease-in-out infinite}
+.cloud{animation:cloud 9s ease-in-out infinite alternate}
+.pin{animation:pin 1s ease-in-out infinite}
+.ship{animation:bob 2.6s ease-in-out infinite}
+@keyframes glow{0%,100%{transform:scale(.85);opacity:.55}50%{transform:scale(1.12);opacity:1}}
+@keyframes drift{to{transform:translateX(40px)}}
+@keyframes foam{to{stroke-dashoffset:-48}}
+@keyframes tw{0%,100%{opacity:.1;transform:scale(.4)}50%{opacity:1;transform:scale(1)}}
+@keyframes cloud{from{transform:translateX(-14px)}to{transform:translateX(14px)}}
+@keyframes pin{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.inv{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.slot{width:54px;height:54px;border-radius:14px;background:#fff;border:3px dashed #e3c98a;display:grid;place-items:center;font-size:30px;filter:grayscale(1);opacity:.55}
+.slot.have{filter:none;opacity:1;border-style:solid;border-color:#ffc83d;background:#fff3c4;animation:pop .5s}
+.badges{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:8px;font-size:15px;font-weight:700}
+.badge{background:#fff;border-radius:999px;padding:3px 12px;border:2px solid #ffc83d}
+.badge.off{filter:grayscale(1);opacity:.45;border-color:#ccc}
+.lbl{font-weight:800;font-size:17px;text-align:center;margin-top:12px}
+
+/* play */
+.ph{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:800;font-size:19px}
+.dots{display:flex;gap:6px;margin:10px 0}
+.dot{flex:1;height:14px;border-radius:99px;background:#eadbb0}
+.dot.done{background:#34c759}
+.dot.cur{background:#ffc83d;animation:pulse 1s infinite}
+.hp{height:20px;border-radius:99px;background:#eadbb0;border:3px solid #b88a3b;overflow:hidden;margin:10px 0}
+.hp span{display:block;height:100%;background:linear-gradient(#ff8a8a,#e63946);transition:width .6s}
+.hplabel{font-weight:800;font-size:15px;margin-top:6px}
+.qtext{font-size:23px;font-weight:700;line-height:1.3;margin-top:14px}
+.qtext b{color:#c2410c;font-size:1.15em}
+.eq{display:block;margin-top:6px;font-size:36px;font-weight:800;color:#1b66a8;letter-spacing:1px}
+.qvis{margin-top:8px;text-align:center}
+.vis{display:flex;flex-wrap:wrap;gap:8px 14px;justify-content:center;align-items:center}
+.vis .op{font-size:34px}
+.grp{display:inline-flex;flex-wrap:wrap;gap:2px;justify-content:center;max-width:300px;background:rgba(255,255,255,.7);border-radius:16px;padding:6px 8px}
+.grp i{font-style:normal;font-size:28px;line-height:1.1;position:relative}
+.grp i.gone{filter:grayscale(1);opacity:.45}
+.grp i.gone::after{content:"✖";position:absolute;inset:0;color:#e11d48;font-size:24px;font-weight:900;display:grid;place-items:center}
+.grp.sm i{font-size:20px}
+.gbox{display:flex;flex-direction:column;align-items:center;background:rgba(255,255,255,.7);border:3px dashed #e3c98a;border-radius:16px;padding:4px 8px;max-width:150px}
+.gbox .gi{font-size:26px}
+.gbox .grp{background:none;padding:0}
+.hintbox{margin-top:10px;background:#e8f6ff;border:3px solid #7ac3ee;border-radius:16px;padding:10px 14px;font-size:20px;font-weight:700;line-height:1.35}
+.hintbox .seq{display:block;font-size:22px;color:#1b66a8;margin-top:4px;word-spacing:2px}
+.hintbox .step{display:block;margin-top:2px}
+.hintbox .step b{color:#c2410c}
+svg.shape{width:150px;height:150px}
+svg.shape .dn{font:800 10px sans-serif;fill:#fff;text-anchor:middle;dominant-baseline:central}
+svg.lines{width:100%;max-width:380px;height:auto;background:#fff;border-radius:16px;border:3px solid #e3c98a}
+.bigemoji{font-size:84px;line-height:1.1}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.opts.wide{grid-template-columns:1fr}
+.opt{font-size:30px;font-weight:800;padding:14px 8px;border-radius:18px;background:#fff;border:4px solid #e3c98a;box-shadow:0 5px 0 #d9b96a;min-height:70px;text-transform:capitalize}
+.opt:active{transform:translateY(3px);box-shadow:0 2px 0 #d9b96a}
+.opt.good{background:#c9f7d4;border-color:#34c759;box-shadow:0 5px 0 #25a244;animation:pop .5s}
+.opt.bad{background:#ffe0e0;border-color:#ff6b6b;box-shadow:none;opacity:.55}
+.numdisp{margin:14px auto 0;max-width:240px;background:#fff;border:4px solid #7ac3ee;border-radius:18px;font-size:48px;font-weight:800;text-align:center;min-height:70px;line-height:62px;color:#1b66a8}
+.numdisp.good{background:#c9f7d4;border-color:#34c759}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:320px;margin:12px auto 0}
+.pad button{font-size:32px;font-weight:800;padding:10px 0;min-height:64px;border-radius:16px;background:#fff;border:4px solid #e3c98a;box-shadow:0 5px 0 #d9b96a}
+.pad button:active{transform:translateY(3px);box-shadow:0 2px 0 #d9b96a}
+.pad .go{background:#34c759;border-color:#25a244;color:#fff;box-shadow:0 5px 0 #1a7f33}
+.pad .del{background:#ffe3e3;border-color:#ffb3b3;box-shadow:0 5px 0 #f2a0a0}
+.tools{display:flex;gap:10px;justify-content:center;margin-top:16px}
+.shake{animation:shake .4s}
+
+/* complete / finale */
+.stars{font-size:64px;letter-spacing:6px;margin:6px 0}
+.stars span{display:inline-block;animation:pop .6s both}
+.stars span:nth-child(2){animation-delay:.25s}
+.stars span:nth-child(3){animation-delay:.5s}
+.stars .off{filter:grayscale(1);opacity:.3}
+.loot{display:inline-flex;align-items:center;gap:12px;background:#fff3c4;border:4px solid #ffc83d;border-radius:20px;padding:8px 18px;font-size:24px;font-weight:800;margin:10px 0;animation:pop .7s .8s both}
+.loot i{font-style:normal;font-size:48px}
+.msg{font-size:21px;font-weight:700;line-height:1.3;margin-top:6px}
+svg.chest{width:260px;height:auto;margin:6px auto;display:block}
+svg.chest .lid{transform-origin:30px 72px;transition:transform .9s cubic-bezier(.3,1.6,.5,1)}
+svg.chest.open .lid{transform:rotate(-38deg)}
+svg.chest .glow{opacity:0;transition:opacity .8s .3s}
+svg.chest.open .glow{opacity:1}
+svg.chest.open .hoard{opacity:1;transform:translateY(-14px)}
+svg.chest .hoard{opacity:0;transition:all .8s .3s}
+.cert{border:5px double #b88a3b;border-radius:18px;padding:12px;margin-top:12px;background:#fffbe9}
+.cert b{color:#c2410c}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#2b1b0a;color:#fff;padding:10px 20px;border-radius:999px;font-weight:800;font-size:18px;z-index:60;box-shadow:0 6px 20px rgba(0,0,0,.35);animation:pop .4s;max-width:92vw;text-align:center}
+.burst{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}
+.burst span{position:absolute;top:-60px;animation:fall 2.6s ease-in forwards}
+
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes pop{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+@keyframes hop{0%,100%{transform:translateY(0)}30%{transform:translateY(-22px) rotate(-8deg)}60%{transform:translateY(0) rotate(6deg)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.18);opacity:.55}}
+@keyframes fall{to{transform:translate(var(--dx),115vh) rotate(540deg)}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
+@media (max-width:420px){h1{font-size:36px}.qtext{font-size:21px}.opt{font-size:26px}.eq{font-size:32px}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<noscript><p style="padding:20px;color:#fff;font-size:22px">Please turn on JavaScript to play Captain Math!</p></noscript>
+
+<script>
+"use strict";
+/* ============================================================
+   Captain Math and the Lost Treasure of Mathoria
+   Single-file game. Progress is saved in this browser (localStorage).
+   ============================================================ */
+
+// ---------- helpers ----------
+const app = document.querySelector('#app');
+const rnd = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+const pick = a => a[rnd(0, a.length - 1)];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+
+// ---------- save data ----------
+const KEY = 'captain-math-v1';
+const fresh = () => ({ name: '', coins: 0, stars: {}, items: [], badges: [], bestStreak: 0, sound: true, intro: false });
+let S = load();
+function load() {
+  try { return Object.assign(fresh(), JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { return fresh(); }
+}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* private mode: just don't save */ } }
+
+// ---------- sound & speech ----------
+let AC;
+function tone(f, t = 0, d = .15, type = 'sine', v = .14) {
+  if (!S.sound) return;
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type = type; o.frequency.value = f; o.connect(g); g.connect(AC.destination);
+    const s = AC.currentTime + t;
+    g.gain.setValueAtTime(v, s); g.gain.exponentialRampToValueAtTime(.001, s + d);
+    o.start(s); o.stop(s + d + .02);
+  } catch (e) { /* audio not available */ }
+}
+const sfx = {
+  click() { tone(660, 0, .05, 'sine', .07); },
+  ok() { [523, 659, 784].forEach((f, i) => tone(f, i * .09, .18, 'triangle')); },
+  no() { tone(220, 0, .16, 'square', .06); tone(170, .12, .22, 'square', .06); },
+  win() { [523, 659, 784, 1047, 784, 1047, 1319].forEach((f, i) => tone(f, i * .12, .28, 'triangle')); },
+  coin() { tone(988, 0, .08, 'square', .06); tone(1319, .08, .25, 'square', .06); }
+};
+function speakable(html) {
+  return html.replace(/×/g, ' times ').replace(/−/g, ' minus ').replace(/□/g, ' what number ')
+    .replace(/<[^>]+>/g, ' ').replace(/[^\x20-\x7E]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+function speak(text) {
+  try {
+    if (!window.speechSynthesis) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text); u.rate = .9; u.pitch = 1.1; u.lang = 'en-US';
+    speechSynthesis.speak(u);
+  } catch (e) { /* ignore */ }
+}
+
+// ---------- little effects ----------
+function burst(list, n = 28) {
+  const w = document.createElement('div'); w.className = 'burst';
+  for (let k = 0; k < n; k++) {
+    const s = document.createElement('span');
+    s.textContent = pick(list); s.style.left = rnd(0, 96) + 'vw';
+    s.style.animationDelay = (Math.random() * .7) + 's'; s.style.fontSize = rnd(22, 42) + 'px';
+    s.style.setProperty('--dx', rnd(-90, 90) + 'px'); w.appendChild(s);
+  }
+  document.body.appendChild(w); setTimeout(() => w.remove(), 3600);
+}
+let toastTimer;
+function toast(msg) {
+  document.querySelectorAll('.toast').forEach(t => t.remove());
+  const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t);
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.remove(), 3000);
+}
+
+// ============================================================
+//  QUESTION GENERATORS
+//  Every generator: gen(i, n) -> question for step i of n.
+//  Questions get a little harder as i grows.
+//  i >= 4 on the themed stages (and the boss) picks a random variety.
+// ============================================================
+const THINGS = [
+  { e: '🥥', n: 'coconuts' }, { e: '🐚', n: 'shells' }, { e: '🦀', n: 'crabs' },
+  { e: '🪙', n: 'gold coins' }, { e: '💎', n: 'gems' }, { e: '🐟', n: 'fish' }
+];
+const grp = (e, n, cls = '') => `<span class="grp ${cls}">${'<i>' + e + '</i>'.repeat(n)}</span>`;
+const clampT = (i, n) => Math.max(0, Math.min(1, i / (n - 1)));
+
+function numOptions(ans, extra = []) {
+  const set = new Set([ans]);
+  const cand = [...shuffle([ans - 1, ans + 1, ans - 2, ans + 2]), ...shuffle(extra), ans + 10, ans - 10, ans + 3, ans + 4];
+  for (const c of cand) { if (set.size >= 4) break; if (c >= 0) set.add(c); }
+  let k = 5; while (set.size < 4) set.add(ans + k++);
+  return [...set].sort((a, b) => a - b);
+}
+
+// ---- Stage 1: adding ----
+function genAdd(i, n) {
+  const t = clampT(i, n), max = 6 + Math.round(t * 14);
+  const a = rnd(1, max - 1), b = rnd(1, max - a), th = pick(THINGS), ans = a + b;
+  const seq = Array.from({ length: b }, (_, k) => a + k + 1).join(' → ');
+  const vis = `<div class="vis">${grp(th.e, a)}<b class="op">+</b>${grp(th.e, b)}</div>`;
+  return {
+    numeric: true, answer: ans, options: numOptions(ans),
+    prompt: `You find <b>${a}</b> ${th.n} ${th.e} … and then <b>${b}</b> more!<br>How many now?<span class="eq">${a} + ${b} = ?</span>`,
+    visual: t < .5 ? vis : '', hintVisual: vis,
+    hint: `Start at <b>${a}</b> and count up <b>${b}</b> more:<span class="seq">${a} → ${seq}</span>`,
+    explain: `${a} + ${b} = ${ans}`
+  };
+}
+
+// ---- Stage 2: taking away ----
+function genSub(i, n) {
+  const t = clampT(i, n), max = 8 + Math.round(t * 12);
+  const a = rnd(Math.max(4, max - 6), max), b = rnd(1, a - 1), th = pick(THINGS), ans = a - b;
+  const plain = `<div class="vis">${grp(th.e, a)}</div>`;
+  const crossed = `<div class="vis"><span class="grp">${Array.from({ length: a }, (_, k) => `<i class="${k >= a - b ? 'gone' : ''}">${th.e}</i>`).join('')}</span></div>`;
+  const hops = Array.from({ length: b }, (_, k) => a - k - 1);
+  const seq = hops.length > 7 ? [...hops.slice(0, 3), '…', ...hops.slice(-2)].join(' → ') : hops.join(' → ');
+  return {
+    numeric: true, answer: ans, options: numOptions(ans),
+    prompt: `There are <b>${a}</b> ${th.n} ${th.e} on the ship. Oh no! <b>${b}</b> fall into the sea!<br>How many are left?<span class="eq">${a} − ${b} = ?</span>`,
+    visual: t < .5 ? plain : '', hintVisual: crossed,
+    hint: `Start at <b>${a}</b> and hop back <b>${b}</b> times:<span class="seq">${a} → ${seq}</span>Count the ones that are NOT crossed out!`,
+    explain: `${a} − ${b} = ${ans}`
+  };
+}
+
+// ---- Stage 3: shapes ----
+const SHAPES = { circle: 0, square: 4, triangle: 3, rectangle: 4, pentagon: 5, hexagon: 6 };
+const SHAPE_CLUE = {
+  circle: 'Round like a coin 🪙. No corners, no straight sides!',
+  square: '4 straight sides, and they are <b>all the same length</b>.',
+  rectangle: '4 straight sides: 2 long and 2 short, like a door 🚪.',
+  triangle: '3 straight sides and 3 corners, like a pizza slice 🍕.',
+  pentagon: '5 sides, like a little house 🏠.',
+  hexagon: '6 sides, like a honeycomb 🍯.'
+};
+const COLS = ['#ff9b9b', '#ffd166', '#7ee8b8', '#8fd6ff', '#c9b6ff', '#ffb3d1'];
+function poly(n, r = 46, rot = -90) {
+  return Array.from({ length: n }, (_, k) => { const a = (rot + k * 360 / n) * Math.PI / 180; return [60 + r * Math.cos(a), 60 + r * Math.sin(a)]; });
+}
+function shapeSVG(name, dots) {
+  const col = pick(COLS);
+  const pts = { square: [[20, 20], [100, 20], [100, 100], [20, 100]], rectangle: [[8, 30], [112, 30], [112, 90], [8, 90]],
+    triangle: [[60, 14], [108, 100], [12, 100]], pentagon: poly(5), hexagon: poly(6, 46, 0) }[name];
+  const style = `fill="${col}" stroke="#4a2c0f" stroke-width="5" stroke-linejoin="round"`;
+  const body = name === 'circle' ? `<circle cx="60" cy="60" r="46" ${style}/>`
+    : `<polygon points="${pts.map(p => p.map(v => v.toFixed(1)).join(',')).join(' ')}" ${style}/>`;
+  const marks = dots && pts ? pts.map((p, k) => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="9" fill="#e11d48" stroke="#fff" stroke-width="2"/><text class="dn" x="${p[0].toFixed(1)}" y="${p[1].toFixed(1)}">${k + 1}</text>`).join('') : '';
+  return `<svg viewBox="0 0 120 120" class="shape">${body}${marks}</svg>`;
+}
+const SHAPE_OBJECTS = [['🚪', 'door', 'rectangle'], ['🍪', 'cookie', 'circle'], ['🍕', 'pizza slice', 'triangle'],
+  ['⏰', 'clock', 'circle'], ['🖼️', 'picture frame', 'rectangle'], ['🪙', 'coin', 'circle'], ['⛵', 'sail', 'triangle'], ['🧱', 'brick', 'rectangle']];
+function genShape(i, n) {
+  const SEQ = ['name', 'object', 'sides', 'corners'];
+  const type = i < SEQ.length ? SEQ[i] : pick(SEQ);
+  const simple = ['circle', 'square', 'triangle', 'rectangle'];
+  const pool = i < 2 ? simple : Object.keys(SHAPES);
+  if (type === 'object') {
+    const [e, nm, ans] = pick(SHAPE_OBJECTS);
+    return { numeric: false, answer: ans, options: shuffle(simple),
+      prompt: `Squawk spots a ${nm} on the beach.<br>What <b>shape</b> is it?`,
+      visual: `<div class="bigemoji">${e}</div>`, hint: SHAPE_CLUE[ans], hintVisual: shapeSVG(ans, false),
+      explain: `A ${nm} is a ${ans}. ${SHAPE_CLUE[ans]}` };
+  }
+  if (type === 'name') {
+    const ans = pick(pool), opts = shuffle([ans, ...shuffle(pool.filter(s => s !== ans)).slice(0, 3)]);
+    return { numeric: false, answer: ans, options: opts,
+      prompt: `Mermaid Marina holds up a shape.<br>What is its <b>name</b>?`,
+      visual: shapeSVG(ans, false), hint: SHAPE_CLUE[ans], explain: `It is a ${ans}! ${SHAPE_CLUE[ans]}` };
+  }
+  const poly_ = Object.keys(SHAPES).filter(s => s !== 'circle' && (i >= 2 || simple.includes(s)));
+  const ans = type === 'corners' && Math.random() < .25 ? 'circle' : pick(i < 3 ? poly_.filter(s => simple.includes(s)) : poly_);
+  const k = SHAPES[ans], word = type === 'sides' ? 'straight sides' : 'corners';
+  const opts = [k, ...shuffle([0, 3, 4, 5, 6].filter(x => x !== k)).slice(0, 3)].sort((a, b) => a - b);
+  return { numeric: true, answer: k, options: opts,
+    prompt: `Marina draws a <b>${ans}</b>.<br>How many <b>${word}</b> does it have?`,
+    visual: shapeSVG(ans, false),
+    hint: ans === 'circle' ? 'A circle is perfectly round. It has <b>no</b> corners and no straight sides!' : `Count the red dots, one for each corner. A ${ans} has as many sides as corners!`,
+    hintVisual: shapeSVG(ans, true),
+    explain: ans === 'circle' ? 'A circle has 0 corners and 0 straight sides.' : `A ${ans} has ${k} ${word}.` };
+}
+
+// ---- Stage 4: lines ----
+const KINDS = ['Straight', 'Curved', 'Zigzag'];
+const DIRS = ['Horizontal ↔', 'Vertical ↕', 'Diagonal ↗'];
+const LONGER = ['The red line', 'The blue line', 'They are the same'];
+const lineSVG = inner => `<svg viewBox="0 0 240 120" class="lines" style="max-width:380px">${inner}</svg>`;
+const rope = 'fill="none" stroke="#a0522d" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"';
+function genLine(i, n) {
+  const SEQ = ['kind', 'dir', 'longer', 'measure'];
+  const type = i < SEQ.length ? SEQ[i] : pick(SEQ);
+  if (type === 'kind') {
+    const ans = pick(KINDS);
+    const d = { Straight: `<line x1="24" y1="${rnd(40, 80)}" x2="216" y2="${rnd(40, 80)}" ${rope}/>`,
+      Curved: `<path d="M24 90 Q120 ${rnd(-20, 10)} 216 90" ${rope}/>`,
+      Zigzag: `<polyline points="24,90 64,30 104,90 144,30 184,90 216,40" ${rope}/>` }[ans];
+    return { numeric: false, answer: ans, options: KINDS,
+      prompt: `A rope on the bridge looks like this.<br>What <b>kind of line</b> is it?`, visual: lineSVG(d),
+      hint: { Straight: 'A straight line does not bend at all, like a ruler 📏.', Curved: 'A curved line bends smoothly, like a rainbow 🌈.', Zigzag: 'A zigzag has sharp turns, like lightning ⚡.' }[ans],
+      explain: `It is a ${ans.toLowerCase()} line.` };
+  }
+  if (type === 'dir') {
+    const ans = pick(DIRS);
+    const d = { 'Horizontal ↔': `<line x1="24" y1="60" x2="216" y2="60" ${rope}/>`, 'Vertical ↕': `<line x1="120" y1="8" x2="120" y2="112" ${rope}/>`,
+      'Diagonal ↗': Math.random() < .5 ? `<line x1="40" y1="104" x2="200" y2="16" ${rope}/>` : `<line x1="40" y1="16" x2="200" y2="104" ${rope}/>` }[ans];
+    return { numeric: false, answer: ans, options: DIRS,
+      prompt: `Which way does this line go?`, visual: lineSVG(d),
+      hint: { 'Horizontal ↔': 'Horizontal lies flat like the sea 🌅, left to right.', 'Vertical ↕': 'Vertical stands tall like a ship\'s mast ⛵, up and down.', 'Diagonal ↗': 'Diagonal is slanted like a slide 🛝.' }[ans],
+      explain: `It is ${ans.split(' ')[0].toLowerCase()}.` };
+  }
+  if (type === 'longer') {
+    const same = Math.random() < .25, l1 = rnd(70, 200), l2 = same ? l1 : (Math.random() < .5 ? l1 + rnd(30, 60) : Math.max(50, l1 - rnd(30, 60)));
+    const ans = same ? LONGER[2] : (l1 > l2 ? LONGER[0] : LONGER[1]);
+    const draw = guide => lineSVG(`<line x1="20" y1="38" x2="${20 + l1}" y2="38" stroke="#e11d48" stroke-width="9" stroke-linecap="round"/>
+      <line x1="20" y1="84" x2="${20 + l2}" y2="84" stroke="#2563eb" stroke-width="9" stroke-linecap="round"/>
+      ${guide ? `<line x1="${20 + l1}" y1="10" x2="${20 + l1}" y2="110" stroke="#4a2c0f" stroke-dasharray="5 5" stroke-width="2"/><line x1="${20 + l2}" y1="10" x2="${20 + l2}" y2="110" stroke="#4a2c0f" stroke-dasharray="5 5" stroke-width="2"/>` : ''}`);
+    return { numeric: false, answer: ans, options: LONGER,
+      prompt: `Two ropes hang from the mast.<br>Which one is <b>longer</b>?`, visual: draw(false), hintVisual: draw(true),
+      hint: 'Look where each line ends (the dotted lines help). The one that reaches farther is longer!',
+      explain: same ? 'Both end in the same place, so they are the same length.' : `${ans} reaches farther, so it is longer.` };
+  }
+  const k = rnd(2, 9);
+  const grid = marks => {
+    let g = ''; for (let c = 0; c <= 10; c++) g += `<line x1="${10 + c * 22}" y1="20" x2="${10 + c * 22}" y2="90" stroke="#e3d2a3" stroke-width="2"/>`;
+    for (let r = 0; r <= 3; r++) g += `<line x1="10" y1="${20 + r * 70 / 3}" x2="230" y2="${20 + r * 70 / 3}" stroke="#e3d2a3" stroke-width="2"/>`;
+    let m = ''; if (marks) for (let c = 1; c <= k; c++) m += `<text x="${10 + c * 22 - 11}" y="14" text-anchor="middle" font-size="14" font-weight="800" fill="#c2410c">${c}</text>`;
+    return lineSVG(`${g}<line x1="10" y1="55" x2="${10 + k * 22}" y2="55" stroke="#a0522d" stroke-width="9" stroke-linecap="round"/>
+      <circle cx="10" cy="55" r="6" fill="#e11d48"/><circle cx="${10 + k * 22}" cy="55" r="6" fill="#e11d48"/>${m}`);
+  };
+  return { numeric: true, answer: k, options: numOptions(k, [k + 3]),
+    prompt: `This plank is drawn on squares.<br>How many <b>squares long</b> is it?`, visual: grid(false), hintVisual: grid(true),
+    hint: 'Start at the first red dot and count each square along the line. The numbers help!',
+    explain: `The plank is ${k} squares long.` };
+}
+
+// ---- Stage 5: multiplying ----
+const MULT_SCENES = [
+  { g: 'baskets', gi: '🧺', e: '🍌', n: 'bananas' }, { g: 'palm trees', gi: '🌴', e: '🥥', n: 'coconuts' },
+  { g: 'boats', gi: '⛵', e: '🛢️', n: 'barrels' }, { g: 'bags', gi: '👜', e: '🪙', n: 'coins' }
+];
+function genMult(i, n) {
+  const t = clampT(i, n), sc = pick(MULT_SCENES);
+  const b = pick(t < .4 ? [2, 5] : t < .75 ? [2, 3, 5, 10] : [2, 3, 4, 5, 10]);
+  const a = b === 10 ? rnd(2, 3) : rnd(2, t > .7 ? 6 : 5), ans = a * b;
+  const run = Array.from({ length: a }, (_, k) => b * (k + 1)).join(', ');
+  const vis = `<div class="vis">${Array.from({ length: a }, () => `<div class="gbox"><span class="gi">${sc.gi}</span>${grp(sc.e, b, 'sm')}</div>`).join('')}</div>`;
+  return { numeric: true, answer: ans, options: numOptions(ans, [ans + b, ans - b, a + b]),
+    prompt: `There are <b>${a}</b> ${sc.g}. Each one has <b>${b}</b> ${sc.n} ${sc.e}.<br>How many ${sc.n} in all?<span class="eq">${a} × ${b} = ?</span>`,
+    visual: t < .6 ? vis : '', hintVisual: vis,
+    hint: `${a} × ${b} means <b>${a} groups of ${b}</b>. Add ${b} again and again:<span class="seq">${Array(a).fill(b).join(' + ')}</span><span class="seq">Skip count: ${run}</span>`,
+    explain: `${a} × ${b} = ${ans}` };
+}
+
+// ---- Stage 6: two-step puzzles ----
+function genMixed(i, n) {
+  const SEQ = ['addsub', 'subadd', 'mulplus', 'missing'];
+  const type = i < SEQ.length ? SEQ[i] : pick(['addsub', 'subadd', 'mulplus', 'mulsub', 'missing']);
+  const steps = (s1, op1, s2, op2, ans) => ({
+    hint: `Go step by step!<span class="step"><b>Step 1:</b> ${op1} = ${s1}</span><span class="step"><b>Step 2:</b> ${op2} = ?</span>`,
+    explain: `${op1} = ${s1}, then ${op2} = ${ans}` });
+  let a, b, c, p, q, r, ans, s1, q_;
+  if (type === 'addsub') {
+    a = rnd(4, 10); b = rnd(3, 9); c = rnd(2, Math.min(a + b - 1, 9)); s1 = a + b; ans = s1 - c;
+    q_ = { prompt: `You grab <b>${a}</b> gold coins 🪙, then find <b>${b}</b> more. A sneaky skeleton 💀 steals <b>${c}</b>!<br>How many coins now?<span class="eq">${a} + ${b} − ${c} = ?</span>`, ...steps(s1, `${a} + ${b}`, 0, `${s1} − ${c}`, ans) };
+  } else if (type === 'subadd') {
+    a = rnd(8, 16); b = rnd(2, a - 2); c = rnd(2, 8); s1 = a - b; ans = s1 + c;
+    q_ = { prompt: `Your chest has <b>${a}</b> coins. You spend <b>${b}</b> on a torch 🔥. Then you find <b>${c}</b> more!<br>How many coins now?<span class="eq">${a} − ${b} + ${c} = ?</span>`, ...steps(s1, `${a} − ${b}`, 0, `${s1} + ${c}`, ans) };
+  } else if (type === 'mulplus') {
+    p = rnd(2, 5); q = pick([2, 3, 4, 5]); r = rnd(1, 9); s1 = p * q; ans = s1 + r;
+    q_ = { prompt: `<b>${p}</b> bags with <b>${q}</b> gems 💎 in each, plus <b>${r}</b> gems on the floor.<br>How many gems?<span class="eq">${p} × ${q} + ${r} = ?</span>`, ...steps(s1, `${p} × ${q}`, 0, `${s1} + ${r}`, ans) };
+  } else if (type === 'mulsub') {
+    p = rnd(2, 5); q = pick([2, 3, 4, 5]); s1 = p * q; r = rnd(1, Math.min(9, s1 - 1)); ans = s1 - r;
+    q_ = { prompt: `<b>${p}</b> bags with <b>${q}</b> gems 💎 in each. A bat 🦇 snatches <b>${r}</b> gems!<br>How many gems are left?<span class="eq">${p} × ${q} − ${r} = ?</span>`, ...steps(s1, `${p} × ${q}`, 0, `${s1} − ${r}`, ans) };
+  } else {
+    c = rnd(10, 20); b = rnd(3, c - 3); ans = c - b;
+    q_ = { prompt: `The cave door needs <b>${c}</b> coins. You have <b>${b}</b> 🪙.<br>How many more do you need?<span class="eq">${b} + □ = ${c}</span>`,
+      hint: `Count up from <b>${b}</b> until you reach <b>${c}</b>:<span class="seq">${b} → ${Array.from({ length: ans }, (_, k) => b + k + 1).slice(0, 8).join(' → ')}${ans > 8 ? ' → …' : ''}</span>Or do the opposite: ${c} − ${b} = ?`,
+      explain: `${b} + ${ans} = ${c}, because ${c} − ${b} = ${ans}` };
+  }
+  return { numeric: true, answer: ans, options: numOptions(ans), visual: '', ...q_ };
+}
+
+// ---- Boss: everything mixed ----
+const BOSS_GENS = [genAdd, genSub, genShape, genMult, genLine, genMixed];
+let lastBoss = -1;
+function genBoss() {
+  let k; do { k = rnd(0, BOSS_GENS.length - 1); } while (k === lastBoss); lastBoss = k;
+  return BOSS_GENS[k](rnd(4, 9), 8);
+}
+
+// ============================================================
+//  STAGES, STORY, BADGES
+// ============================================================
+const STAGES = [
+  { id: 1, name: 'Coconut Beach', icon: '🏖️', skill: 'Adding', gen: genAdd, count: 5, numFrom: 99, item: { icon: '🧭', name: 'Magic Compass' },
+    story: ['Sneaky crabs 🦀 buried the <b>Magic Compass</b> under a pile of coconuts! Add the things up to dig it out.'],
+    after: 'The compass spins and points toward the Parrot Cliffs!' },
+  { id: 2, name: 'Parrot Cliffs', icon: '🦜', skill: 'Taking away', gen: genSub, count: 5, numFrom: 3, item: { icon: '🔭', name: 'Brass Telescope' },
+    story: ['The cliff parrots stole our <b>Brass Telescope</b>! They only give it back if you can take away correctly.'],
+    after: 'Through the telescope you can see a glittering cove!' },
+  { id: 3, name: 'Shape Cove', icon: '🔷', skill: 'Shapes', gen: genShape, count: 5, numFrom: 99, item: { icon: '🗝️', name: 'Shell Key' },
+    story: ['Mermaid Marina keeps the <b>Shell Key</b>. She is a shape-shifter! Tell her the names of her shapes, and count their sides and corners.'],
+    after: 'Marina smiles and hands you the shiny key!' },
+  { id: 4, name: 'Line Bridge', icon: '🌉', skill: 'Lines', gen: genLine, count: 5, numFrom: 3, item: { icon: '🪢', name: 'Magic Rope' },
+    story: ['The old bridge is held together by ropes, but they are all tangled! Straight, curved, long, short… sort out the lines to win the <b>Magic Rope</b>.'],
+    after: 'The bridge is fixed, and you can cross to the jungle!' },
+  { id: 5, name: 'Monkey Jungle', icon: '🌴', skill: 'Multiplying', gen: genMult, count: 5, numFrom: 2, item: { icon: '🏮', name: 'Glow Lantern' },
+    story: ['The monkeys 🐒 pack everything in <b>equal groups</b>. Count the groups with multiplying and they will give you the <b>Glow Lantern</b>!'],
+    after: 'The lantern lights up the way to a dark cave…' },
+  { id: 6, name: 'Skeleton Cave', icon: '💀', skill: 'Two-step puzzles', gen: genMixed, count: 5, numFrom: 1, item: { icon: '⛏️', name: 'Golden Shovel' },
+    story: ['The skeleton guard loves tricky puzzles with <b>two steps</b>. Do step 1, then step 2, and the <b>Golden Shovel</b> is yours!'],
+    after: 'You have all six treasure tools! Time to find the X!' },
+  { id: 7, name: 'Treasure Bay', icon: '💰', skill: 'Everything!', gen: genBoss, count: 6, numFrom: 1, boss: true, item: { icon: '💰', name: 'Mathoria Treasure' },
+    story: ['The <b>X</b> marks the spot, but Crabzilla the Crab Guardian 🦀 blocks the chest! Every right answer is a hit. Use <b>everything</b> you learned!'],
+    after: 'Crabzilla scuttles away. The treasure is yours!' }
+];
+const ITEM_STAGES = STAGES.slice(0, 6);
+
+const BADGES = [
+  { id: 'first', icon: '⚓', name: 'First Mate', test: () => Object.values(S.stars).some(s => s > 0) },
+  { id: 'perfect', icon: '🌟', name: 'Perfect Pirate', test: () => Object.values(S.stars).some(s => s === 3) },
+  { id: 'streak', icon: '🔥', name: 'Hot Streak', test: () => S.bestStreak >= 5 },
+  { id: 'rich', icon: '💰', name: 'Gold Hoarder', test: () => S.coins >= 200 },
+  { id: 'captain', icon: '🏴‍☠️', name: 'Treasure Captain', test: () => S.stars[7] > 0 }
+];
+function checkBadges() {
+  const got = BADGES.filter(b => !S.badges.includes(b.id) && b.test());
+  got.forEach(b => S.badges.push(b.id));
+  return got;
+}
+const RANKS = [[0, 'Cabin Kid'], [3, 'Deck Sailor'], [8, 'First Mate'], [14, 'Captain']];
+const totalStars = () => Object.values(S.stars).reduce((a, b) => a + b, 0);
+const rank = () => RANKS.filter(r => totalStars() >= r[0]).pop()[1];
+const unlocked = id => id === 1 || S.stars[id - 1] > 0;
+
+const START_MSGS = ['You can do it, Captain!', 'Think it through. Take your time!', 'Squawk! Let\'s solve this one!', 'Read carefully, then pick!'];
+const WRONG_MSGS = ['Oops! Not quite. Look at the hint and try again!', 'Almost! Check the hint, Captain.', 'Shiver me timbers! Try once more!'];
+const RIGHT_MSGS = ['Brilliant!', 'Yo ho ho! Correct!', 'Treasure-tastic!', 'You are so smart!', 'Shiver me timbers, you got it!', 'Super sailor!'];
+
+// ============================================================
+//  SCREENS
+// ============================================================
+function hud() {
+  return `<div class="hud">
+    <span class="chip">👤 ${esc(S.name || 'Captain')} · ${rank()}</span>
+    <span class="chip">🪙 ${S.coins}</span>
+    <span class="chip">⭐ ${totalStars()}/21</span>
+    <button class="chip" data-act="snd" aria-label="sound">${S.sound ? '🔊' : '🔇'}</button>
+  </div>`;
+}
+
+function title() {
+  G = null;
+  app.innerHTML = `<div class="card center" style="margin-top:28px">
+    <div class="logo">🏴‍☠️</div>
+    <h1>Captain Math</h1>
+    <p class="sub">and the Lost Treasure of Mathoria Island</p>
+    ${S.name ? `<p class="msg" style="margin-top:14px">Welcome back, Captain <b>${esc(S.name)}</b>!</p>
+      <button class="big" data-act="map">⚓ Continue adventure</button>
+      <button class="big alt" data-act="newcap">🆕 New captain</button>`
+      : `<input id="nm" maxlength="14" placeholder="Type your name" autocomplete="off">
+      <button class="big" data-act="begin">⛵ Set sail!</button>`}
+  </div>`;
+  const nm = document.querySelector('#nm'); if (nm) nm.focus();
+}
+
+let ST = null;
+function story(pages, icon, onDone, doneLabel = 'Next ➜', back = false) {
+  ST = { pages, i: 0, icon, onDone, doneLabel, back };
+  renderStory();
+}
+function renderStory() {
+  const { pages, i, icon, doneLabel, back } = ST, last = i === pages.length - 1;
+  app.innerHTML = `${hud()}<div class="card center">
+    <div class="bigicon">${icon}</div>
+    <div class="pbox" style="margin-top:14px;text-align:left"><div class="parrot">🦜</div><div class="bubble storytext" style="margin:0">${pages[i].replace(/\{name\}/g, esc(S.name))}</div></div>
+    <button class="big" data-act="storynext">${last ? doneLabel : 'Next ➜'}</button>
+    ${back ? '<button class="big alt" data-act="map">🗺️ Back to map</button>' : ''}
+  </div>`;
+}
+
+function introStory() {
+  story([
+    'Ahoy, Captain <b>{name}</b>! 🏴‍☠️ Long ago, Captain Goldbeard hid his greatest treasure on Mathoria Island. But a storm tore his map into pieces!',
+    'I am <b>Squawk</b> 🦜, your parrot! Each place on the island has a math puzzle. Solve them to win <b>magic tools</b>.',
+    'Collect all <b>6 tools</b> 🧭🔭🗝️🪢🏮⛏️, then sail to Treasure Bay to open the chest. Ready?'
+  ], '🗺️', () => { S.intro = true; save(); map(); }, 'To the map! ⛵');
+}
+
+// ---------- illustrated island map ----------
+const POS = [[100, 505], [300, 450], [100, 370], [300, 290], [100, 215], [295, 150], [200, 78]];
+const ISLAND = [[200, 40], [290, 46], [345, 92], [354, 160], [338, 218], [362, 268], [352, 330], [370, 400], [360, 470], [330, 530], [262, 566],
+  [190, 566], [118, 560], [60, 534], [38, 480], [52, 425], [30, 372], [40, 318], [28, 260], [44, 200], [50, 142], [88, 82], [140, 50]];
+const f1 = v => +v.toFixed(1);
+// Catmull-Rom spline through points -> smooth SVG path
+function smooth(pts, closed) {
+  const n = pts.length, P = i => pts[closed ? (i + n) % n : Math.max(0, Math.min(n - 1, i))];
+  let d = `M${pts[0].join(' ')}`;
+  for (let i = 0; i < (closed ? n : n - 1); i++) {
+    const p0 = P(i - 1), p1 = P(i), p2 = P(i + 1), p3 = P(i + 2);
+    d += ` C${f1(p1[0] + (p2[0] - p0[0]) / 6)} ${f1(p1[1] + (p2[1] - p0[1]) / 6)} ${f1(p2[0] - (p3[0] - p1[0]) / 6)} ${f1(p2[1] - (p3[1] - p1[1]) / 6)} ${p2.join(' ')}`;
+  }
+  return d + (closed ? 'Z' : '');
+}
+function starPath(R, r) {
+  return 'M' + Array.from({ length: 10 }, (_, k) => { const a = (-90 + k * 36) * Math.PI / 180, q = k % 2 ? r : R; return `${f1(q * Math.cos(a))} ${f1(q * Math.sin(a))}`; }).join(' L') + 'Z';
+}
+const at = (id, x, y, s = 1, extra = '') => `<use href="#${id}" transform="translate(${x} ${y}) scale(${s})" ${extra}/>`;
+
+const MAP_DEFS = () => `<defs>
+  <radialGradient id="gSea" cx="50%" cy="50%" r="75%"><stop offset="0" stop-color="#5ad8ec"/><stop offset=".55" stop-color="#2196d3"/><stop offset="1" stop-color="#0d5a96"/></radialGradient>
+  <linearGradient id="gSand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fdeab8"/><stop offset="1" stop-color="#f1cc84"/></linearGradient>
+  <radialGradient id="gGrass" cx="45%" cy="40%" r="70%"><stop offset="0" stop-color="#a8e67e"/><stop offset=".7" stop-color="#6cc65a"/><stop offset="1" stop-color="#4fae4c"/></radialGradient>
+  <linearGradient id="gWater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9af0f6"/><stop offset="1" stop-color="#3cc0de"/></linearGradient>
+  <linearGradient id="gMtn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b39b8e"/><stop offset="1" stop-color="#6d4c41"/></linearGradient>
+  <radialGradient id="gOpen" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#fff3b0"/><stop offset=".55" stop-color="#ffc83d"/><stop offset="1" stop-color="#ef8a00"/></radialGradient>
+  <radialGradient id="gDone" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#d4fbe4"/><stop offset=".55" stop-color="#3fd08a"/><stop offset="1" stop-color="#1c9460"/></radialGradient>
+  <radialGradient id="gLock" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#f4f7fa"/><stop offset=".55" stop-color="#b8c4d0"/><stop offset="1" stop-color="#8694a5"/></radialGradient>
+  <radialGradient id="gGlow"><stop offset=".45" stop-color="#fff59d" stop-opacity=".95"/><stop offset="1" stop-color="#fff59d" stop-opacity="0"/></radialGradient>
+  <radialGradient id="gVig" cx="50%" cy="50%" r="72%"><stop offset=".62" stop-color="#002244" stop-opacity="0"/><stop offset="1" stop-color="#002244" stop-opacity=".5"/></radialGradient>
+  <filter id="fBlur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="7"/></filter>
+  <filter id="fSh" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="3" stdDeviation="2.5" flood-color="#000" flood-opacity=".3"/></filter>
+  <pattern id="pWaves" width="40" height="24" patternUnits="userSpaceOnUse">
+    <path d="M2 14 q8 -7 16 0" stroke="#fff" stroke-opacity=".28" fill="none" stroke-width="2" stroke-linecap="round"/>
+    <path d="M22 4 q8 -7 16 0" stroke="#fff" stroke-opacity=".2" fill="none" stroke-width="2" stroke-linecap="round"/></pattern>
+  <path id="isl" d="${smooth(ISLAND, true)}"/>
+  <path id="star" d="${starPath(7.5, 3.4)}"/>
+  <path id="spark" d="M0 -6 L1.5 -1.5 L6 0 L1.5 1.5 L0 6 L-1.5 1.5 L-6 0 L-1.5 -1.5Z" fill="#fff"/>
+  <g id="palm">
+    <ellipse cx="4" cy="1" rx="16" ry="4" fill="#000" opacity=".15"/>
+    <path d="M0 0 C2 -15 -2 -30 6 -44" stroke="#8b5a2b" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <path d="M0 -10 l4 -1 M0 -20 l4 -1 M1 -30 l4 -1" stroke="#6b4423" stroke-width="1.5"/>
+    <g fill="#2f9e44" stroke="#1f7a33" stroke-width="1">
+      <path d="M6 -44 C16 -54 30 -50 34 -40 C24 -46 14 -44 6 -44Z"/><path d="M6 -44 C-4 -54 -20 -50 -24 -40 C-14 -46 -2 -44 6 -44Z"/>
+      <path d="M6 -44 C10 -58 22 -64 30 -60 C20 -58 12 -52 6 -44Z"/><path d="M6 -44 C0 -58 -12 -62 -18 -58 C-8 -56 0 -52 6 -44Z"/>
+      <path d="M6 -44 C18 -44 26 -34 26 -24 C20 -34 12 -40 6 -44Z" fill="#37b24d"/><path d="M6 -44 C-6 -44 -14 -34 -14 -24 C-8 -34 0 -40 6 -44Z" fill="#37b24d"/></g>
+    <circle cx="3" cy="-42" r="3" fill="#7a4a1e"/><circle cx="9" cy="-41" r="3" fill="#8b5a2b"/></g>
+  <g id="tree">
+    <ellipse cx="0" cy="1" rx="14" ry="4" fill="#000" opacity=".15"/>
+    <rect x="-2.5" y="-10" width="5" height="11" rx="2" fill="#7a4a1e"/>
+    <circle cx="0" cy="-20" r="14" fill="#2b8a3e"/><circle cx="-9" cy="-13" r="10" fill="#37a046"/><circle cx="9" cy="-14" r="10" fill="#319b41"/>
+    <circle cx="-4" cy="-25" r="6" fill="#69db7c" opacity=".7"/></g>
+  <g id="bush">
+    <circle cx="-6" cy="-4" r="6" fill="#2f9e44"/><circle cx="5" cy="-4" r="6" fill="#37b24d"/><circle cx="0" cy="-9" r="6" fill="#40c057"/>
+    <circle cx="-5" cy="-8" r="1.8" fill="#ff6b9a"/><circle cx="4" cy="-10" r="1.8" fill="#ffd43b"/><circle cx="6" cy="-3" r="1.8" fill="#ff6b9a"/></g>
+  <g id="rock" stroke="#6b5f55" stroke-width="2" stroke-linejoin="round">
+    <polygon points="-20,0 -15,-20 -2,-30 13,-24 21,0" fill="#9c8f84"/><polygon points="-15,-20 -2,-30 13,-24 2,-15" fill="#cdc3b8"/></g>
+  <g id="mtn" stroke="#5d4037" stroke-width="2" stroke-linejoin="round">
+    <polygon points="-52,0 -8,-72 10,-56 22,-64 56,0" fill="url(#gMtn)"/>
+    <polygon points="-8,-72 10,-56 22,-64 56,0 6,0" fill="#000" opacity=".14" stroke="none"/>
+    <polygon points="-8,-72 -19,-53 -9,-57 0,-49 10,-56" fill="#f5f0eb"/></g>
+  <g id="tuft"><path d="M-4 0 L-2 -6 L0 0 L2 -7 L4 0" stroke="#3f9a3f" fill="none" stroke-width="1.5" stroke-linejoin="round"/></g>
+</defs>`;
+
+function mapSVG() {
+  const cur = (STAGES.find(s => unlocked(s.id) && !(S.stars[s.id] > 0)) || STAGES[6]).id;
+  const grass = 'transform="translate(200 305) scale(.86) translate(-200 -305)"';
+
+  // trail between places: gold dots once walked, faded brown dots ahead
+  let trail = '';
+  for (let k = 1; k < POS.length; k++) {
+    const [x1, y1] = POS[k - 1], [x2, y2] = POS[k], my = (y1 + y2) / 2, d = `M${x1} ${y1} C${x1} ${my} ${x2} ${my} ${x2} ${y2}`;
+    const walked = S.stars[k] > 0;
+    trail += `<path d="${d}" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="10" stroke-linecap="round"/>
+      <path d="${d}" fill="none" stroke="${walked ? '#f59f00' : '#8b5a2b'}" stroke-opacity="${walked ? 1 : .6}" stroke-width="${walked ? 6 : 4.5}" stroke-dasharray="0.1 11" stroke-linecap="round"/>`;
+  }
+
+  const nodes = STAGES.map((st, k) => {
+    const [x, y] = POS[k], done = S.stars[st.id] > 0, open = unlocked(st.id) && !done, locked = !unlocked(st.id);
+    const r = st.boss ? 36 : 30, w = st.name.length * 7.2 + 22;
+    const extra = done
+      ? [0, 1, 2].map(j => `<use href="#star" x="${(j - 1) * 17}" y="${r + 40}" fill="${j < S.stars[st.id] ? '#ffc83d' : '#d6d3c4'}" stroke="#b45309" stroke-width="1.2"/>`).join('')
+      : open ? `<text class="nk" y="${r + 43}">${st.skill}</text>` : '';
+    return `<g class="node ${done ? 'done' : open ? 'open' : 'locked'}" data-act="${locked ? 'locked' : 'stage'}" data-id="${st.id}" transform="translate(${x},${y})">
+      ${open ? `<circle class="glow" r="${r + 14}" fill="url(#gGlow)"/>` : ''}
+      <ellipse cy="${r + 3}" rx="${r * .85}" ry="5" fill="#000" opacity=".22"/>
+      <circle r="${r + 3}" fill="#4a2c0f"/>
+      <circle class="base" r="${r}" fill="url(#${done ? 'gDone' : open ? 'gOpen' : 'gLock'})" stroke="#fff" stroke-width="3"/>
+      <ellipse cx="${-r * .2}" cy="${-r * .5}" rx="${r * .5}" ry="${r * .2}" fill="#fff" opacity=".4"/>
+      <text class="ni" style="font-size:${st.boss ? 36 : 28}px" opacity="${locked ? .4 : 1}">${st.icon}</text>
+      ${locked ? `<g transform="translate(${f1(r * .7)},${f1(-r * .7)})"><circle r="11" fill="#475569" stroke="#fff" stroke-width="2"/><text class="nlk">🔒</text></g>` : ''}
+      <rect x="${f1(-w / 2)}" y="${r + 7}" width="${f1(w)}" height="21" rx="10.5" fill="${locked ? '#e9ecef' : '#fff8e6'}" stroke="#8b5a2b" stroke-width="2" filter="url(#fSh)"/>
+      <text class="nl" y="${r + 18}">${st.name}</text>
+      ${extra}</g>`;
+  }).join('');
+
+  const [px, py] = POS[cur - 1], pr = STAGES[cur - 1].boss ? 36 : 30;
+  const sparks = [[20, 120], [380, 200], [386, 330], [16, 520], [300, 590], [110, 588], [384, 500], [22, 300]]
+    .map(([x, y], k) => `<g transform="translate(${x} ${y})"><use href="#spark" class="twinkle" style="animation-delay:${(k * .37).toFixed(2)}s"/></g>`).join('');
+
+  return `<svg class="map" viewBox="0 0 400 600" role="img" aria-label="Treasure map of Mathoria Island">
+    ${MAP_DEFS()}
+    <!-- ocean -->
+    <rect width="400" height="600" fill="url(#gSea)"/>
+    <rect class="waves" x="-40" width="480" height="600" fill="url(#pWaves)"/>
+    <rect width="400" height="600" fill="url(#gVig)"/>
+    ${sparks}
+    <!-- island -->
+    <use href="#isl" transform="translate(4 12)" fill="#06345c" opacity=".45" filter="url(#fBlur)"/>
+    <use href="#isl" fill="none" stroke="#9eeef3" stroke-width="36" stroke-linejoin="round" opacity=".5"/>
+    <use href="#isl" fill="none" stroke="#e6fbff" stroke-width="16" stroke-linejoin="round" opacity=".55"/>
+    <use href="#isl" class="foam" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="14 10" opacity=".9"/>
+    <use href="#isl" fill="url(#gSand)" stroke="#e2b866" stroke-width="2"/>
+    <use href="#isl" ${grass} fill="url(#gGrass)" stroke="#4ea64a" stroke-width="2.5"/>
+    <ellipse cx="210" cy="250" rx="44" ry="15" fill="#c3ef9a" opacity=".45"/><ellipse cx="185" cy="430" rx="48" ry="14" fill="#c3ef9a" opacity=".45"/>
+    <ellipse cx="225" cy="365" rx="30" ry="10" fill="#c3ef9a" opacity=".4"/><ellipse cx="160" cy="130" rx="34" ry="11" fill="#c3ef9a" opacity=".4"/>
+    ${[[170, 320], [245, 205], [150, 470], [255, 400], [190, 160], [130, 300], [270, 520], [235, 455]].map(([x, y]) => at('tuft', x, y)).join('')}
+
+    <!-- 1 Coconut Beach -->
+    <ellipse cx="95" cy="516" rx="80" ry="44" transform="rotate(-12 95 516)" fill="url(#gSand)"/>
+    <use href="#star" transform="translate(38 522) rotate(15)" fill="#ff7f50" stroke="#e8590c"/>
+    ${at('palm', 62, 505, .8)}${at('palm', 158, 548, .9)}
+
+    <!-- 2 Parrot Cliffs -->
+    ${at('rock', 350, 428, .85)}${at('rock', 347, 478, 1.1)}${at('rock', 258, 480, .7)}${at('rock', 322, 510, .65)}
+
+    <!-- 3 Shape Cove -->
+    <path d="${smooth([[18, 338], [62, 332], [84, 362], [70, 402], [26, 408], [4, 374]], true)}" fill="url(#gWater)" stroke="#fdeab8" stroke-width="4"/>
+    <g transform="translate(40 360)"><use href="#spark" class="twinkle"/></g><g transform="translate(56 392)"><use href="#spark" class="twinkle" style="animation-delay:1.2s"/></g>
+
+    <!-- 4 Line Bridge: river + lake + bridge -->
+    <path d="${smooth([[378, 300], [340, 286], [300, 292], [262, 302], [228, 318], [200, 334]], false)}" fill="none" stroke="#3cc0de" stroke-width="20" stroke-linecap="round"/>
+    <path d="${smooth([[378, 300], [340, 286], [300, 292], [262, 302], [228, 318], [200, 334]], false)}" fill="none" stroke="#9af0f6" stroke-width="7" stroke-linecap="round" opacity=".7"/>
+    <path class="flow" d="${smooth([[378, 300], [340, 286], [300, 292], [262, 302], [228, 318], [200, 334]], false)}" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="6 18" stroke-linecap="round" style="animation-direction:reverse"/>
+    <ellipse cx="190" cy="340" rx="30" ry="17" fill="url(#gWater)" stroke="#fdeab8" stroke-width="3"/>
+    <g transform="translate(250 306) rotate(-25)">
+      <line x1="-12" y1="-22" x2="-12" y2="22" stroke="#5d3a1a" stroke-width="3"/><line x1="12" y1="-22" x2="12" y2="22" stroke="#5d3a1a" stroke-width="3"/>
+      ${[-20, -14, -8, -2, 4, 10, 16].map(yy => `<rect x="-13" y="${yy}" width="26" height="4.5" rx="1" fill="#c68642" stroke="#7a4a1e" stroke-width="1"/>`).join('')}</g>
+
+    <!-- 5 Monkey Jungle -->
+    ${at('tree', 62, 185, .9)}${at('tree', 142, 172, .8)}${at('tree', 48, 250, 1)}${at('tree', 150, 262, .8)}${at('tree', 66, 292, .7)}${at('palm', 30, 225, .6)}
+
+    <!-- 6 Skeleton Cave mountains -->
+    ${at('mtn', 300, 150, 1)}${at('mtn', 333, 175, .6)}${at('mtn', 245, 165, .5)}
+
+    <!-- 7 Treasure Bay -->
+    <ellipse cx="200" cy="82" rx="80" ry="34" fill="url(#gSand)"/>
+    <circle class="xglow" cx="200" cy="78" r="62" fill="url(#gGlow)"/>
+    ${at('palm', 128, 84, .8)}${at('palm', 272, 76, .75)}
+
+    <!-- bushes -->
+    ${at('bush', 215, 372)}${at('bush', 190, 452)}${at('bush', 205, 218)}${at('bush', 240, 544)}
+
+    <!-- sea life, compass, clouds, ship -->
+    <text x="372" y="40" font-size="24" text-anchor="middle">🐳</text>
+    <text x="18" y="440" font-size="18" text-anchor="middle">🐢</text>
+    <text x="26" y="584" font-size="20" text-anchor="middle">🐙</text>
+    <g transform="translate(46 50)" filter="url(#fSh)">
+      <circle r="24" fill="#fff8e6" stroke="#8b5a2b" stroke-width="2.5"/><circle r="18" fill="none" stroke="#d9b96a" stroke-width="1"/>
+      <polygon points="0,-20 4,0 0,20 -4,0" fill="#c0392b"/><polygon points="-20,0 0,-4 20,0 0,4" fill="#4a2c0f"/>
+      <polygon points="0,-20 4,0 -4,0" fill="#e74c3c"/><circle r="3" fill="#ffc83d" stroke="#4a2c0f"/>
+      <text y="-27" text-anchor="middle" font-size="11" font-weight="800" fill="#fff" style="paint-order:stroke" stroke="#4a2c0f" stroke-width="3">N</text></g>
+    <g class="cloud" opacity=".9"><g transform="translate(120 22)"><circle r="12" fill="#fff"/><circle cx="14" cy="3" r="10" fill="#fff"/><circle cx="-13" cy="4" r="9" fill="#fff"/><ellipse cy="9" rx="26" ry="6" fill="#fff"/></g></g>
+    <g class="cloud" opacity=".8" style="animation-delay:-4s"><g transform="translate(384 245)"><circle r="10" fill="#fff"/><circle cx="12" cy="3" r="8" fill="#fff"/><circle cx="-11" cy="4" r="8" fill="#fff"/></g></g>
+    <g transform="translate(352 562)"><g class="ship">
+      <path d="M-34 15 q8 -4 16 0 M18 15 q8 -4 16 0" stroke="#fff" stroke-width="2" fill="none" opacity=".8"/>
+      <path d="M-26 0 L26 0 L18 13 L-18 13 Z" fill="#8b4513" stroke="#4a2c0f" stroke-width="2" stroke-linejoin="round"/>
+      <rect x="-20" y="3" width="40" height="3" fill="#ffd166"/>
+      <line x1="0" y1="0" x2="0" y2="-40" stroke="#4a2c0f" stroke-width="3"/>
+      <path d="M2 -36 Q22 -24 2 -6 Z" fill="#fff" stroke="#cbd5e1"/><path d="M-2 -32 Q-18 -20 -2 -6 Z" fill="#f1f5f9" stroke="#cbd5e1"/>
+      <path d="M0 -40 L14 -36 L0 -32 Z" fill="#111"/></g></g>
+
+    <!-- trail + places -->
+    ${trail}
+    ${nodes}
+    <g transform="translate(${px} ${py - pr - 6})" pointer-events="none"><g class="pin">
+      <path d="M0 0 C-4 -8 -12 -12 -12 -21 A12 12 0 1 1 12 -21 C12 -12 4 -8 0 0Z" fill="#ef4444" stroke="#fff" stroke-width="3"/>
+      <circle cy="-21" r="4.5" fill="#fff"/></g></g>
+  </svg>`;
+}
+function map() {
+  G = null; if (window.speechSynthesis) speechSynthesis.cancel();
+  if (!S.intro) return introStory();
+  app.innerHTML = `${hud()}
+  <div class="mapwrap"><div class="maptitle">🗺️ Mathoria Island</div>${mapSVG()}</div>
+  <div class="lbl">🧰 Treasure tools found</div>
+  <div class="inv">${ITEM_STAGES.map(s => `<span class="slot ${S.items.includes(s.id) ? 'have' : ''}" title="${esc(s.item.name)}">${S.items.includes(s.id) ? s.item.icon : '❔'}</span>`).join('')}</div>
+  <div class="lbl">🏅 Badges</div>
+  <div class="badges">${BADGES.map(b => `<span class="badge ${S.badges.includes(b.id) ? '' : 'off'}">${b.icon} ${b.name}</span>`).join('')}</div>
+  <div class="lbl" style="opacity:.8"><button class="mini" data-act="title">🏠 Home</button></div>`;
+}
+
+// ============================================================
+//  PLAY
+// ============================================================
+let G = null;
+function startStage(id) {
+  const st = STAGES[id - 1];
+  G = { st, need: st.count, resolved: 0, extra: 0, missed: 0, streak: 0, coins: 0, tries: 0, locked: false, typed: '', mode: 'choice', q: null };
+  nextQuestion();
+}
+function nextQuestion() {
+  const { st } = G;
+  G.q = st.gen(Math.min(G.resolved, st.count - 1), st.count);
+  renderQ();
+}
+function renderQ() {
+  const { st, q } = G;
+  G.mode = q.numeric && G.resolved >= st.numFrom ? 'number' : 'choice';
+  G.tries = 0; G.locked = false; G.typed = '';
+  const progress = st.boss
+    ? `<div class="hplabel">🦀 Crabzilla's power</div><div class="hp"><span style="width:${Math.round((G.need - G.resolved) / G.need * 100)}%"></span></div>`
+    : `<div class="dots">${Array.from({ length: G.need }, (_, k) => `<span class="dot ${k < G.resolved ? 'done' : k === G.resolved ? 'cur' : ''}"></span>`).join('')}</div>`;
+  const wide = q.options && q.options.some(o => String(o).length > 8);
+  const input = G.mode === 'choice'
+    ? `<div class="opts ${wide ? 'wide' : ''}">${q.options.map(o => `<button class="opt" data-act="pick" data-v="${esc(o)}">${o}</button>`).join('')}</div>`
+    : `<div class="numdisp" id="typed">?</div>
+       <div class="pad">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(k => `<button data-act="key" data-v="${k}">${k}</button>`).join('')}
+         <button class="del" data-act="key" data-v="del">⌫</button><button data-act="key" data-v="0">0</button><button class="go" data-act="key" data-v="go">✔</button></div>`;
+  app.innerHTML = `${hud()}<div class="card" id="card">
+    <div class="ph"><span>${st.icon} ${st.name}</span><span><button class="mini" data-act="map">🗺️ Map</button></span></div>
+    ${progress}
+    <div class="pbox"><div class="parrot" id="parrot">🦜</div><div class="bubble" id="fb">${pick(START_MSGS)}</div></div>
+    <div class="qtext">${q.prompt}</div>
+    <div class="qvis" id="vis">${q.visual || ''}</div>
+    <div class="hintbox" id="hint" hidden></div>
+    ${input}
+    <div class="tools"><button class="mini" data-act="hint">💡 Hint</button><button class="mini" data-act="say">🔊 Read to me</button></div>
+    <button class="big" id="next" data-act="next" hidden>Next ➜</button>
+  </div>`;
+}
+const $ = s => document.querySelector(s);
+function showHint() {
+  const h = $('#hint'); if (!h || !G) return;
+  h.innerHTML = '💡 ' + G.q.hint; h.hidden = false;
+  if (G.q.hintVisual) $('#vis').innerHTML = G.q.hintVisual;
+}
+function setBubble(html) { const f = $('#fb'); if (f) f.innerHTML = html; }
+
+function answer(v) {
+  if (!G || G.locked) return;
+  const val = G.mode === 'number' ? String(parseInt(v, 10)) : String(v);
+  if (val === String(G.q.answer)) right(); else wrong(v);
+}
+function right() {
+  G.locked = true; G.resolved++;
+  const clean = G.tries === 0;
+  if (clean) G.streak++;
+  S.bestStreak = Math.max(S.bestStreak, G.streak);
+  const gain = (clean ? 10 : 5) + (clean && G.streak >= 3 ? 5 : 0);
+  G.coins += gain; S.coins += gain; save();
+  sfx.ok(); setTimeout(sfx.coin, 350);
+  if (G.mode === 'choice') document.querySelectorAll('.opt').forEach(b => { b.disabled = true; if (String(b.dataset.v) === String(G.q.answer)) b.classList.add('good'); });
+  else { const t = $('#typed'); if (t) { t.textContent = G.q.answer; t.classList.add('good'); } }
+  setBubble(`✅ ${pick(RIGHT_MSGS)} <b>+${gain} 🪙</b>${G.streak >= 2 && clean ? ` 🔥 ${G.streak} in a row!` : ''}`);
+  const p = $('#parrot'); if (p) p.classList.add('happy');
+  burst(['⭐', '✨', '🪙'], 12);
+  finishQ();
+}
+function wrong(v) {
+  G.tries++;
+  if (G.tries === 1) { G.missed++; G.streak = 0; }
+  sfx.no();
+  const c = $('#card'); if (c) { c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); }
+  if (G.mode === 'choice') {
+    const b = document.querySelector(`.opt[data-v="${CSS.escape(String(v))}"]`); if (b) { b.classList.add('bad'); b.disabled = true; }
+  } else { G.typed = ''; updateTyped(); }
+  if (G.tries >= 2) return reveal();
+  showHint(); setBubble('🤔 ' + pick(WRONG_MSGS));
+}
+function reveal() {
+  G.locked = true; G.resolved++;
+  if (G.extra < 2) { G.extra++; G.need++; }
+  if (G.mode === 'choice') document.querySelectorAll('.opt').forEach(b => { b.disabled = true; if (String(b.dataset.v) === String(G.q.answer)) b.classList.add('good'); });
+  else { const t = $('#typed'); if (t) { t.textContent = G.q.answer; t.classList.add('good'); } }
+  showHint(); if (G.q.hintVisual) $('#vis').innerHTML = G.q.hintVisual;
+  setBubble(`The answer is <b>${G.q.answer}</b>. ${G.q.explain}<br>No worries, we'll try another one! 💪`);
+  finishQ();
+}
+function finishQ() {
+  const nx = $('#next'); if (!nx) return;
+  nx.textContent = G.resolved >= G.need ? 'Finish 🎉' : 'Next ➜'; nx.hidden = false;
+  nx.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function updateTyped() { const t = $('#typed'); if (t) t.textContent = G.typed || '?'; }
+function key(v) {
+  if (!G || G.locked || G.mode !== 'number') return;
+  if (v === 'del') G.typed = G.typed.slice(0, -1);
+  else if (v === 'go') { if (G.typed !== '') answer(G.typed); return; }
+  else if (G.typed.length < 3) G.typed += v;
+  updateTyped();
+}
+
+function finishStage() {
+  const { st } = G;
+  const stars = G.missed === 0 ? 3 : G.missed <= 2 ? 2 : 1;
+  const newItem = !S.items.includes(st.id) && st.id <= 6;
+  if (newItem) S.items.push(st.id);
+  S.stars[st.id] = Math.max(S.stars[st.id] || 0, stars);
+  const bonus = stars * 10; S.coins += bonus; G.coins += bonus;
+  const badges = checkBadges(); save();
+  if (st.boss) return finale(stars, badges);
+  sfx.win(); burst(['⭐', '🎉', '🪙', '✨', '💎']);
+  const nextSt = STAGES[st.id];
+  app.innerHTML = `${hud()}<div class="card center">
+    <h2>${st.icon} ${st.name} cleared!</h2>
+    <div class="stars">${[1, 2, 3].map(k => `<span class="${k <= stars ? '' : 'off'}">⭐</span>`).join('')}</div>
+    <p class="msg">${stars === 3 ? 'PERFECT! No mistakes at all!' : stars === 2 ? 'Great job, Captain!' : 'You did it! Practice makes perfect!'}</p>
+    <p class="msg">You earned <b>${G.coins} 🪙</b></p>
+    <div class="loot"><i>${st.item.icon}</i> ${newItem ? 'You found the' : 'You have the'} ${st.item.name}!</div>
+    <p class="msg">${st.after}</p>
+    ${badges.length ? `<p class="msg">🏅 New badge: <b>${badges.map(b => b.icon + ' ' + b.name).join(', ')}</b></p>` : ''}
+    ${nextSt ? `<button class="big" data-act="stage" data-id="${nextSt.id}">${nextSt.icon} Next: ${nextSt.name}</button>` : ''}
+    <button class="big alt" data-act="map">🗺️ Back to map</button>
+    ${stars < 3 ? `<button class="mini" style="margin-top:12px" data-act="stage" data-id="${st.id}">🔁 Try again for 3 ⭐</button>` : ''}
+  </div>`;
+}
+
+function chestSVG() {
+  return `<svg class="chest" id="chest" viewBox="0 0 200 170">
+    <ellipse cx="100" cy="160" rx="85" ry="9" fill="rgba(0,0,0,.18)"/>
+    <g class="glow"><circle cx="100" cy="70" r="70" fill="#fff3a0" opacity=".6"/><circle cx="100" cy="70" r="45" fill="#ffe14d" opacity=".7"/></g>
+    <rect x="30" y="72" width="140" height="80" rx="8" fill="#c8793a" stroke="#4a2c0f" stroke-width="5"/>
+    <rect x="30" y="100" width="140" height="10" fill="#8b4a1c"/>
+    <g class="hoard"><circle cx="70" cy="76" r="14" fill="#ffc83d" stroke="#b8860b" stroke-width="3"/><circle cx="100" cy="68" r="16" fill="#ffd84d" stroke="#b8860b" stroke-width="3"/><circle cx="132" cy="76" r="14" fill="#ffc83d" stroke="#b8860b" stroke-width="3"/><circle cx="116" cy="60" r="8" fill="#6ee7ff" stroke="#1b66a8" stroke-width="2"/></g>
+    <g class="lid"><path d="M30 74 Q30 20 100 20 Q170 20 170 74 Z" fill="#a0522d" stroke="#4a2c0f" stroke-width="5"/><rect x="30" y="60" width="140" height="14" fill="#8b4a1c" stroke="#4a2c0f" stroke-width="4"/></g>
+    <rect x="90" y="84" width="20" height="30" rx="4" fill="#ffc83d" stroke="#4a2c0f" stroke-width="4"/><circle cx="100" cy="97" r="4" fill="#4a2c0f"/>
+  </svg>`;
+}
+function finale(stars, badges) {
+  app.innerHTML = `${hud()}<div class="card center">
+    <h2>Crabzilla is defeated! 🦀💥</h2>
+    <p class="msg">You have all the tools: ${ITEM_STAGES.map(s => s.item.icon).join(' ')}</p>
+    ${chestSVG()}
+    <div id="after"><button class="big" data-act="open">🗝️ Open the treasure chest!</button></div>
+  </div>`;
+  G = { st: STAGES[6], stars, badges, coins: G.coins, locked: true };
+}
+function openChest() {
+  const c = $('#chest'); if (!c || c.classList.contains('open')) return;
+  c.classList.add('open'); sfx.win(); setTimeout(() => burst(['💰', '🪙', '💎', '👑', '⭐', '✨'], 50), 500);
+  const { stars, badges } = G;
+  $('#after').innerHTML = `<div class="cert"><h2>🏴‍☠️ Treasure found! 🏴‍☠️</h2>
+    <p class="msg">Captain <b>${esc(S.name)}</b> solved every puzzle and found the treasure of Mathoria Island!</p>
+    <div class="stars">${[1, 2, 3].map(k => `<span class="${k <= stars ? '' : 'off'}">⭐</span>`).join('')}</div>
+    <p class="msg">🪙 ${S.coins} coins · ⭐ ${totalStars()}/21 stars · 🏅 ${S.badges.length}/${BADGES.length} badges</p>
+    ${badges.length ? `<p class="msg">New badge: <b>${badges.map(b => b.icon + ' ' + b.name).join(', ')}</b></p>` : ''}</div>
+    <button class="big" data-act="map">🗺️ Back to map (win more stars!)</button>`;
+}
+
+// ============================================================
+//  EVENTS
+// ============================================================
+app.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]'); if (!el) return;
+  const act = el.dataset.act, id = Number(el.dataset.id);
+  if (act !== 'pick' && act !== 'key') sfx.click();
+  switch (act) {
+    case 'begin': {
+      const v = ($('#nm').value || '').trim(); if (!v) { $('#nm').focus(); toast('Please type your name, Captain!'); return; }
+      S.name = cap(v); save(); map(); break;
+    }
+    case 'newcap': if (confirm('Start over with a new captain? This erases the saved game on this device.')) { S = fresh(); save(); title(); } break;
+    case 'title': title(); break;
+    case 'map': map(); break;
+    case 'snd': S.sound = !S.sound; save(); el.textContent = S.sound ? '🔊' : '🔇'; if (!S.sound && window.speechSynthesis) speechSynthesis.cancel(); break;
+    case 'locked': toast('🔒 Finish the place before this one first!'); break;
+    case 'stage': {
+      const st = STAGES[id - 1];
+      story([`${st.story[0]}`, `<b>Your mission:</b> solve ${st.count} puzzles. Every right answer gives <b>🪙 coins</b>, and no mistakes means <b>⭐⭐⭐</b>!`], st.icon, () => startStage(id), "Let's go! ⚔️", true);
+      break;
+    }
+    case 'storynext': if (ST.i < ST.pages.length - 1) { ST.i++; renderStory(); } else ST.onDone(); break;
+    case 'pick': answer(el.dataset.v); break;
+    case 'key': key(el.dataset.v); break;
+    case 'hint': showHint(); break;
+    case 'say': if (G && G.q) speak(speakable(G.q.prompt)); break;
+    case 'next': if (G.resolved >= G.need) finishStage(); else nextQuestion(); break;
+    case 'open': openChest(); break;
+  }
+});
+document.addEventListener('keydown', e => {
+  if (e.target && e.target.id === 'nm') { if (e.key === 'Enter') document.querySelector('[data-act="begin"]').click(); return; }
+  if (!G || G.mode !== 'number') return;
+  if (/^[0-9]$/.test(e.key)) key(e.key); else if (e.key === 'Backspace') key('del'); else if (e.key === 'Enter') { if (G.locked) { const n = $('#next'); if (n && !n.hidden) n.click(); } else key('go'); }
+});
+
+title();
+</script>
+</body>
+</html>
