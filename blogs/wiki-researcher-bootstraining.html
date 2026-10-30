@@ -1,0 +1,867 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bootstraining Wiki Researcher — Nguyễn Đăng Khoa</title>
+<meta name="description" content="Lộ trình hands-on post-train một model nhỏ thành agent nghiên cứu Wikipedia theo công thức Samaya: Eval, Harness, SFT, GRPO, Ablation, kèm bài học đúng lúc và máy tính ngân sách Tinker.">
+<link rel="canonical" href="https://nguyendangkhoa.info/blogs/wiki-researcher-bootstraining.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bootstraining Wiki Researcher">
+<meta property="og:description" content="Post-train một model nhỏ thành agent nghiên cứu Wikipedia: Eval → Harness → SFT → GRPO → Ablation, làm tới đâu học tới đó, với ngân sách thấp nhất.">
+<meta property="og:url" content="https://nguyendangkhoa.info/blogs/wiki-researcher-bootstraining.html">
+<meta property="og:image" content="https://nguyendangkhoa.info/blogs/thumbs/wiki-researcher-bootstraining.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f7f8f6">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>⚗</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: field manual. Sticky pipeline rail on the left (Eval → Ablation is a real sequence), one long column of steps on the right. */
+:root {
+  --paper: #f7f8f6;
+  --sheet: #ffffff;
+  --ink: #1b2130;
+  --muted: #5b6475;
+  --rule: #dfe3e8;
+  --link: #2f5fc4;
+  --link-soft: #e8eefb;
+  --cost: #9a5b00;
+  --cost-soft: #fbf1e1;
+  --ok: #1f7a4d;
+  --ok-soft: #e4f3ea;
+  --warn: #a33a2b;
+  --warn-soft: #fbe9e6;
+  --code-bg: #f0f2f5;
+  --display: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --body: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #12151b; --sheet: #191d25; --ink: #e5e8ee; --muted: #9aa3b4; --rule: #2a303b;
+    --link: #8fb0ff; --link-soft: #1d2840; --cost: #e3a64a; --cost-soft: #2c2214;
+    --ok: #6fd09c; --ok-soft: #15291f; --warn: #f08b7b; --warn-soft: #2e1916; --code-bg: #1f242e;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #12151b; --sheet: #191d25; --ink: #e5e8ee; --muted: #9aa3b4; --rule: #2a303b;
+  --link: #8fb0ff; --link-soft: #1d2840; --cost: #e3a64a; --cost-soft: #2c2214;
+  --ok: #6fd09c; --ok-soft: #15291f; --warn: #f08b7b; --warn-soft: #2e1916; --code-bg: #1f242e;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: var(--body); font-size: 15.5px; line-height: 1.65;
+}
+a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:focus-visible, input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+code, .mono { font-family: var(--mono); font-size: 0.86em; }
+code { background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 4px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; line-height: 1.2; margin: 0; }
+p { margin: 0; }
+
+.wrap {
+  max-width: 1180px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 80px;
+}
+
+/* Hero */
+.hero { display: grid; gap: 18px; padding-bottom: 32px; border-bottom: 1px solid var(--rule); }
+.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.hero h1 { font-size: clamp(30px, 4.6vw, 48px); font-weight: 700; max-width: 22ch; }
+.hero .sub { font-size: 17px; color: var(--muted); max-width: 68ch; }
+.pipeline { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 6px; }
+.pipeline a {
+  font-family: var(--mono); font-size: 13px; text-decoration: none; color: var(--ink);
+  border: 1px solid var(--rule); background: var(--sheet); padding: 6px 10px; border-radius: 6px;
+}
+.pipeline a:hover { border-color: var(--link); color: var(--link); }
+.pipeline .arrow { color: var(--muted); font-size: 13px; }
+
+/* Shell */
+.shell { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 48px; margin-top: 36px; }
+.rail { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 20px); align-self: start; display: grid; gap: 4px; }
+.rail .label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.rail a {
+  display: grid; grid-template-columns: 26px 1fr auto; align-items: center; gap: 6px;
+  text-decoration: none; color: var(--ink); padding: 6px 8px; border-radius: 6px; font-size: 14px;
+}
+.rail a:hover { background: var(--link-soft); }
+.rail .n { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.rail .p { font-family: var(--mono); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.rail .p.full { color: var(--ok); }
+main { display: grid; gap: 56px; min-width: 0; }
+
+section > h2 { font-size: 28px; }
+.block { display: grid; gap: 16px; }
+.lede { font-size: 16.5px; max-width: 70ch; }
+.note { color: var(--muted); font-size: 14px; max-width: 72ch; }
+
+/* Tables */
+.tbl { overflow-x: auto; border: 1px solid var(--rule); border-radius: 8px; background: var(--sheet); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); background: var(--paper); }
+tr:last-child td { border-bottom: 0; }
+td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Tiers */
+.tiers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.tier { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: 16px; display: grid; gap: 8px; align-content: start; }
+.tier .price { font-family: var(--mono); font-size: 22px; font-weight: 500; color: var(--cost); font-variant-numeric: tabular-nums; }
+.tier h3 { font-family: var(--body); font-size: 15px; font-weight: 600; }
+.tier ul { margin: 0; padding-left: 18px; font-size: 14px; color: var(--muted); }
+
+/* Calculator */
+.calc { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: 18px; display: grid; gap: 16px; }
+.calc-head { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: end; }
+.calc label { display: grid; gap: 4px; font-size: 12.5px; color: var(--muted); }
+.calc input, .calc select {
+  font: inherit; font-size: 14px; color: var(--ink); background: var(--paper);
+  border: 1px solid var(--rule); border-radius: 6px; padding: 6px 8px; width: 100%;
+}
+.calc input { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.calc-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.calc-card { border: 1px solid var(--rule); border-radius: 8px; padding: 12px; display: grid; gap: 10px; align-content: start; }
+.calc-card h4 { margin: 0; font-size: 14px; font-weight: 600; }
+.calc-card .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.calc-card .out { font-family: var(--mono); font-size: 20px; color: var(--cost); font-variant-numeric: tabular-nums; }
+.calc-card .why { font-size: 12px; color: var(--muted); font-family: var(--mono); }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.seg button { font: inherit; font-size: 13px; background: var(--paper); color: var(--ink); border: 0; padding: 7px 10px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--link); color: var(--sheet); }
+.calc-total { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; border-top: 1px solid var(--rule); padding-top: 12px; }
+.calc-total .big { font-family: var(--mono); font-size: 26px; color: var(--cost); font-variant-numeric: tabular-nums; }
+
+/* Steps */
+.step { display: grid; gap: 20px; scroll-margin-top: 20px; }
+.step-head { display: grid; gap: 8px; }
+.step-no { font-family: var(--mono); font-size: 12.5px; color: var(--link); letter-spacing: 0.04em; }
+.step-head h2 { font-size: 30px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.chip { font-size: 12.5px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--rule); background: var(--sheet); color: var(--muted); white-space: nowrap; }
+.chip.cost { color: var(--cost); background: var(--cost-soft); border-color: transparent; }
+.cols { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 20px; }
+.panel { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: 18px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.panel h3 { font-family: var(--body); font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.panel h3 .count { font-family: var(--mono); letter-spacing: 0; text-transform: none; color: var(--ok); margin-left: 6px; }
+
+.tasks { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; counter-reset: t; }
+.tasks li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; align-items: start; }
+.tasks input { width: 16px; height: 16px; margin: 4px 0 0; accent-color: var(--ok); cursor: pointer; }
+.tasks label { cursor: pointer; font-size: 14.5px; }
+.tasks li.done label { color: var(--muted); }
+.tasks li.done label strong { text-decoration: line-through; text-decoration-color: var(--muted); }
+
+.learn { display: grid; gap: 14px; }
+.learn-item { display: grid; gap: 5px; padding-bottom: 14px; border-bottom: 1px dashed var(--rule); }
+.learn-item:last-child { border-bottom: 0; padding-bottom: 0; }
+.learn-item .when { font-size: 13px; color: var(--muted); }
+.learn-item .what { font-size: 14.5px; font-weight: 600; }
+.learn-item .why { font-size: 14px; }
+.refs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.refs a { font-size: 12.5px; text-decoration: none; padding: 2px 8px; border-radius: 5px; border: 1px solid var(--rule); }
+.refs a.repo { font-family: var(--mono); font-size: 11.5px; background: var(--link-soft); border-color: transparent; }
+.refs a:hover { border-color: var(--link); }
+
+.gate { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.gate > div { border-radius: 8px; padding: 14px 16px; font-size: 14px; display: grid; gap: 6px; align-content: start; }
+.gate .done-when { background: var(--ok-soft); }
+.gate .traps { background: var(--warn-soft); }
+.gate b { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; }
+.gate .done-when b { color: var(--ok); }
+.gate .traps b { color: var(--warn); }
+.gate ul { margin: 0; padding-left: 18px; }
+
+pre.trace {
+  margin: 0; background: var(--code-bg); border-radius: 8px; padding: 14px 16px; overflow-x: auto;
+  font-family: var(--mono); font-size: 12.5px; line-height: 1.6; color: var(--ink);
+}
+pre.trace .c { color: var(--muted); }
+pre.trace .t { color: var(--link); }
+pre.trace .r { color: var(--ok); }
+.formula { font-family: var(--mono); font-size: 13.5px; background: var(--code-bg); padding: 10px 14px; border-radius: 8px; overflow-x: auto; white-space: nowrap; }
+
+.sources ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: 14px; }
+
+@media (max-width: 960px) {
+  .shell { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .rail { position: static; display: flex; flex-wrap: wrap; gap: 6px; }
+  .rail .label { width: 100%; margin: 0; }
+  .rail a { display: inline-flex; gap: 6px; border: 1px solid var(--rule); background: var(--sheet); }
+  .cols, .gate { grid-template-columns: minmax(0, 1fr); }
+  .tiers, .calc-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <span class="eyebrow">Case study: Samaya Sterling → phiên bản Wikipedia của bạn</span>
+    <h1>Post-train một model nhỏ thành agent nghiên cứu Wikipedia</h1>
+    <p class="sub">Làm lại công thức của Samaya (Eval → Harness → SFT → GRPO → Ablation) trên một domain mà máy tự chấm được. Mỗi bước có việc cần làm ngay, và "cần học gì" chỉ hiện ra đúng lúc bạn chạm tới nó. Ngân sách tính theo giá Tinker ngày 19/10/2026.</p>
+    <nav class="pipeline" aria-label="Các bước">
+      <a href="#setup">0 Chuẩn bị</a><span class="arrow">→</span>
+      <a href="#eval">1 Eval</a><span class="arrow">→</span>
+      <a href="#harness">2 Harness</a><span class="arrow">→</span>
+      <a href="#sft">3 SFT</a><span class="arrow">→</span>
+      <a href="#grpo">4 GRPO</a><span class="arrow">→</span>
+      <a href="#ablation">5 Ablation</a>
+    </nav>
+  </header>
+
+  <div class="shell">
+    <nav class="rail" aria-label="Tiến độ">
+      <span class="label">Tiến độ của bạn</span>
+      <a href="#setup"><span class="n">0</span><span>Chuẩn bị</span><span class="p" data-prog="setup"></span></a>
+      <a href="#eval"><span class="n">1</span><span>Eval</span><span class="p" data-prog="eval"></span></a>
+      <a href="#harness"><span class="n">2</span><span>Harness</span><span class="p" data-prog="harness"></span></a>
+      <a href="#sft"><span class="n">3</span><span>SFT</span><span class="p" data-prog="sft"></span></a>
+      <a href="#grpo"><span class="n">4</span><span>GRPO</span><span class="p" data-prog="grpo"></span></a>
+      <a href="#ablation"><span class="n">5</span><span>Ablation</span><span class="p" data-prog="ablation"></span></a>
+      <a href="#budget"><span class="n">$</span><span>Ngân sách</span><span class="p"></span></a>
+    </nav>
+
+    <main>
+      <!-- Target -->
+      <section class="block" id="target">
+        <h2>Đích đến, nói cho đúng</h2>
+        <p class="lede">"State-of-the-art" chỉ có nghĩa khi so cùng corpus, cùng bộ câu hỏi, cùng cách chấm. Vì vậy đích đến được viết thành ba câu đo được, giống cách Samaya tự đặt mục tiêu:</p>
+        <div class="tbl"><table>
+          <thead><tr><th>#</th><th>Mục tiêu</th><th>Đo bằng</th></tr></thead>
+          <tbody>
+            <tr><td class="num">1</td><td>Model sau train vượt xa chính nó trước train, trong cùng harness</td><td>EM/F1 trên tập test giữ kín, tách theo độ khó</td></tr>
+            <tr><td class="num">2</td><td>Bằng hoặc vượt một frontier model chạy trong <em>cùng harness</em>, với chi phí mỗi câu thấp hơn nhiều lần</td><td>Điểm + $/câu + giây/câu</td></tr>
+            <tr><td class="num">3</td><td>Đặt cạnh kết quả Search-R1 cùng cỡ model để tham khảo</td><td>Chỉ tham khảo: corpus và retriever khác nhau</td></tr>
+          </tbody>
+        </table></div>
+
+        <h3 style="font-size:20px;margin-top:8px">Samaya làm gì → bạn làm gì</h3>
+        <div class="tbl"><table>
+          <thead><tr><th>Thành phần</th><th>Samaya (tài chính)</th><th>Bạn (Wikipedia)</th></tr></thead>
+          <tbody>
+            <tr><td>Benchmark</td><td>FrontierFinance, 220 câu công khai</td><td>HotpotQA, 2WikiMultihopQA, MuSiQue (dev), mở rộng sang Bamboogle, FRAMES</td></tr>
+            <tr><td>Chấm điểm</td><td>Rubric do chuyên gia viết + LLM grader</td><td>Exact Match / F1, thêm LLM judge đã kiểm chứng bằng tay</td></tr>
+            <tr><td>Base model</td><td>Nemotron 3.5 Lightning 30B-A3B</td><td>Chính model đó trên Tinker, hoặc Qwen3.5-4B</td></tr>
+            <tr><td>Tools</td><td>37 tool tài chính</td><td>3–4 tool: <code>search</code>, <code>open</code>, <code>find</code>, <code>answer</code></td></tr>
+            <tr><td>Teacher</td><td>Kimi K3</td><td>Model open-weight lớn qua Tinker sampling, hoặc tự sinh trace (STaR)</td></tr>
+            <tr><td>SFT</td><td>968 câu synthetic + 1.157 câu best-of-8</td><td>500–1.000 trace đúng, đã lọc</td></tr>
+            <tr><td>Online GRPO</td><td>26 bước × 16 câu × 8 lần thử</td><td>20–30 bước × 16 câu × 8 lần thử</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <!-- Budget -->
+      <section class="block" id="budget">
+        <h2>Ngân sách: ba tầng, dùng tầng thấp nhất còn đủ</h2>
+        <p class="lede">Học cơ chế ở tầng miễn phí. Chỉ trả tiền khi chạy thật. Mọi con số dưới đây là ước tính; số token thật của bạn sẽ đo được ở Bước 1, rồi điền vào máy tính bên dưới.</p>
+        <div class="tiers">
+          <div class="tier">
+            <span class="price">$0</span>
+            <h3>Tầng 0: học cơ chế</h3>
+            <ul>
+              <li>Google Colab hoặc Kaggle (GPU miễn phí, có hạn mức)</li>
+              <li>Model ~0.6–1.7B, LoRA bằng Unsloth hoặc TRL</li>
+              <li>Corpus nhỏ, 200–500 câu hỏi</li>
+              <li>Mục đích: chạy hết pipeline một lần, chưa cần điểm cao</li>
+            </ul>
+          </div>
+          <div class="tier">
+            <span class="price">≈ $70</span>
+            <h3>Tầng 1 lean: chạy thật trên Tinker</h3>
+            <ul>
+              <li>Nemotron-3.5-Lightning-30B-A3B (rẻ nhất, giống Samaya)</li>
+              <li>SFT bằng trace tự sinh (STaR), một lần online GRPO</li>
+              <li>Không cần GPU riêng</li>
+            </ul>
+          </div>
+          <div class="tier">
+            <span class="price">≈ $200</span>
+            <h3>Tầng 2: đầy đủ như Samaya</h3>
+            <ul>
+              <li>Thêm teacher lớn, SFT hai giai đoạn, offline GRPO</li>
+              <li>Ablation đầy đủ, chạy 2 seed</li>
+              <li>Tùy chọn: thuê CPU/GPU vài giờ để build index Wikipedia đầy đủ</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="calc" id="calc">
+          <div class="calc-head">
+            <label for="c-model" style="min-width:260px;flex:1">Model trên Tinker (giá USD / 1M token, 19/10/2026)
+              <select id="c-model"></select>
+            </label>
+            <label for="c-cache" style="width:150px">Tỉ lệ prefill được cache
+              <input id="c-cache" type="number" min="0" max="95" step="5" value="70">
+            </label>
+          </div>
+          <p class="note" id="c-rates"></p>
+          <div class="calc-grid">
+            <div class="calc-card">
+              <h4>Một lần chạy eval</h4>
+              <div class="fields">
+                <label for="e-n">Số câu<input id="e-n" type="number" min="1" value="500"></label>
+                <label for="e-pre">Prefill / câu<input id="e-pre" type="number" min="0" step="1000" value="20000"></label>
+                <label for="e-smp">Sample / câu<input id="e-smp" type="number" min="0" step="100" value="1500"></label>
+              </div>
+              <span class="out" id="e-out">$0</span>
+              <span class="why" id="e-why"></span>
+            </div>
+            <div class="calc-card">
+              <h4>Một lần SFT (LoRA)</h4>
+              <div class="fields">
+                <label for="s-n">Số trace<input id="s-n" type="number" min="1" value="1000"></label>
+                <label for="s-len">Token / trace<input id="s-len" type="number" min="0" step="500" value="8000"></label>
+                <label for="s-ep">Epoch<input id="s-ep" type="number" min="1" value="3"></label>
+              </div>
+              <span class="out" id="s-out">$0</span>
+              <span class="why" id="s-why"></span>
+            </div>
+            <div class="calc-card">
+              <h4>Một lần online GRPO</h4>
+              <div class="fields">
+                <label for="g-steps">Số bước<input id="g-steps" type="number" min="1" value="26"></label>
+                <label for="g-q">Câu / bước<input id="g-q" type="number" min="1" value="16"></label>
+                <label for="g-g">Lần thử / câu<input id="g-g" type="number" min="2" value="8"></label>
+                <label for="g-len">Token / trace<input id="g-len" type="number" min="0" step="500" value="8000"></label>
+              </div>
+              <span class="out" id="g-out">$0</span>
+              <span class="why" id="g-why"></span>
+            </div>
+          </div>
+          <div class="calc-total">
+            <span class="note">Cả dự án ≈ 10 lần eval + 2 lần SFT + 2 lần GRPO:</span>
+            <span class="big" id="t-out">$0</span>
+            <span class="note">(chưa gồm teacher và frontier baseline)</span>
+          </div>
+        </div>
+        <p class="note">Cách tính: prefill là tổng token model phải đọc lại qua mọi lượt (agent nhiều lượt nên prefill lớn hơn độ dài trace nhiều lần); sample là token model sinh ra; train là độ dài trace × số lần train. GRPO = chi phí sinh rollout + chi phí train trên các rollout đó. Kiểm tra giá mới nhất tại <a href="https://thinkingmachines.ai/tinker/pricing/">trang giá Tinker</a>.</p>
+      </section>
+
+      <!-- Step 0 -->
+      <section class="step" id="setup" data-step="setup">
+        <div class="step-head">
+          <span class="step-no">BƯỚC 0</span>
+          <h2>Chuẩn bị</h2>
+          <p class="lede">Dựng khung dự án, chạy được một model nhỏ, mở tài khoản Tinker, tải dữ liệu. Cuối bước này chưa có gì thông minh, nhưng mọi thứ đã chạy được.</p>
+          <div class="meta"><span class="chip">1–2 ngày</span><span class="chip cost">$0</span><span class="chip">Laptop + Colab/Kaggle</span></div>
+        </div>
+        <div class="cols">
+          <div class="panel">
+            <h3>Làm<span class="count" data-count="setup"></span></h3>
+            <ol class="tasks">
+              <li><input type="checkbox" id="setup-1"><label for="setup-1"><strong>Tạo repo <code>wiki-researcher/</code></strong> với các thư mục <code>data/</code>, <code>harness/</code>, <code>eval/</code>, <code>train/</code>, <code>runs/</code>. Mọi lần chạy ghi ra <code>runs/&lt;ngày&gt;-&lt;tên&gt;/</code>.</label></li>
+              <li><input type="checkbox" id="setup-2"><label for="setup-2"><strong>Chạy một model ~1B trên Colab hoặc Kaggle</strong> bằng <code>transformers</code>: nạp model, gửi một câu hỏi, in câu trả lời.</label></li>
+              <li><input type="checkbox" id="setup-3"><label for="setup-3"><strong>Mở tài khoản Tinker</strong>, đặt giới hạn chi tiêu, chạy ví dụ đầu tiên trong tinker-cookbook trên model rẻ nhất.</label></li>
+              <li><input type="checkbox" id="setup-4"><label for="setup-4"><strong>Tải dữ liệu</strong> HotpotQA, 2WikiMultihopQA, MuSiQue, Bamboogle từ <code>RUC-NLPIR/FlashRAG_datasets</code> trên Hugging Face. Lưu thành JSONL <code>{id, question, answers}</code>.</label></li>
+              <li><input type="checkbox" id="setup-5"><label for="setup-5"><strong>Tạo <code>costs.csv</code></strong>: mỗi lần chạy ghi một dòng <code>ngày, việc, model, token_in, token_out, usd</code>.</label></li>
+            </ol>
+          </div>
+          <div class="panel">
+            <h3>Cần học gì, khi nào</h3>
+            <div class="learn">
+              <div class="learn-item">
+                <span class="when">Khi Colab báo hết bộ nhớ hoặc bạn không biết chọn GPU nào</span>
+                <span class="what">VRAM, dtype, GPU cloud</span>
+                <div class="refs">
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/00-setup-and-tooling/03-gpu-setup-and-cloud">00/03 gpu-setup-and-cloud</a>
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/00-setup-and-tooling/05-jupyter-notebooks">00/05 jupyter-notebooks</a>
+                </div>
+              </div>
+              <div class="learn-item">
+                <span class="when">Khi dữ liệu bắt đầu có nhiều phiên bản và bạn sợ lẫn train với test</span>
+                <span class="what">Quản lý dữ liệu, phiên bản hóa</span>
+                <div class="refs">
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/00-setup-and-tooling/09-data-management">00/09 data-management</a>
+                </div>
+              </div>
+              <div class="learn-item">
+                <span class="when">Khi đọc ví dụ đầu tiên của Tinker</span>
+                <span class="what">Tinker làm gì: bạn viết vòng lặp, họ chạy GPU</span>
+                <div class="refs">
+                  <a href="https://tinker-docs.thinkingmachines.ai/">Tinker docs</a>
+                  <a href="https://github.com/thinking-machines-lab/tinker-cookbook">tinker-cookbook</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="gate">
+          <div class="done-when"><b>Xong khi</b><ul><li>Một lệnh chạy model nhỏ trả lời được một câu HotpotQA</li><li>Tinker chạy xong một ví dụ, hóa đơn &lt; $1</li></ul></div>
+          <div class="traps"><b>Bẫy</b><ul><li>Quên đặt giới hạn chi tiêu trên Tinker</li><li>Tải dataset từ nhiều nguồn khác nhau, mỗi nguồn một format</li></ul></div>
+        </div>
+      </section>
+
+      <!-- Step 1 -->
+      <section class="step" id="eval" data-step="eval">
+        <div class="step-head">
+          <span class="step-no">BƯỚC 1</span>
+          <h2>Eval: xây thước đo trước khi train</h2>
+          <p class="lede">Samaya có con số 42.5% của base model trước khi train dòng nào. Bạn cũng vậy: chưa có thước đo thì không biết bước nào giúp ích. Bước này cũng là nơi bạn đo số token thật cho máy tính ngân sách.</p>
+          <div class="meta"><span class="chip">~1 tuần</span><span class="chip cost">$5–15</span><span class="chip">Laptop + Tinker sampling</span></div>
+        </div>
+        <div class="cols">
+          <div class="panel">
+            <h3>Làm<span class="count" data-count="eval"></span></h3>
+            <ol class="tasks">
+              <li><input type="checkbox" id="eval-1"><label for="eval-1"><strong>Chia ba tập, khóa lại.</strong> Train: lấy từ tập train của ba dataset. Validation: 150 câu trộn, dùng để chọn checkpoint. Test: 500 câu dev mỗi dataset + Bamboogle, <em>không bao giờ</em> dùng để train hay tune. Ghi hash của file test.</label></li>
+              <li><input type="checkbox" id="eval-2"><label for="eval-2"><strong>Viết <code>score.py</code></strong>: chuẩn hóa đáp án kiểu SQuAD (chữ thường, bỏ mạo từ và dấu câu), rồi tính EM và F1. Viết 5 unit test cho các ca khó: "the United States" vs "United States", số, ngày.</label></li>
+              <li><input type="checkbox" id="eval-3"><label for="eval-3"><strong>Thêm LLM judge</strong> cho câu trả lời đúng nhưng diễn đạt khác. Tự chấm tay 50 mẫu, so với judge, ghi lại tỉ lệ đồng ý.</label></li>
+              <li><input type="checkbox" id="eval-4"><label for="eval-4"><strong>Chạy baseline đóng sách</strong> (không tool) cho base model. Đây là sàn.</label></li>
+              <li><input type="checkbox" id="eval-5"><label for="eval-5"><strong>Ghi kèm mỗi câu</strong>: số tool call, token in/out, $, giây, có hết budget không. Bảng kết quả luôn có cột chi phí.</label></li>
+              <li><input type="checkbox" id="eval-6"><label for="eval-6"><strong>Chia độ khó thành ba phần</strong> (theo số hop hoặc theo tỉ lệ base model làm đúng). Báo cáo riêng phần khó nhất, như Samaya.</label></li>
+              <li><input type="checkbox" id="eval-7"><label for="eval-7"><strong>Đọc 30 câu sai</strong>, gán nhãn lỗi: truy vấn tệ, không mở trang, sai hop, sai format. Danh sách này định hướng Bước 2.</label></li>
+            </ol>
+          </div>
+          <div class="panel">
+            <h3>Cần học gì, khi nào</h3>
+            <div class="learn">
+              <div class="learn-item">
+                <span class="when">Khi phân vân "chia train/val/test thế nào cho đúng"</span>
+                <span class="what">Held-out set, overfitting lên benchmark, contamination</span>
+                <div class="refs">
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/02-ml-fundamentals/09-model-evaluation">02/09 model-evaluation</a>
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/10-llms-from-scratch/10-evaluation">10/10 evaluation</a>
+                  <a href="https://stanford-cs336.github.io/">Stanford CS336 (bài evaluation)</a>
+                </div>
+              </div>
+              <div class="learn-item">
+                <span class="when">Khi EM chấm sai một câu rõ ràng là đúng</span>
+                <span class="what">EM, F1 token-level, LLM-as-judge và cách kiểm chứng judge</span>
+                <div class="refs">
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/11-llm-engineering/10-evaluation">11/10 evaluation</a>
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/05-nlp-foundations-to-advanced/27-llm-evaluation-frameworks">05/27 llm-eval-frameworks</a>
+                  <a href="https://hotpotqa.github.io/">HotpotQA (định nghĩa metric)</a>
+                </div>
+              </div>
+              <div class="learn-item">
+                <span class="when">Khi đọc trace lỗi và không biết bắt đầu phân loại từ đâu</span>
+                <span class="what">Error analysis: đọc dữ liệu trước, viết metric sau</span>
+                <div class="refs">
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/14-agent-engineering/30-eval-driven-agent-development">14/30 eval-driven-agent-dev</a>
+                  <a href="https://hamel.dev/blog/posts/evals/">Hamel: Your AI product needs evals</a>
+                  <a href="https://maven.com/parlance-labs/evals">AI Evals course (Husain &amp; Shankar)</a>
+                </div>
+              </div>
+              <div class="learn-item">
+                <span class="when">Khi muốn eval chạy lại được, có log đầy đủ</span>
+                <span class="what">Eval harness: fixture, runner, báo cáo</span>
+                <div class="refs">
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/19-capstone-projects/27-eval-harness-fixture-tasks">19/27 eval-harness</a>
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/19-capstone-projects/75-end-to-end-eval-runner">19/75 eval-runner</a>
+                  <a href="https://inspect.aisi.org.uk/">Inspect AI</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="gate">
+          <div class="done-when"><b>Xong khi</b><ul><li><code>python eval.py --model X --split val</code> in ra bảng điểm + $/câu</li><li>Hai lần chạy giống nhau lệch dưới ~1 điểm</li><li>Đã biết token trung bình mỗi câu → điền vào máy tính ngân sách</li></ul></div>
+          <div class="traps"><b>Bẫy</b><ul><li>Nhìn vào tập test để sửa prompt: từ lúc đó nó không còn là test</li><li>Tin LLM judge khi chưa so với chấm tay</li><li>Benchmark công khai có thể đã nằm trong dữ liệu pretrain: giữ thêm 50 câu tự viết</li></ul></div>
+        </div>
+      </section>
+
+      <!-- Step 2 -->
+      <section class="step" id="harness" data-step="harness">
+        <div class="step-head">
+          <span class="step-no">BƯỚC 2</span>
+          <h2>Harness: môi trường agent làm việc</h2>
+          <p class="lede">Harness là phần code bao quanh model: tool, vòng lặp, cách cắt gọn context, giới hạn ngân sách. Samaya nhấn mạnh model và harness "lớn lên cùng nhau", nên harness ở bước này phải đúng là harness dùng khi train và khi chạy thật.</p>
+          <div class="meta"><span class="chip">1–2 tuần</span><span class="chip cost">$2–5</span><span class="chip">Laptop (BM25 chạy CPU)</span></div>
+        </div>
+        <pre class="trace" aria-label="Ví dụ trace"><span class="c"># Câu HotpotQA: Which magazine was started first, Arthur's Magazine or First for Women?</span>
+<span class="t">search</span>(query="Arthur's Magazine founded")
+<span class="r">→ [1] Arthur's Magazine: an American literary periodical published in Philadelphia, 1844–1846 …</span>
+<span class="t">search</span>(query="First for Women magazine first published")
+<span class="r">→ [1] First for Women: a woman's magazine published by Bauer Media Group … started in 1989 …</span>
+<span class="t">answer</span>(text="Arthur's Magazine", evidence=["Arthur's Magazine", "First for Women"])
+<span class="c"># Chấm: EM = 1, F1 = 1.0 · 2 tool call · ghi token, $ và giây vào runs/</span></pre>
+        <div class="cols">
+          <div class="panel">
+            <h3>Làm<span class="count" data-count="harness"></span></h3>
+            <ol class="tasks">
+              <li><input type="checkbox" id="harness-1"><label for="harness-1"><strong>Corpus v1 (nhỏ)</strong>: gộp mọi đoạn context có sẵn trong HotpotQA, 2Wiki, MuSiQue thành một bảng <code>{title, para_id, text}</code>, khử trùng lặp. Build index BM25 bằng <code>bm25s</code> trên laptop.</label></li>
+              <li><input type="checkbox" id="harness-2"><label for="harness-2"><strong>Viết 4 tool</strong> với JSON schema rõ ràng: <code>search(query, k=5)</code>, <code>open(title)</code>, <code>find(title, keyword)</code>, <code>answer(text, evidence)</code>.</label></li>
+              <li><input type="checkbox" id="harness-3"><label for="harness-3"><strong>Viết vòng lặp agent</strong>: gọi model → parse tool call → chạy tool → nối kết quả → lặp. Parse lỗi thì trả thông báo lỗi cho model, không crash.</label></li>
+              <li><input type="checkbox" id="harness-4"><label for="harness-4"><strong>Thêm 3 cơ chế của Samaya</strong>: condenser (cắt kết quả tool dài về N token), compactor (tóm tắt lịch sử khi context vượt ngưỡng), research budget (tối đa ~12 tool call, sau đó chuyển sang bước viết đáp án).</label></li>
+              <li><input type="checkbox" id="harness-5"><label for="harness-5"><strong>Ghi trace ra JSONL</strong> với đúng chat template của base model. File này về sau chính là dữ liệu SFT, nên format phải chuẩn ngay từ đầu.</label></li>
+              <li><input type="checkbox" id="harness-6"><label for="harness-6"><strong>Chạy eval lại</strong> với base model + harness, rồi với một frontier model + cùng harness. Bạn có ba con số: đóng sách, base + harness, frontier + harness.</label></li>
+              <li><input type="checkbox" id="harness-7"><label for="harness-7"><strong>Tùy chọn, Tầng 2</strong>: Corpus v2 là Wikipedia 2018 đầy đủ của FlashRAG (corpus mà Search-R1 dùng). Thuê máy CPU nhiều RAM vài giờ để build index, cần cho Bamboogle và FRAMES.</label></li>
+            </ol>
+          </div>
+          <div class="panel">
+            <h3>Cần học gì, khi nào</h3>
+            <div class="learn">
+              <div class="learn-item">
+                <span class="when">Khi viết vòng lặp và không chắc khi nào dừng</span>
+                <span class="what">Agent loop, ReAct, hợp đồng của vòng lặp</span>
+                <div class="refs">
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/14-agent-engineering/01-the-agent-loop">14/01 agent-loop</a>
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/19-capstone-projects/20-agent-harness-loop-contract">19/20 harness-loop-contract</a>
+                  <a href="https://arxiv.org/abs/2210.03629">ReAct paper</a>
+                </div>
+              </div>
+              <div class="learn-item">
+                <span class="when">Khi model gọi tool sai tham số hoặc sai cú pháp</span>
+                <span class="what">Function calling, thiết kế schema tool</span>
+                <div class="refs">
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/14-agent-engineering/06-tool-use-and-function-calling">14/06 tool-use</a>
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/13-tools-and-protocols/05-tool-schema-design">13/05 tool-schema-design</a>
+                </div>
+              </div>
+              <div class="learn-item">
+                <span class="when">Khi <code>search</code> trả về đoạn không liên quan</span>
+                <span class="what">BM25, TF-IDF, dense retrieval, hybrid</span>
+                <div class="refs">
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/05-nlp-foundations-to-advanced/14-information-retrieval-search">05/14 information-retrieval</a>
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/19-capstone-projects/65-hybrid-retrieval-bm25-dense">19/65 hybrid-bm25-dense</a>
+                  <a href="https://github.com/xhluca/bm25s">bm25s</a>
+                </div>
+              </div>
+              <div class="learn-item">
+                <span class="when">Khi context phình to và model bắt đầu "quên" câu hỏi</span>
+                <span class="what">Context engineering: condenser, compactor</span>
+                <div class="refs">
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/11-llm-engineering/05-context-engineering">11/05 context-engineering</a>
+                  <a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">Anthropic: context engineering</a>
+                </div>
+              </div>
+              <div class="learn-item">
+                <span class="when">Khi frontier model làm tốt mà model nhỏ thất bại trong cùng harness</span>
+                <span class="what">Vì sao model giỏi vẫn hỏng trong harness kém</span>
+                <div class="refs">
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/14-agent-engineering/31-agent-workbench-why-models-fail">14/31 why-models-fail</a>
+                  <a href="https://www.anthropic.com/engineering/building-effective-agents">Anthropic: building effective agents</a>
+                  <a href="https://llmagents-learning.org/">Berkeley LLM Agents MOOC</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="gate">
+          <div class="done-when"><b>Xong khi</b><ul><li>Base + harness chạy hết tập val không crash, &lt; 2% lỗi format</li><li>Có bảng ba dòng: đóng sách / base + harness / frontier + harness</li><li>Khoảng cách giữa base và frontier chính là "đất" để train</li></ul></div>
+          <div class="traps"><b>Bẫy</b><ul><li>Dùng web search live: cùng câu trả lời mà reward thay đổi theo ngày</li><li>Corpus v1 dễ hơn thực tế vì đáp án chắc chắn nằm trong đó: ghi rõ khi báo cáo</li><li>Đổi harness sau khi đã train: phải eval lại mọi checkpoint</li></ul></div>
+        </div>
+      </section>
+
+      <!-- Step 3 -->
+      <section class="step" id="sft" data-step="sft">
+        <div class="step-head">
+          <span class="step-no">BƯỚC 3</span>
+          <h2>SFT: dạy model bắt chước trace tốt</h2>
+          <p class="lede">Ở Samaya, hai giai đoạn SFT mang lại +12.3 điểm, phần lớn mức tăng. Model học cách gọi tool hợp lệ, tìm nhiều hơn, và biết lúc nào dừng để trả lời. Dữ liệu là trace đầy đủ, không phải cặp hỏi–đáp.</p>
+          <div class="meta"><span class="chip">1–2 tuần</span><span class="chip cost">$10–60</span><span class="chip">Colab để thử · Tinker để chạy thật</span></div>
+        </div>
+        <div class="cols">
+          <div class="panel">
+            <h3>Làm<span class="count" data-count="sft"></span></h3>
+            <ol class="tasks">
+              <li><input type="checkbox" id="sft-1"><label for="sft-1"><strong>Thử trên Colab trước</strong>: LoRA SFT một model ~1B trên 200 trace bằng Unsloth hoặc TRL. Mục đích là thấy loss giảm và hiểu từng tham số, chưa cần điểm cao.</label></li>
+              <li><input type="checkbox" id="sft-2"><label for="sft-2"><strong>Sinh trace, chọn một trong hai đường.</strong> Lean: cho chính base model thử 8 lần mỗi câu, giữ lần đúng (STaR, gần như miễn phí). Đầy đủ: cho một teacher lớn chạy 2 lần mỗi câu trong harness của bạn, giữ lần tốt hơn.</label></li>
+              <li><input type="checkbox" id="sft-3"><label for="sft-3"><strong>Tùy chọn, giống SFT giai đoạn 2 của Samaya</strong>: viết 3–4 chiến lược prompt (tách câu hỏi trước; tìm rộng rồi hẹp; kiểm chứng trước khi trả lời), mỗi câu chọn trace có điểm cao nhất.</label></li>
+              <li><input type="checkbox" id="sft-4"><label for="sft-4"><strong>Lọc</strong>: chỉ giữ trace đúng (F1 ≥ ngưỡng), bỏ 25% kém nhất theo độ dài hoặc số tool call, khử trùng lặp, kiểm tra không có câu nào trong test.</label></li>
+              <li><input type="checkbox" id="sft-5"><label for="sft-5"><strong>Chuyển sang chat template</strong> của base model, chỉ tính loss trên token của assistant (loss masking). In ra 3 mẫu và đọc bằng mắt.</label></li>
+              <li><input type="checkbox" id="sft-6"><label for="sft-6"><strong>Train LoRA trên Tinker</strong> theo recipe SFT của cookbook, lưu checkpoint mỗi epoch, eval từng checkpoint trên val, chọn cái tốt nhất (Samaya chọn epoch 3/5).</label></li>
+            </ol>
+          </div>
+          <div class="panel">
+            <h3>Cần học gì, khi nào</h3>
+            <div class="learn">
+              <div class="learn-item">
+                <span class="when">Khi thấy chữ "loss" và "gradient" lần đầu</span>
+                <span class="what">Next-token loss, backprop, optimizer</span>
+                <p class="why">Fine-tune là train tiếp: forward → loss → backward → chỉnh trọng số một chút, lặp lại.</p>
+                <div class="refs">
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/03-deep-learning-core/03-backpropagation">03/03 backpropagation</a>
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/03-deep-learning-core/06-optimizers">03/06 optimizers</a>
+                </div>
+              </div>
+              <div class="learn-item">
+                <span class="when">Khi chuẩn bị dữ liệu và thấy các token lạ như <code>&lt;|im_start|&gt;</code></span>
+                <span class="what">Tokenizer, chat template, loss masking</span>
+                <div class="refs">
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/10-llms-from-scratch/01-tokenizers">10/01 tokenizers</a>
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/10-llms-from-scratch/06-instruction-tuning-sft">10/06 instruction-tuning-sft</a>
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/19-capstone-projects/39-instruction-tuning-sft">19/39 sft capstone</a>
+                </div>
+              </div>
+              <div class="learn-item">
+                <span class="when">Khi phải chọn rank, alpha, learning rate</span>
+                <span class="what">LoRA và khi nào nó bằng full fine-tune</span>
+                <div class="refs">
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/11-llm-engineering/08-fine-tuning-lora">11/08 fine-tuning-lora</a>
+                  <a href="https://arxiv.org/abs/2106.09685">LoRA paper</a>
+                  <a href="https://thinkingmachines.ai/blog/lora/">LoRA Without Regret</a>
+                </div>
+              </div>
+              <div class="learn-item">
+                <span class="when">Khi không muốn trả tiền teacher</span>
+                <span class="what">STaR / rejection-sampling fine-tuning</span>
+                <p class="why">Model tự thử nhiều lần, chỉ học từ lần đúng. Rẻ, và trace đúng sẵn phong cách của model.</p>
+                <div class="refs">
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/15-autonomous-systems/02-star-family-reasoning">15/02 star-reasoning</a>
+                  <a href="https://arxiv.org/abs/2203.14465">STaR paper</a>
+                </div>
+              </div>
+              <div class="learn-item">
+                <span class="when">Khi muốn hiểu sâu toàn bộ chuỗi post-training</span>
+                <span class="what">Khóa nền tảng</span>
+                <div class="refs">
+                  <a href="https://stanford-cs336.github.io/">Stanford CS336</a>
+                  <a href="https://huggingface.co/learn/llm-course">Hugging Face LLM Course</a>
+                  <a href="https://github.com/thinking-machines-lab/tinker-cookbook">tinker-cookbook (SFT recipe)</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="gate">
+          <div class="done-when"><b>Xong khi</b><ul><li>Checkpoint tốt nhất vượt base + harness trên val</li><li>Lỗi format &lt; 1%</li><li>Số tool call trung bình tăng (Samaya: 3 → 17)</li></ul></div>
+          <div class="traps"><b>Bẫy</b><ul><li>Format lúc train khác format lúc chạy harness</li><li>Train quá nhiều epoch: loss train giảm nhưng val giảm theo</li><li>Dùng output của model đóng mà điều khoản cấm dùng để train</li></ul></div>
+        </div>
+      </section>
+
+      <!-- Step 4 -->
+      <section class="step" id="grpo" data-step="grpo">
+        <div class="step-head">
+          <span class="step-no">BƯỚC 4</span>
+          <h2>GRPO: cho model tự thử và học từ điểm số</h2>
+          <p class="lede">Không cần đáp án mẫu, chỉ cần câu hỏi và hàm chấm. Mỗi câu cho model thử 8 lần, chấm từng lần, rồi đẩy lên những lần tốt hơn trung bình nhóm. Ở Samaya, RL thêm +4.1 điểm và tăng mạnh nhất ở nhóm câu khó.</p>
+          <div class="meta"><span class="chip">2–3 tuần</span><span class="chip cost">$25–80</span><span class="chip">Tinker</span></div>
+        </div>
+        <div class="formula">advantageᵢ = (rewardᵢ − mean(reward nhóm)) / std(reward nhóm) &nbsp;·&nbsp; nhóm = 8 lần thử của cùng một câu</div>
+        <div class="cols">
+          <div class="panel">
+            <h3>Làm<span class="count" data-count="grpo"></span></h3>
+            <ol class="tasks">
+              <li><input type="checkbox" id="grpo-1"><label for="grpo-1"><strong>Viết GRPO bằng numpy trên bài toán đồ chơi</strong> (bandit vài lựa chọn): tính advantage theo nhóm, cập nhật policy, thấy reward tăng. Khoảng 80 dòng, chạy trên laptop.</label></li>
+              <li><input type="checkbox" id="grpo-2"><label for="grpo-2"><strong>Viết hàm reward</strong>: F1 của đáp án cuối (0–1), trừ điểm nếu sai format hoặc không gọi <code>answer</code>. Viết unit test cho hàm reward như mọi hàm khác.</label></li>
+              <li><input type="checkbox" id="grpo-3"><label for="grpo-3"><strong>Lọc câu theo phương sai</strong>: cho model SFT thử 8 lần trên tập train, chỉ giữ câu có tỉ lệ đúng nằm giữa 0 và 1. Câu đúng 8/8 hoặc sai 8/8 cho advantage bằng 0, model không học được gì.</label></li>
+              <li><input type="checkbox" id="grpo-4"><label for="grpo-4"><strong>Tùy chọn, Tầng 2: offline GRPO</strong> trên 8 câu trả lời teacher đã có. Không cần sinh mới nên rẻ.</label></li>
+              <li><input type="checkbox" id="grpo-5"><label for="grpo-5"><strong>Online GRPO trên Tinker</strong>: 16 câu × 8 lần thử mỗi bước, 20–30 bước, eval val mỗi 5 bước. Bật truncated importance sampling nếu recipe hỗ trợ.</label></li>
+              <li><input type="checkbox" id="grpo-6"><label for="grpo-6"><strong>Theo dõi mỗi bước</strong>: reward trung bình, % nhóm có phương sai 0, số tool call, độ dài, % hết budget. Đọc 10 trace ngẫu nhiên sau mỗi 5 bước.</label></li>
+              <li><input type="checkbox" id="grpo-7"><label for="grpo-7"><strong>Bốn bước cuối</strong>: dồn thêm câu mà model hay hết budget, giống cách Samaya kết thúc run.</label></li>
+            </ol>
+          </div>
+          <div class="panel">
+            <h3>Cần học gì, khi nào</h3>
+            <div class="learn">
+              <div class="learn-item">
+                <span class="when">Trước khi viết bản numpy</span>
+                <span class="what">Policy, reward, policy gradient (REINFORCE)</span>
+                <div class="refs">
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/09-reinforcement-learning/01-mdps-states-actions-rewards">09/01 mdps-rewards</a>
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/09-reinforcement-learning/06-policy-gradients-reinforce">09/06 reinforce</a>
+                  <a href="https://spinningup.openai.com/">OpenAI Spinning Up</a>
+                </div>
+              </div>
+              <div class="learn-item">
+                <span class="when">Khi đọc công thức GRPO và thấy "clip", "ratio"</span>
+                <span class="what">PPO → GRPO: bỏ critic, dùng trung bình nhóm làm baseline</span>
+                <div class="refs">
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/09-reinforcement-learning/08-ppo">09/08 ppo</a>
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/10-llms-from-scratch/07-rlhf">10/07 rlhf</a>
+                  <a href="https://arxiv.org/abs/2402.03300">DeepSeekMath (gốc của GRPO)</a>
+                  <a href="https://rlhfbook.com/">RLHF Book</a>
+                </div>
+              </div>
+              <div class="learn-item">
+                <span class="when">Khi gặp "truncated importance sampling"</span>
+                <span class="what">Importance sampling, on-policy vs off-policy</span>
+                <p class="why">Bộ sinh mẫu và bộ train tính xác suất hơi khác nhau (rõ nhất với MoE). Mỗi token được nhân trọng số p_train / p_sample, có chặn trên để không bùng nổ.</p>
+                <div class="refs">
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/01-math-foundations/16-sampling-methods">01/16 sampling-methods</a>
+                </div>
+              </div>
+              <div class="learn-item">
+                <span class="when">Khi reward tăng nhưng trace trông kỳ quặc</span>
+                <span class="what">Reward hacking, định luật Goodhart</span>
+                <div class="refs">
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/18-ethics-safety-alignment/02-reward-hacking-goodhart">18/02 reward-hacking</a>
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/09-reinforcement-learning/09-reward-modeling-rlhf">09/09 reward-modeling</a>
+                </div>
+              </div>
+              <div class="learn-item">
+                <span class="when">Khi muốn so cách làm của mình với một paper cùng bài toán</span>
+                <span class="what">RL cho agent dùng search</span>
+                <div class="refs">
+                  <a href="https://arxiv.org/abs/2503.09516">Search-R1 paper</a>
+                  <a href="https://arxiv.org/abs/2501.12948">DeepSeek-R1</a>
+                  <a href="https://huggingface.co/docs/trl/grpo_trainer">TRL GRPOTrainer</a>
+                  <a href="https://cs224r.stanford.edu/">Stanford CS224R</a>
+                  <a href="https://rail.eecs.berkeley.edu/deeprlcourse/">Berkeley CS285</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="gate">
+          <div class="done-when"><b>Xong khi</b><ul><li>Checkpoint GRPO vượt checkpoint SFT trên val</li><li>Phần khó nhất tăng nhiều hơn phần dễ</li><li>Đọc trace không thấy dấu hiệu gian lận reward</li></ul></div>
+          <div class="traps"><b>Bẫy</b><ul><li>Phần lớn nhóm có phương sai 0: câu quá dễ hoặc quá khó</li><li>Model học đoán đáp án ngắn mà không tìm kiếm</li><li>Chọn checkpoint theo điểm test thay vì val</li></ul></div>
+        </div>
+      </section>
+
+      <!-- Step 5 -->
+      <section class="step" id="ablation" data-step="ablation">
+        <div class="step-head">
+          <span class="step-no">BƯỚC 5</span>
+          <h2>Ablation: chứng minh từng phần có tác dụng</h2>
+          <p class="lede">Bỏ hoặc đổi từng thành phần để biết điểm số đến từ đâu. Đây là phần biến một lần chạy may mắn thành một kết luận, và là nội dung chính của bài viết cuối cùng.</p>
+          <div class="meta"><span class="chip">~1 tuần</span><span class="chip cost">$15–50</span><span class="chip">Tinker sampling</span></div>
+        </div>
+        <div class="cols">
+          <div class="panel">
+            <h3>Làm<span class="count" data-count="ablation"></span></h3>
+            <ol class="tasks">
+              <li><input type="checkbox" id="ablation-1"><label for="ablation-1"><strong>Bảng theo giai đoạn</strong> trên tập test (lần đầu tiên mở test): base → SFT → (offline GRPO) → online GRPO, kèm $/câu, giây/câu, số tool call, và riêng phần khó nhất.</label></li>
+              <li><input type="checkbox" id="ablation-2"><label for="ablation-2"><strong>Thêm khoảng tin cậy</strong>: bootstrap 1.000 lần trên từng câu. Với 500 câu, chênh lệch 2–3 điểm có thể chỉ là nhiễu.</label></li>
+              <li><input type="checkbox" id="ablation-3"><label for="ablation-3"><strong>Ablation harness</strong>: tắt condenser, tắt compactor, budget 6 / 12 / 20 tool call.</label></li>
+              <li><input type="checkbox" id="ablation-4"><label for="ablation-4"><strong>Reward shaping</strong>: thêm phạt độ dài context, thử lại từ một checkpoint giữa run. Đo đánh đổi chất lượng–chi phí như Samaya (−30% chi phí, −1.1 điểm).</label></li>
+              <li><input type="checkbox" id="ablation-5"><label for="ablation-5"><strong>Tổng quát hóa</strong>: chạy trên Bamboogle và FRAMES (chưa từng train) với Corpus v2, nếu đã build.</label></li>
+              <li><input type="checkbox" id="ablation-6"><label for="ablation-6"><strong>Viết báo cáo</strong> theo khung bài Samaya: vấn đề → setup → từng giai đoạn → kết quả → điều học được → giới hạn.</label></li>
+            </ol>
+          </div>
+          <div class="panel">
+            <h3>Cần học gì, khi nào</h3>
+            <div class="learn">
+              <div class="learn-item">
+                <span class="when">Khi hai con số cách nhau 1–3 điểm và bạn muốn nói "tốt hơn"</span>
+                <span class="what">Sai số chuẩn, bootstrap, so sánh cặp</span>
+                <div class="refs">
+                  <a href="https://arxiv.org/abs/2411.00640">Adding Error Bars to Evals</a>
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/02-ml-fundamentals/09-model-evaluation">02/09 model-evaluation</a>
+                </div>
+              </div>
+              <div class="learn-item">
+                <span class="when">Khi phân loại lỗi còn lại sau train</span>
+                <span class="what">Các kiểu hỏng của agent</span>
+                <div class="refs">
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/14-agent-engineering/26-failure-modes-agentic">14/26 failure-modes</a>
+                  <a class="repo" href="https://github.com/khoa-nd/ai-engineering-from-scratch/tree/main/phases/14-agent-engineering/52-design-success-metrics">14/52 success-metrics</a>
+                </div>
+              </div>
+              <div class="learn-item">
+                <span class="when">Khi viết báo cáo</span>
+                <span class="what">Mẫu báo cáo post-training</span>
+                <div class="refs">
+                  <a href="https://samaya.ai/blog/rl-post-trained-agentic-model">Samaya Sterling</a>
+                  <a href="https://arxiv.org/abs/2503.09516">Search-R1</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="gate">
+          <div class="done-when"><b>Xong khi</b><ul><li>Mỗi giai đoạn có một dòng trong bảng, kèm khoảng tin cậy</li><li>Có câu trả lời cho "điểm tăng đến từ đâu"</li><li>Báo cáo có mục giới hạn trung thực</li></ul></div>
+          <div class="traps"><b>Bẫy</b><ul><li>Chạy ablation trên test nhiều lần rồi chọn kết quả đẹp nhất</li><li>So với Search-R1 như thể cùng setup</li></ul></div>
+        </div>
+      </section>
+
+      <section class="block sources">
+        <h2>Nguồn</h2>
+        <ol>
+          <li><a href="https://samaya.ai/blog/rl-post-trained-agentic-model">Samaya AI: Samaya Sterling (28/10/2026)</a></li>
+          <li><a href="https://thinkingmachines.ai/tinker/pricing/">Tinker pricing (ngày 19/10/2026)</a></li>
+          <li><a href="https://arxiv.org/abs/2503.09516">Search-R1: RL-enhanced multi-turn search and reasoning</a></li>
+          <li><a href="https://huggingface.co/datasets/RUC-NLPIR/FlashRAG_datasets">FlashRAG datasets (HotpotQA, 2Wiki, MuSiQue, Bamboogle, Wikipedia 2018)</a></li>
+          <li><a href="https://huggingface.co/datasets/google/frames-benchmark">FRAMES benchmark</a></li>
+          <li>Giá GPU thuê theo giờ (tham khảo 2026): RTX 4090 ≈ $0.3–0.7, A100 80GB ≈ $0.7–1.5, H100 ≈ $1.5–2.9 trên Vast.ai và RunPod. Kiểm tra lại trước khi thuê.</li>
+        </ol>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+(function () {
+  // Tinker prices, USD per 1M tokens, from thinkingmachines.ai/tinker/pricing (as of 2026-10-19)
+  const MODELS = [
+    { id: "nemo-l", name: "Nemotron-3.5-Lightning-30B-A3B · 64K", pre: 0.184, cpre: 0.0368, smp: 0.495, trn: 0.44 },
+    { id: "qwen35-4b", name: "Qwen3.5-4B · 64K", pre: 0.33, cpre: 0.066, smp: 1.005, trn: 0.737 },
+    { id: "qwen3-8b", name: "Qwen3-8B · 32K", pre: 0.195, cpre: 0.039, smp: 0.60, trn: 0.44 },
+    { id: "gptoss-20b", name: "GPT-OSS-20B · 32K", pre: 0.18, cpre: 0.036, smp: 0.45, trn: 0.396 },
+    { id: "qwen36-35b", name: "Qwen3.6-35B-A3B · 64K", pre: 0.45, cpre: 0.09, smp: 1.335, trn: 1.177 }
+  ];
+  const $ = (id) => document.getElementById(id);
+  const sel = $("c-model");
+  MODELS.forEach((m) => { const o = document.createElement("option"); o.value = m.id; o.textContent = m.name; sel.appendChild(o); });
+
+  const num = (id) => { const v = parseFloat($(id).value); return isFinite(v) && v >= 0 ? v : 0; };
+  const usd = (x) => "$" + (x < 10 ? x.toFixed(2) : x.toFixed(0));
+  const mtok = (x) => (x / 1e6).toFixed(1) + "M";
+
+  function rollout(m, pre, smp, cache) {
+    return (pre * (1 - cache) * m.pre + pre * cache * m.cpre + smp * m.smp) / 1e6;
+  }
+
+  function calc() {
+    const m = MODELS.find((x) => x.id === sel.value) || MODELS[0];
+    const cache = Math.min(num("c-cache"), 95) / 100;
+    $("c-rates").textContent = "Prefill $" + m.pre + " · prefill cache $" + m.cpre + " · sample $" + m.smp + " · train $" + m.trn + " / 1M token";
+
+    const pre = num("e-pre"), smp = num("e-smp");
+    const eval1 = num("e-n") * rollout(m, pre, smp, cache);
+    $("e-out").textContent = usd(eval1);
+    $("e-why").textContent = num("e-n") + " câu × " + (pre + smp).toLocaleString("en-US") + " tok/câu";
+
+    const sTok = num("s-n") * num("s-len") * num("s-ep");
+    const sft = sTok * m.trn / 1e6;
+    $("s-out").textContent = usd(sft);
+    $("s-why").textContent = mtok(sTok) + " token train";
+
+    const n = num("g-steps") * num("g-q") * num("g-g");
+    const gSample = n * rollout(m, pre, smp, cache);
+    const gTrain = n * num("g-len") * m.trn / 1e6;
+    const grpo = gSample + gTrain;
+    $("g-out").textContent = usd(grpo);
+    $("g-why").textContent = n.toLocaleString("en-US") + " rollout · sinh " + usd(gSample) + " + train " + usd(gTrain);
+
+    $("t-out").textContent = usd(10 * eval1 + 2 * sft + 2 * grpo);
+  }
+  document.querySelectorAll("#calc input, #calc select").forEach((el) => el.addEventListener("input", calc));
+  calc();
+
+  // Per-viewer checklist progress
+  const KEY = "wiki-researcher-tasks";
+  let state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { state = {}; }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
+
+  function refresh() {
+    document.querySelectorAll("[data-step]").forEach((sec) => {
+      const step = sec.dataset.step;
+      const boxes = sec.querySelectorAll(".tasks input");
+      const done = Array.from(boxes).filter((b) => b.checked).length;
+      const label = done + "/" + boxes.length;
+      const c = document.querySelector('[data-count="' + step + '"]');
+      if (c) c.textContent = label;
+      const p = document.querySelector('[data-prog="' + step + '"]');
+      if (p) { p.textContent = label; p.classList.toggle("full", done === boxes.length); }
+    });
+  }
+  document.querySelectorAll(".tasks input").forEach((box) => {
+    box.checked = !!state[box.id];
+    box.closest("li").classList.toggle("done", box.checked);
+    box.addEventListener("change", () => {
+      state[box.id] = box.checked;
+      box.closest("li").classList.toggle("done", box.checked);
+      save(); refresh();
+    });
+  });
+  refresh();
+})();
+</script>
+
+</body>
+</html>
