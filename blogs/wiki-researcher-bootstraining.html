@@ -194,6 +194,147 @@ pre.trace .r { color: var(--ok); }
 
 .sources ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: 14px; }
 
+/* Factory map */
+.factory { display: grid; gap: 16px; margin-top: 36px; scroll-margin-top: 20px; }
+.fx-top { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: end; justify-content: space-between; }
+.fx-intro { display: grid; gap: 8px; max-width: 76ch; }
+.fx-top h2 { font-size: 30px; }
+.fx-ctrl { display: inline-flex; gap: 6px; }
+.fx-ctrl button {
+  font: inherit; font-size: 13px; color: var(--ink); background: var(--sheet);
+  border: 1px solid var(--rule); border-radius: 6px; padding: 7px 12px; cursor: pointer; white-space: nowrap;
+}
+.fx-ctrl button:hover { border-color: var(--link); color: var(--link); }
+
+.floor {
+  position: relative; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); column-gap: 10px;
+  background-color: var(--sheet);
+  background-image: radial-gradient(var(--rule) 1px, transparent 1.2px); background-size: 16px 16px;
+  border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px 12px;
+}
+.fx-rail { position: relative; height: 32px; }
+.fx-rail::before { content: ""; position: absolute; left: 0; right: 0; height: 12px; border: 1.5px dashed currentColor; }
+.fx-rail span {
+  position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap;
+  font-size: 12px; font-weight: 500; background: var(--sheet); padding: 0 8px;
+}
+.fx-rail.qc { grid-row: 1; grid-column: 3 / 8; margin-inline: calc((100% - 40px) / 10); color: var(--ok); }
+.fx-rail.qc::before { bottom: 0; border-bottom: 0; border-radius: 6px 6px 0 0; }
+.fx-rail.qc span { top: 2px; }
+.fx-rail.back { grid-row: 4; grid-column: 4 / 8; margin-inline: calc((100% - 30px) / 8); color: var(--warn); }
+.fx-rail.back::before { top: 0; border-top: 0; border-radius: 0 0 6px 6px; }
+.fx-rail.back::after {
+  content: ""; position: absolute; left: -5px; top: -2px;
+  border: 5.5px solid transparent; border-bottom: 7px solid currentColor; border-top: 0;
+}
+.fx-rail.back span { bottom: 0; }
+
+.bay {
+  grid-row: 2; position: relative; z-index: 1; min-width: 0;
+  font: inherit; text-align: left; color: var(--ink); background: var(--paper);
+  border: 1px solid var(--rule); border-radius: 8px; padding: 10px 10px 9px; cursor: pointer;
+  display: grid; gap: 6px; align-content: start;
+  transition: border-color .25s, box-shadow .25s, transform .25s;
+}
+.bay:hover { border-color: var(--link); }
+.bay[aria-current="step"] { border-color: var(--link); box-shadow: 0 0 0 3px var(--link-soft); transform: translateY(-2px); }
+.bay .ic { color: var(--muted); display: block; height: 26px; }
+.bay .ic svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.bay[aria-current="step"] .ic { color: var(--link); }
+.bay .tx { display: grid; gap: 2px; }
+.bay .no { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.04em; color: var(--muted); }
+.bay .nm { font-family: var(--display); font-weight: 700; font-size: 17px; line-height: 1.15; }
+.bay .mt { font-size: 12.5px; line-height: 1.35; color: var(--muted); }
+.bay .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.bay .tags span { font-size: 11px; line-height: 1.5; padding: 0 6px; border-radius: 999px; border: 1px solid var(--rule); color: var(--muted); background: var(--sheet); }
+.bay .tags .cost { color: var(--cost); background: var(--cost-soft); border-color: transparent; font-family: var(--mono); }
+.bay .qc { position: absolute; top: 8px; right: 8px; font-family: var(--mono); font-size: 11px; color: var(--ok); font-variant-numeric: tabular-nums; }
+
+.conveyor {
+  grid-row: 3; grid-column: 1 / -1; position: relative; height: 14px; margin-top: 6px;
+  border-radius: 7px; border: 1px solid var(--rule); background-color: var(--code-bg);
+  background-image: repeating-linear-gradient(90deg, var(--rule) 0 2px, transparent 2px 12px);
+}
+.crate {
+  position: absolute; left: 0; top: 50%; width: 18px; height: 18px; margin: -9px 0 0 -9px; z-index: 2;
+  border-radius: 4px; background: var(--cost); box-shadow: inset 0 0 0 2px var(--cost-soft);
+  transition: left .9s cubic-bezier(.5, 0, .3, 1), top .9s cubic-bezier(.5, 0, .3, 1);
+}
+.crate.jump { transition: none; }
+
+.fx-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--muted); }
+.fx-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.fx-legend i { display: inline-block; width: 16px; height: 0; border-top: 1.5px dashed currentColor; }
+.fx-legend .k-crate i { width: 11px; height: 11px; border: 0; border-radius: 3px; background: var(--cost); }
+.fx-legend .k-qc { color: var(--ok); }
+.fx-legend .k-back { color: var(--warn); }
+.fx-legend .k-num b { font-family: var(--mono); font-weight: 400; color: var(--ok); }
+
+.fx-detail { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 18px; display: grid; gap: 16px; }
+.fx-dhead { display: grid; gap: 6px; }
+.fx-dhead .no { font-family: var(--mono); font-size: 12.5px; color: var(--link); letter-spacing: 0.04em; }
+.fx-dhead h3 { font-size: 22px; }
+.fx-dhead p { max-width: 78ch; }
+.fx-io { display: grid; grid-template-columns: minmax(0, 1fr) 22px minmax(0, 1.2fr) 22px minmax(0, 1fr); gap: 8px; align-items: stretch; }
+.fx-io > div { border-radius: 8px; padding: 12px 14px; background: var(--paper); display: grid; gap: 6px; align-content: start; }
+.fx-io > .to { background: none; padding: 0; place-content: center; color: var(--muted); font-size: 18px; }
+.fx-io b { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.fx-io ul { margin: 0; padding-left: 18px; font-size: 14px; display: grid; gap: 3px; }
+.fx-io .out { background: var(--ok-soft); }
+.fx-io .out b { color: var(--ok); }
+.fx-product { font-size: 14px; display: flex; align-items: center; gap: 8px; }
+.fx-product i { width: 12px; height: 12px; border-radius: 3px; background: var(--cost); flex: none; }
+
+.meter { display: grid; gap: 8px; }
+.meter .head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; font-size: 13px; }
+.meter .head span:first-child { font-weight: 600; }
+.meter .head span:last-child { color: var(--muted); }
+.track { position: relative; height: 16px; border-radius: 4px; background: var(--code-bg); display: flex; margin-top: 18px; }
+.track .seg { height: 100%; width: 0; transition: width .7s ease; }
+.track .seg.base { background: var(--muted); opacity: .55; border-radius: 4px 0 0 4px; }
+.track .seg.sft { background: var(--link); }
+.track .seg.rl { background: var(--ok); }
+.track .mark { position: absolute; top: -18px; bottom: -4px; width: 0; border-left: 1.5px dashed var(--ink); }
+.track .mark em { position: absolute; bottom: 100%; transform: translateX(-50%); font-style: normal; font-size: 11.5px; white-space: nowrap; color: var(--ink); }
+.meter .keys { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--muted); }
+.meter .keys span { display: inline-flex; align-items: center; gap: 5px; font-variant-numeric: tabular-nums; transition: opacity .3s; }
+.meter .keys span.off { opacity: .35; }
+.meter .keys i { width: 10px; height: 10px; border-radius: 2px; }
+.meter .keys .k1 i { background: var(--muted); opacity: .55; }
+.meter .keys .k2 i { background: var(--link); }
+.meter .keys .k3 i { background: var(--ok); }
+.fx-foot { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.fx-foot a { margin-left: auto; font-size: 14px; font-weight: 600; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .floor.playing .conveyor { animation: belt 1.2s linear infinite; }
+  .floor.playing .bay[aria-current="step"] .ic svg { animation: hum 1.2s ease-in-out infinite; }
+}
+@keyframes belt { to { background-position: 12px 0; } }
+@keyframes belt-v { to { background-position: 0 12px; } }
+@keyframes hum { 50% { transform: translateY(-2px) rotate(-4deg); } }
+@media (prefers-reduced-motion: reduce) { .crate, .bay, .track .seg { transition: none; } }
+
+@media (max-width: 960px) {
+  .floor { grid-template-columns: minmax(0, 1fr); row-gap: 8px; padding: 14px 14px 14px 46px; }
+  .fx-rail { display: none; }
+  .bay { grid-row: auto; grid-template-columns: 30px minmax(0, 1fr); column-gap: 10px; }
+  .bay .tags { grid-column: 2; }
+  .bay[aria-current="step"] { transform: translateX(3px); }
+  .conveyor {
+    position: absolute; grid-row: auto; grid-column: auto; left: 16px; top: 14px; bottom: 14px; width: 14px; height: auto; margin: 0;
+    background-image: repeating-linear-gradient(180deg, var(--rule) 0 2px, transparent 2px 12px);
+  }
+  .crate { left: 50%; top: 0; margin: -9px 0 0 -9px; }
+  .fx-io { grid-template-columns: minmax(0, 1fr); }
+  .fx-io > .to { display: none; }
+  .track { margin-top: 30px; }
+  .fx-foot a { margin-left: 0; }
+}
+@media (max-width: 960px) and (prefers-reduced-motion: no-preference) {
+  .floor.playing .conveyor { animation-name: belt-v; }
+}
+
 @media (max-width: 960px) {
   .shell { grid-template-columns: minmax(0, 1fr); gap: 28px; }
   .rail { position: static; display: flex; flex-wrap: wrap; gap: 6px; }
@@ -221,9 +362,116 @@ pre.trace .r { color: var(--ok); }
     </nav>
   </header>
 
+  <!-- Big picture: the factory line -->
+  <section class="factory" id="map" aria-labelledby="map-title">
+    <div class="fx-top">
+      <div class="fx-intro">
+        <span class="eyebrow">Bức tranh toàn cảnh</span>
+        <h2 id="map-title">Một nhà máy sáu trạm: nguyên liệu vào, agent ra</h2>
+        <p class="lede">Nhìn cả dây chuyền trước khi đi vào từng bước. Nguyên liệu là câu hỏi, Wikipedia và một model nền. Mỗi trạm nhận sản phẩm từ trạm trước, biến đổi nó, rồi giao cho trạm sau. Thước đo làm ở Bước 1 kiểm tra lại sản phẩm sau mọi trạm. Bấm vào một trạm để xem nó nhận gì, làm gì, giao ra gì.</p>
+      </div>
+      <div class="fx-ctrl">
+        <button type="button" id="fx-prev" aria-label="Trạm trước">‹ Trước</button>
+        <button type="button" id="fx-play" aria-pressed="false">▶ Chạy</button>
+        <button type="button" id="fx-next" aria-label="Trạm sau">Sau ›</button>
+      </div>
+    </div>
+
+    <div class="floor" id="fx-floor">
+      <div class="fx-rail qc" aria-hidden="true"><span>QC: thước đo Bước 1 đo lại sản phẩm sau mỗi trạm</span></div>
+
+      <button type="button" class="bay" data-i="0" aria-current="step">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></span>
+        <span class="tx"><span class="no">ĐẦU VÀO</span><span class="nm">Nguyên liệu</span><span class="mt">Câu hỏi, Wikipedia, model nền</span></span>
+        <span class="tags"><span>Hugging Face</span></span>
+      </button>
+      <button type="button" class="bay" data-i="1">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M14.5 6.5a4 4 0 0 0-5 5L3.5 17.5a1.4 1.4 0 0 0 0 2l1 1a1.4 1.4 0 0 0 2 0l6-6a4 4 0 0 0 5-5l-2.6 2.6-2.4-.6-.6-2.4z"/></svg></span>
+        <span class="tx"><span class="no">BƯỚC 0</span><span class="nm">Chuẩn bị</span><span class="mt">Dựng xưởng, nhập kho</span></span>
+        <span class="tags"><span>Colab</span><span class="cost">$0</span></span>
+      </button>
+      <button type="button" class="bay" data-i="2">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M4 17a8 8 0 1 1 16 0"/><path d="M12 17l4-5"/><circle cx="12" cy="17" r="1.2"/><path d="M4 21h16"/></svg></span>
+        <span class="tx"><span class="no">BƯỚC 1</span><span class="nm">Eval</span><span class="mt">Phòng đo lường</span></span>
+        <span class="tags"><span>Tinker</span><span class="cost">$5–15</span></span>
+        <span class="qc" title="Điểm sàn: đóng sách, chưa có tool">sàn</span>
+      </button>
+      <button type="button" class="bay" data-i="3">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M9 3v4M15 3v4"/><path d="M6.5 7h11v4a5.5 5.5 0 0 1-11 0z"/><path d="M12 16.5V21"/></svg></span>
+        <span class="tx"><span class="no">BƯỚC 2</span><span class="nm">Harness</span><span class="mt">Lắp tool cho model</span></span>
+        <span class="tags"><span>Laptop</span><span class="cost">$2–5</span></span>
+        <span class="qc" title="Samaya: base model trong harness">42.5</span>
+      </button>
+      <button type="button" class="bay" data-i="4">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2.2 9 2.2 12 0v-5"/><path d="M22 9v6"/></svg></span>
+        <span class="tx"><span class="no">BƯỚC 3</span><span class="nm">SFT</span><span class="mt">Xưởng dạy nghề</span></span>
+        <span class="tags"><span>Tinker</span><span class="cost">$10–60</span></span>
+        <span class="qc" title="Samaya: sau SFT">54.8</span>
+      </button>
+      <button type="button" class="bay" data-i="5">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3c.8 3.6 5 5 5 10a5 5 0 0 1-10 0c0-2.8 1.8-4 2-6 1 1.2 1.8 2 3 2.2-.4-2.2-.8-4.2 0-6.2z"/></svg></span>
+        <span class="tx"><span class="no">BƯỚC 4</span><span class="nm">GRPO</span><span class="mt">Lò luyện: thử, chấm, củng cố</span></span>
+        <span class="tags"><span>Tinker</span><span class="cost">$25–80</span></span>
+        <span class="qc" title="Samaya: sau RL">58.9</span>
+      </button>
+      <button type="button" class="bay" data-i="6">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V3"/><path d="M7.4 15h9.2"/></svg></span>
+        <span class="tx"><span class="no">BƯỚC 5</span><span class="nm">Ablation</span><span class="mt">Kiểm định xuất xưởng</span></span>
+        <span class="tags"><span>Tinker</span><span class="cost">$15–50</span></span>
+        <span class="qc" title="Kèm khoảng tin cậy">± CI</span>
+      </button>
+      <button type="button" class="bay" data-i="7">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M2.5 6h11.5v10H2.5z"/><path d="M14 10h4l3.5 3.5V16H14"/><circle cx="7" cy="18" r="1.8"/><circle cx="17.5" cy="18" r="1.8"/></svg></span>
+        <span class="tx"><span class="no">ĐẦU RA</span><span class="nm">Xuất xưởng</span><span class="mt">Agent + bằng chứng + giá</span></span>
+        <span class="tags"><span>Báo cáo</span></span>
+      </button>
+
+      <div class="conveyor" id="fx-belt" aria-hidden="true"><span class="crate" id="fx-crate"></span></div>
+      <div class="fx-rail back" aria-hidden="true"><span>Phản hồi: đọc trace sai → quay lại sửa harness, dữ liệu, reward</span></div>
+    </div>
+
+    <div class="fx-legend">
+      <span class="k-crate"><i></i>Sản phẩm đang chạy trên băng chuyền</span>
+      <span class="k-qc"><i></i>QC: đo lại sau mỗi trạm</span>
+      <span class="k-back"><i></i>Vòng phản hồi về trạm trước</span>
+      <span class="k-num"><b>54.8</b> trên thẻ: điểm tham chiếu của Samaya (FrontierFinance)</span>
+    </div>
+
+    <div class="fx-detail" id="fx-detail" aria-live="polite">
+      <div class="fx-dhead">
+        <span class="no" id="fx-d-no">ĐẦU VÀO</span>
+        <h3 id="fx-d-title">Nguyên liệu</h3>
+        <p id="fx-d-why">Ba thứ đi vào nhà máy: câu hỏi có đáp án, kho văn bản để tra cứu, và một model nền chưa biết dùng tool.</p>
+      </div>
+      <div class="fx-io">
+        <div><b>Vào</b><ul id="fx-d-in"></ul></div>
+        <span class="to" aria-hidden="true">→</span>
+        <div><b>Máy móc ở trạm</b><ul id="fx-d-do"></ul></div>
+        <span class="to" aria-hidden="true">→</span>
+        <div class="out"><b>Ra</b><ul id="fx-d-out"></ul></div>
+      </div>
+      <p class="fx-product"><i aria-hidden="true"></i><span>Trên băng chuyền sau trạm này: <strong id="fx-d-product">nguyên liệu thô</strong></span></p>
+      <div class="meter">
+        <div class="head"><span id="fx-m-title">Điểm số qua từng trạm</span><span>Tham chiếu Samaya, thang 0–100%</span></div>
+        <div class="track" role="img" id="fx-track" aria-label="">
+          <span class="seg base" data-w="42.5"></span><span class="seg sft" data-w="12.3"></span><span class="seg rl" data-w="4.1"></span>
+          <span class="mark" style="left:55.9%"><em>Fable 5.1 · 55.9% · $6.89/câu</em></span>
+        </div>
+        <div class="keys">
+          <span class="k1"><i></i>Base trong harness 42.5</span>
+          <span class="k2"><i></i>SFT +12.3</span>
+          <span class="k3"><i></i>RL +4.1 → 58.9 · $0.61/câu</span>
+        </div>
+        <p class="note" id="fx-m-note"></p>
+      </div>
+      <div class="fx-foot" id="fx-d-foot"></div>
+    </div>
+  </section>
+
   <div class="shell">
     <nav class="rail" aria-label="Tiến độ">
       <span class="label">Tiến độ của bạn</span>
+      <a href="#map"><span class="n">◎</span><span>Bản đồ</span><span class="p"></span></a>
       <a href="#setup"><span class="n">0</span><span>Chuẩn bị</span><span class="p" data-prog="setup"></span></a>
       <a href="#eval"><span class="n">1</span><span>Eval</span><span class="p" data-prog="eval"></span></a>
       <a href="#harness"><span class="n">2</span><span>Harness</span><span class="p" data-prog="harness"></span></a>
@@ -860,6 +1108,141 @@ pre.trace .r { color: var(--ok); }
     });
   });
   refresh();
+})();
+</script>
+
+<script>
+(function () {
+  // Factory map: one entry per bay, in line order. level = how many score segments are reached.
+  const ST = [
+    { no: "ĐẦU VÀO", title: "Nguyên liệu",
+      why: "Ba thứ đi vào nhà máy: câu hỏi có đáp án, kho văn bản để tra cứu, và một model nền chưa biết dùng tool.",
+      in: ["Câu hỏi multi-hop: HotpotQA, 2WikiMultihopQA, MuSiQue, Bamboogle", "Kho tra cứu: các đoạn Wikipedia đi kèm dataset, sau này là Wikipedia 2018 đầy đủ", "Model nền: Nemotron 3.5 Lightning 30B-A3B hoặc Qwen3.5-4B"],
+      do: ["Chưa xử lý gì, chỉ nhập kho"],
+      out: ["Nguyên liệu thô, mỗi nguồn một định dạng"],
+      product: "nguyên liệu thô", level: 0,
+      note: "Chưa có điểm. Muốn có điểm phải có thước đo, và thước đo được làm ở Bước 1." },
+    { no: "BƯỚC 0", title: "Chuẩn bị: dựng xưởng", href: "#setup", time: "1–2 ngày", cost: "$0", where: "Laptop + Colab/Kaggle",
+      why: "Trước khi sản xuất, mọi máy phải chạy được và mọi đồng chi tiêu phải được ghi lại.",
+      in: ["Dữ liệu thô từ FlashRAG_datasets", "Model nền", "Tài khoản Tinker có giới hạn chi tiêu"],
+      do: ["Repo wiki-researcher/ với data, harness, eval, train, runs", "Chạy model ~1B trên Colab", "Chạy ví dụ đầu tiên của tinker-cookbook"],
+      out: ["JSONL {id, question, answers}", "Một model trả lời được một câu", "Sổ chi phí costs.csv"],
+      product: "dữ liệu sạch + máy đã chạy", level: 0,
+      note: "Chưa có điểm. Trạm này chỉ đảm bảo mọi thứ chạy được." },
+    { no: "BƯỚC 1", title: "Eval: phòng đo lường", href: "#eval", time: "~1 tuần", cost: "$5–15", where: "Laptop + Tinker sampling",
+      why: "Nhà máy nào cũng cần thước đo trước khi sản xuất. Thước đo này được dùng lại sau mọi trạm phía sau, nên nó phải đúng và chạy lại được.",
+      in: ["Tập test khóa kín, có hash", "Base model, chưa có tool"],
+      do: ["score.py: Exact Match + F1", "LLM judge, kiểm bằng 50 mẫu chấm tay", "Chia ba mức độ khó", "Đọc 30 câu sai, gán nhãn lỗi"],
+      out: ["Thước đo: một lệnh in điểm + $/câu", "Điểm sàn đóng sách", "Token/câu cho máy tính ngân sách", "Danh sách lỗi cho Bước 2"],
+      product: "thước đo + điểm sàn", level: 0,
+      note: "Thước đo đã sẵn sàng. Điểm đóng sách chỉ là sàn; con số so sánh được bắt đầu khi model có tool ở trạm sau." },
+    { no: "BƯỚC 2", title: "Harness: lắp tool cho model", href: "#harness", time: "1–2 tuần", cost: "$2–5", where: "Laptop (BM25 chạy CPU)",
+      why: "Gắn tay chân cho model: tìm, mở, đọc, trả lời. Model và harness lớn lên cùng nhau, nên đây cũng chính là môi trường dùng khi train.",
+      in: ["Base model", "Corpus v1 + index BM25", "Danh sách lỗi từ Bước 1"],
+      do: ["4 tool: search, open, find, answer", "Vòng lặp agent, lỗi parse trả về cho model", "Condenser, compactor, research budget"],
+      out: ["Trace JSONL đúng chat template", "Ba con số: đóng sách, base + harness, frontier + harness"],
+      product: "agent thô + trace", level: 1,
+      note: "Base model trong harness: điểm xuất phát thật. Samaya bắt đầu ở 42.5%." },
+    { no: "BƯỚC 3", title: "SFT: xưởng dạy nghề", href: "#sft", time: "1–2 tuần", cost: "$10–60", where: "Colab để thử · Tinker để chạy thật",
+      why: "Cho model xem nhiều trace tốt để bắt chước: gọi tool đúng format, tìm đủ, biết lúc nào dừng để trả lời.",
+      in: ["500–1.000 trace đúng (tự sinh kiểu STaR hoặc từ teacher)", "Đã lọc, khử trùng, không chạm tập test"],
+      do: ["LoRA SFT trên Tinker", "Loss chỉ tính trên token của assistant", "Checkpoint mỗi epoch, chọn theo val"],
+      out: ["Checkpoint SFT tốt nhất"],
+      product: "model đã học nghề", level: 2,
+      note: "Phần tăng lớn nhất nằm ở đây: Samaya +12.3 điểm, lên 54.8%." },
+    { no: "BƯỚC 4", title: "GRPO: lò luyện", href: "#grpo", time: "2–3 tuần", cost: "$25–80", where: "Tinker",
+      why: "Không còn đáp án mẫu. Mỗi câu model tự thử 8 lần; lần nào tốt hơn trung bình nhóm thì được củng cố.",
+      in: ["Checkpoint SFT", "Câu hỏi có tỉ lệ đúng nằm giữa 0 và 1", "Hàm reward: F1, phạt sai format"],
+      do: ["Online GRPO: 16 câu × 8 lần thử mỗi bước", "20–30 bước, eval val mỗi 5 bước", "Theo dõi reward, độ dài, % hết budget"],
+      out: ["Checkpoint RL"],
+      product: "model đã tôi luyện", level: 3,
+      note: "Samaya +4.1 điểm, lên 58.9%: vượt Fable 5.1 (55.9%) với chi phí $0.61 thay vì $6.89 mỗi câu." },
+    { no: "BƯỚC 5", title: "Ablation: kiểm định xuất xưởng", href: "#ablation", time: "~1 tuần", cost: "$15–50", where: "Tinker sampling",
+      why: "Tháo từng bộ phận ra để biết điểm đến từ đâu. Một lần chạy may mắn trở thành một kết luận.",
+      in: ["Mọi checkpoint: base, SFT, RL", "Tập test, lần đầu tiên được mở"],
+      do: ["Bảng theo giai đoạn + $/câu", "Bootstrap 1.000 lần cho khoảng tin cậy", "Tắt condenser, compactor; đổi budget", "Thử Bamboogle, FRAMES"],
+      out: ["Bảng điểm có khoảng tin cậy", "Biết từng phần đóng góp bao nhiêu"],
+      product: "model + bằng chứng", level: 3,
+      note: "Cùng con số cuối, nhưng giờ có khoảng tin cậy và biết từng phần đóng góp bao nhiêu." },
+    { no: "ĐẦU RA", title: "Xuất xưởng",
+      why: "Thứ giao ra không chỉ là model, mà là model kèm bằng chứng và giá thành.",
+      in: ["Mọi thứ từ năm bước trước"],
+      do: ["Viết báo cáo theo khung Samaya: vấn đề → setup → từng giai đoạn → kết quả → giới hạn"],
+      out: ["Agent nghiên cứu Wikipedia chạy bằng model nhỏ", "Bảng điểm EM/F1, $/câu, giây/câu, riêng phần khó", "Bài viết"],
+      product: "agent + báo cáo", level: 3,
+      note: "Mục tiêu của bạn có cùng hình dạng: model nhỏ, rẻ hơn nhiều lần, điểm bằng hoặc hơn frontier trong cùng harness." }
+  ];
+
+  const $ = (id) => document.getElementById(id);
+  const floor = $("fx-floor"), belt = $("fx-belt"), crate = $("fx-crate");
+  const bays = Array.from(floor.querySelectorAll(".bay"));
+  const segs = Array.from($("fx-track").querySelectorAll(".seg"));
+  const keys = Array.from(document.querySelectorAll(".meter .keys span"));
+  const playBtn = $("fx-play");
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let cur = 0, playing = !reduce, visible = !("IntersectionObserver" in window), timer = null;
+
+  const list = (el, items) => {
+    el.textContent = "";
+    items.forEach((t) => { const li = document.createElement("li"); li.textContent = t; el.appendChild(li); });
+  };
+
+  function placeCrate(jump) {
+    const b = belt.getBoundingClientRect(), c = bays[cur].getBoundingClientRect();
+    if (jump) crate.classList.add("jump");
+    if (b.height > b.width) { crate.style.top = (c.top + c.height / 2 - b.top) + "px"; crate.style.left = ""; }
+    else { crate.style.left = (c.left + c.width / 2 - b.left) + "px"; crate.style.top = ""; }
+    if (jump) { void crate.offsetWidth; crate.classList.remove("jump"); }
+  }
+
+  function render(jump) {
+    const s = ST[cur];
+    bays.forEach((b, i) => { if (i === cur) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current"); });
+    $("fx-d-no").textContent = s.no;
+    $("fx-d-title").textContent = s.title;
+    $("fx-d-why").textContent = s.why;
+    list($("fx-d-in"), s.in); list($("fx-d-do"), s.do); list($("fx-d-out"), s.out);
+    $("fx-d-product").textContent = s.product;
+    segs.forEach((g, i) => { g.style.width = i < s.level ? g.dataset.w + "%" : "0"; });
+    keys.forEach((k, i) => k.classList.toggle("off", i >= s.level));
+    $("fx-m-note").textContent = s.note;
+    $("fx-track").setAttribute("aria-label", s.note);
+    const foot = $("fx-d-foot");
+    foot.textContent = "";
+    [s.time, s.cost, s.where].filter(Boolean).forEach((t, i) => {
+      const c = document.createElement("span"); c.className = "chip" + (i === 1 ? " cost" : ""); c.textContent = t; foot.appendChild(c);
+    });
+    if (s.href) { const a = document.createElement("a"); a.href = s.href; a.textContent = "Làm " + s.no.toLowerCase() + " ↓"; foot.appendChild(a); }
+    placeCrate(jump);
+  }
+
+  function go(i) {
+    const next = (i + ST.length) % ST.length;
+    const wrapped = (cur === ST.length - 1 && next === 0) || (cur === 0 && next === ST.length - 1);
+    cur = next;
+    render(wrapped);
+  }
+
+  function sync() {
+    clearInterval(timer); timer = null;
+    const run = playing && visible;
+    if (run) timer = setInterval(() => go(cur + 1), 3400);
+    floor.classList.toggle("playing", run);
+    playBtn.textContent = playing ? "⏸ Dừng" : "▶ Chạy";
+    playBtn.setAttribute("aria-pressed", String(playing));
+  }
+  const pause = () => { playing = false; sync(); };
+
+  bays.forEach((b, i) => b.addEventListener("click", () => { pause(); go(i); }));
+  $("fx-prev").addEventListener("click", () => { pause(); go(cur - 1); });
+  $("fx-next").addEventListener("click", () => { pause(); go(cur + 1); });
+  playBtn.addEventListener("click", () => { playing = !playing; if (playing && cur === ST.length - 1) go(0); sync(); });
+  window.addEventListener("resize", () => placeCrate(true));
+  if (!visible) {
+    new IntersectionObserver((es) => { visible = es[0].isIntersecting; sync(); }, { threshold: 0.35 }).observe(floor);
+  }
+  render(true);
+  sync();
 })();
 </script>
 
