@@ -1,5 +1,15 @@
 [
   {
+    "title": "System Design: An Autonomous Book Curator That Learns My Taste",
+    "kicker": "System design · draft",
+    "date": "2026-11-01",
+    "desc": "Design for Shelf, a system that finds books, shortlists them against my recorded taste, checks reviews, recommends one book a day by chat, email and this blog, and learns from my reactions. A draft for review; nothing is built yet.",
+    "file": "autonomous-book-curator-system-design.html",
+    "image": "thumbs/autonomous-book-curator-system-design.jpg",
+    "imageAlt": "Shelf system design: a seven-part loop from taste registry to learning",
+    "cta": "Review the design"
+  },
+  {
     "title": "Hands-on Building Wikipedia Research Agent By Post Training using SFT and GRPO",
     "kicker": "Hands-on tutorial",
     "date": "2026-10-30",

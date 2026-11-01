@@ -1,0 +1,944 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shelf System Design — Nguyễn Đăng Khoa</title>
+<meta name="description" content="System design for Shelf, an autonomous book curator: discover, shortlist by taste, check reviews, recommend one book a day, and learn from reactions. Draft for review.">
+<link rel="canonical" href="https://nguyendangkhoa.info/blogs/autonomous-book-curator-system-design.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="System Design: An Autonomous Book Curator That Learns My Taste">
+<meta property="og:description" content="Five fixed stages, one book a day, a taste registry that changes over time, and a learning loop driven by my reactions. Design draft, not built yet.">
+<meta property="og:url" content="https://nguyendangkhoa.info/blogs/autonomous-book-curator-system-design.html">
+<meta property="og:image" content="https://nguyendangkhoa.info/blogs/thumbs/autonomous-book-curator-system-design.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f7f8f6">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>📚</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: field manual. Sticky pipeline rail on the left (Eval → Ablation is a real sequence), one long column of steps on the right. */
+:root {
+  --paper: #f7f8f6;
+  --sheet: #ffffff;
+  --ink: #1b2130;
+  --muted: #5b6475;
+  --rule: #dfe3e8;
+  --link: #2f5fc4;
+  --link-soft: #e8eefb;
+  --cost: #9a5b00;
+  --cost-soft: #fbf1e1;
+  --ok: #1f7a4d;
+  --ok-soft: #e4f3ea;
+  --warn: #a33a2b;
+  --warn-soft: #fbe9e6;
+  --code-bg: #f0f2f5;
+  --display: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --body: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #12151b; --sheet: #191d25; --ink: #e5e8ee; --muted: #9aa3b4; --rule: #2a303b;
+    --link: #8fb0ff; --link-soft: #1d2840; --cost: #e3a64a; --cost-soft: #2c2214;
+    --ok: #6fd09c; --ok-soft: #15291f; --warn: #f08b7b; --warn-soft: #2e1916; --code-bg: #1f242e;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #12151b; --sheet: #191d25; --ink: #e5e8ee; --muted: #9aa3b4; --rule: #2a303b;
+  --link: #8fb0ff; --link-soft: #1d2840; --cost: #e3a64a; --cost-soft: #2c2214;
+  --ok: #6fd09c; --ok-soft: #15291f; --warn: #f08b7b; --warn-soft: #2e1916; --code-bg: #1f242e;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: var(--body); font-size: 15.5px; line-height: 1.65;
+}
+a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:focus-visible, input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+code, .mono { font-family: var(--mono); font-size: 0.86em; }
+code { background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 4px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; line-height: 1.2; margin: 0; }
+p { margin: 0; }
+
+.wrap {
+  max-width: 1180px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 80px;
+}
+
+/* Hero */
+.hero { display: grid; gap: 18px; padding-bottom: 32px; border-bottom: 1px solid var(--rule); }
+.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.hero h1 { font-size: clamp(30px, 4.6vw, 48px); font-weight: 700; max-width: 22ch; }
+.hero .sub { font-size: 17px; color: var(--muted); max-width: 68ch; }
+.pipeline { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 6px; }
+.pipeline a {
+  font-family: var(--mono); font-size: 13px; text-decoration: none; color: var(--ink);
+  border: 1px solid var(--rule); background: var(--sheet); padding: 6px 10px; border-radius: 6px;
+}
+.pipeline a:hover { border-color: var(--link); color: var(--link); }
+.pipeline .arrow { color: var(--muted); font-size: 13px; }
+
+/* Shell */
+.shell { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 48px; margin-top: 36px; }
+.rail { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 20px); align-self: start; display: grid; gap: 4px; }
+.rail .label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.rail a {
+  display: grid; grid-template-columns: 26px 1fr auto; align-items: center; gap: 6px;
+  text-decoration: none; color: var(--ink); padding: 6px 8px; border-radius: 6px; font-size: 14px;
+}
+.rail a:hover { background: var(--link-soft); }
+.rail .n { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.rail .p { font-family: var(--mono); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.rail .p.full { color: var(--ok); }
+main { display: grid; gap: 56px; min-width: 0; }
+
+section > h2 { font-size: 28px; }
+.block { display: grid; gap: 16px; }
+.lede { font-size: 16.5px; max-width: 70ch; }
+.note { color: var(--muted); font-size: 14px; max-width: 72ch; }
+
+/* Tables */
+.tbl { overflow-x: auto; border: 1px solid var(--rule); border-radius: 8px; background: var(--sheet); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); background: var(--paper); }
+tr:last-child td { border-bottom: 0; }
+td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Steps */
+.step { display: grid; gap: 20px; scroll-margin-top: 20px; }
+.step-head { display: grid; gap: 8px; }
+.step-no { font-family: var(--mono); font-size: 12.5px; color: var(--link); letter-spacing: 0.04em; }
+.step-head h2 { font-size: 30px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.chip { font-size: 12.5px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--rule); background: var(--sheet); color: var(--muted); white-space: nowrap; }
+.chip.cost { color: var(--cost); background: var(--cost-soft); border-color: transparent; }
+.cols { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 20px; }
+.panel { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: 18px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.panel h3 { font-family: var(--body); font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.panel h3 .count { font-family: var(--mono); letter-spacing: 0; text-transform: none; color: var(--ok); margin-left: 6px; }
+
+.tasks { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; counter-reset: t; }
+.tasks li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; align-items: start; }
+.tasks input { width: 16px; height: 16px; margin: 4px 0 0; accent-color: var(--ok); cursor: pointer; }
+.tasks label { cursor: pointer; font-size: 14.5px; }
+.tasks li.done label { color: var(--muted); }
+.tasks li.done label strong { text-decoration: line-through; text-decoration-color: var(--muted); }
+
+.learn { display: grid; gap: 14px; }
+.learn-item { display: grid; gap: 5px; padding-bottom: 14px; border-bottom: 1px dashed var(--rule); }
+.learn-item:last-child { border-bottom: 0; padding-bottom: 0; }
+.learn-item .when { font-size: 13px; color: var(--muted); }
+.learn-item .what { font-size: 14.5px; font-weight: 600; }
+.learn-item .why { font-size: 14px; }
+.refs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.refs a { font-size: 12.5px; text-decoration: none; padding: 2px 8px; border-radius: 5px; border: 1px solid var(--rule); }
+.refs a.repo { font-family: var(--mono); font-size: 11.5px; background: var(--link-soft); border-color: transparent; }
+.refs a:hover { border-color: var(--link); }
+
+.gate { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.gate > div { border-radius: 8px; padding: 14px 16px; font-size: 14px; display: grid; gap: 6px; align-content: start; }
+.gate .done-when { background: var(--ok-soft); }
+.gate .traps { background: var(--warn-soft); }
+.gate b { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; }
+.gate .done-when b { color: var(--ok); }
+.gate .traps b { color: var(--warn); }
+.gate ul { margin: 0; padding-left: 18px; }
+
+pre.trace {
+  margin: 0; background: var(--code-bg); border-radius: 8px; padding: 14px 16px; overflow-x: auto;
+  font-family: var(--mono); font-size: 12.5px; line-height: 1.6; color: var(--ink);
+}
+pre.trace .c { color: var(--muted); }
+pre.trace .t { color: var(--link); }
+pre.trace .r { color: var(--ok); }
+.formula { font-family: var(--mono); font-size: 13.5px; background: var(--code-bg); padding: 10px 14px; border-radius: 8px; overflow-x: auto; white-space: nowrap; }
+
+.sources ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: 14px; }
+
+/* Factory map */
+.factory { display: grid; gap: 16px; margin-top: 36px; scroll-margin-top: 20px; }
+.fx-top { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: end; justify-content: space-between; }
+.fx-intro { display: grid; gap: 8px; max-width: 76ch; }
+.fx-top h2 { font-size: 30px; }
+.fx-ctrl { display: inline-flex; gap: 6px; }
+.fx-ctrl button {
+  font: inherit; font-size: 13px; color: var(--ink); background: var(--sheet);
+  border: 1px solid var(--rule); border-radius: 6px; padding: 7px 12px; cursor: pointer; white-space: nowrap;
+}
+.fx-ctrl button:hover { border-color: var(--link); color: var(--link); }
+
+.floor {
+  position: relative; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); column-gap: 10px;
+  background-color: var(--sheet);
+  background-image: radial-gradient(var(--rule) 1px, transparent 1.2px); background-size: 16px 16px;
+  border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px 12px;
+}
+.fx-rail { position: relative; height: 32px; }
+.fx-rail::before { content: ""; position: absolute; left: 0; right: 0; height: 12px; border: 1.5px dashed currentColor; }
+.fx-rail span {
+  position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap;
+  font-size: 12px; font-weight: 500; background: var(--sheet); padding: 0 8px;
+}
+.fx-rail.qc { grid-row: 1; grid-column: 3 / 8; margin-inline: calc((100% - 40px) / 10); color: var(--ok); }
+.fx-rail.qc::before { bottom: 0; border-bottom: 0; border-radius: 6px 6px 0 0; }
+.fx-rail.qc span { top: 2px; }
+.fx-rail.back { grid-row: 4; grid-column: 4 / 8; margin-inline: calc((100% - 30px) / 8); color: var(--warn); }
+.fx-rail.back::before { top: 0; border-top: 0; border-radius: 0 0 6px 6px; }
+.fx-rail.back::after {
+  content: ""; position: absolute; left: -5px; top: -2px;
+  border: 5.5px solid transparent; border-bottom: 7px solid currentColor; border-top: 0;
+}
+.fx-rail.back span { bottom: 0; }
+
+.bay {
+  grid-row: 2; position: relative; z-index: 1; min-width: 0;
+  font: inherit; text-align: left; color: var(--ink); background: var(--paper);
+  border: 1px solid var(--rule); border-radius: 8px; padding: 10px 10px 9px; cursor: pointer;
+  display: grid; gap: 6px; align-content: start;
+  transition: border-color .25s, box-shadow .25s, transform .25s;
+}
+.bay:hover { border-color: var(--link); }
+.bay[aria-current="step"] { border-color: var(--link); box-shadow: 0 0 0 3px var(--link-soft); transform: translateY(-2px); }
+.bay .ic { color: var(--muted); display: block; height: 26px; }
+.bay .ic svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.bay[aria-current="step"] .ic { color: var(--link); }
+.bay .tx { display: grid; gap: 2px; }
+.bay .no { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.04em; color: var(--muted); }
+.bay .nm { font-family: var(--display); font-weight: 700; font-size: 17px; line-height: 1.15; }
+.bay .mt { font-size: 12.5px; line-height: 1.35; color: var(--muted); }
+.bay .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.bay .tags span { font-size: 11px; line-height: 1.5; padding: 0 6px; border-radius: 999px; border: 1px solid var(--rule); color: var(--muted); background: var(--sheet); }
+.bay .tags .cost { color: var(--cost); background: var(--cost-soft); border-color: transparent; font-family: var(--mono); }
+.bay .qc { position: absolute; top: 8px; right: 8px; font-family: var(--mono); font-size: 11px; color: var(--ok); font-variant-numeric: tabular-nums; }
+
+.conveyor {
+  grid-row: 3; grid-column: 1 / -1; position: relative; height: 14px; margin-top: 6px;
+  border-radius: 7px; border: 1px solid var(--rule); background-color: var(--code-bg);
+  background-image: repeating-linear-gradient(90deg, var(--rule) 0 2px, transparent 2px 12px);
+}
+.crate {
+  position: absolute; left: 0; top: 50%; width: 18px; height: 18px; margin: -9px 0 0 -9px; z-index: 2;
+  border-radius: 4px; background: var(--cost); box-shadow: inset 0 0 0 2px var(--cost-soft);
+  transition: left .9s cubic-bezier(.5, 0, .3, 1), top .9s cubic-bezier(.5, 0, .3, 1);
+}
+.crate.jump { transition: none; }
+
+.fx-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--muted); }
+.fx-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.fx-legend i { display: inline-block; width: 16px; height: 0; border-top: 1.5px dashed currentColor; }
+.fx-legend .k-crate i { width: 11px; height: 11px; border: 0; border-radius: 3px; background: var(--cost); }
+.fx-legend .k-qc { color: var(--ok); }
+.fx-legend .k-back { color: var(--warn); }
+.fx-legend .k-num b { font-family: var(--mono); font-weight: 400; color: var(--ok); }
+
+.fx-detail { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 18px; display: grid; gap: 16px; }
+.fx-dhead { display: grid; gap: 6px; }
+.fx-dhead .no { font-family: var(--mono); font-size: 12.5px; color: var(--link); letter-spacing: 0.04em; }
+.fx-dhead h3 { font-size: 22px; }
+.fx-dhead p { max-width: 78ch; }
+.fx-io { display: grid; grid-template-columns: minmax(0, 1fr) 22px minmax(0, 1.2fr) 22px minmax(0, 1fr); gap: 8px; align-items: stretch; }
+.fx-io > div { border-radius: 8px; padding: 12px 14px; background: var(--paper); display: grid; gap: 6px; align-content: start; }
+.fx-io > .to { background: none; padding: 0; place-content: center; color: var(--muted); font-size: 18px; }
+.fx-io b { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.fx-io ul { margin: 0; padding-left: 18px; font-size: 14px; display: grid; gap: 3px; }
+.fx-io .out { background: var(--ok-soft); }
+.fx-io .out b { color: var(--ok); }
+.fx-product { font-size: 14px; display: flex; align-items: center; gap: 8px; }
+.fx-product i { width: 12px; height: 12px; border-radius: 3px; background: var(--cost); flex: none; }
+
+.meter { display: grid; gap: 8px; }
+.meter .head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; font-size: 13px; }
+.meter .head span:first-child { font-weight: 600; }
+.meter .head span:last-child { color: var(--muted); }
+.track { position: relative; height: 16px; border-radius: 4px; background: var(--code-bg); display: flex; margin-top: 18px; }
+.track .seg { height: 100%; width: 0; transition: width .7s ease; }
+.track .seg.base { background: var(--muted); opacity: .55; border-radius: 4px 0 0 4px; }
+.track .seg.sft { background: var(--link); }
+.track .seg.rl { background: var(--ok); }
+.track .mark { position: absolute; top: -18px; bottom: -4px; width: 0; border-left: 1.5px dashed var(--ink); }
+.track .mark em { position: absolute; bottom: 100%; transform: translateX(-50%); font-style: normal; font-size: 11.5px; white-space: nowrap; color: var(--ink); }
+.meter .keys { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--muted); }
+.meter .keys span { display: inline-flex; align-items: center; gap: 5px; font-variant-numeric: tabular-nums; transition: opacity .3s; }
+.meter .keys span.off { opacity: .35; }
+.meter .keys i { width: 10px; height: 10px; border-radius: 2px; }
+.meter .keys .k1 i { background: var(--muted); opacity: .55; }
+.meter .keys .k2 i { background: var(--link); }
+.meter .keys .k3 i { background: var(--ok); }
+.fx-foot { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.fx-foot a { margin-left: auto; font-size: 14px; font-weight: 600; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .floor.playing .conveyor { animation: belt 1.2s linear infinite; }
+  .floor.playing .bay[aria-current="step"] .ic svg { animation: hum 1.2s ease-in-out infinite; }
+}
+@keyframes belt { to { background-position: 12px 0; } }
+@keyframes belt-v { to { background-position: 0 12px; } }
+@keyframes hum { 50% { transform: translateY(-2px) rotate(-4deg); } }
+@media (prefers-reduced-motion: reduce) { .crate, .bay, .track .seg { transition: none; } }
+
+@media (max-width: 960px) {
+  .floor { grid-template-columns: minmax(0, 1fr); row-gap: 8px; padding: 14px 14px 14px 46px; }
+  .fx-rail { display: none; }
+  .bay { grid-row: auto; grid-template-columns: 30px minmax(0, 1fr); column-gap: 10px; }
+  .bay .tags { grid-column: 2; }
+  .bay[aria-current="step"] { transform: translateX(3px); }
+  .conveyor {
+    position: absolute; grid-row: auto; grid-column: auto; left: 16px; top: 14px; bottom: 14px; width: 14px; height: auto; margin: 0;
+    background-image: repeating-linear-gradient(180deg, var(--rule) 0 2px, transparent 2px 12px);
+  }
+  .crate { left: 50%; top: 0; margin: -9px 0 0 -9px; }
+  .fx-io { grid-template-columns: minmax(0, 1fr); }
+  .fx-io > .to { display: none; }
+  .track { margin-top: 30px; }
+  .fx-foot a { margin-left: 0; }
+}
+@media (max-width: 960px) and (prefers-reduced-motion: no-preference) {
+  .floor.playing .conveyor { animation-name: belt-v; }
+}
+
+@media (max-width: 960px) {
+  .shell { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .rail { position: static; display: flex; flex-wrap: wrap; gap: 6px; }
+  .rail .label { width: 100%; margin: 0; }
+  .rail a { display: inline-flex; gap: 6px; border: 1px solid var(--rule); background: var(--sheet); }
+  .cols, .gate { grid-template-columns: minmax(0, 1fr); }
+  .tiers, .calc-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+/* Tutorial */
+:root { --hl-kw: #a626a4; --hl-str: #3f8a3a; --hl-com: #8a8f98; --hl-num: #986801; --hl-fn: #3a6fd8; --hl-bi: #b0710b; --hl-lit: #0e7c9a; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --hl-kw: #c99be8; --hl-str: #9fd08a; --hl-com: #7f8796; --hl-num: #e0a872; --hl-fn: #7fb2f5; --hl-bi: #e5c07b; --hl-lit: #6fc8d8; }
+}
+:root[data-theme="dark"] { --hl-kw: #c99be8; --hl-str: #9fd08a; --hl-com: #7f8796; --hl-num: #e0a872; --hl-fn: #7fb2f5; --hl-bi: #e5c07b; --hl-lit: #6fc8d8; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px; }
+.fact { font-size: 13px; border: 1px solid var(--rule); background: var(--sheet); border-radius: 999px; padding: 4px 12px; }
+.fact b { font-weight: 600; margin-right: 4px; }
+.cta { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { display: inline-flex; align-items: center; font-size: 14px; font-weight: 600; text-decoration: none; padding: 9px 16px; border-radius: 8px; border: 1px solid var(--rule); background: var(--sheet); color: var(--ink); }
+.btn:hover { border-color: var(--link); }
+.btn.primary { background: var(--link); color: var(--sheet); border-color: transparent; }
+.hero .note { max-width: 86ch; }
+.substep { display: grid; gap: 12px; padding-top: 20px; border-top: 1px dashed var(--rule); scroll-margin-top: 20px; min-width: 0; }
+.sub-head { display: flex; gap: 10px; align-items: flex-start; }
+.sub-head input { width: 17px; height: 17px; accent-color: var(--ok); margin: 3px 0 0; cursor: pointer; flex: none; }
+.sub-head h3 { font-family: var(--body); font-size: 17px; font-weight: 600; line-height: 1.4; }
+.sub-head .sn { font-family: var(--mono); color: var(--link); margin-right: 8px; font-size: 14px; }
+.substep.done .sub-head h3 { color: var(--muted); }
+.substep > p, .substep > ul, .substep > ol { max-width: 78ch; }
+.substep > ul, .substep > ol { margin: 0; padding-left: 20px; display: grid; gap: 5px; }
+figure.code { margin: 0; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; background: var(--code-bg); min-width: 0; }
+figure.code figcaption { display: flex; align-items: center; gap: 10px; padding: 6px 8px 6px 12px; font-family: var(--mono); font-size: 12px; color: var(--muted); border-bottom: 1px solid var(--rule); background: var(--sheet); }
+figure.code figcaption .fname { color: var(--ink); font-weight: 500; }
+figure.code figcaption a { color: var(--muted); }
+figure.code figcaption .copy { margin-left: auto; font: inherit; font-size: 12px; color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 5px; padding: 3px 10px; cursor: pointer; white-space: nowrap; }
+figure.code figcaption .copy:hover { border-color: var(--link); }
+figure.code figcaption .copy.ok { color: var(--ok); border-color: var(--ok); }
+figure.code pre { margin: 0; padding: 12px 14px; overflow: auto; max-height: 560px; font-family: var(--mono); font-size: 12.5px; line-height: 1.55; color: var(--ink); tab-size: 4; }
+figure.code pre code { background: none; padding: 0; font-size: inherit; border-radius: 0; }
+figure.code.out { background: var(--sheet); }
+figure.code.out figcaption { background: var(--ok-soft); color: var(--ok); }
+figure.code.out pre { max-height: 420px; }
+.tip { border-left: 3px solid var(--cost); background: var(--cost-soft); padding: 10px 14px; border-radius: 0 8px 8px 0; font-size: 14px; max-width: 82ch; }
+.tip b { color: var(--cost); }
+.hljs-keyword, .hljs-meta .hljs-keyword { color: var(--hl-kw); }
+.hljs-string, .hljs-meta .hljs-string { color: var(--hl-str); }
+.hljs-comment { color: var(--hl-com); font-style: italic; }
+.hljs-number { color: var(--hl-num); }
+.hljs-title, .hljs-title.function_, .hljs-title.class_ { color: var(--hl-fn); }
+.hljs-built_in { color: var(--hl-bi); }
+.hljs-literal, .hljs-variable { color: var(--hl-lit); }
+.hljs-meta { color: var(--hl-com); }
+.hljs-subst { color: var(--ink); }
+/* Curator page */
+.status { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--cost); background: var(--cost-soft); border-radius: 999px; padding: 4px 12px; width: fit-content; }
+.status i { width: 8px; height: 8px; border-radius: 50%; background: var(--cost); }
+.floor.loop { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.floor.loop .fx-rail.qc { grid-column: 4 / 6; margin-inline: calc((100% - 10px) / 4); }
+.floor.loop .fx-rail.back { grid-column: 1 / 8; margin-inline: calc((100% - 60px) / 14); }
+.fx-tech { display: flex; flex-wrap: wrap; gap: 6px; }
+.fx-tech span { font-size: 12.5px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); color: var(--muted); }
+.fx-tech span b { color: var(--ink); font-weight: 600; margin-right: 4px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.card { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; display: grid; gap: 6px; align-content: start; }
+.card h3 { font-family: var(--body); font-size: 15px; font-weight: 600; }
+.card p, .card li { font-size: 14px; }
+.card ul { margin: 0; padding-left: 18px; display: grid; gap: 3px; }
+.card .lvl { font-family: var(--mono); font-size: 12px; color: var(--link); }
+.card .when { font-size: 12.5px; color: var(--muted); }
+.arch { display: grid; grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1.25fr) 28px minmax(0, 1fr); gap: 10px; align-items: stretch; }
+.arch .lane { display: grid; gap: 8px; align-content: start; }
+.arch .lane > b { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.arch .box { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: 10px 12px; font-size: 13.5px; display: grid; gap: 2px; }
+.arch .box strong { font-size: 14px; }
+.arch .box span { color: var(--muted); font-size: 12.5px; }
+.arch .box.core { border-color: var(--link); box-shadow: 0 0 0 3px var(--link-soft); }
+.arch .box.db { border-style: dashed; }
+.arch .flow { display: grid; place-items: center; color: var(--muted); font-size: 18px; }
+.tg { max-width: 420px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 14px; padding: 14px; display: grid; gap: 10px; font-size: 14px; box-shadow: 0 6px 20px rgba(0,0,0,.06); }
+.tg .who { font-size: 12px; color: var(--muted); }
+.tg .book { display: grid; grid-template-columns: 64px 1fr; gap: 12px; align-items: start; }
+.tg .cover { width: 64px; height: 92px; border-radius: 4px; background: linear-gradient(160deg, var(--link), var(--ok)); opacity: .85; }
+.tg .t { font-weight: 600; }
+.tg .m { font-size: 12.5px; color: var(--muted); }
+.tg .btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.tg .btns span { text-align: center; font-size: 13px; padding: 7px 4px; border-radius: 8px; background: var(--link-soft); color: var(--link); }
+.mock-note { font-size: 12.5px; color: var(--muted); }
+.decisions { margin: 0; padding-left: 22px; display: grid; gap: 10px; }
+.decisions li { max-width: 82ch; }
+.decisions .rec { color: var(--ok); font-weight: 600; }
+@media (max-width: 960px) {
+  .floor.loop { grid-template-columns: minmax(0, 1fr); }
+  .arch { grid-template-columns: minmax(0, 1fr); }
+  .arch .flow { transform: rotate(90deg); height: 18px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <span class="eyebrow">System design · draft v0.1 for review</span>
+    <h1>Shelf: an autonomous book curator that learns my taste</h1>
+    <p class="sub">One book a day, picked for me. Shelf finds candidates, shortlists them against my recorded taste, checks what readers and critics say, sends me one recommendation, and treats my reaction as the reward that tunes tomorrow's pick. This page is the design; nothing is built yet.</p>
+    <span class="status"><i></i>Status: design for review. No code until the open decisions at the end are settled.</span>
+    <div class="facts">
+      <span class="fact"><b>Cadence</b> 1 book / day, 07:00 ICT</span>
+      <span class="fact"><b>Stages</b> Discover → Shortlist → Review → Recommend → React</span>
+      <span class="fact"><b>Learning</b> bandit now, reward model later</span>
+      <span class="fact"><b>Run cost</b> ≈ $8–10 / month</span>
+      <span class="fact"><b>Servers</b> none to manage</span>
+    </div>
+  </header>
+
+  <!-- The loop -->
+  <section class="factory" id="map" aria-labelledby="map-title">
+    <div class="fx-top">
+      <div class="fx-intro">
+        <span class="eyebrow">The big picture</span>
+        <h2 id="map-title">A loop, not an agent</h2>
+        <p class="lede">Seven parts in a fixed order, run on a schedule. The LLM works inside a part with a narrow job and a typed output; it never decides what runs next. Click a part to see what goes in, what runs, and what comes out.</p>
+      </div>
+      <div class="fx-ctrl">
+        <button type="button" id="fx-prev" aria-label="Previous part">‹ Prev</button>
+        <button type="button" id="fx-play" aria-pressed="false">▶ Play</button>
+        <button type="button" id="fx-next" aria-label="Next part">Next ›</button>
+      </div>
+    </div>
+
+    <div class="floor loop" id="fx-floor">
+      <div class="fx-rail qc" aria-hidden="true"><span>Evidence rule: no claim without a source</span></div>
+
+      <button type="button" class="bay" data-i="0" aria-current="step">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/></svg></span>
+        <span class="tx"><span class="no">STATE</span><span class="nm">Taste registry</span><span class="mt">What I like, with history</span></span>
+        <span class="tags"><span>Postgres</span></span>
+      </button>
+      <button type="button" class="bay" data-i="1">
+        <span class="ic"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5.5 5.5"/></svg></span>
+        <span class="tx"><span class="no">STAGE 1</span><span class="nm">Discover</span><span class="mt">APIs, lists, prizes, search</span></span>
+        <span class="tags"><span>weekly + daily</span></span>
+      </button>
+      <button type="button" class="bay" data-i="2">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h16l-6 7v6l-4 2v-8z"/></svg></span>
+        <span class="tx"><span class="no">STAGE 2</span><span class="nm">Shortlist</span><span class="mt">Filter, score, pick a slot</span></span>
+        <span class="tags"><span>nightly</span></span>
+      </button>
+      <button type="button" class="bay" data-i="3">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg></span>
+        <span class="tx"><span class="no">STAGE 3</span><span class="nm">Review check</span><span class="mt">Ratings, critics, Reddit</span></span>
+        <span class="tags"><span>nightly</span></span>
+      </button>
+      <button type="button" class="bay" data-i="4">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8z"/></svg></span>
+        <span class="tx"><span class="no">STAGE 4</span><span class="nm">Recommend</span><span class="mt">Chat, email, blog post</span></span>
+        <span class="tags"><span>07:00 ICT</span></span>
+      </button>
+      <button type="button" class="bay" data-i="5">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M7 11v9H4v-9zM7 11l4-8a2 2 0 0 1 2 2v4h5.5a2 2 0 0 1 2 2.3l-1.2 7A2 2 0 0 1 17.3 20H7"/></svg></span>
+        <span class="tx"><span class="no">STAGE 5</span><span class="nm">Reactions</span><span class="mt">Buttons, comments, silence</span></span>
+        <span class="tags"><span>any time</span></span>
+      </button>
+      <button type="button" class="bay" data-i="6">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 13.7-5.6L20 9"/><path d="M20 4v5h-5"/><path d="M20 12a8 8 0 0 1-13.7 5.6L4 15"/><path d="M4 20v-5h5"/></svg></span>
+        <span class="tx"><span class="no">LOOP</span><span class="nm">Learn</span><span class="mt">Rewards tune weights</span></span>
+        <span class="tags"><span>instant + weekly</span></span>
+      </button>
+
+      <div class="conveyor" id="fx-belt" aria-hidden="true"><span class="crate" id="fx-crate"></span></div>
+      <div class="fx-rail back" aria-hidden="true"><span>Learning loop: every reaction becomes a reward that updates taste weights, the slot bandit and the scorer</span></div>
+    </div>
+
+    <div class="fx-detail" id="fx-detail" aria-live="polite">
+      <div class="fx-dhead">
+        <span class="no" id="fx-d-no"></span>
+        <h3 id="fx-d-title"></h3>
+        <p id="fx-d-why"></p>
+      </div>
+      <div class="fx-io">
+        <div><b>In</b><ul id="fx-d-in"></ul></div>
+        <span class="to" aria-hidden="true">→</span>
+        <div><b>Run</b><ul id="fx-d-do"></ul></div>
+        <span class="to" aria-hidden="true">→</span>
+        <div class="out"><b>Out</b><ul id="fx-d-out"></ul></div>
+      </div>
+      <div class="fx-tech" id="fx-d-tech"></div>
+    </div>
+  </section>
+
+  <div class="shell">
+    <nav class="rail" aria-label="Sections">
+      <span class="label">Sections</span>
+      <a href="#map"><span class="n">◎</span><span>The loop</span><span class="p"></span></a>
+      <a href="#scope"><span class="n">1</span><span>Scope</span><span class="p"></span></a>
+      <a href="#taste"><span class="n">2</span><span>Taste registry</span><span class="p"></span></a>
+      <a href="#discover"><span class="n">3</span><span>Discover</span><span class="p"></span></a>
+      <a href="#shortlist"><span class="n">4</span><span>Shortlist</span><span class="p"></span></a>
+      <a href="#review"><span class="n">5</span><span>Review check</span><span class="p"></span></a>
+      <a href="#recommend"><span class="n">6</span><span>Recommend</span><span class="p"></span></a>
+      <a href="#react"><span class="n">7</span><span>Reactions</span><span class="p"></span></a>
+      <a href="#learn"><span class="n">8</span><span>Learning</span><span class="p"></span></a>
+      <a href="#arch"><span class="n">9</span><span>Architecture</span><span class="p"></span></a>
+      <a href="#guard"><span class="n">10</span><span>Guardrails</span><span class="p"></span></a>
+      <a href="#cost"><span class="n">$</span><span>Cost</span><span class="p"></span></a>
+      <a href="#plan"><span class="n">→</span><span>Roadmap</span><span class="p"></span></a>
+      <a href="#decide"><span class="n">?</span><span>Decisions</span><span class="p"></span></a>
+    </nav>
+
+    <main>
+      <!-- 1 -->
+      <section class="block" id="scope">
+        <h2>1. What Shelf is, and what it isn't</h2>
+        <p class="lede">"Autonomous" here means it runs every day without me: it wakes on a schedule, does the same five stages in the same order, and stops. It is not an open-ended agent that decides its own next step. That choice makes it cheap, testable, and easy to replay when a pick goes wrong.</p>
+        <div class="tbl"><table>
+          <thead><tr><th>Requirement</th><th>What it means in practice</th></tr></thead>
+          <tbody>
+            <tr><td><strong>F1 Taste registry</strong></td><td>My tastes live in a database with their history. I can add, reweight or pause a taste at any time from chat.</td></tr>
+            <tr><td><strong>F2 Discover</strong></td><td>Pull candidates from book APIs, bestseller lists, prize lists and web search, including stores that ship to Vietnam.</td></tr>
+            <tr><td><strong>F3 Shortlist</strong></td><td>Filter and score candidates against my taste; plan which taste gets today's slot.</td></tr>
+            <tr><td><strong>F4 Review check</strong></td><td>Gather ratings and reviews (Goodreads, Google, Reddit, critics) and write an honest digest with sources.</td></tr>
+            <tr><td><strong>F5 Recommend</strong></td><td>One book a day by chat message, email, and an auto-published post in a "Book suggestions" section of this site.</td></tr>
+            <tr><td><strong>F6 Reactions</strong></td><td>Capture likes, dislikes, comments, purchases, finishes, and silence.</td></tr>
+            <tr><td><strong>F7 Learn</strong></td><td>Turn reactions into rewards that change future picks, the way RL does, at a data rate of one label a day.</td></tr>
+            <tr><td><strong>N1 Truthful</strong></td><td>Every rating, quote and price comes from a fetched source with a date. No source, no claim.</td></tr>
+            <tr><td><strong>N2 Within the rules</strong></td><td>Official APIs first. No scraping of sites whose terms forbid it.</td></tr>
+            <tr><td><strong>N3 Cheap and quiet</strong></td><td>Around $10 a month, no server to babysit, one summary line a day when everything is fine.</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <!-- 2 -->
+      <section class="block" id="taste">
+        <h2>2. The taste registry</h2>
+        <p class="lede">Taste is data with a timeline. Every change is an event, so Shelf can answer "what did I like in March?" and the learning loop can tell a real shift in taste from a bad week.</p>
+        <div class="tbl"><table>
+          <thead><tr><th>Facet</th><th>Starting priority</th><th>Notes the scorer uses</th></tr></thead>
+          <tbody>
+            <tr><td>History and stories of <strong>mathematics</strong></td><td class="num">1.00</td><td>Narrative over textbook; biographies of mathematicians count</td></tr>
+            <tr><td>History and stories of <strong>physics</strong></td><td class="num">1.00</td><td>Same; includes cosmology and the bomb-era histories</td></tr>
+            <tr><td>History of other sciences</td><td class="num">0.70</td><td>Biology, chemistry, medicine, computing history</td></tr>
+            <tr><td><strong>AI and computer science</strong></td><td class="num">0.70</td><td>Both technical and narrative; seeded from my reading list</td></tr>
+            <tr><td>Philosophy</td><td class="num">0.55</td><td>Philosophy of science gets a bonus from the science facets</td></tr>
+            <tr><td>Psychology</td><td class="num">0.55</td><td>Seeded by <em>Thinking, Fast and Slow</em> (rated 4★)</td></tr>
+            <tr><td>Pulitzer Prize winners</td><td class="num">0.50</td><td>A quality signal that boosts any facet, plus its own slot</td></tr>
+            <tr><td>Classics</td><td class="num">0.40</td><td>Rotates with new releases</td></tr>
+            <tr><td>Hot new releases</td><td class="num">0.40</td><td>Published in the last 12 months, from bestseller lists and reviews</td></tr>
+          </tbody>
+        </table></div>
+        <div class="cards">
+          <div class="card"><h3>Register a new taste</h3><p>From chat: <code>/taste add "history of chemistry" high</code>, <code>/taste pause classics</code>, <code>/taste weight ai 0.9</code>. A free-text message like "I want more books like The Code Breaker" is parsed by a small model into a proposed change, and I confirm with one tap.</p></div>
+          <div class="card"><h3>Kept time by time</h3><p><code>taste_event</code> is append-only (add, reweight, pause, remove, note). The current profile is a view over it. A monthly snapshot gives a taste timeline I can read later.</p></div>
+          <div class="card"><h3>Cold start</h3><p>Seed from the 8 books already on <a href="../books.html">my reading list</a> (titles, ratings, notes), a short chat interview (10 favorites, 5 books I didn't enjoy), and a Goodreads CSV export if I have one. Day 1 picks use these priors.</p></div>
+        </div>
+      </section>
+
+      <!-- 3 -->
+      <section class="block" id="discover">
+        <h2>3. Stage 1: Discover</h2>
+        <p class="lede">A wide crawl every Sunday builds the candidate pool (a few hundred books a week). A small daily pull adds fresh releases and new lists. Everything is stored per <em>work</em> (one book, many editions), keyed by ISBN-13 and Open Library work ID, so the same book from five sources is one candidate.</p>
+        <p>Several sources changed their rules in 2025–2026. The table records what was true when I checked on Nov 1, 2026, and how Shelf uses each one.</p>
+        <div class="tbl"><table>
+          <thead><tr><th>Source</th><th>Access today</th><th>Role in Shelf</th></tr></thead>
+          <tbody>
+            <tr><td>Google Books API</td><td>Official, free with a key</td><td>Metadata backbone: subjects, descriptions, page counts, editions</td></tr>
+            <tr><td>Open Library</td><td>Official, free; asks clients to identify themselves and stay under its rate limits</td><td>Canonical work IDs, subjects, covers for blog posts</td></tr>
+            <tr><td>NYT Books API</td><td>Official, free key for non-commercial use</td><td>"Hot new release" signal: weekly bestseller lists</td></tr>
+            <tr><td>Pulitzer.org, Royal Society Science Book Prize</td><td>Public winner lists</td><td>Prize seeds, refreshed once a year</td></tr>
+            <tr><td>Hardcover</td><td>GraphQL API in beta; personal token; terms may change</td><td>Ratings and reader counts, the closest open substitute for Goodreads data</td></tr>
+            <tr><td>Goodreads</td><td>No new API keys since Dec 2020; scraping is blocked and against its terms</td><td>Only the rating shown in web search results, and my own library export</td></tr>
+            <tr><td>Reddit</td><td>Data API needs approval under the Responsible Builder Policy (Nov 2025)</td><td>Apply for personal, non-commercial access; until approved, find threads through web search</td></tr>
+            <tr><td>Web search</td><td>Google's Custom Search JSON API is closed to new customers and shuts down Jan 1, 2027</td><td>Brave Search API instead (pay per query, small monthly credit)</td></tr>
+            <tr><td>Amazon</td><td>PA-API 5 was deprecated in May 2026; its replacement, the Creators API, needs an Associates account</td><td>Search links only at first; prices if I join Associates</td></tr>
+            <tr><td>Shopee</td><td>Affiliate Open API for approved affiliates (documented for Brazil; Vietnam not confirmed)</td><td>Search links only at first; prices if the Vietnam affiliate API is available to me</td></tr>
+            <tr><td>Tiki, Fahasa</td><td>No public API</td><td>Search links, including for Vietnamese translations</td></tr>
+          </tbody>
+        </table></div>
+        <div class="tip"><b>Design rule.</b> Each source is an adapter with the same contract: <code>search(query, facet) → [WorkHit]</code>, its own rate limit and cache, and a health flag. When a source breaks or changes its terms, Shelf drops it and keeps going; it never falls back to scraping.</div>
+      </section>
+
+      <!-- 4 -->
+      <section class="block" id="shortlist">
+        <h2>4. Stage 2: Shortlist by taste</h2>
+        <p class="lede">From a few hundred candidates to five, in three passes: hard filters, a cheap score, then an LLM judge on the top twenty.</p>
+        <div class="cards">
+          <div class="card"><span class="lvl">Pass 1</span><h3>Hard filters</h3><ul><li>Not already read, recommended or rejected</li><li>Author cooldown: 30 days</li><li>Buyable in Vietnam, or a Vietnamese edition exists</li><li>Enough ratings to judge, except for releases under 3 months old</li></ul></div>
+          <div class="card"><span class="lvl">Pass 2</span><h3>Cheap score</h3><p><code>score = taste_match + quality + freshness + novelty − penalties</code>, each weighted. Taste match is embedding similarity between the book and each facet. Quality is a Bayesian average rating, so a 4.6 from 12 readers doesn't beat a 4.3 from 40,000, plus a prize bonus.</p></div>
+          <div class="card"><span class="lvl">Pass 3</span><h3>LLM judge</h3><p>Claude Opus 5.5 reads my profile and the top 20 book cards and scores each against a fixed rubric (fit per facet, depth, readability, why now), with a one-line reason. Output is typed JSON, so the reasons are stored and auditable.</p></div>
+        </div>
+        <p><strong>Which taste gets today?</strong> A slot planner picks the facet before the book. It uses Thompson sampling: each facet keeps a Beta distribution of "how often I liked its picks", seeded from my priorities, and the planner samples from each and takes the highest. Math and physics history start ahead, but a facet that keeps getting thumbs-down loses slots on its own. One day a week is a labeled wildcard outside my top facets, so the loop doesn't shrink my taste to what it already knows.</p>
+      </section>
+
+      <!-- 5 -->
+      <section class="block" id="review">
+        <h2>5. Stage 3: Review check</h2>
+        <p class="lede">The top three of the shortlist get a full review check. The best of the three after reviews becomes today's pick; the other two are kept as runner-ups.</p>
+        <div class="cards">
+          <div class="card"><h3>Gather evidence</h3><ul><li>Ratings and counts: Hardcover, Open Library, Google Books, and the Goodreads rating shown in search results</li><li>Critics: NYT, Guardian, Kirkus, Nature and Science reviews, found by search</li><li>Readers: Reddit threads (API or search)</li></ul><p>Each piece is stored with its URL and fetch time.</p></div>
+          <div class="card"><h3>Write the digest</h3><p>Claude Opus 5.5 writes a structured digest: consensus, strengths, common criticisms, who it's for, how much math it assumes, and red flags (dated science, disputed claims). Every sentence carries the ID of the evidence it came from.</p></div>
+          <div class="card"><h3>Check the digest</h3><p>A validator drops any sentence whose evidence ID doesn't exist or whose source text doesn't support it. Ratings are copied from evidence, never written by the model. If too little survives, the book goes back to the pool and the runner-up moves up.</p></div>
+        </div>
+        <p>The comparison of the three books is stored too: which one won and why. That gives a ranked group every day, the same group-relative signal GRPO learns from in the <a href="hands-on-wiki-research-agent-post-training-using-sft-grpo-techniques.html">Wikipedia agent tutorial</a>.</p>
+      </section>
+
+      <!-- 6 -->
+      <section class="block" id="recommend">
+        <h2>6. Stage 4: Recommend, one book a day</h2>
+        <p class="lede">At 07:00 ICT the pick goes out on three channels from one stored recommendation, so they never disagree.</p>
+        <div class="cols">
+          <div class="panel">
+            <h3>Chat message (mock-up)</h3>
+            <div class="tg" role="img" aria-label="Mock-up of the daily Telegram message">
+              <span class="who">Shelf · 07:00</span>
+              <div class="book">
+                <span class="cover"></span>
+                <div>
+                  <div class="t">The Making of the Atomic Bomb</div>
+                  <div class="m">Richard Rhodes · 1986 · Pulitzer Prize, General Nonfiction</div>
+                  <div class="m">Today's slot: history of physics</div>
+                </div>
+              </div>
+              <div><strong>Why you:</strong> narrative history of physics, your top facet, and a Pulitzer winner.</div>
+              <div><strong>Readers say:</strong> three-line digest with sources…</div>
+              <div class="m">Ratings ★ x.x (n) · Buy: Amazon · Shopee · Tiki · Vietnamese edition: …</div>
+              <div class="btns"><span>👍 Want it</span><span>👎 Not for me</span><span>💬 Comment</span><span>📖 Reading</span><span>✅ Finished</span><span>⏸ Hold post</span></div>
+            </div>
+            <p class="mock-note">Mock-up only: ratings, prices and the digest are placeholders.</p>
+          </div>
+          <div class="panel">
+            <h3>Channels</h3>
+            <ul>
+              <li><strong>Chat:</strong> a Telegram bot that answers only my chat ID. Buttons record reactions; replying to the message records a comment.</li>
+              <li><strong>Email:</strong> the same card as HTML, with signed reaction links.</li>
+              <li><strong>Blog post:</strong> a short introduction and review digest with sources, published to a new "Book suggestions" section of this site. Shelf commits the post through the GitHub API, and the site's existing build and GitHub Pages deploy it.</li>
+            </ul>
+            <p><strong>Publishing gate.</strong> The post goes live at 12:00 unless I press <em>Hold post</em>. Fully automatic, with a five-hour veto.</p>
+            <p><strong>Site change needed.</strong> One post a day would flood the blog index, so suggestions get their own list (<code>content/book-suggestions.json</code>, rendered on <a href="../books.html">Books</a>), and the blog index shows only the latest three.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7 -->
+      <section class="block" id="react">
+        <h2>7. Stage 5: Recognize my reaction</h2>
+        <p class="lede">Every signal becomes a row in <code>reaction</code>, then a number in <code>reward</code>. Rewards can be revised: finishing a book weeks later updates the reward of the day it was recommended.</p>
+        <div class="tbl"><table>
+          <thead><tr><th>Signal</th><th>Where it comes from</th><th>Reward</th></tr></thead>
+          <tbody>
+            <tr><td>Finished, rated 5★ / 4★ / 3★ or less</td><td>Chat buttons</td><td class="num">1.0 / 0.8 / 0.3</td></tr>
+            <tr><td>Bought (clicked a store link, then confirmed)</td><td>Link redirect + chat</td><td class="num">0.7</td></tr>
+            <tr><td>Want it</td><td>Chat, email, blog</td><td class="num">0.6</td></tr>
+            <tr><td>No reaction in 72 hours</td><td>Timer</td><td class="num">0.35 (weak)</td></tr>
+            <tr><td>Not for me</td><td>Chat, email, blog</td><td class="num">0.0</td></tr>
+            <tr><td>"Already read"</td><td>Chat</td><td>No reward; book marked read, author kept</td></tr>
+            <tr><td>Free-text comment</td><td>Reply to the message</td><td>Parsed into sentiment, aspects and taste suggestions</td></tr>
+          </tbody>
+        </table></div>
+        <p>A comment such as "great story but too much equation-heavy for a morning read" is parsed by Claude Haiku 5.5 into structured fields: sentiment, aspects (<em>narrative +</em>, <em>math density −</em>), and a suggested change ("lower math depth for weekday picks"). Suggestions never change the registry by themselves; they arrive as a one-tap confirm.</p>
+        <p>Reactions on the public blog post count only when they come from me (a signed link in my email). Visitors' likes are stored separately and don't train anything.</p>
+      </section>
+
+      <!-- 8 -->
+      <section class="block" id="learn">
+        <h2>8. The learning loop, like RL but sized for one reader</h2>
+        <p class="lede">One reader produces about 365 labels a year. Full RL on an LLM would starve on that. So Shelf climbs in levels, and each level only switches on when there is enough data to beat the one below it on the offline eval.</p>
+        <div class="cards">
+          <div class="card"><span class="lvl">Level 0 · day 1</span><h3>Priors and rules</h3><p>Starting priorities, cold-start seed books, the judge's rubric. Works with zero reactions.</p></div>
+          <div class="card"><span class="lvl">Level 1 · from the first reaction</span><h3>Slot bandit</h3><p>Thompson sampling over taste facets, updated the moment a reaction arrives. Decides which kind of book I get.</p></div>
+          <div class="card"><span class="lvl">Level 2 · about 50 reactions</span><h3>Learned scorer</h3><p>A small logistic model on book features and embeddings, refit weekly on my rewards, replacing the hand-set weights in pass 2. Decides which book.</p></div>
+          <div class="card"><span class="lvl">Level 3 · about 300 reactions, optional</span><h3>Post-trained judge</h3><p>SFT on accepted picks plus DPO or GRPO on my preferences, trained on Tinker like the Wikipedia agent. Only if the Level 2 eval shows the off-the-shelf judge is the bottleneck.</p></div>
+        </div>
+        <p><strong>Weekly reflection.</strong> Every Sunday, Claude Opus 5.5 reads the week's reactions and comments and proposes a profile diff in plain words ("you liked narrative physics history more than technical treatments; lower math depth on weekdays"). I approve or edit it in chat, and it becomes a new <code>profile_version</code>.</p>
+        <div class="tbl"><table>
+          <thead><tr><th>Wikipedia agent tutorial</th><th>Same idea in Shelf</th></tr></thead>
+          <tbody>
+            <tr><td>Eval first: lock a test set</td><td>Offline replay: books I've already rated, held out. Metric: how many I rated ≥ 4★ land in the shortlist's top 5. Online: 30-day like rate and finish rate</td></tr>
+            <tr><td>Harness: the same loop for eval and training</td><td>The five stages are one pipeline; replaying a past day runs the same code</td></tr>
+            <tr><td>SFT on its own correct answers</td><td>Picks I liked, with the judge's reasons, become few-shot examples (and training data for Level 3)</td></tr>
+            <tr><td>GRPO: compare a group of attempts</td><td>Each day's three reviewed books are a group; occasional "this or that?" questions give clean pairwise preferences</td></tr>
+            <tr><td>Ablation with confidence intervals</td><td>Monthly report: turn off reviews, the bandit, or embeddings on the replay set, with bootstrap intervals</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <!-- 9 -->
+      <section class="block" id="arch">
+        <h2>9. Architecture</h2>
+        <p class="lede">A scheduled Python pipeline, one Postgres database, a few small webhooks, and the channels I already use. Nothing to keep running except the database.</p>
+        <div class="arch">
+          <div class="lane">
+            <b>Sources</b>
+            <div class="box"><strong>Book APIs</strong><span>Google Books, Open Library, NYT, Hardcover</span></div>
+            <div class="box"><strong>Lists</strong><span>Pulitzer, Royal Society prize</span></div>
+            <div class="box"><strong>Search</strong><span>Brave Search API</span></div>
+            <div class="box"><strong>Stores</strong><span>Amazon, Shopee, Tiki, Fahasa links</span></div>
+          </div>
+          <div class="flow" aria-hidden="true">→</div>
+          <div class="lane">
+            <b>Core</b>
+            <div class="box core"><strong>Pipeline (Python), GitHub Actions cron</strong><span>Nightly 00:00 ICT; weekly crawl and reflection on Sunday. Each stage idempotent and resumable by run ID</span></div>
+            <div class="box"><strong>Claude API</strong><span>Opus 5.5 for judge, digest, writing, reflection · Haiku 5.5 for parsing · overnight work through the Batch API</span></div>
+            <div class="box db"><strong>Supabase Postgres + pgvector</strong><span>Tastes, books, evidence, recommendations, reactions, rewards, bandit state, run log</span></div>
+            <div class="box"><strong>Edge functions</strong><span>Telegram webhook, signed reaction links, store-link redirect</span></div>
+          </div>
+          <div class="flow" aria-hidden="true">→</div>
+          <div class="lane">
+            <b>Channels</b>
+            <div class="box"><strong>Telegram bot</strong><span>Daily card, buttons, commands</span></div>
+            <div class="box"><strong>Email</strong><span>Same card, signed links</span></div>
+            <div class="box"><strong>This website</strong><span>Commit via GitHub API → build → GitHub Pages</span></div>
+          </div>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Decision</th><th>Choice</th><th>Why not the alternative</th></tr></thead>
+          <tbody>
+            <tr><td>Orchestration</td><td>Fixed pipeline in code</td><td>An agent framework or Claude Managed Agents could run this on a schedule, but the order of steps never changes. Code is cheaper, and every day can be replayed exactly</td></tr>
+            <tr><td>Scheduler</td><td>GitHub Actions cron (private repo)</td><td>A VPS would sit idle 23 hours a day. A run takes minutes</td></tr>
+            <tr><td>Database</td><td>Supabase Postgres with pgvector</td><td>One store for rows and embeddings, reachable from Actions and from webhooks. Free projects pause after a week of inactivity; the daily run keeps it awake</td></tr>
+            <tr><td>LLM calls</td><td>Batch API overnight, standard API for chat replies</td><td>Nothing overnight is urgent, and batches cost half. If a batch hasn't finished by 06:30, the pipeline falls back to standard calls</td></tr>
+            <tr><td>Chat</td><td>Telegram</td><td>Free bot API with buttons and webhooks. Zalo would need an Official Account</td></tr>
+          </tbody>
+        </table></div>
+        <h3 style="font-size:20px">Data model</h3>
+        <div class="tbl"><table>
+          <thead><tr><th>Table</th><th>Key columns</th></tr></thead>
+          <tbody>
+            <tr><td><code>taste_facet</code>, <code>taste_event</code></td><td>facet, priority, status · event type, payload, source, time</td></tr>
+            <tr><td><code>profile_version</code></td><td>profile text, embedding, facet snapshot, approved_at</td></tr>
+            <tr><td><code>work</code>, <code>edition</code></td><td>Open Library work ID, title, authors, year, subjects, description, embedding · ISBN-13, language, format</td></tr>
+            <tr><td><code>offer</code></td><td>edition, store, price, ships to Vietnam, URL, checked_at</td></tr>
+            <tr><td><code>evidence</code></td><td>work, source, URL, rating, count, excerpt, fetched_at</td></tr>
+            <tr><td><code>candidate</code></td><td>run ID, work, slot facet, scores, rank</td></tr>
+            <tr><td><code>recommendation</code></td><td>date (unique), work, facet, digest, judge reasons, runner-ups, exploration flag, model versions</td></tr>
+            <tr><td><code>delivery</code>, <code>reaction</code>, <code>reward</code></td><td>channel, message ID, URL · kind, value, comment · value, components, updated_at</td></tr>
+            <tr><td><code>bandit_state</code>, <code>model_version</code>, <code>run_log</code></td><td>facet α/β · scorer params and eval metrics · stage, status, tokens, cost, error</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <!-- 10 -->
+      <section class="block" id="guard">
+        <h2>10. Guardrails</h2>
+        <div class="cards">
+          <div class="card"><h3>What it may do alone</h3><ul><li>Fetch, score and store</li><li>Message me</li><li>Publish a post after the grace window</li></ul></div>
+          <div class="card"><h3>What needs me</h3><ul><li>Any change to the taste registry</li><li>Adding a new source</li><li>Spending above the monthly cap</li></ul></div>
+          <div class="card"><h3>Hard limits</h3><ul><li>Daily caps on LLM spend and search calls; the run stops cleanly when hit</li><li>One recommendation per date (unique key), so a rerun never double-posts</li><li><code>/pause</code>, <code>/skip</code>, <code>/why</code> in chat</li></ul></div>
+          <div class="card"><h3>Honest content</h3><ul><li>No claim without evidence; ratings copied, never generated</li><li>Prices show their check time</li><li>Posts in my own words, at most one short quote; covers credited to Open Library</li></ul></div>
+          <div class="card"><h3>Private by default</h3><ul><li>Reactions and the taste history stay in the database</li><li>The blog shows the recommendation, not my reaction</li><li>The bot answers one chat ID</li></ul></div>
+        </div>
+      </section>
+
+      <!-- cost -->
+      <section class="block" id="cost">
+        <h2>Cost</h2>
+        <p class="lede">Claude prices as of Oct 2026: Opus 5.5 $4 / $20 and Haiku 5.5 $0.10 / $0.50 per million input / output tokens; the Batch API halves both. Token counts below are estimates for one day.</p>
+        <div class="tbl"><table>
+          <thead><tr><th>Work per day</th><th>Model</th><th>Tokens in / out</th><th>Standard</th></tr></thead>
+          <tbody>
+            <tr><td>Normalize ~100 new candidates</td><td>Haiku 5.5</td><td class="num">80k / 15k</td><td class="num">$0.02</td></tr>
+            <tr><td>Judge the top 20</td><td>Opus 5.5</td><td class="num">25k / 6k</td><td class="num">$0.22</td></tr>
+            <tr><td>Review digests for 3 books</td><td>Opus 5.5</td><td class="num">27k / 4.5k</td><td class="num">$0.20</td></tr>
+            <tr><td>Write message and post</td><td>Opus 5.5</td><td class="num">6k / 2.5k</td><td class="num">$0.07</td></tr>
+            <tr><td>Weekly reflection, per day</td><td>Opus 5.5</td><td class="num">6k / 0.7k</td><td class="num">$0.04</td></tr>
+            <tr><td><strong>Total</strong></td><td></td><td></td><td class="num"><strong>≈ $0.55 / day</strong></td></tr>
+          </tbody>
+        </table></div>
+        <p>That is about $17 a month at standard rates, or about $8 with the overnight work on the Batch API. Search runs about 15 queries a day; at Brave's reported $5 per 1,000 queries that is about $2 a month, which its monthly credit may cover. Supabase, GitHub Actions and Telegram fit in free tiers at this volume. Using Sonnet 5.5 ($2 / $10) for the judge and digests would roughly halve the Claude line.</p>
+      </section>
+
+      <!-- plan -->
+      <section class="block" id="plan">
+        <h2>Roadmap</h2>
+        <div class="cards">
+          <div class="card"><span class="lvl">M0 · week 1</span><h3>Registry and bot</h3><p>Tables, cold-start import from my reading list, Telegram bot with <code>/taste</code> commands.</p><p class="when">Done when: I can add a taste from chat and see it in the database.</p></div>
+          <div class="card"><span class="lvl">M1 · week 2</span><h3>First daily pick</h3><p>Discovery from Google Books, Open Library, NYT and prize lists; shortlist; a daily Telegram card without reviews.</p><p class="when">Done when: 7 picks in a row arrive at 07:00.</p></div>
+          <div class="card"><span class="lvl">M2 · week 3</span><h3>Reviews and publishing</h3><p>Evidence gathering, digest with validator, email, blog posts with the grace window.</p><p class="when">Done when: a post goes live with every claim linked.</p></div>
+          <div class="card"><span class="lvl">M3 · week 4</span><h3>Reactions and bandit</h3><p>Buttons, comments, link redirect, reward table, Thompson sampling for slots.</p><p class="when">Done when: a thumbs-down visibly shifts next week's slots.</p></div>
+          <div class="card"><span class="lvl">M4 · months 2–3</span><h3>Measure and learn</h3><p>Offline replay eval, learned scorer, weekly reflection, monthly ablation report.</p><p class="when">Done when: the scorer beats hand weights on replay, with intervals.</p></div>
+          <div class="card"><span class="lvl">M5 · month 10+, optional</span><h3>Post-trained judge</h3><p>SFT plus DPO or GRPO on my preferences, on Tinker.</p><p class="when">Done when: it beats Level 2 on replay and live like rate.</p></div>
+        </div>
+      </section>
+
+      <!-- decisions -->
+      <section class="block" id="decide">
+        <h2>Open decisions for my review</h2>
+        <p class="lede">Each has a recommended default. Nothing gets built until these are settled.</p>
+        <ol class="decisions">
+          <li><strong>Chat channel.</strong> Telegram, Zalo, Slack or Discord? <span class="rec">Recommended: Telegram.</span></li>
+          <li><strong>Publishing.</strong> Five-hour veto window, approve every post first, or fully automatic? <span class="rec">Recommended: veto window.</span></li>
+          <li><strong>Where posts live.</strong> A separate "Book suggestions" list plus the latest three on the blog index, or every post in the blog index? <span class="rec">Recommended: separate list.</span></li>
+          <li><strong>Editions.</strong> English originals, Vietnamese translations, or both? <span class="rec">Recommended: show both when a translation exists.</span></li>
+          <li><strong>Buying.</strong> Plain store links, or apply to Amazon Associates and the Shopee affiliate program for prices? <span class="rec">Recommended: plain links first.</span></li>
+          <li><strong>Reddit.</strong> Apply for Data API approval, or rely on search results? <span class="rec">Recommended: apply, and use search until approved.</span></li>
+          <li><strong>Models.</strong> Opus 5.5 for judging and writing (≈ $8/month with batches), or Sonnet 5.5 (about half)? <span class="rec">Recommended: Opus 5.5, then compare on the replay eval.</span></li>
+          <li><strong>Monthly cap.</strong> <span class="rec">Recommended: $20 hard cap.</span></li>
+          <li><strong>Formats.</strong> Print, ebook, audiobook? This changes which stores and prices matter.</li>
+          <li><strong>Delivery time.</strong> <span class="rec">Recommended: 07:00 ICT.</span></li>
+        </ol>
+      </section>
+
+      <section class="block sources">
+        <h2>Sources (checked Nov 1, 2026)</h2>
+        <ol>
+          <li><a href="https://affiliate-program.amazon.com/creatorsapi/docs/en-us/paapiv5-deprecation">Amazon: PA-API 5 deprecation and the Creators API</a></li>
+          <li><a href="https://www.firecrawl.dev/blog/google-search-json-api-alternative">Google Custom Search JSON API shutdown on Jan 1, 2027</a> (vendor summary)</li>
+          <li><a href="https://www.reddit.com/r/redditdev/comments/1oug31u/introducing_the_responsible_builder_policy_new/">Reddit: Introducing the Responsible Builder Policy (Nov 2025)</a></li>
+          <li><a href="https://docs.hardcover.app/api/getting-started">Hardcover API: getting started</a></li>
+          <li><a href="https://www.infodocket.com/2020/12/13/report-goodreads-plans-to-retire-api-access-disables-existing-api-keys/">Goodreads stops issuing API keys (Dec 2020)</a></li>
+          <li><a href="https://github.com/gregojoao/shopee-affiliate">Shopee Affiliate Open API client (Brazil endpoint)</a></li>
+          <li><a href="https://developer.nytimes.com/docs/books-product/1/overview">NYT Books API</a>, <a href="https://developers.google.com/books">Google Books API</a>, <a href="https://openlibrary.org/developers/api">Open Library API</a></li>
+          <li><a href="https://brave.com/search/api/">Brave Search API</a></li>
+          <li><a href="https://www.pulitzer.org/prize-winners-by-category">Pulitzer Prize winners by category</a></li>
+          <li><a href="https://core.telegram.org/bots/api">Telegram Bot API</a>, <a href="https://supabase.com/docs/guides/database/extensions/pgvector">Supabase pgvector</a></li>
+          <li><a href="https://platform.claude.com/docs/en/about-claude/pricing">Claude pricing</a></li>
+          <li><a href="https://arxiv.org/abs/1707.02038">Russo et al., A Tutorial on Thompson Sampling</a></li>
+        </ol>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+(function () {
+  const ST = [
+    { no: "STATE", title: "Taste registry",
+      why: "Everything Shelf knows about what I like, stored as events so it can change over time and be replayed.",
+      in: ["Starting priorities from my message", "8 rated books on my reading list", "/taste commands and approved reflection diffs"],
+      do: ["Append to taste_event", "Rebuild the current profile view", "Monthly snapshot for the taste timeline"],
+      out: ["Current facets with priorities", "Profile text and embedding for the judge"],
+      tech: [["Store", "Postgres"], ["LLM", "Haiku 5.5 parses free-text taste changes"], ["Changes", "always confirmed by me"]] },
+    { no: "STAGE 1", title: "Discover",
+      why: "Fill the candidate pool from official APIs, bestseller and prize lists, and web search, one record per book.",
+      in: ["Facets and their search queries", "Source adapters with rate limits"],
+      do: ["Sunday wide crawl, small daily pull", "Merge editions into works by ISBN-13 and work ID", "Map subjects to my facets"],
+      out: ["A few hundred new candidates a week"],
+      tech: [["When", "Sunday + nightly"], ["LLM", "Haiku 5.5 for subject mapping"], ["Rule", "no scraping"]] },
+    { no: "STAGE 2", title: "Shortlist by taste",
+      why: "From hundreds to five: hard filters, a cheap score, then an LLM judge on the top twenty.",
+      in: ["Candidate pool", "Profile, bandit state, history"],
+      do: ["Filters: read, cooldown, buyable in Vietnam", "Score: taste, quality, freshness, novelty", "Thompson sampling picks today's facet", "Opus 5.5 judges the top 20"],
+      out: ["Top 5 with typed scores and reasons"],
+      tech: [["When", "nightly"], ["LLM", "Opus 5.5 via Batch API"], ["Exploration", "1 wildcard day a week"]] },
+    { no: "STAGE 3", title: "Review check",
+      why: "Find out what readers and critics actually say, then write a digest where every sentence points at its source.",
+      in: ["Top 3 of the shortlist"],
+      do: ["Collect ratings, critic reviews, Reddit threads", "Opus 5.5 writes a digest with evidence IDs", "Validator drops unsupported sentences", "Rank the 3 and store why"],
+      out: ["Today's pick, 2 runner-ups, a sourced digest"],
+      tech: [["When", "nightly"], ["Search", "Brave Search API"], ["Rule", "no source, no claim"]] },
+    { no: "STAGE 4", title: "Recommend",
+      why: "One stored recommendation, sent three ways so the channels never disagree.",
+      in: ["Pick, digest, store links"],
+      do: ["Telegram card with buttons", "Email with signed links", "Blog post committed to the site repo"],
+      out: ["Message at 07:00 ICT", "Post live at 12:00 unless held"],
+      tech: [["Chat", "Telegram bot, my chat ID only"], ["Site", "GitHub API → Pages"], ["Gate", "5-hour veto"]] },
+    { no: "STAGE 5", title: "Reactions",
+      why: "Turn whatever I do, including nothing, into a reward on the day it was recommended.",
+      in: ["Buttons, replies, link clicks, silence"],
+      do: ["Store in reaction", "Haiku 5.5 parses comments into aspects", "Map to a reward, revisable later"],
+      out: ["Reward per recommendation", "Proposed taste changes for me to confirm"],
+      tech: [["Endpoint", "Supabase edge functions"], ["Weak signal", "no reaction in 72 h"], ["Ignored", "visitors' likes"]] },
+    { no: "LOOP", title: "Learn",
+      why: "Climb from priors to a bandit to a learned scorer, and only post-train a model when the data says it would help.",
+      in: ["Rewards", "Offline replay set"],
+      do: ["Update facet Beta posteriors at once", "Weekly scorer refit and reflection diff", "Monthly eval and ablation report"],
+      out: ["New bandit state, scorer and profile version"],
+      tech: [["Level 1", "Thompson sampling"], ["Level 2", "learned scorer at ~50 reactions"], ["Level 3", "post-trained judge, optional"]] }
+  ];
+
+  const $ = (id) => document.getElementById(id);
+  const floor = $("fx-floor"), belt = $("fx-belt"), crate = $("fx-crate");
+  const bays = Array.from(floor.querySelectorAll(".bay"));
+  const playBtn = $("fx-play");
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let cur = 0, playing = !reduce, visible = !("IntersectionObserver" in window), timer = null;
+
+  const list = (el, items) => {
+    el.textContent = "";
+    items.forEach((t) => { const li = document.createElement("li"); li.textContent = t; el.appendChild(li); });
+  };
+
+  function placeCrate(jump) {
+    const b = belt.getBoundingClientRect(), c = bays[cur].getBoundingClientRect();
+    if (jump) crate.classList.add("jump");
+    if (b.height > b.width) { crate.style.top = (c.top + c.height / 2 - b.top) + "px"; crate.style.left = ""; }
+    else { crate.style.left = (c.left + c.width / 2 - b.left) + "px"; crate.style.top = ""; }
+    if (jump) { void crate.offsetWidth; crate.classList.remove("jump"); }
+  }
+
+  function render(jump) {
+    const s = ST[cur];
+    bays.forEach((b, i) => { if (i === cur) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current"); });
+    $("fx-d-no").textContent = s.no;
+    $("fx-d-title").textContent = s.title;
+    $("fx-d-why").textContent = s.why;
+    list($("fx-d-in"), s.in); list($("fx-d-do"), s.do); list($("fx-d-out"), s.out);
+    const tech = $("fx-d-tech");
+    tech.textContent = "";
+    s.tech.forEach(([k, v]) => {
+      const c = document.createElement("span"), b = document.createElement("b");
+      b.textContent = k; c.appendChild(b); c.appendChild(document.createTextNode(v)); tech.appendChild(c);
+    });
+    placeCrate(jump);
+  }
+
+  function go(i) {
+    const next = (i + ST.length) % ST.length;
+    const wrapped = (cur === ST.length - 1 && next === 0) || (cur === 0 && next === ST.length - 1);
+    cur = next;
+    render(wrapped);
+  }
+
+  function sync() {
+    clearInterval(timer); timer = null;
+    const run = playing && visible;
+    if (run) timer = setInterval(() => go(cur + 1), 3400);
+    floor.classList.toggle("playing", run);
+    playBtn.textContent = playing ? "⏸ Pause" : "▶ Play";
+    playBtn.setAttribute("aria-pressed", String(playing));
+  }
+  const pause = () => { playing = false; sync(); };
+
+  bays.forEach((b, i) => b.addEventListener("click", () => { pause(); go(i); }));
+  $("fx-prev").addEventListener("click", () => { pause(); go(cur - 1); });
+  $("fx-next").addEventListener("click", () => { pause(); go(cur + 1); });
+  playBtn.addEventListener("click", () => { playing = !playing; sync(); });
+  window.addEventListener("resize", () => placeCrate(true));
+  if (!visible) {
+    new IntersectionObserver((es) => { visible = es[0].isIntersecting; sync(); }, { threshold: 0.35 }).observe(floor);
+  }
+  render(true);
+  sync();
+})();
+</script>
+</body>
+</html>
