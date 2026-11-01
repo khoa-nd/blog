@@ -1,0 +1,1944 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Wiki Research Agent Hands-on — Nguyễn Đăng Khoa</title>
+<meta name="description" content="Copy-paste tutorial: post-train Qwen3.5-4B into a Wikipedia research agent on Tinker. 16 tested Python files, every command, real outputs, ≈ $22.">
+<link rel="canonical" href="https://nguyendangkhoa.info/blogs/hands-on-wiki-research-agent-post-training-using-sft-grpo-techniques.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hands-on Building Wikipedia Research Agent By Post Training using SFT and GRPO">
+<meta property="og:description" content="Eval → Harness → SFT → GRPO → Ablation in copy-paste code: HotpotQA, BM25 on a laptop, LoRA and GRPO on Tinker, ≈ $22.">
+<meta property="og:url" content="https://nguyendangkhoa.info/blogs/hands-on-wiki-research-agent-post-training-using-sft-grpo-techniques.html">
+<meta property="og:image" content="https://nguyendangkhoa.info/blogs/thumbs/hands-on-wiki-research-agent-post-training-using-sft-grpo-techniques.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f7f8f6">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>⚗</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: field manual. Sticky pipeline rail on the left (Eval → Ablation is a real sequence), one long column of steps on the right. */
+:root {
+  --paper: #f7f8f6;
+  --sheet: #ffffff;
+  --ink: #1b2130;
+  --muted: #5b6475;
+  --rule: #dfe3e8;
+  --link: #2f5fc4;
+  --link-soft: #e8eefb;
+  --cost: #9a5b00;
+  --cost-soft: #fbf1e1;
+  --ok: #1f7a4d;
+  --ok-soft: #e4f3ea;
+  --warn: #a33a2b;
+  --warn-soft: #fbe9e6;
+  --code-bg: #f0f2f5;
+  --display: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --body: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #12151b; --sheet: #191d25; --ink: #e5e8ee; --muted: #9aa3b4; --rule: #2a303b;
+    --link: #8fb0ff; --link-soft: #1d2840; --cost: #e3a64a; --cost-soft: #2c2214;
+    --ok: #6fd09c; --ok-soft: #15291f; --warn: #f08b7b; --warn-soft: #2e1916; --code-bg: #1f242e;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #12151b; --sheet: #191d25; --ink: #e5e8ee; --muted: #9aa3b4; --rule: #2a303b;
+  --link: #8fb0ff; --link-soft: #1d2840; --cost: #e3a64a; --cost-soft: #2c2214;
+  --ok: #6fd09c; --ok-soft: #15291f; --warn: #f08b7b; --warn-soft: #2e1916; --code-bg: #1f242e;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: var(--body); font-size: 15.5px; line-height: 1.65;
+}
+a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:focus-visible, input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+code, .mono { font-family: var(--mono); font-size: 0.86em; }
+code { background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 4px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; line-height: 1.2; margin: 0; }
+p { margin: 0; }
+
+.wrap {
+  max-width: 1180px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 80px;
+}
+
+/* Hero */
+.hero { display: grid; gap: 18px; padding-bottom: 32px; border-bottom: 1px solid var(--rule); }
+.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.hero h1 { font-size: clamp(30px, 4.6vw, 48px); font-weight: 700; max-width: 22ch; }
+.hero .sub { font-size: 17px; color: var(--muted); max-width: 68ch; }
+.pipeline { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 6px; }
+.pipeline a {
+  font-family: var(--mono); font-size: 13px; text-decoration: none; color: var(--ink);
+  border: 1px solid var(--rule); background: var(--sheet); padding: 6px 10px; border-radius: 6px;
+}
+.pipeline a:hover { border-color: var(--link); color: var(--link); }
+.pipeline .arrow { color: var(--muted); font-size: 13px; }
+
+/* Shell */
+.shell { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 48px; margin-top: 36px; }
+.rail { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 20px); align-self: start; display: grid; gap: 4px; }
+.rail .label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.rail a {
+  display: grid; grid-template-columns: 26px 1fr auto; align-items: center; gap: 6px;
+  text-decoration: none; color: var(--ink); padding: 6px 8px; border-radius: 6px; font-size: 14px;
+}
+.rail a:hover { background: var(--link-soft); }
+.rail .n { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.rail .p { font-family: var(--mono); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.rail .p.full { color: var(--ok); }
+main { display: grid; gap: 56px; min-width: 0; }
+
+section > h2 { font-size: 28px; }
+.block { display: grid; gap: 16px; }
+.lede { font-size: 16.5px; max-width: 70ch; }
+.note { color: var(--muted); font-size: 14px; max-width: 72ch; }
+
+/* Tables */
+.tbl { overflow-x: auto; border: 1px solid var(--rule); border-radius: 8px; background: var(--sheet); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); background: var(--paper); }
+tr:last-child td { border-bottom: 0; }
+td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Steps */
+.step { display: grid; gap: 20px; scroll-margin-top: 20px; }
+.step-head { display: grid; gap: 8px; }
+.step-no { font-family: var(--mono); font-size: 12.5px; color: var(--link); letter-spacing: 0.04em; }
+.step-head h2 { font-size: 30px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.chip { font-size: 12.5px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--rule); background: var(--sheet); color: var(--muted); white-space: nowrap; }
+.chip.cost { color: var(--cost); background: var(--cost-soft); border-color: transparent; }
+.cols { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 20px; }
+.panel { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: 18px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.panel h3 { font-family: var(--body); font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.panel h3 .count { font-family: var(--mono); letter-spacing: 0; text-transform: none; color: var(--ok); margin-left: 6px; }
+
+.tasks { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; counter-reset: t; }
+.tasks li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; align-items: start; }
+.tasks input { width: 16px; height: 16px; margin: 4px 0 0; accent-color: var(--ok); cursor: pointer; }
+.tasks label { cursor: pointer; font-size: 14.5px; }
+.tasks li.done label { color: var(--muted); }
+.tasks li.done label strong { text-decoration: line-through; text-decoration-color: var(--muted); }
+
+.learn { display: grid; gap: 14px; }
+.learn-item { display: grid; gap: 5px; padding-bottom: 14px; border-bottom: 1px dashed var(--rule); }
+.learn-item:last-child { border-bottom: 0; padding-bottom: 0; }
+.learn-item .when { font-size: 13px; color: var(--muted); }
+.learn-item .what { font-size: 14.5px; font-weight: 600; }
+.learn-item .why { font-size: 14px; }
+.refs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.refs a { font-size: 12.5px; text-decoration: none; padding: 2px 8px; border-radius: 5px; border: 1px solid var(--rule); }
+.refs a.repo { font-family: var(--mono); font-size: 11.5px; background: var(--link-soft); border-color: transparent; }
+.refs a:hover { border-color: var(--link); }
+
+.gate { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.gate > div { border-radius: 8px; padding: 14px 16px; font-size: 14px; display: grid; gap: 6px; align-content: start; }
+.gate .done-when { background: var(--ok-soft); }
+.gate .traps { background: var(--warn-soft); }
+.gate b { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; }
+.gate .done-when b { color: var(--ok); }
+.gate .traps b { color: var(--warn); }
+.gate ul { margin: 0; padding-left: 18px; }
+
+pre.trace {
+  margin: 0; background: var(--code-bg); border-radius: 8px; padding: 14px 16px; overflow-x: auto;
+  font-family: var(--mono); font-size: 12.5px; line-height: 1.6; color: var(--ink);
+}
+pre.trace .c { color: var(--muted); }
+pre.trace .t { color: var(--link); }
+pre.trace .r { color: var(--ok); }
+.formula { font-family: var(--mono); font-size: 13.5px; background: var(--code-bg); padding: 10px 14px; border-radius: 8px; overflow-x: auto; white-space: nowrap; }
+
+.sources ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: 14px; }
+
+/* Factory map */
+.factory { display: grid; gap: 16px; margin-top: 36px; scroll-margin-top: 20px; }
+.fx-top { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: end; justify-content: space-between; }
+.fx-intro { display: grid; gap: 8px; max-width: 76ch; }
+.fx-top h2 { font-size: 30px; }
+.fx-ctrl { display: inline-flex; gap: 6px; }
+.fx-ctrl button {
+  font: inherit; font-size: 13px; color: var(--ink); background: var(--sheet);
+  border: 1px solid var(--rule); border-radius: 6px; padding: 7px 12px; cursor: pointer; white-space: nowrap;
+}
+.fx-ctrl button:hover { border-color: var(--link); color: var(--link); }
+
+.floor {
+  position: relative; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); column-gap: 10px;
+  background-color: var(--sheet);
+  background-image: radial-gradient(var(--rule) 1px, transparent 1.2px); background-size: 16px 16px;
+  border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px 12px;
+}
+.fx-rail { position: relative; height: 32px; }
+.fx-rail::before { content: ""; position: absolute; left: 0; right: 0; height: 12px; border: 1.5px dashed currentColor; }
+.fx-rail span {
+  position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap;
+  font-size: 12px; font-weight: 500; background: var(--sheet); padding: 0 8px;
+}
+.fx-rail.qc { grid-row: 1; grid-column: 3 / 8; margin-inline: calc((100% - 40px) / 10); color: var(--ok); }
+.fx-rail.qc::before { bottom: 0; border-bottom: 0; border-radius: 6px 6px 0 0; }
+.fx-rail.qc span { top: 2px; }
+.fx-rail.back { grid-row: 4; grid-column: 4 / 8; margin-inline: calc((100% - 30px) / 8); color: var(--warn); }
+.fx-rail.back::before { top: 0; border-top: 0; border-radius: 0 0 6px 6px; }
+.fx-rail.back::after {
+  content: ""; position: absolute; left: -5px; top: -2px;
+  border: 5.5px solid transparent; border-bottom: 7px solid currentColor; border-top: 0;
+}
+.fx-rail.back span { bottom: 0; }
+
+.bay {
+  grid-row: 2; position: relative; z-index: 1; min-width: 0;
+  font: inherit; text-align: left; color: var(--ink); background: var(--paper);
+  border: 1px solid var(--rule); border-radius: 8px; padding: 10px 10px 9px; cursor: pointer;
+  display: grid; gap: 6px; align-content: start;
+  transition: border-color .25s, box-shadow .25s, transform .25s;
+}
+.bay:hover { border-color: var(--link); }
+.bay[aria-current="step"] { border-color: var(--link); box-shadow: 0 0 0 3px var(--link-soft); transform: translateY(-2px); }
+.bay .ic { color: var(--muted); display: block; height: 26px; }
+.bay .ic svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.bay[aria-current="step"] .ic { color: var(--link); }
+.bay .tx { display: grid; gap: 2px; }
+.bay .no { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.04em; color: var(--muted); }
+.bay .nm { font-family: var(--display); font-weight: 700; font-size: 17px; line-height: 1.15; }
+.bay .mt { font-size: 12.5px; line-height: 1.35; color: var(--muted); }
+.bay .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.bay .tags span { font-size: 11px; line-height: 1.5; padding: 0 6px; border-radius: 999px; border: 1px solid var(--rule); color: var(--muted); background: var(--sheet); }
+.bay .tags .cost { color: var(--cost); background: var(--cost-soft); border-color: transparent; font-family: var(--mono); }
+.bay .qc { position: absolute; top: 8px; right: 8px; font-family: var(--mono); font-size: 11px; color: var(--ok); font-variant-numeric: tabular-nums; }
+
+.conveyor {
+  grid-row: 3; grid-column: 1 / -1; position: relative; height: 14px; margin-top: 6px;
+  border-radius: 7px; border: 1px solid var(--rule); background-color: var(--code-bg);
+  background-image: repeating-linear-gradient(90deg, var(--rule) 0 2px, transparent 2px 12px);
+}
+.crate {
+  position: absolute; left: 0; top: 50%; width: 18px; height: 18px; margin: -9px 0 0 -9px; z-index: 2;
+  border-radius: 4px; background: var(--cost); box-shadow: inset 0 0 0 2px var(--cost-soft);
+  transition: left .9s cubic-bezier(.5, 0, .3, 1), top .9s cubic-bezier(.5, 0, .3, 1);
+}
+.crate.jump { transition: none; }
+
+.fx-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--muted); }
+.fx-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.fx-legend i { display: inline-block; width: 16px; height: 0; border-top: 1.5px dashed currentColor; }
+.fx-legend .k-crate i { width: 11px; height: 11px; border: 0; border-radius: 3px; background: var(--cost); }
+.fx-legend .k-qc { color: var(--ok); }
+.fx-legend .k-back { color: var(--warn); }
+.fx-legend .k-num b { font-family: var(--mono); font-weight: 400; color: var(--ok); }
+
+.fx-detail { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 18px; display: grid; gap: 16px; }
+.fx-dhead { display: grid; gap: 6px; }
+.fx-dhead .no { font-family: var(--mono); font-size: 12.5px; color: var(--link); letter-spacing: 0.04em; }
+.fx-dhead h3 { font-size: 22px; }
+.fx-dhead p { max-width: 78ch; }
+.fx-io { display: grid; grid-template-columns: minmax(0, 1fr) 22px minmax(0, 1.2fr) 22px minmax(0, 1fr); gap: 8px; align-items: stretch; }
+.fx-io > div { border-radius: 8px; padding: 12px 14px; background: var(--paper); display: grid; gap: 6px; align-content: start; }
+.fx-io > .to { background: none; padding: 0; place-content: center; color: var(--muted); font-size: 18px; }
+.fx-io b { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.fx-io ul { margin: 0; padding-left: 18px; font-size: 14px; display: grid; gap: 3px; }
+.fx-io .out { background: var(--ok-soft); }
+.fx-io .out b { color: var(--ok); }
+.fx-product { font-size: 14px; display: flex; align-items: center; gap: 8px; }
+.fx-product i { width: 12px; height: 12px; border-radius: 3px; background: var(--cost); flex: none; }
+
+.meter { display: grid; gap: 8px; }
+.meter .head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; font-size: 13px; }
+.meter .head span:first-child { font-weight: 600; }
+.meter .head span:last-child { color: var(--muted); }
+.track { position: relative; height: 16px; border-radius: 4px; background: var(--code-bg); display: flex; margin-top: 18px; }
+.track .seg { height: 100%; width: 0; transition: width .7s ease; }
+.track .seg.base { background: var(--muted); opacity: .55; border-radius: 4px 0 0 4px; }
+.track .seg.sft { background: var(--link); }
+.track .seg.rl { background: var(--ok); }
+.track .mark { position: absolute; top: -18px; bottom: -4px; width: 0; border-left: 1.5px dashed var(--ink); }
+.track .mark em { position: absolute; bottom: 100%; transform: translateX(-50%); font-style: normal; font-size: 11.5px; white-space: nowrap; color: var(--ink); }
+.meter .keys { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--muted); }
+.meter .keys span { display: inline-flex; align-items: center; gap: 5px; font-variant-numeric: tabular-nums; transition: opacity .3s; }
+.meter .keys span.off { opacity: .35; }
+.meter .keys i { width: 10px; height: 10px; border-radius: 2px; }
+.meter .keys .k1 i { background: var(--muted); opacity: .55; }
+.meter .keys .k2 i { background: var(--link); }
+.meter .keys .k3 i { background: var(--ok); }
+.fx-foot { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.fx-foot a { margin-left: auto; font-size: 14px; font-weight: 600; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .floor.playing .conveyor { animation: belt 1.2s linear infinite; }
+  .floor.playing .bay[aria-current="step"] .ic svg { animation: hum 1.2s ease-in-out infinite; }
+}
+@keyframes belt { to { background-position: 12px 0; } }
+@keyframes belt-v { to { background-position: 0 12px; } }
+@keyframes hum { 50% { transform: translateY(-2px) rotate(-4deg); } }
+@media (prefers-reduced-motion: reduce) { .crate, .bay, .track .seg { transition: none; } }
+
+@media (max-width: 960px) {
+  .floor { grid-template-columns: minmax(0, 1fr); row-gap: 8px; padding: 14px 14px 14px 46px; }
+  .fx-rail { display: none; }
+  .bay { grid-row: auto; grid-template-columns: 30px minmax(0, 1fr); column-gap: 10px; }
+  .bay .tags { grid-column: 2; }
+  .bay[aria-current="step"] { transform: translateX(3px); }
+  .conveyor {
+    position: absolute; grid-row: auto; grid-column: auto; left: 16px; top: 14px; bottom: 14px; width: 14px; height: auto; margin: 0;
+    background-image: repeating-linear-gradient(180deg, var(--rule) 0 2px, transparent 2px 12px);
+  }
+  .crate { left: 50%; top: 0; margin: -9px 0 0 -9px; }
+  .fx-io { grid-template-columns: minmax(0, 1fr); }
+  .fx-io > .to { display: none; }
+  .track { margin-top: 30px; }
+  .fx-foot a { margin-left: 0; }
+}
+@media (max-width: 960px) and (prefers-reduced-motion: no-preference) {
+  .floor.playing .conveyor { animation-name: belt-v; }
+}
+
+@media (max-width: 960px) {
+  .shell { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .rail { position: static; display: flex; flex-wrap: wrap; gap: 6px; }
+  .rail .label { width: 100%; margin: 0; }
+  .rail a { display: inline-flex; gap: 6px; border: 1px solid var(--rule); background: var(--sheet); }
+  .cols, .gate { grid-template-columns: minmax(0, 1fr); }
+  .tiers, .calc-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+/* Tutorial */
+:root { --hl-kw: #a626a4; --hl-str: #3f8a3a; --hl-com: #8a8f98; --hl-num: #986801; --hl-fn: #3a6fd8; --hl-bi: #b0710b; --hl-lit: #0e7c9a; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --hl-kw: #c99be8; --hl-str: #9fd08a; --hl-com: #7f8796; --hl-num: #e0a872; --hl-fn: #7fb2f5; --hl-bi: #e5c07b; --hl-lit: #6fc8d8; }
+}
+:root[data-theme="dark"] { --hl-kw: #c99be8; --hl-str: #9fd08a; --hl-com: #7f8796; --hl-num: #e0a872; --hl-fn: #7fb2f5; --hl-bi: #e5c07b; --hl-lit: #6fc8d8; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px; }
+.fact { font-size: 13px; border: 1px solid var(--rule); background: var(--sheet); border-radius: 999px; padding: 4px 12px; }
+.fact b { font-weight: 600; margin-right: 4px; }
+.cta { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { display: inline-flex; align-items: center; font-size: 14px; font-weight: 600; text-decoration: none; padding: 9px 16px; border-radius: 8px; border: 1px solid var(--rule); background: var(--sheet); color: var(--ink); }
+.btn:hover { border-color: var(--link); }
+.btn.primary { background: var(--link); color: var(--sheet); border-color: transparent; }
+.hero .note { max-width: 86ch; }
+.substep { display: grid; gap: 12px; padding-top: 20px; border-top: 1px dashed var(--rule); scroll-margin-top: 20px; min-width: 0; }
+.sub-head { display: flex; gap: 10px; align-items: flex-start; }
+.sub-head input { width: 17px; height: 17px; accent-color: var(--ok); margin: 3px 0 0; cursor: pointer; flex: none; }
+.sub-head h3 { font-family: var(--body); font-size: 17px; font-weight: 600; line-height: 1.4; }
+.sub-head .sn { font-family: var(--mono); color: var(--link); margin-right: 8px; font-size: 14px; }
+.substep.done .sub-head h3 { color: var(--muted); }
+.substep > p, .substep > ul, .substep > ol { max-width: 78ch; }
+.substep > ul, .substep > ol { margin: 0; padding-left: 20px; display: grid; gap: 5px; }
+figure.code { margin: 0; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; background: var(--code-bg); min-width: 0; }
+figure.code figcaption { display: flex; align-items: center; gap: 10px; padding: 6px 8px 6px 12px; font-family: var(--mono); font-size: 12px; color: var(--muted); border-bottom: 1px solid var(--rule); background: var(--sheet); }
+figure.code figcaption .fname { color: var(--ink); font-weight: 500; }
+figure.code figcaption a { color: var(--muted); }
+figure.code figcaption .copy { margin-left: auto; font: inherit; font-size: 12px; color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 5px; padding: 3px 10px; cursor: pointer; white-space: nowrap; }
+figure.code figcaption .copy:hover { border-color: var(--link); }
+figure.code figcaption .copy.ok { color: var(--ok); border-color: var(--ok); }
+figure.code pre { margin: 0; padding: 12px 14px; overflow: auto; max-height: 560px; font-family: var(--mono); font-size: 12.5px; line-height: 1.55; color: var(--ink); tab-size: 4; }
+figure.code pre code { background: none; padding: 0; font-size: inherit; border-radius: 0; }
+figure.code.out { background: var(--sheet); }
+figure.code.out figcaption { background: var(--ok-soft); color: var(--ok); }
+figure.code.out pre { max-height: 420px; }
+.tip { border-left: 3px solid var(--cost); background: var(--cost-soft); padding: 10px 14px; border-radius: 0 8px 8px 0; font-size: 14px; max-width: 82ch; }
+.tip b { color: var(--cost); }
+.hljs-keyword, .hljs-meta .hljs-keyword { color: var(--hl-kw); }
+.hljs-string, .hljs-meta .hljs-string { color: var(--hl-str); }
+.hljs-comment { color: var(--hl-com); font-style: italic; }
+.hljs-number { color: var(--hl-num); }
+.hljs-title, .hljs-title.function_, .hljs-title.class_ { color: var(--hl-fn); }
+.hljs-built_in { color: var(--hl-bi); }
+.hljs-literal, .hljs-variable { color: var(--hl-lit); }
+.hljs-meta { color: var(--hl-com); }
+.hljs-subst { color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <span class="eyebrow">Hands-on tutorial · copy-paste · runnable</span>
+    <h1>Post-train <span style="white-space: nowrap">Qwen3.5-4B</span> into a Wikipedia research agent, one command at a time</h1>
+    <p class="sub">Rebuild Samaya's recipe (Eval → Harness → SFT → GRPO → Ablation) with 16 Python files (~850 lines, tests included). Every step has a command to run, the full code to copy, the expected output, and a sign that tells you you're on track. No GPU of your own needed: search runs on your laptop, training runs on Tinker.</p>
+    <div class="facts">
+      <span class="fact"><b>Model</b> Qwen/Qwen3.5-4B</span>
+      <span class="fact"><b>Data</b> HotpotQA + 507,494 Wikipedia paragraphs</span>
+      <span class="fact"><b>Search</b> BM25, runs on CPU</span>
+      <span class="fact"><b>Cost</b> ≈ $22 for all 5 steps</span>
+      <span class="fact"><b>Needs</b> Python 3.11+, 4 GB free RAM, a Tinker account</span>
+    </div>
+    <div class="cta">
+      <a class="btn primary" href="wiki-researcher/wiki-researcher.zip">Download all the code (.zip)</a>
+      <a class="btn" href="#setup">Start at Step 0 ↓</a>
+    </div>
+    <p class="note">Run for real on Nov 1, 2026 on a MacBook (Apple Silicon, 16 GB): data download, BM25 build, 13 unit tests, and the agent running locally with Qwen3.5-0.8B. Every "Real output" block below is copied from the terminal. The Tinker calls are written against SDK <code>tinker 0.36.0</code>, and the whole flow (SFT → GRPO → eval → ablation) was checked against a fake Tinker backend; your Tinker scores and bill are the first real numbers.</p>
+  </header>
+
+  <!-- Big picture: the factory line -->
+  <section class="factory" id="map" aria-labelledby="map-title">
+    <div class="fx-top">
+      <div class="fx-intro">
+        <span class="eyebrow">The big picture</span>
+        <h2 id="map-title">A six-station factory: raw materials in, agent out</h2>
+        <p class="lede">Each station is one or two scripts. Click a station to see what it takes in, which file it runs, and what it hands on. The yardstick built in Step 1 re-checks the product after every station.</p>
+      </div>
+      <div class="fx-ctrl">
+        <button type="button" id="fx-prev" aria-label="Previous station">‹ Prev</button>
+        <button type="button" id="fx-play" aria-pressed="false">▶ Play</button>
+        <button type="button" id="fx-next" aria-label="Next station">Next ›</button>
+      </div>
+    </div>
+
+    <div class="floor" id="fx-floor">
+      <div class="fx-rail qc" aria-hidden="true"><span>QC: eval.py re-measures the product after every station</span></div>
+
+      <button type="button" class="bay" data-i="0" aria-current="step">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></span>
+        <span class="tx"><span class="no">INPUT</span><span class="nm">Raw materials</span><span class="mt">HotpotQA, Wikipedia, Qwen3.5-4B</span></span>
+        <span class="tags"><span>Hugging Face</span></span>
+      </button>
+      <button type="button" class="bay" data-i="1">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M14.5 6.5a4 4 0 0 0-5 5L3.5 17.5a1.4 1.4 0 0 0 0 2l1 1a1.4 1.4 0 0 0 2 0l6-6a4 4 0 0 0 5-5l-2.6 2.6-2.4-.6-.6-2.4z"/></svg></span>
+        <span class="tx"><span class="no">STEP 0</span><span class="nm">Setup</span><span class="mt">pip + API key</span></span>
+        <span class="tags"><span>Laptop</span><span class="cost">$0</span></span>
+      </button>
+      <button type="button" class="bay" data-i="2">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M4 17a8 8 0 1 1 16 0"/><path d="M12 17l4-5"/><circle cx="12" cy="17" r="1.2"/><path d="M4 21h16"/></svg></span>
+        <span class="tx"><span class="no">STEP 1</span><span class="nm">Eval</span><span class="mt">Data, yardstick, floor score</span></span>
+        <span class="tags"><span>Tinker</span><span class="cost">≈$0.05</span></span>
+        <span class="qc" title="Floor score: closed book, no tools yet">floor</span>
+      </button>
+      <button type="button" class="bay" data-i="3">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M9 3v4M15 3v4"/><path d="M6.5 7h11v4a5.5 5.5 0 0 1-11 0z"/><path d="M12 16.5V21"/></svg></span>
+        <span class="tx"><span class="no">STEP 2</span><span class="nm">Harness</span><span class="mt">BM25 + agent loop</span></span>
+        <span class="tags"><span>Laptop</span><span class="cost">≈$0.2</span></span>
+        <span class="qc" title="Samaya: base model in the harness">42.5</span>
+      </button>
+      <button type="button" class="bay" data-i="4">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2.2 9 2.2 12 0v-5"/><path d="M22 9v6"/></svg></span>
+        <span class="tx"><span class="no">STEP 3</span><span class="nm">SFT</span><span class="mt">Learn from its correct runs</span></span>
+        <span class="tags"><span>Tinker</span><span class="cost">≈$8</span></span>
+        <span class="qc" title="Samaya: after SFT">54.8</span>
+      </button>
+      <button type="button" class="bay" data-i="5">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3c.8 3.6 5 5 5 10a5 5 0 0 1-10 0c0-2.8 1.8-4 2-6 1 1.2 1.8 2 3 2.2-.4-2.2-.8-4.2 0-6.2z"/></svg></span>
+        <span class="tx"><span class="no">STEP 4</span><span class="nm">GRPO</span><span class="mt">Try 8 times, reinforce the good ones</span></span>
+        <span class="tags"><span>Tinker</span><span class="cost">≈$12</span></span>
+        <span class="qc" title="Samaya: after RL">58.9</span>
+      </button>
+      <button type="button" class="bay" data-i="6">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V3"/><path d="M7.4 15h9.2"/></svg></span>
+        <span class="tx"><span class="no">STEP 5</span><span class="nm">Ablation</span><span class="mt">Test set + confidence intervals</span></span>
+        <span class="tags"><span>Tinker</span><span class="cost">≈$2</span></span>
+        <span class="qc" title="With confidence intervals">± CI</span>
+      </button>
+      <button type="button" class="bay" data-i="7">
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M2.5 6h11.5v10H2.5z"/><path d="M14 10h4l3.5 3.5V16H14"/><circle cx="7" cy="18" r="1.8"/><circle cx="17.5" cy="18" r="1.8"/></svg></span>
+        <span class="tx"><span class="no">OUTPUT</span><span class="nm">Ship it</span><span class="mt">Model + scoreboard + price</span></span>
+        <span class="tags"><span>Report</span></span>
+      </button>
+
+      <div class="conveyor" id="fx-belt" aria-hidden="true"><span class="crate" id="fx-crate"></span></div>
+      <div class="fx-rail back" aria-hidden="true"><span>Feedback: show.py reads failed traces → fix prompt, data, reward</span></div>
+    </div>
+
+    <div class="fx-legend">
+      <span class="k-crate"><i></i>Product moving on the conveyor</span>
+      <span class="k-qc"><i></i>QC: re-measured after every station</span>
+      <span class="k-back"><i></i>Feedback loop to an earlier station</span>
+      <span class="k-num"><b>54.8</b> on a card: Samaya's reference score (FrontierFinance)</span>
+    </div>
+
+    <div class="fx-detail" id="fx-detail" aria-live="polite">
+      <div class="fx-dhead">
+        <span class="no" id="fx-d-no">INPUT</span>
+        <h3 id="fx-d-title">Raw materials</h3>
+        <p id="fx-d-why"></p>
+      </div>
+      <div class="fx-io">
+        <div><b>In</b><ul id="fx-d-in"></ul></div>
+        <span class="to" aria-hidden="true">→</span>
+        <div><b>Run</b><ul id="fx-d-do"></ul></div>
+        <span class="to" aria-hidden="true">→</span>
+        <div class="out"><b>Out</b><ul id="fx-d-out"></ul></div>
+      </div>
+      <p class="fx-product"><i aria-hidden="true"></i><span>On the conveyor after this station: <strong id="fx-d-product">raw materials</strong></span></p>
+      <div class="meter">
+        <div class="head"><span id="fx-m-title">Score across the stations</span><span>Samaya reference, 0–100% scale</span></div>
+        <div class="track" role="img" id="fx-track" aria-label="">
+          <span class="seg base" data-w="42.5"></span><span class="seg sft" data-w="12.3"></span><span class="seg rl" data-w="4.1"></span>
+          <span class="mark" style="left:55.9%"><em>Fable 5.1 · 55.9% · $6.89/question</em></span>
+        </div>
+        <div class="keys">
+          <span class="k1"><i></i>Base in harness 42.5</span>
+          <span class="k2"><i></i>SFT +12.3</span>
+          <span class="k3"><i></i>RL +4.1 → 58.9 · $0.61/question</span>
+        </div>
+        <p class="note" id="fx-m-note"></p>
+      </div>
+      <div class="fx-foot" id="fx-d-foot"></div>
+    </div>
+  </section>
+
+  <div class="shell">
+    <nav class="rail" aria-label="Progress">
+      <span class="label">Your progress</span>
+      <a href="#map"><span class="n">◎</span><span>Map</span><span class="p"></span></a>
+      <a href="#setup"><span class="n">0</span><span>Setup</span><span class="p" data-prog="setup"></span></a>
+      <a href="#eval"><span class="n">1</span><span>Eval</span><span class="p" data-prog="eval"></span></a>
+      <a href="#harness"><span class="n">2</span><span>Harness</span><span class="p" data-prog="harness"></span></a>
+      <a href="#sft"><span class="n">3</span><span>SFT</span><span class="p" data-prog="sft"></span></a>
+      <a href="#grpo"><span class="n">4</span><span>GRPO</span><span class="p" data-prog="grpo"></span></a>
+      <a href="#ablation"><span class="n">5</span><span>Ablation</span><span class="p" data-prog="ablation"></span></a>
+      <a href="#fix"><span class="n">!</span><span>Troubleshooting</span><span class="p"></span></a>
+      <a href="#cost"><span class="n">$</span><span>Cost</span><span class="p"></span></a>
+    </nav>
+
+    <main>
+      <section class="block" id="layout">
+        <h2>What you'll have at the end</h2>
+        <p class="lede">A folder of 17 files. The table below is the whole project; each step adds a few rows to it.</p>
+        <div class="tbl"><table>
+          <thead><tr><th>File</th><th>Step</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td><code>requirements.txt</code>, <code>config.py</code>, <code>hello_tinker.py</code></td><td class="num">0–1</td><td>Pinned versions, every setting in one place, API key check</td></tr>
+            <tr><td><code>prep_data.py</code></td><td class="num">1</td><td>Download HotpotQA, split train/val/test, build the 507k-paragraph corpus</td></tr>
+            <tr><td><code>score.py</code>, <code>test_score.py</code></td><td class="num">1</td><td>HotpotQA-style Exact Match and F1, 7 tests</td></tr>
+            <tr><td><code>harness.py</code></td><td class="num">1–2</td><td>Agent loop: model → <code>&lt;search&gt;</code> → results → <code>&lt;answer&gt;</code>, recording every token</td></tr>
+            <tr><td><code>eval.py</code>, <code>show.py</code></td><td class="num">1–2</td><td>Run a model on a split, score it, total the cost; read the failures</td></tr>
+            <tr><td><code>search.py</code>, <code>test_harness.py</code></td><td class="num">2</td><td>BM25 over the corpus; 6 harness tests, including a chat-template match test</td></tr>
+            <tr><td><code>make_sft.py</code>, <code>datums.py</code>, <code>train_sft.py</code>, <code>ckpt.py</code></td><td class="num">3</td><td>Collect correct traces, train LoRA on Tinker, look up checkpoint paths</td></tr>
+            <tr><td><code>train_grpo.py</code></td><td class="num">4</td><td>Online GRPO inside that same harness</td></tr>
+            <tr><td><code>ablate.py</code></td><td class="num">5</td><td>Compare runs on the same questions, with bootstrap confidence intervals</td></tr>
+          </tbody>
+        </table></div>
+        <div class="tip"><b>Shortcut.</b> Don't want to copy file by file? Download the zip at the top of the page, unzip it, and go straight to the commands in each step. The code in the zip and on the page is the same version.</div>
+      </section>
+
+      <!-- STEP 0 -->
+      <section class="step" id="setup" data-step="setup">
+        <div class="step-head">
+          <span class="step-no">STEP 0</span>
+          <h2>Setup</h2>
+          <div class="meta"><span class="chip">10 min</span><span class="chip cost">$0</span><span class="chip">Laptop</span></div>
+        </div>
+
+        <div class="substep" id="s0-1">
+          <div class="sub-head"><input type="checkbox" data-k="s0-1" aria-label="Mark 0.1 done"><h3><span class="sn">0.1</span>Create the folder and the Python environment</h3></div>
+          <p>Use <code>uv</code> (Tinker recommends it too). If you don't have it: <code>curl -LsSf https://astral.sh/uv/install.sh | sh</code>.</p>
+<figure class="code"><figcaption><span class="fname">Terminal</span><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-bash">mkdir wiki-researcher &amp;&amp; cd wiki-researcher
+uv venv --python 3.12 .venv
+source .venv/bin/activate</code></pre></figure>
+          <p>Create <code>requirements.txt</code> with exactly the versions that were tested, then install:</p>
+<figure class="code"><figcaption><span class="fname">requirements.txt · 6 lines</span><a href="wiki-researcher/requirements.txt" download>download</a><button type="button" class="copy">Copy</button></figcaption><pre><code class="nohighlight">tinker==0.36.0
+transformers==5.22.1
+jinja2==3.1.6
+datasets==5.1.0
+bm25s==0.3.16
+PyStemmer==3.1.0</code></pre></figure>
+<figure class="code"><figcaption><span class="fname">Terminal</span><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-bash">uv pip install -r requirements.txt</code></pre></figure>
+        </div>
+
+        <div class="substep" id="s0-2">
+          <div class="sub-head"><input type="checkbox" data-k="s0-2" aria-label="Mark 0.2 done"><h3><span class="sn">0.2</span>Get a Tinker API key and set a spending limit</h3></div>
+          <ol>
+            <li>Go to <a href="https://tinker.thinkingmachines.ai/keys?new_key=true">Tinker Console → Keys</a> and create a key.</li>
+            <li>Go to <a href="https://tinker.thinkingmachines.ai/billing/">Billing</a>, add a card and <strong>set a $40 spending limit</strong>. That covers the whole tutorial and stops a buggy loop from running all night.</li>
+          </ol>
+<figure class="code"><figcaption><span class="fname">Terminal</span><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-bash">export TINKER_API_KEY="tml-..."   # add this line to ~/.zshrc so you don't retype it</code></pre></figure>
+        </div>
+
+        <div class="substep" id="s0-3">
+          <div class="sub-head"><input type="checkbox" data-k="s0-3" aria-label="Mark 0.3 done"><h3><span class="sn">0.3</span>One config file, one test call</h3></div>
+          <p><code>config.py</code> holds every setting. Change the model or the budget here and every script follows.</p>
+<figure class="code"><figcaption><span class="fname">config.py · 14 lines</span><a href="wiki-researcher/config.py" download>download</a><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-python">"""Shared settings. Every script imports from here, so change a value once."""
+
+MODEL = "Qwen/Qwen3.5-4B"          # Tinker ID of the model we post-train
+LOCAL_MODEL = "Qwen/Qwen3.5-0.8B"  # same chat template; runs free on a laptop or Colab
+
+# Tinker prices for MODEL in USD per 1M tokens (tinker-docs Models &amp; Pricing, 2026-11-01).
+PRICE_PREFILL = 0.33
+PRICE_SAMPLE = 1.005
+PRICE_TRAIN = 0.737
+
+TOP_K = 3           # paragraphs returned by one search
+MAX_SEARCHES = 5    # research budget: after this many searches the model must answer
+MAX_TOKENS = 512    # max tokens the model may write in one turn
+LORA_RANK = 32</code></pre></figure>
+<figure class="code"><figcaption><span class="fname">hello_tinker.py · 21 lines</span><a href="wiki-researcher/hello_tinker.py" download>download</a><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-python">"""Step 0: check that your key works and the model answers."""
+import asyncio
+
+import tinker
+
+from config import MODEL
+
+
+async def main():
+    service = tinker.ServiceClient()
+    client = await service.create_sampling_client_async(base_model=MODEL)
+    tok = client.get_tokenizer()
+    prompt = tok.apply_chat_template([{"role": "user", "content": "In one sentence: who wrote Hamlet?"}],
+                                     add_generation_prompt=True, enable_thinking=False,
+                                     tokenize=True, return_dict=False)
+    result = await client.sample_async(prompt=tinker.ModelInput.from_ints(prompt), num_samples=1,
+                                       sampling_params=tinker.SamplingParams(max_tokens=50, temperature=0.0))
+    print(tok.decode(result.sequences[0].tokens, skip_special_tokens=True))
+
+
+asyncio.run(main())</code></pre></figure>
+<figure class="code"><figcaption><span class="fname">Terminal</span><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-bash">python hello_tinker.py</code></pre></figure>
+<figure class="code out"><figcaption><span class="fname">You'll see a sentence like this (the first tokenizer download takes ~10 seconds)</span></figcaption><pre><code class="nohighlight">Hamlet was written by William Shakespeare.</code></pre></figure>
+        </div>
+        <div class="gate">
+          <div class="done-when"><b>Done when</b><ul><li><code>hello_tinker.py</code> prints an answer</li><li>Billing has a spending limit</li></ul></div>
+          <div class="traps"><b>If it fails</b><ul><li><code>401</code> / <code>AuthenticationError</code>: you haven't run <code>export TINKER_API_KEY</code> in this terminal</li><li><code>HF_TOKEN</code> warning: safe to ignore, it's just Hugging Face's download rate limit</li></ul></div>
+        </div>
+      </section>
+
+      <!-- STEP 1 -->
+      <section class="step" id="eval" data-step="eval">
+        <div class="step-head">
+          <span class="step-no">STEP 1</span>
+          <h2>Eval: data, yardstick, floor score</h2>
+          <p class="lede">Before training a single line, lock the test set and have one command that prints the score + the cost. Every later step reruns exactly this command.</p>
+          <div class="meta"><span class="chip">30 min</span><span class="chip cost">≈ $0.05</span><span class="chip">Laptop + Tinker</span></div>
+        </div>
+
+        <div class="substep" id="s1-1">
+          <div class="sub-head"><input type="checkbox" data-k="s1-1" aria-label="Mark 1.1 done"><h3><span class="sn">1.1</span>Download HotpotQA, split it, build the corpus</h3></div>
+          <p>The <em>distractor</em> version of HotpotQA ships 10 Wikipedia paragraphs with every question. Pool them all, keep one paragraph per title, and you get a 507k-paragraph "mini Wikipedia" to search. Test and val come from the official dev split, train from the train split, so no question overlaps.</p>
+<figure class="code"><figcaption><span class="fname">prep_data.py · 51 lines</span><a href="wiki-researcher/prep_data.py" download>download</a><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-python">"""Step 1: download HotpotQA, write the question splits and the paragraph corpus.
+
+data/train.jsonl  90k questions to train on
+data/val.jsonl    200 questions to pick checkpoints with
+data/test.jsonl   500 questions you only open in Step 5
+data/corpus.jsonl every Wikipedia paragraph that appears in HotpotQA (one per title)
+"""
+import hashlib
+import json
+import os
+import random
+
+from datasets import load_dataset
+
+
+def write(path, rows):
+    with open(path, "w") as f:
+        for row in rows:
+            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+
+
+def question(row):
+    return {"id": row["id"], "question": row["question"], "answers": [row["answer"]],
+            "type": row["type"], "level": row["level"]}
+
+
+os.makedirs("data", exist_ok=True)
+train = load_dataset("hotpotqa/hotpot_qa", "distractor", split="train")
+dev = load_dataset("hotpotqa/hotpot_qa", "distractor", split="validation")
+
+corpus, seen = [], set()
+for split in (train, dev):
+    for context in split["context"]:
+        for title, sentences in zip(context["title"], context["sentences"]):
+            if title not in seen:
+                seen.add(title)
+                corpus.append({"id": len(corpus), "title": title, "text": "".join(sentences).strip()})
+write("data/corpus.jsonl", corpus)
+
+rng = random.Random(0)
+dev_rows = [question(r) for r in dev]
+rng.shuffle(dev_rows)
+write("data/test.jsonl", dev_rows[:500])
+write("data/val.jsonl", dev_rows[500:700])
+train_rows = [question(r) for r in train]
+rng.shuffle(train_rows)
+write("data/train.jsonl", train_rows)
+
+digest = hashlib.sha256(open("data/test.jsonl", "rb").read()).hexdigest()[:16]
+print(f"corpus {len(corpus):,} paragraphs | train {len(train_rows):,} | val 200 | test 500")
+print(f"test.jsonl sha256 {digest}  &lt;- write this down; it must never change")</code></pre></figure>
+<figure class="code"><figcaption><span class="fname">Terminal</span><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-bash">python prep_data.py</code></pre></figure>
+<figure class="code out"><figcaption><span class="fname">Real output (13 seconds after the download, ~1.4 GB RAM)</span></figcaption><pre><code class="nohighlight">corpus 507,494 paragraphs | train 90,447 | val 200 | test 500
+test.jsonl sha256 cb4ad042f2c0ef38  &lt;- write this down; it must never change</code></pre></figure>
+          <div class="tip"><b>Tip.</b> Your hash must be exactly <code>cb4ad042f2c0ef38</code>. If it differs, Hugging Face has changed the dataset version, and your numbers won't be comparable with anyone who ran this before. Put the hash in your project's README.</div>
+        </div>
+
+        <div class="substep" id="s1-2">
+          <div class="sub-head"><input type="checkbox" data-k="s1-2" aria-label="Mark 1.2 done"><h3><span class="sn">1.2</span>The scoring function and its tests</h3></div>
+          <p>SQuAD-style normalization (lowercase, strip punctuation and articles), then Exact Match and token-level F1. Yes/no answers must match exactly, just like HotpotQA's official script.</p>
+<figure class="code"><figcaption><span class="fname">score.py · 30 lines</span><a href="wiki-researcher/score.py" download>download</a><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-python">"""Exact Match and F1, normalized the way SQuAD and HotpotQA do it."""
+import re
+import string
+from collections import Counter
+
+
+def normalize(text):
+    text = text.lower()
+    text = "".join(ch for ch in text if ch not in set(string.punctuation))
+    text = re.sub(r"\b(a|an|the)\b", " ", text)
+    return " ".join(text.split())
+
+
+def exact_match(prediction, answers):
+    return float(any(normalize(prediction) == normalize(a) for a in answers))
+
+
+def f1(prediction, answers):
+    best = 0.0
+    for answer in answers:
+        pred, gold = normalize(prediction).split(), normalize(answer).split()
+        # yes/no/noanswer must match exactly, as in the official HotpotQA script
+        if {" ".join(pred), " ".join(gold)} &amp; {"yes", "no", "noanswer"} and pred != gold:
+            continue
+        common = sum((Counter(pred) &amp; Counter(gold)).values())
+        if common == 0:
+            continue
+        precision, recall = common / len(pred), common / len(gold)
+        best = max(best, 2 * precision * recall / (precision + recall))
+    return best</code></pre></figure>
+<figure class="code"><figcaption><span class="fname">test_score.py · 32 lines</span><a href="wiki-researcher/test_score.py" download>download</a><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-python">import unittest
+
+from score import exact_match, f1, normalize
+
+
+class ScoreTest(unittest.TestCase):
+    def test_articles_and_case(self):
+        self.assertEqual(exact_match("The United States", ["United States"]), 1.0)
+
+    def test_punctuation(self):
+        self.assertEqual(normalize("Arthur's Magazine."), "arthurs magazine")
+
+    def test_partial_credit(self):
+        self.assertAlmostEqual(f1("President Richard Nixon", ["Richard Nixon"]), 0.8)
+
+    def test_yes_no_is_all_or_nothing(self):
+        self.assertEqual(f1("yes", ["no"]), 0.0)
+        self.assertEqual(f1("no it was not", ["no"]), 0.0)
+        self.assertEqual(f1("Yes", ["yes"]), 1.0)
+
+    def test_numbers(self):
+        self.assertEqual(exact_match("1,844", ["1844"]), 1.0)
+
+    def test_best_of_several_answers(self):
+        self.assertEqual(f1("NYC", ["New York City", "NYC"]), 1.0)
+
+    def test_empty_prediction(self):
+        self.assertEqual(f1("", ["Paris"]), 0.0)
+
+
+if __name__ == "__main__":
+    unittest.main()</code></pre></figure>
+<figure class="code"><figcaption><span class="fname">Terminal</span><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-bash">python -m unittest test_score</code></pre></figure>
+<figure class="code out"><figcaption><span class="fname">Real output</span></figcaption><pre><code class="nohighlight">.......
+----------------------------------------------------------------------
+Ran 7 tests in 0.000s
+
+OK</code></pre></figure>
+        </div>
+
+        <div class="substep" id="s1-3">
+          <div class="sub-head"><input type="checkbox" data-k="s1-3" aria-label="Mark 1.3 done"><h3><span class="sn">1.3</span>Harness: one episode, every token recorded</h3></div>
+          <p>The most important file in the project. Eval, SFT data collection and RL rollouts all call the same <code>run_episode</code> function, so the model is trained in exactly the environment it is scored in. Three things to watch for as you read it:</p>
+          <ul>
+            <li><strong>Every token has a <code>sampled</code> flag.</strong> 1 means the model wrote it, 0 means the harness inserted it (search results). SFT and RL learn only from tokens flagged 1.</li>
+            <li><strong><code>user_turn</code> stitches tokens by hand</strong> instead of re-rendering the whole conversation. Qwen's template drops the empty <code>&lt;think&gt;&lt;/think&gt;</code> block from earlier turns, so re-rendering would change tokens the model already produced and break RL. Step 2 has a test that checks this.</li>
+            <li><strong>Reward = F1 if there is an <code>&lt;answer&gt;</code>, otherwise 0.</strong> Running out of tokens, taking no action, or going over budget all score 0.</li>
+          </ul>
+<figure class="code"><figcaption><span class="fname">harness.py · 161 lines</span><a href="wiki-researcher/harness.py" download>download</a><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-python">"""The agent harness: question -&gt; searches -&gt; answer, recorded token by token.
+
+The same code runs evaluation, collects SFT data and produces RL rollouts, so the
+model is trained in exactly the environment it is tested in.
+"""
+import re
+from dataclasses import dataclass, field
+
+from config import MAX_SEARCHES, MAX_TOKENS, TOP_K
+from score import f1
+
+SYSTEM = """You are a research agent. You answer questions by searching Wikipedia.
+
+Each reply contains exactly one action:
+- To search, write a short query inside &lt;search&gt;&lt;/search&gt; and stop. The results arrive in the next message.
+- When you know the answer, write only the answer inside &lt;answer&gt;&lt;/answer&gt;: a name, date, number, or yes/no.
+
+Example. Question: Who directed the film in which Tom Hanks plays a FedEx employee stranded on an island?
+Reply 1: &lt;search&gt;Tom Hanks FedEx employee stranded island film&lt;/search&gt;
+Reply 2: &lt;search&gt;Cast Away 2000 film director&lt;/search&gt;
+Reply 3: &lt;answer&gt;Robert Zemeckis&lt;/answer&gt;
+
+Most questions need two facts: find the first, then search for the second. Never answer before you have searched."""
+
+SYSTEM_CLOSED_BOOK = """Answer the question from memory.
+Write only the final answer inside &lt;answer&gt;&lt;/answer&gt;: a name, date, number, or yes/no."""
+
+
+@dataclass
+class Sample:
+    tokens: list
+    logprobs: list
+    stop_reason: str  # "stop" (end of turn) or "length" (hit MAX_TOKENS)
+
+
+@dataclass
+class Episode:
+    id: str
+    question: str
+    answers: list
+    prompt: list                                  # chat-template tokens of system + question
+    tokens: list = field(default_factory=list)    # everything after the prompt
+    sampled: list = field(default_factory=list)   # 1 = the model wrote this token, 0 = the harness did
+    logprobs: list = field(default_factory=list)  # sampler logprob per token (0.0 for harness tokens)
+    searches: list = field(default_factory=list)
+    answer: str = ""
+    end: str = ""          # answer | no_action | length | budget
+    prefill: int = 0       # tokens sent to the sampler, summed over turns (for cost)
+    generated: int = 0     # tokens the sampler produced
+
+    @property
+    def reward(self):
+        return f1(self.answer, self.answers) if self.end == "answer" else 0.0
+
+
+class LocalPolicy:
+    """Runs the model with transformers on your own machine: free, slow, no logprobs."""
+
+    def __init__(self, name):
+        import torch
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+        self.torch = torch
+        self.tokenizer = AutoTokenizer.from_pretrained(name)
+        device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+        self.model = AutoModelForCausalLM.from_pretrained(name, dtype="auto").to(device)
+        self.end = self.tokenizer.convert_tokens_to_ids("&lt;|im_end|&gt;")
+
+    async def sample(self, ids, temperature):
+        x = self.torch.tensor([ids], device=self.model.device)
+        out = self.model.generate(x, attention_mask=self.torch.ones_like(x), max_new_tokens=MAX_TOKENS,
+                                  do_sample=temperature &gt; 0, temperature=temperature or None,
+                                  top_p=None, top_k=None, eos_token_id=self.end)
+        new = out[0, len(ids):].tolist()
+        return Sample(new, [0.0] * len(new), "stop" if new and new[-1] == self.end else "length")
+
+
+class TinkerPolicy:
+    """Samples from a model on Tinker: a base model or one of your checkpoints."""
+
+    def __init__(self, sampling_client):
+        import tinker
+        self.tinker = tinker
+        self.client = sampling_client
+        self.tokenizer = sampling_client.get_tokenizer()
+        self.end = self.tokenizer.convert_tokens_to_ids("&lt;|im_end|&gt;")
+
+    async def sample(self, ids, temperature):
+        params = self.tinker.SamplingParams(max_tokens=MAX_TOKENS, temperature=temperature, stop=[self.end])
+        result = await self.client.sample_async(prompt=self.tinker.ModelInput.from_ints(ids),
+                                                num_samples=1, sampling_params=params)
+        seq = result.sequences[0]
+        if seq.logprobs is None:
+            raise RuntimeError("the sampler returned no logprobs; RL needs them")
+        return Sample(list(seq.tokens), list(seq.logprobs), seq.stop_reason)
+
+
+def chat_prompt(tokenizer, system, question):
+    return tokenizer.apply_chat_template(
+        [{"role": "system", "content": system}, {"role": "user", "content": question}],
+        add_generation_prompt=True, enable_thinking=False, tokenize=True, return_dict=False)
+
+
+def user_turn(tokenizer, content):
+    """Tokens that close the model's turn, add a user message and open the next model turn.
+
+    Built by hand instead of re-rendering the whole chat: the Qwen template drops the
+    empty &lt;think&gt;&lt;/think&gt; from earlier turns, which would change tokens the model
+    already produced. test_harness.py checks this string against the real template.
+    """
+    text = f"\n&lt;|im_start|&gt;user\n{content}&lt;|im_end|&gt;\n&lt;|im_start|&gt;assistant\n&lt;think&gt;\n\n&lt;/think&gt;\n\n"
+    return tokenizer.encode(text, add_special_tokens=False)
+
+
+def format_results(docs):
+    if not docs:
+        return "&lt;result&gt;\nNo results. Try other keywords.\n&lt;/result&gt;"
+    return "&lt;result&gt;\n" + "\n\n".join(f"[{d['title']}] {d['text']}" for d in docs) + "\n&lt;/result&gt;"
+
+
+async def run_episode(policy, searcher, item, temperature=0.0, closed_book=False,
+                      top_k=TOP_K, max_searches=MAX_SEARCHES):
+    tok = policy.tokenizer
+    system = SYSTEM_CLOSED_BOOK if closed_book else SYSTEM
+    ep = Episode(item["id"], item["question"], item["answers"], chat_prompt(tok, system, item["question"]))
+
+    def add(tokens, logprobs, sampled):
+        ep.tokens += tokens
+        ep.logprobs += logprobs
+        ep.sampled += [sampled] * len(tokens)
+
+    while True:
+        ids = ep.prompt + ep.tokens
+        out = await policy.sample(ids, temperature)
+        ep.prefill += len(ids)
+        ep.generated += len(out.tokens)
+        add(out.tokens, out.logprobs, 1)
+        if out.stop_reason == "length":
+            ep.end = "length"
+            return ep
+        if not out.tokens or out.tokens[-1] != policy.end:  # some samplers leave out the stop token
+            add([policy.end], [0.0], 0)
+        reply = tok.decode(out.tokens, skip_special_tokens=True)
+
+        answer = re.search(r"&lt;answer&gt;(.*?)&lt;/answer&gt;", reply, re.S)
+        if answer:
+            ep.answer, ep.end = answer.group(1).strip(), "answer"
+            return ep
+        query = re.search(r"&lt;search&gt;(.*?)&lt;/search&gt;", reply, re.S)
+        if closed_book or not query:
+            ep.end = "no_action"
+            return ep
+        if len(ep.searches) == max_searches:
+            ep.end = "budget"
+            return ep
+
+        ep.searches.append(query.group(1).strip())
+        content = format_results(searcher.search(ep.searches[-1], top_k))
+        if len(ep.searches) == max_searches:
+            content += "\nThat was your last search. Reply with &lt;answer&gt;&lt;/answer&gt; now."
+        env = user_turn(tok, content)
+        add(env, [0.0] * len(env), 0)</code></pre></figure>
+        </div>
+
+        <div class="substep" id="s1-4">
+          <div class="sub-head"><input type="checkbox" data-k="s1-4" aria-label="Mark 1.4 done"><h3><span class="sn">1.4</span>The eval runner and the closed-book floor</h3></div>
+          <p><code>eval.py</code> runs 32 questions in parallel and writes <code>runs/&lt;name&gt;/episodes.jsonl</code> (one line per question, trace included) and <code>summary.json</code>. The cost column uses Tinker prices and is an upper bound, since it doesn't subtract the prefix cache.</p>
+<figure class="code"><figcaption><span class="fname">eval.py · 95 lines</span><a href="wiki-researcher/eval.py" download>download</a><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-python">"""Run the agent on a split, score every answer, write runs/&lt;name&gt;/.
+
+python eval.py --name base                          base model on Tinker, val split
+python eval.py --name closed --closed-book          no search: the floor
+python eval.py --name sft-e2 --model-path tinker://...   one of your checkpoints
+python eval.py --name local --local --limit 10      free, on your own machine
+"""
+import argparse
+import asyncio
+import json
+import os
+import time
+
+from config import LOCAL_MODEL, MAX_SEARCHES, MODEL, PRICE_PREFILL, PRICE_SAMPLE, TOP_K
+from harness import LocalPolicy, TinkerPolicy, run_episode
+from score import exact_match, f1
+
+
+async def make_policy(args):
+    if args.local:
+        return LocalPolicy(LOCAL_MODEL)
+    import tinker
+    service = tinker.ServiceClient()
+    if args.model_path:
+        return TinkerPolicy(await service.create_sampling_client_async(model_path=args.model_path))
+    return TinkerPolicy(await service.create_sampling_client_async(base_model=MODEL))
+
+
+def cost(ep):
+    return (ep.prefill * PRICE_PREFILL + ep.generated * PRICE_SAMPLE) / 1e6
+
+
+def record(ep, tokenizer, free=False):
+    return {"id": ep.id, "question": ep.question, "answers": ep.answers, "prediction": ep.answer,
+            "em": exact_match(ep.answer, ep.answers), "f1": f1(ep.answer, ep.answers),
+            "searches": ep.searches, "end": ep.end, "prefill": ep.prefill,
+            "generated": ep.generated, "usd": 0.0 if free else cost(ep),
+            "trace": tokenizer.decode(ep.tokens, skip_special_tokens=False)}
+
+
+def summarize(rows):
+    n = len(rows)
+    mean = lambda key: sum(r[key] for r in rows) / n
+    return {"n": n, "em": mean("em"), "f1": mean("f1"),
+            "searches": sum(len(r["searches"]) for r in rows) / n,
+            "answered": sum(r["end"] == "answer" for r in rows) / n,
+            "usd_per_q": mean("usd"), "usd_total": sum(r["usd"] for r in rows)}
+
+
+async def main(args):
+    items = [json.loads(line) for line in open(f"data/{args.split}.jsonl")][: args.limit]
+    policy = await make_policy(args)
+    searcher = None
+    if not args.closed_book:
+        from search import Searcher  # built in Step 2
+        searcher = Searcher()
+    gate = asyncio.Semaphore(1 if args.local else args.concurrency)
+    out_dir = f"runs/{args.name}"
+    os.makedirs(out_dir, exist_ok=True)
+    started, rows = time.time(), []
+
+    async def one(item):
+        async with gate:
+            ep = await run_episode(policy, searcher, item, temperature=0.0, closed_book=args.closed_book,
+                                   top_k=args.top_k, max_searches=args.max_searches)
+        rows.append(record(ep, policy.tokenizer, free=args.local))
+        if len(rows) % 25 == 0 or args.local:
+            print(f"  {len(rows)}/{len(items)}  F1 so far {summarize(rows)['f1']:.3f}", flush=True)
+
+    await asyncio.gather(*(one(item) for item in items))
+    rows.sort(key=lambda r: r["id"])
+    with open(f"{out_dir}/episodes.jsonl", "w") as f:
+        for row in rows:
+            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+    summary = summarize(rows) | {"split": args.split, "model_path": args.model_path or MODEL,
+                                 "top_k": args.top_k, "max_searches": args.max_searches,
+                                 "seconds": round(time.time() - started)}
+    json.dump(summary, open(f"{out_dir}/summary.json", "w"), indent=2)
+    print(f"\n{args.name}: EM {summary['em']:.3f}  F1 {summary['f1']:.3f}  "
+          f"searches {summary['searches']:.2f}  answered {summary['answered']:.0%}  "
+          f"${summary['usd_per_q']:.4f}/q  (total ${summary['usd_total']:.2f}, {summary['seconds']}s)")
+
+
+if __name__ == "__main__":
+    p = argparse.ArgumentParser()
+    p.add_argument("--name", required=True)
+    p.add_argument("--split", default="val", choices=["val", "test", "train"])
+    p.add_argument("--model-path", help="tinker://... checkpoint; default is the base model")
+    p.add_argument("--local", action="store_true", help="run LOCAL_MODEL with transformers")
+    p.add_argument("--closed-book", action="store_true")
+    p.add_argument("--limit", type=int)
+    p.add_argument("--top-k", type=int, default=TOP_K)
+    p.add_argument("--max-searches", type=int, default=MAX_SEARCHES)
+    p.add_argument("--concurrency", type=int, default=32)
+    asyncio.run(main(p.parse_args()))</code></pre></figure>
+          <p>The floor: the model answers from memory, without searching.</p>
+<figure class="code"><figcaption><span class="fname">Terminal</span><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-bash">python eval.py --name closed --closed-book</code></pre></figure>
+<figure class="code out"><figcaption><span class="fname">Output format (the numbers are yours)</span></figcaption><pre><code class="nohighlight">  25/200  F1 so far …
+  …
+closed: EM …  F1 …  searches 0.00  answered …%  $…/q  (total $…, …s)</code></pre></figure>
+        </div>
+        <div class="gate">
+          <div class="done-when"><b>Done when</b><ul><li><code>runs/closed/summary.json</code> exists</li><li>The 7 <code>score.py</code> tests pass</li><li>You've written down the hash of <code>test.jsonl</code></li></ul></div>
+          <div class="traps"><b>Traps</b><ul><li>Opening <code>--split test</code> before Step 5. The moment you tune a prompt on test, it is no longer a test</li><li><code>apply_chat_template requires jinja2</code>: you dropped the <code>jinja2</code> line from requirements</li></ul></div>
+        </div>
+      </section>
+
+      <!-- STEP 2 -->
+      <section class="step" id="harness" data-step="harness">
+        <div class="step-head">
+          <span class="step-no">STEP 2</span>
+          <h2>Harness: turn on search, read the traces</h2>
+          <p class="lede">Give the model a search tool and measure the real starting point. Most of the time in this step goes into reading traces, not writing code.</p>
+          <div class="meta"><span class="chip">1–2 hours</span><span class="chip cost">≈ $0.20</span><span class="chip">Laptop (BM25 runs on CPU)</span></div>
+        </div>
+
+        <div class="substep" id="s2-1">
+          <div class="sub-head"><input type="checkbox" data-k="s2-1" aria-label="Mark 2.1 done"><h3><span class="sn">2.1</span>A BM25 index over 507k paragraphs</h3></div>
+<figure class="code"><figcaption><span class="fname">search.py · 42 lines</span><a href="wiki-researcher/search.py" download>download</a><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-python">"""BM25 search over the paragraph corpus.
+
+python search.py                      build the index into data/bm25 (once, ~2 min)
+python search.py "Ed Wood director"   try a query
+"""
+import json
+import sys
+
+import bm25s
+import Stemmer
+
+INDEX = "data/bm25"
+stemmer = Stemmer.Stemmer("english")
+
+
+def build():
+    corpus = [json.loads(line) for line in open("data/corpus.jsonl")]
+    texts = [f"{doc['title']}. {doc['text']}" for doc in corpus]
+    index = bm25s.BM25()
+    index.index(bm25s.tokenize(texts, stopwords="en", stemmer=stemmer))
+    index.save(INDEX, corpus=corpus)
+    print(f"indexed {len(corpus):,} paragraphs into {INDEX}")
+
+
+class Searcher:
+    def __init__(self):
+        self.index = bm25s.BM25.load(INDEX, load_corpus=True)
+
+    def search(self, query, k=3):
+        tokens = bm25s.tokenize([query], stopwords="en", stemmer=stemmer, show_progress=False)
+        if not tokens.ids[0]:  # the query was only stopwords
+            return []
+        docs, _ = self.index.retrieve(tokens, k=k, show_progress=False)
+        return list(docs[0])
+
+
+if __name__ == "__main__":
+    if len(sys.argv) == 1:
+        build()
+    else:
+        for doc in Searcher().search(" ".join(sys.argv[1:])):
+            print(f"[{doc['title']}] {doc['text'][:200]}\n")</code></pre></figure>
+<figure class="code"><figcaption><span class="fname">Terminal</span><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-bash">python search.py                                   # build, once
+python search.py "Scott Derrickson nationality"    # try a query</code></pre></figure>
+<figure class="code out"><figcaption><span class="fname">Real output: 28-second build, 2.5 GB peak RAM, 442 MB index</span></figcaption><pre><code class="nohighlight">indexed 507,494 paragraphs into data/bm25</code></pre></figure>
+<figure class="code out"><figcaption><span class="fname">Real output of the test query</span></figcaption><pre><code class="nohighlight">[Scott Derrickson] Scott Derrickson (born July 16, 1966) is an American director, screenwriter and producer. He lives in Los Angeles, California. He is best known for directing horror films such as "Sinister", "The Exor
+
+[Sinister (film)] Sinister is a 2012 supernatural horror film directed by Scott Derrickson and written by Derrickson and C. Robert Cargill. It stars Ethan Hawke as fictional true-crime writer Ellison Oswalt who discove
+
+[Sinister 2] Sinister 2 is a 2015 American supernatural horror film directed by Ciaran Foy and written by Scott Derrickson and C. Robert Cargill. The sequel to the 2012 film "Sinister", the film stars James Ranson</code></pre></figure>
+        </div>
+
+        <div class="substep" id="s2-2">
+          <div class="sub-head"><input type="checkbox" data-k="s2-2" aria-label="Mark 2.2 done"><h3><span class="sn">2.2</span>Test the harness without a model</h3></div>
+          <p><code>ScriptedPolicy</code> replays pre-written replies, so the tests run in 0.1 seconds and cost nothing. The first test is the most important one: the hand-stitched tokens must match Qwen3.5's real chat template.</p>
+<figure class="code"><figcaption><span class="fname">test_harness.py · 79 lines</span><a href="wiki-researcher/test_harness.py" download>download</a><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-python">import asyncio
+import unittest
+
+from transformers import AutoTokenizer
+
+from config import MODEL
+from harness import SYSTEM, Sample, chat_prompt, run_episode, user_turn
+
+tok = AutoTokenizer.from_pretrained(MODEL)
+END = tok.convert_tokens_to_ids("&lt;|im_end|&gt;")
+
+
+class ScriptedPolicy:
+    """Replays fixed replies, so the harness can be tested without a model."""
+
+    def __init__(self, replies):
+        self.tokenizer, self.end, self.replies = tok, END, list(replies)
+
+    async def sample(self, ids, temperature):
+        tokens = tok.encode(self.replies.pop(0), add_special_tokens=False) + [END]
+        return Sample(tokens, [-0.5] * len(tokens), "stop")
+
+
+class FakeSearcher:
+    def search(self, query, k=3):
+        return [{"title": "Arthur's Magazine", "text": "Arthur's Magazine was published from 1844 to 1846."}]
+
+
+ITEM = {"id": "q1", "question": "Which magazine started first?", "answers": ["Arthur's Magazine"]}
+
+
+def run(replies, **kw):
+    return asyncio.run(run_episode(ScriptedPolicy(replies), FakeSearcher(), ITEM, **kw))
+
+
+class HarnessTest(unittest.TestCase):
+    def test_user_turn_matches_chat_template(self):
+        # Our hand-built tokens must equal what the template renders for the next turn.
+        msgs = [{"role": "system", "content": SYSTEM}, {"role": "user", "content": "Q"}]
+        prompt = chat_prompt(tok, SYSTEM, "Q")
+        reply = tok.encode("&lt;search&gt;x&lt;/search&gt;", add_special_tokens=False) + [END]
+        ours = prompt + reply + user_turn(tok, "&lt;result&gt;R&lt;/result&gt;")
+        rendered = tok.apply_chat_template(
+            msgs + [{"role": "assistant", "content": "&lt;search&gt;x&lt;/search&gt;"},
+                    {"role": "user", "content": "&lt;result&gt;R&lt;/result&gt;"}],
+            add_generation_prompt=True, enable_thinking=False, tokenize=False)
+        # The template drops the old turn's empty &lt;think&gt; block; everything else must match.
+        expected = rendered.replace("&lt;|im_start|&gt;assistant\n&lt;search&gt;", "&lt;|im_start|&gt;assistant\n&lt;think&gt;\n\n&lt;/think&gt;\n\n&lt;search&gt;")
+        self.assertEqual(tok.decode(ours), expected)
+
+    def test_search_then_answer(self):
+        ep = run(["&lt;search&gt;Arthur's Magazine&lt;/search&gt;", "&lt;answer&gt;Arthur's Magazine&lt;/answer&gt;"])
+        self.assertEqual(ep.end, "answer")
+        self.assertEqual(ep.searches, ["Arthur's Magazine"])
+        self.assertEqual(ep.reward, 1.0)
+
+    def test_masks_line_up(self):
+        ep = run(["&lt;search&gt;a&lt;/search&gt;", "&lt;answer&gt;b&lt;/answer&gt;"])
+        self.assertEqual(len(ep.tokens), len(ep.sampled))
+        self.assertEqual(len(ep.tokens), len(ep.logprobs))
+        self.assertIn("1844", tok.decode([t for t, s in zip(ep.tokens, ep.sampled) if s == 0]))
+        self.assertNotIn("1844", tok.decode([t for t, s in zip(ep.tokens, ep.sampled) if s == 1]))
+
+    def test_no_action_scores_zero(self):
+        ep = run(["I think it is Arthur's Magazine."])
+        self.assertEqual((ep.end, ep.reward), ("no_action", 0.0))
+
+    def test_budget_forces_answer(self):
+        ep = run(["&lt;search&gt;a&lt;/search&gt;"] * 3 + ["&lt;answer&gt;Arthur's Magazine&lt;/answer&gt;"], max_searches=3)
+        self.assertEqual((len(ep.searches), ep.end), (3, "answer"))
+        self.assertIn("last search", tok.decode(ep.tokens))
+
+    def test_budget_exceeded(self):
+        ep = run(["&lt;search&gt;a&lt;/search&gt;"] * 3, max_searches=2)
+        self.assertEqual(ep.end, "budget")
+
+
+if __name__ == "__main__":
+    unittest.main()</code></pre></figure>
+<figure class="code"><figcaption><span class="fname">Terminal</span><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-bash">python -m unittest test_score test_harness</code></pre></figure>
+<figure class="code out"><figcaption><span class="fname">Real output</span></figcaption><pre><code class="nohighlight">.............
+----------------------------------------------------------------------
+Ran 13 tests in 0.057s
+
+OK</code></pre></figure>
+        </div>
+
+        <div class="substep" id="s2-3">
+          <div class="sub-head"><input type="checkbox" data-k="s2-3" aria-label="Mark 2.3 done"><h3><span class="sn">2.3</span>A free trial run on your own machine</h3></div>
+          <p>Before paying anything, run the whole loop with Qwen3.5-0.8B on your laptop (or Colab). This model is weak; the point is to see the loop run and catch format bugs.</p>
+<figure class="code"><figcaption><span class="fname">Terminal</span><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-bash">uv pip install torch
+python eval.py --name local --local --limit 10
+python show.py runs/local --n 3</code></pre></figure>
+<figure class="code out"><figcaption><span class="fname">Real output (MacBook, Apple chip, 19 seconds for 10 questions)</span></figcaption><pre><code class="nohighlight">  1/10  F1 so far 0.000
+  2/10  F1 so far 0.000
+  3/10  F1 so far 0.000
+  4/10  F1 so far 0.100
+  5/10  F1 so far 0.080
+  6/10  F1 so far 0.067
+  7/10  F1 so far 0.057
+  8/10  F1 so far 0.050
+  9/10  F1 so far 0.044
+  10/10  F1 so far 0.140
+local: EM 0.100  F1 0.140  searches 0.40  answered 100%  $0.0000/q  (total $0.00, 19s)</code></pre></figure>
+<figure class="code out"><figcaption><span class="fname">Real output of show.py (one trace, trimmed)</span></figcaption><pre><code class="nohighlight">how episodes ended: {'answer': 10}
+searches per episode: {0: 6, 1: 4}
+9/10 episodes with F1 &lt; 0.5. A random 1:
+
+====================================================================================================
+Q: An American football quarterback for the Chicago Bears was a star of a game released when?
+GOLD: ['July 14, 2009']   PRED: '1933'   END: answer
+----------------------------------------------------------------------------------------------------
+&lt;search&gt;Chicago Bears quarterback star game released year&lt;/search&gt;&lt;|im_end|&gt;
+&lt;|im_start|&gt;user
+&lt;result&gt;
+[Joey Sternaman] Joseph Theodore Sternaman (February 1, 1900 – March 10, 1988) was a professional American football player, born in Springfield, Illinois, who played quarterback for nine seasons for the Chicago Bears and Duluth Kelleys. At 5'6" and 135 pounds he was called "the strongest little man I ever met" by sportswriter Grantland Rice. He played quarterback during the years Red Grange starred with the Bears. In 1926, he was the quarterback, head coach, and owner of the Chicago Bulls of the first American Football League. Joey was also the brother of Chicago Bears co-owner Dutch Sternaman.
+
+[NFL Quarterback Club 96] NFL Quarterback Club 96 is an American football video game released in December 1995. The game was released on the Sega Saturn, Sega Genesis, Game Boy, Sega Game Gear, DOS, and Super Nintendo Entertainment System. The game's cover features San Francisco 49ers quarterback Steve Young passing while being tackled by Chicago Bears defensive lineman Chris Zorich and an unidentified defender. The Saturn, SNES and DOS versions were developed by Iguana Entertainment, while the Game Boy edition was developed by Condor Inc.
+
+[NFL starting quarterback playoff records] The first official National Football League (NFL) playoff game was the 1933 NFL Championship Game between the Chicago Bears and New York Giants. A "playoff" game was played in 1932 between the Chicago Bears and Portsmouth Spartans to break a regular season tie, but is recorded in the team record books as a regular season game. Since then there have been a total over 525 NFL playoff games including games from the AFL, but not the AAFC. The following list shows career postseason records for each starting quarterback in the NFL playoffs.
+&lt;/result&gt;&lt;|im_end|&gt;
+&lt;|im_start|&gt;assistant
+&lt;think&gt;
+
+&lt;/think&gt;
+
+&lt;answer&gt;1933&lt;/answer&gt;&lt;|im_end|&gt;</code></pre></figure>
+          <div class="tip"><b>What actually happened while writing this.</b> The first prompt described the actions with placeholders: <code>&lt;search&gt;keywords&lt;/search&gt;</code>. The small model copied them verbatim: all 5 questions searched for the word "keywords" and answered <code>'final answer'</code>. F1 = 0. One concrete example (the Cast Away question in <code>SYSTEM</code>) fixed it. Lesson: always read the traces before you trust a number.</div>
+<figure class="code out"><figcaption><span class="fname">Real failing trace, before the prompt fix</span></figcaption><pre><code class="nohighlight">Q: What year was the magazine that Stanley Bing spent a decade at founded in?
+GOLD: ['1933']   PRED: 'final answer'
+&lt;search&gt;keywords&lt;/search&gt;&lt;|im_end|&gt;
+&lt;|im_start|&gt;user
+&lt;result&gt;
+[Restrict] In the C programming language, as of the C99 standard, codice_1 is a keyword ...</code></pre></figure>
+        </div>
+
+        <div class="substep" id="s2-4">
+          <div class="sub-head"><input type="checkbox" data-k="s2-4" aria-label="Mark 2.4 done"><h3><span class="sn">2.4</span>The real starting point on Tinker</h3></div>
+<figure class="code"><figcaption><span class="fname">Terminal</span><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-bash">python eval.py --name base
+python show.py runs/base --n 10</code></pre></figure>
+<figure class="code out"><figcaption><span class="fname">Output format (the numbers are yours)</span></figcaption><pre><code class="nohighlight">  25/200  F1 so far …
+  …
+base: EM …  F1 …  searches …  answered …%  $…/q  (total $…, …s)</code></pre></figure>
+          <p>As you read the 10 failures, give each one a label: <em>bad query</em>, <em>right paragraph but misread</em>, <em>stopped after 1 hop</em>, <em>answer too long</em> (low F1 even though the meaning is right), <em>no action</em>. Fix the most common label first, through the prompt or a setting in <code>config.py</code>, then rerun <code>eval.py --name base-v2</code>.</p>
+          <div class="tip"><b>Reference numbers.</b> Tinker's own Search-R1 recipe measured Qwen3.5-4B (no thinking) on HotpotQA: 0.47 before RL, 0.70 after 30 steps. They used the full 2018 Wikipedia with embedding search, so your numbers will differ; use theirs to tell whether you're in the same range or way off.</div>
+        </div>
+        <div class="gate">
+          <div class="done-when"><b>Done when</b><ul><li>All 13 tests pass</li><li><code>runs/base</code> has a score, ≥ 1.5 searches on average, and ≥ 90% of questions with an <code>&lt;answer&gt;</code></li><li>You've read at least 10 failed traces</li></ul></div>
+          <div class="traps"><b>Traps</b><ul><li>If you change the harness after Step 3, every checkpoint must be re-evaluated: the model was trained in the old harness</li><li>This corpus is easier than the real world because the answer is guaranteed to be in it. Say so in your report</li></ul></div>
+        </div>
+      </section>
+
+      <!-- STEP 3 -->
+      <section class="step" id="sft" data-step="sft">
+        <div class="step-head">
+          <span class="step-no">STEP 3</span>
+          <h2>SFT: learn from the times it got it right</h2>
+          <p class="lede">No expensive teacher needed. Let the base model try each question 4 times, keep the shortest correct attempt (rejection sampling, the STaR idea), then train LoRA on those very traces. The model learns to use the tool more consistently and to ramble less.</p>
+          <div class="meta"><span class="chip">2–3 hours</span><span class="chip cost">≈ $8</span><span class="chip">Tinker</span></div>
+        </div>
+
+        <div class="substep" id="s3-1">
+          <div class="sub-head"><input type="checkbox" data-k="s3-1" aria-label="Mark 3.1 done"><h3><span class="sn">3.1</span>Collect correct traces</h3></div>
+<figure class="code"><figcaption><span class="fname">make_sft.py · 63 lines</span><a href="wiki-researcher/make_sft.py" download>download</a><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-python">"""Step 3a: build SFT data by rejection sampling (STaR).
+
+The base model tries each train question several times in the harness. We keep the
+shortest attempt that searched at least once and got the answer right.
+
+python make_sft.py --questions 1500 --tries 4
+"""
+import argparse
+import asyncio
+import json
+
+import tinker
+
+from config import MODEL, PRICE_PREFILL, PRICE_SAMPLE
+from harness import TinkerPolicy, run_episode
+from search import Searcher
+
+
+async def main(args):
+    items = [json.loads(line) for line in open("data/train.jsonl")][: args.questions]
+    service = tinker.ServiceClient()
+    client = await (service.create_sampling_client_async(model_path=args.model_path) if args.model_path
+                    else service.create_sampling_client_async(base_model=MODEL))
+    policy, searcher = TinkerPolicy(client), Searcher()
+    gate = asyncio.Semaphore(64)
+    kept, solved, usd, done = [], 0, 0.0, 0
+
+    async def attempt(item):
+        async with gate:
+            return await run_episode(policy, searcher, item, temperature=args.temperature)
+
+    async def one(item):
+        nonlocal solved, usd, done
+        episodes = await asyncio.gather(*(attempt(item) for _ in range(args.tries)))
+        usd += sum(e.prefill * PRICE_PREFILL + e.generated * PRICE_SAMPLE for e in episodes) / 1e6
+        good = [e for e in episodes if e.reward &gt;= args.min_f1 and e.searches]
+        solved += any(e.reward &gt;= args.min_f1 for e in episodes)
+        if good:
+            best = min(good, key=lambda e: len(e.tokens))
+            kept.append({"id": best.id, "question": best.question, "answers": best.answers,
+                         "prompt": best.prompt, "tokens": best.tokens, "sampled": best.sampled,
+                         "searches": best.searches, "reward": best.reward})
+        done += 1
+        if done % 100 == 0:
+            print(f"  {done}/{len(items)}  kept {len(kept)}  ${usd:.2f}", flush=True)
+
+    await asyncio.gather(*(one(item) for item in items))
+    with open(args.out, "w") as f:
+        for row in kept:
+            f.write(json.dumps(row) + "\n")
+    print(f"\nkept {len(kept)}/{len(items)} questions  |  solved@{args.tries} {solved / len(items):.1%}  |  "
+          f"avg searches {sum(len(r['searches']) for r in kept) / max(len(kept), 1):.2f}  |  ${usd:.2f}")
+
+
+if __name__ == "__main__":
+    p = argparse.ArgumentParser()
+    p.add_argument("--questions", type=int, default=1500)
+    p.add_argument("--tries", type=int, default=4)
+    p.add_argument("--temperature", type=float, default=0.8)
+    p.add_argument("--min-f1", type=float, default=0.8)
+    p.add_argument("--model-path", help="sample from a checkpoint instead of the base model")
+    p.add_argument("--out", default="data/sft.jsonl")
+    asyncio.run(main(p.parse_args()))</code></pre></figure>
+<figure class="code"><figcaption><span class="fname">Terminal</span><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-bash">python make_sft.py --questions 1500 --tries 4</code></pre></figure>
+<figure class="code out"><figcaption><span class="fname">Output format</span></figcaption><pre><code class="nohighlight">  100/1500  kept …  $…
+  …
+kept …/1500 questions  |  solved@4 …%  |  avg searches …  |  $…</code></pre></figure>
+          <p>Read one trace with your own eyes before training:</p>
+<figure class="code"><figcaption><span class="fname">Terminal</span><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-bash">python -c "
+import json; from transformers import AutoTokenizer
+tok = AutoTokenizer.from_pretrained('Qwen/Qwen3.5-4B')
+r = json.loads(open('data/sft.jsonl').readline())
+print(tok.decode(r['prompt'] + r['tokens']))"</code></pre></figure>
+          <div class="tip"><b>Tip.</b> If you keep fewer than 300 questions, don't train yet: raise <code>--tries 8</code> or loosen <code>--min-f1 0.6</code>. If you keep more than 90%, the set is too easy for the model; take harder questions (HotpotQA has a <code>level</code> column).</div>
+        </div>
+
+        <div class="substep" id="s3-2">
+          <div class="sub-head"><input type="checkbox" data-k="s3-2" aria-label="Mark 3.2 done"><h3><span class="sn">3.2</span>From episode to Datum</h3></div>
+          <p>Tinker takes a <code>Datum</code>: the input is every token except the last, the target is every token except the first. SFT uses <code>weights</code> (1 on the tokens the model wrote). RL uses the sampler's <code>logprobs</code> and the <code>advantages</code>. Both functions live in one file so Step 4 can reuse them.</p>
+<figure class="code"><figcaption><span class="fname">datums.py · 24 lines</span><a href="wiki-researcher/datums.py" download>download</a><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-python">"""Turn episodes into Tinker training examples (Datum).
+
+A model predicts the next token, so the input is every token except the last and the
+target is every token except the first. Masks are shifted the same way.
+"""
+import tinker
+
+
+def sft_datum(prompt, tokens, sampled):
+    """Cross-entropy only on tokens the model wrote; prompt and search results get weight 0."""
+    full = prompt + tokens
+    weights = [0.0] * len(prompt) + [float(s) for s in sampled]
+    return tinker.Datum(model_input=tinker.ModelInput.from_ints(full[:-1]),
+                        loss_fn_inputs={"target_tokens": full[1:], "weights": weights[1:]})
+
+
+def rl_datum(ep, advantage):
+    """Importance-sampling loss: push up the model's own tokens in proportion to the advantage."""
+    full = ep.prompt + ep.tokens
+    n = len(ep.prompt) - 1
+    return tinker.Datum(model_input=tinker.ModelInput.from_ints(full[:-1]),
+                        loss_fn_inputs={"target_tokens": full[1:],
+                                        "logprobs": [0.0] * n + ep.logprobs,
+                                        "advantages": [0.0] * n + [advantage * s for s in ep.sampled]})</code></pre></figure>
+        </div>
+
+        <div class="substep" id="s3-3">
+          <div class="sub-head"><input type="checkbox" data-k="s3-3" aria-label="Mark 3.3 done"><h3><span class="sn">3.3</span>Train LoRA on Tinker</h3></div>
+          <p>Each step is two calls: <code>forward_backward_async</code> computes the gradients, <code>optim_step_async</code> applies them. Send both before waiting so the server can pipeline them. At the end of each epoch it saves two things: a <em>sampler</em> for eval, and a <em>state</em> for Step 4 to keep training from.</p>
+<figure class="code"><figcaption><span class="fname">train_sft.py · 63 lines</span><a href="wiki-researcher/train_sft.py" download>download</a><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-python">"""Step 3b: LoRA SFT on Tinker, loss only on tokens the model wrote.
+
+python train_sft.py --epochs 3
+Prints a sampler path (for eval.py) and a state path (for train_grpo.py) after each epoch.
+"""
+import argparse
+import asyncio
+import json
+import os
+import random
+
+import tinker
+
+from config import LORA_RANK, MODEL, PRICE_TRAIN
+from datums import sft_datum
+
+
+async def main(args):
+    rows = [json.loads(line) for line in open(args.data)]
+    data = [sft_datum(r["prompt"], r["tokens"], r["sampled"]) for r in rows]
+    tokens_per_epoch = sum(d.model_input.length for d in data)
+    print(f"{len(data)} examples, {tokens_per_epoch:,} tokens/epoch, "
+          f"≈ ${tokens_per_epoch * args.epochs * PRICE_TRAIN / 1e6:.2f} to train")
+
+    service = tinker.ServiceClient()
+    trainer = await service.create_lora_training_client_async(base_model=MODEL, rank=LORA_RANK)
+    steps_per_epoch = (len(data) + args.batch - 1) // args.batch
+    total, step = steps_per_epoch * args.epochs, 0
+    rng = random.Random(0)
+    os.makedirs("runs", exist_ok=True)
+
+    for epoch in range(1, args.epochs + 1):
+        rng.shuffle(data)
+        for i in range(0, len(data), args.batch):
+            batch = data[i : i + args.batch]
+            lr = args.lr * (1 - step / total)  # linear decay to 0
+            fwd = await trainer.forward_backward_async(batch, "cross_entropy")
+            opt = await trainer.optim_step_async(tinker.AdamParams(learning_rate=lr))
+            result = await fwd.result_async()
+            await opt.result_async()
+            step += 1
+            logprobs = [lp for out in result.loss_fn_outputs for lp in out["logprobs"].tolist()]
+            weights = [w for d in batch for w in d.loss_fn_inputs["weights"].tolist()]
+            loss = -sum(lp * w for lp, w in zip(logprobs, weights)) / sum(weights)
+            if step % 5 == 0 or step == total:
+                print(f"epoch {epoch}  step {step}/{total}  loss {loss:.4f}  lr {lr:.2e}", flush=True)
+
+        name = f"{args.name}-e{epoch}"
+        sampler = await (await trainer.save_weights_for_sampler_async(name=name)).result_async()
+        state = await (await trainer.save_state_async(name=name + "-state")).result_async()
+        print(f"saved {name}\n  sampler: {sampler.path}\n  state:   {state.path}")
+        with open("runs/checkpoints.jsonl", "a") as f:
+            f.write(json.dumps({"name": name, "sampler": sampler.path, "state": state.path}) + "\n")
+
+
+if __name__ == "__main__":
+    p = argparse.ArgumentParser()
+    p.add_argument("--data", default="data/sft.jsonl")
+    p.add_argument("--name", default="sft")
+    p.add_argument("--epochs", type=int, default=3)
+    p.add_argument("--batch", type=int, default=32)
+    p.add_argument("--lr", type=float, default=2e-4)
+    asyncio.run(main(p.parse_args()))</code></pre></figure>
+<figure class="code"><figcaption><span class="fname">ckpt.py · 13 lines</span><a href="wiki-researcher/ckpt.py" download>download</a><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-python">"""Print a checkpoint path saved in runs/checkpoints.jsonl.
+
+python ckpt.py sft-e2          sampler path, for eval.py --model-path
+python ckpt.py sft-e2 state    state path, for train_grpo.py --init-state
+"""
+import json
+import sys
+
+name, kind = sys.argv[1], sys.argv[2] if len(sys.argv) &gt; 2 else "sampler"
+paths = [json.loads(line)[kind] for line in open("runs/checkpoints.jsonl") if json.loads(line)["name"] == name]
+if not paths:
+    sys.exit(f"no checkpoint named {name} in runs/checkpoints.jsonl")
+print(paths[-1])</code></pre></figure>
+<figure class="code"><figcaption><span class="fname">Terminal</span><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-bash">python train_sft.py --epochs 3</code></pre></figure>
+<figure class="code out"><figcaption><span class="fname">Output format</span></figcaption><pre><code class="nohighlight">… examples, … tokens/epoch, ≈ $… to train
+epoch 1  step 5/…  loss …  lr …
+…
+saved sft-e1
+  sampler: tinker://…/sampler_weights/sft-e1
+  state:   tinker://…/weights/sft-e1-state</code></pre></figure>
+          <p>The loss should drop clearly during epoch 1, then flatten. If it gets close to 0, the model is memorizing the data.</p>
+        </div>
+
+        <div class="substep" id="s3-4">
+          <div class="sub-head"><input type="checkbox" data-k="s3-4" aria-label="Mark 3.4 done"><h3><span class="sn">3.4</span>Pick the epoch by val, not by loss</h3></div>
+<figure class="code"><figcaption><span class="fname">Terminal</span><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-bash">for e in 1 2 3; do
+  python eval.py --name sft-e$e --model-path $(python ckpt.py sft-e$e)
+done
+python ablate.py runs/base runs/sft-e1 runs/sft-e2 runs/sft-e3</code></pre></figure>
+          <p>Pick the epoch with the highest val F1. Samaya did the same and picked epoch 3 of 5, not the last one. From here on it's called <code>sft-eN</code>.</p>
+        </div>
+        <div class="gate">
+          <div class="done-when"><b>Done when</b><ul><li>One SFT checkpoint has a higher val F1 than <code>runs/base</code></li><li>The average number of searches hasn't dropped (the model hasn't learned to skip the tool)</li></ul></div>
+          <div class="traps"><b>Traps</b><ul><li>Training on badly formatted traces: nice loss, bad score. Always read a trace in <code>sft.jsonl</code></li><li>Feeding val/test questions into <code>make_sft.py</code>: the script reads only <code>train.jsonl</code>, don't change that</li></ul></div>
+        </div>
+      </section>
+
+      <!-- STEP 4 -->
+      <section class="step" id="grpo" data-step="grpo">
+        <div class="step-head">
+          <span class="step-no">STEP 4</span>
+          <h2>GRPO: try, self-score, reinforce the good runs</h2>
+          <p class="lede">Each step: 32 new questions, 8 episodes per question with the current weights. An episode whose F1 beats its group's average is pushed up; one below is pushed down. Groups where all 8 runs score the same teach nothing and are skipped.</p>
+          <div class="meta"><span class="chip">3–5 hours</span><span class="chip cost">≈ $12</span><span class="chip">Tinker</span></div>
+        </div>
+        <div class="formula">advantage = F1(episode) − mean F1 of the 8 episodes for the same question &nbsp;·&nbsp; loss = importance_sampling on tokens with sampled = 1</div>
+
+        <div class="substep" id="s4-1">
+          <div class="sub-head"><input type="checkbox" data-k="s4-1" aria-label="Mark 4.1 done"><h3><span class="sn">4.1</span>The GRPO loop</h3></div>
+          <p>The settings come from Tinker's Search-R1 recipe for this exact model (LoRA rank 32, lr 4e-5, group of 8), with questions per step cut from 512 to 32 to fit the budget. It starts from the <em>state</em> of the best SFT epoch.</p>
+<figure class="code"><figcaption><span class="fname">train_grpo.py · 91 lines</span><a href="wiki-researcher/train_grpo.py" download>download</a><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-python">"""Step 4: online GRPO in the agent harness.
+
+Each step: take Q new train questions, run G episodes per question with the current
+weights, reward = F1, advantage = reward - mean reward of the same question's group.
+Groups where every episode scored the same teach nothing and are skipped.
+
+python train_grpo.py --init-state tinker://.../sft-e2-state --steps 30
+"""
+import argparse
+import asyncio
+import json
+import os
+
+import tinker
+
+from config import LORA_RANK, MODEL, PRICE_PREFILL, PRICE_SAMPLE, PRICE_TRAIN
+from datums import rl_datum
+from harness import TinkerPolicy, run_episode
+from search import Searcher
+
+
+async def main(args):
+    service = tinker.ServiceClient()
+    if args.init_state:
+        trainer = await service.create_training_client_from_state_async(args.init_state)
+    else:
+        trainer = await service.create_lora_training_client_async(base_model=MODEL, rank=LORA_RANK)
+    items = [json.loads(line) for line in open("data/train.jsonl")][args.offset :]
+    searcher, gate = Searcher(), asyncio.Semaphore(128)
+    os.makedirs(f"runs/{args.name}", exist_ok=True)
+    spent = 0.0
+
+    for step in range(1, args.steps + 1):
+        policy = TinkerPolicy(await trainer.save_weights_and_get_sampling_client_async())
+        batch = items[(step - 1) * args.questions : step * args.questions]
+
+        async def attempt(item):
+            async with gate:
+                return await run_episode(policy, searcher, item, temperature=args.temperature)
+
+        groups = await asyncio.gather(*(asyncio.gather(*(attempt(it) for _ in range(args.group)))
+                                        for it in batch))
+        data, skipped = [], 0
+        for group in groups:
+            rewards = [e.reward for e in group]
+            if max(rewards) - min(rewards) &lt; 1e-6:
+                skipped += 1
+                continue
+            mean = sum(rewards) / len(rewards)
+            data += [rl_datum(e, e.reward - mean) for e in group]
+
+        if data:
+            fwd = await trainer.forward_backward_async(data, "importance_sampling")
+            opt = await trainer.optim_step_async(tinker.AdamParams(learning_rate=args.lr))
+            await fwd.result_async()
+            await opt.result_async()
+
+        episodes = [e for g in groups for e in g]
+        spent += sum(e.prefill * PRICE_PREFILL + e.generated * PRICE_SAMPLE for e in episodes) / 1e6
+        spent += sum(d.model_input.length for d in data) * PRICE_TRAIN / 1e6
+        log = {"step": step, "reward": sum(e.reward for e in episodes) / len(episodes),
+               "skipped_groups": skipped / len(groups),
+               "searches": sum(len(e.searches) for e in episodes) / len(episodes),
+               "answered": sum(e.end == "answer" for e in episodes) / len(episodes),
+               "budget_hit": sum(e.end in ("budget", "length") for e in episodes) / len(episodes),
+               "tokens": sum(len(e.tokens) for e in episodes) / len(episodes), "usd": round(spent, 2)}
+        print("  ".join(f"{k} {v:.3f}" if isinstance(v, float) else f"{k} {v}" for k, v in log.items()), flush=True)
+        with open(f"runs/{args.name}/train_log.jsonl", "a") as f:
+            f.write(json.dumps(log) + "\n")
+
+        if step % args.save_every == 0 or step == args.steps:
+            name = f"{args.name}-s{step}"
+            sampler = await (await trainer.save_weights_for_sampler_async(name=name)).result_async()
+            state = await (await trainer.save_state_async(name=name + "-state")).result_async()
+            print(f"saved {name}\n  sampler: {sampler.path}\n  state:   {state.path}")
+            with open("runs/checkpoints.jsonl", "a") as f:
+                f.write(json.dumps({"name": name, "sampler": sampler.path, "state": state.path}) + "\n")
+
+
+if __name__ == "__main__":
+    p = argparse.ArgumentParser()
+    p.add_argument("--init-state", help="tinker:// state path from train_sft.py; omit to start from the base model")
+    p.add_argument("--name", default="grpo")
+    p.add_argument("--steps", type=int, default=30)
+    p.add_argument("--questions", type=int, default=32, help="questions per step")
+    p.add_argument("--group", type=int, default=8, help="episodes per question")
+    p.add_argument("--lr", type=float, default=4e-5)
+    p.add_argument("--temperature", type=float, default=1.0)
+    p.add_argument("--offset", type=int, default=1500, help="skip the questions used for SFT")
+    p.add_argument("--save-every", type=int, default=10)
+    asyncio.run(main(p.parse_args()))</code></pre></figure>
+<figure class="code"><figcaption><span class="fname">Terminal</span><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-bash">python train_grpo.py --init-state $(python ckpt.py sft-e2 state) --steps 30   # change e2 to the epoch you picked</code></pre></figure>
+<figure class="code out"><figcaption><span class="fname">Log format, one line per step</span></figcaption><pre><code class="nohighlight">step 1  reward …  skipped_groups …  searches …  answered …  budget_hit …  tokens …  usd …
+step 2  reward …  …
+…
+saved grpo-s10
+  sampler: tinker://…/sampler_weights/grpo-s10
+  state:   tinker://…/weights/grpo-s10-state</code></pre></figure>
+        </div>
+
+        <div class="substep" id="s4-2">
+          <div class="sub-head"><input type="checkbox" data-k="s4-2" aria-label="Mark 4.2 done"><h3><span class="sn">4.2</span>Read the log like a practitioner</h3></div>
+          <div class="tbl"><table>
+            <thead><tr><th>Column</th><th>Healthy</th><th>Problem → what to do</th></tr></thead>
+            <tbody>
+              <tr><td><code>reward</code></td><td>Rises gradually; step-to-step noise is normal</td><td>Flat for 15 steps: raise <code>--lr</code> to 8e-5, or the questions are too hard</td></tr>
+              <tr><td><code>skipped_groups</code></td><td>0.2–0.6</td><td>Near 1.0: every question is all right or all wrong. Switch to harder / easier questions</td></tr>
+              <tr><td><code>searches</code></td><td>Stable or rising slightly</td><td>Drops to ~1: the model is learning to guess. Look at traces with eval + <code>show.py</code></td></tr>
+              <tr><td><code>budget_hit</code></td><td>&lt; 5%</td><td>Climbing: the model is searching in circles. Lower <code>MAX_SEARCHES</code> or add a penalty</td></tr>
+              <tr><td><code>tokens</code></td><td>Stable</td><td>Growing fast: the model is rambling to "stall". Read the traces now</td></tr>
+            </tbody>
+          </table></div>
+          <p>In Tinker's Search-R1 run with the same model, train reward went from 0.39 to 0.60 over 30 steps. That's the best "right ballpark" check you have before running eval.</p>
+        </div>
+
+        <div class="substep" id="s4-3">
+          <div class="sub-head"><input type="checkbox" data-k="s4-3" aria-label="Mark 4.3 done"><h3><span class="sn">4.3</span>Evaluate the checkpoints on val</h3></div>
+<figure class="code"><figcaption><span class="fname">Terminal</span><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-bash">for s in 10 20 30; do
+  python eval.py --name grpo-s$s --model-path $(python ckpt.py grpo-s$s)
+done
+python ablate.py runs/sft-e2 runs/grpo-s10 runs/grpo-s20 runs/grpo-s30</code></pre></figure>
+          <p>To run 20 more steps from s30: <code>python train_grpo.py --init-state $(python ckpt.py grpo-s30 state) --name grpo2 --offset 2460</code>. <code>--offset</code> keeps it from reusing questions already seen (1500 + 30 × 32 = 2460).</p>
+        </div>
+        <div class="gate">
+          <div class="done-when"><b>Done when</b><ul><li>One GRPO checkpoint has a higher val F1 than SFT, and <code>ablate.py</code> gives a Δ confidence interval that doesn't contain 0</li></ul></div>
+          <div class="traps"><b>Traps</b><ul><li>Reward hacking: F1 gives partial credit, so the model can learn to answer long to "hit" a few words. If answer length grows, read the traces</li><li>Picking the checkpoint by train reward instead of val</li></ul></div>
+        </div>
+      </section>
+
+      <!-- STEP 5 -->
+      <section class="step" id="ablation" data-step="ablation">
+        <div class="step-head">
+          <span class="step-no">STEP 5</span>
+          <h2>Ablation: open the test set, prove each part</h2>
+          <p class="lede">The first and only run on test. Every comparison comes with a confidence interval, because with 500 questions a 2–3 point gap can be pure luck.</p>
+          <div class="meta"><span class="chip">1–2 hours</span><span class="chip cost">≈ $2</span><span class="chip">Tinker</span></div>
+        </div>
+
+        <div class="substep" id="s5-1">
+          <div class="sub-head"><input type="checkbox" data-k="s5-1" aria-label="Mark 5.1 done"><h3><span class="sn">5.1</span>A stage-by-stage table on test</h3></div>
+<figure class="code"><figcaption><span class="fname">ablate.py · 43 lines</span><a href="wiki-researcher/ablate.py" download>download</a><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-python">"""Step 5: compare runs on the same questions with 95% bootstrap confidence intervals.
+
+python ablate.py runs/test-base runs/test-sft runs/test-grpo
+The first run is the baseline; every other run gets a paired difference against it.
+"""
+import json
+import random
+import sys
+
+
+def load(run):
+    rows = {}
+    for line in open(f"{run}/episodes.jsonl"):
+        r = json.loads(line)
+        rows[r["id"]] = r
+    return rows
+
+
+def ci(values, rng, n=1000):
+    means = sorted(sum(rng.choices(values, k=len(values))) / len(values) for _ in range(n))
+    return means[int(0.025 * n)], means[int(0.975 * n)]
+
+
+runs = sys.argv[1:]
+data = [load(r) for r in runs]
+ids = sorted(set.intersection(*(set(d) for d in data)))
+rng = random.Random(0)
+base = [data[0][i]["f1"] for i in ids]
+print(f"{len(ids)} shared questions\n")
+print(f"{'run':&lt;22}{'F1':&gt;7}{'95% CI':&gt;16}{'EM':&gt;7}{'searches':&gt;10}{'$/q':&gt;9}{'Δ F1 vs first':&gt;24}")
+for run, d in zip(runs, data):
+    f1s = [d[i]["f1"] for i in ids]
+    lo, hi = ci(f1s, rng)
+    mean = lambda key: sum(d[i][key] for i in ids) / len(ids)
+    searches = sum(len(d[i]["searches"]) for i in ids) / len(ids)
+    delta = ""
+    if d is not data[0]:
+        diffs = [a - b for a, b in zip(f1s, base)]
+        dlo, dhi = ci(diffs, rng)
+        delta = f"{sum(diffs) / len(diffs):+.3f} [{dlo:+.3f}, {dhi:+.3f}]"
+    print(f"{run:&lt;22}{mean('f1'):&gt;7.3f}{f'[{lo:.3f}, {hi:.3f}]':&gt;16}{mean('em'):&gt;7.3f}"
+          f"{searches:&gt;10.2f}{mean('usd'):&gt;9.4f}{delta:&gt;24}")
+print("\nA difference is real only if its interval does not contain 0.")</code></pre></figure>
+<figure class="code"><figcaption><span class="fname">Terminal</span><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-bash">python eval.py --split test --name test-closed --closed-book
+python eval.py --split test --name test-base
+python eval.py --split test --name test-sft  --model-path $(python ckpt.py sft-e2)
+python eval.py --split test --name test-grpo --model-path $(python ckpt.py grpo-s30)
+python ablate.py runs/test-base runs/test-closed runs/test-sft runs/test-grpo</code></pre></figure>
+<figure class="code out"><figcaption><span class="fname">Output format</span></figcaption><pre><code class="nohighlight">500 shared questions
+
+run                        F1          95% CI     EM  searches      $/q           Δ F1 vs first
+runs/test-base             …        [… , …]      …         …        …
+runs/test-closed           …        [… , …]      …      0.00        …     −… [−…, −…]
+runs/test-sft              …        [… , …]      …         …        …     +… [+…, +…]
+runs/test-grpo             …        [… , …]      …         …        …     +… [+…, +…]
+
+A difference is real only if its interval does not contain 0.</code></pre></figure>
+        </div>
+
+        <div class="substep" id="s5-2">
+          <div class="sub-head"><input type="checkbox" data-k="s5-2" aria-label="Mark 5.2 done"><h3><span class="sn">5.2</span>Take the harness apart, one piece at a time</h3></div>
+          <p>Same GRPO model, one setting changed at a time. No retraining needed.</p>
+<figure class="code"><figcaption><span class="fname">Terminal</span><button type="button" class="copy">Copy</button></figcaption><pre><code class="language-bash">python eval.py --split test --name test-grpo-k1 --model-path $(python ckpt.py grpo-s30) --top-k 1
+python eval.py --split test --name test-grpo-b2 --model-path $(python ckpt.py grpo-s30) --max-searches 2
+python ablate.py runs/test-grpo runs/test-grpo-k1 runs/test-grpo-b2</code></pre></figure>
+          <p>The question this step answers: did the model get stronger because it searches better, or because it reads better? If <code>k1</code> drops sharply, the model relies on being handed many paragraphs. If <code>b2</code> is about the same, a research budget of 5 is overkill and you can save money.</p>
+        </div>
+
+        <div class="substep" id="s5-3">
+          <div class="sub-head"><input type="checkbox" data-k="s5-3" aria-label="Mark 5.3 done"><h3><span class="sn">5.3</span>Write up the results</h3></div>
+          <p>Fill this table from the output of <code>ablate.py</code> and <code>summary.json</code>. It's the core of your write-up, following the same outline as Samaya's post.</p>
+<figure class="code out"><figcaption><span class="fname">Report template (copy into README.md)</span></figcaption><pre><code class="nohighlight">## Results on HotpotQA test (500 questions, 507k-paragraph corpus, BM25 top-3, budget of 5 searches)
+
+| Stage                | F1 [95% CI]        | EM    | Searches/q | $/q     |
+|----------------------|--------------------|-------|------------|---------|
+| Closed book          |                    |       | 0          |         |
+| Base + harness       |                    |       |            |         |
+| + SFT (epoch N)      |                    |       |            |         |
+| + GRPO (step N)      |                    |       |            |         |
+| GRPO, top-1          |                    |       |            |         |
+| GRPO, budget 2       |                    |       |            |         |
+
+Total Tinker cost: $..   test.jsonl sha256: cb4ad042f2c0ef38
+Limitation: the corpus only contains paragraphs that appear in HotpotQA, so it is easier than full Wikipedia.</code></pre></figure>
+        </div>
+        <div class="gate">
+          <div class="done-when"><b>Done when</b><ul><li>The table has all 6 rows, and every Δ has a confidence interval</li><li>You can write one sentence: which part contributed how many points, at what price</li></ul></div>
+          <div class="traps"><b>Traps</b><ul><li>Running test several times and picking the best run</li><li>Reporting F1 without a $/question column: half of Samaya's story is the price</li></ul></div>
+        </div>
+      </section>
+
+      <section class="block" id="fix">
+        <h2>Quick troubleshooting</h2>
+        <div class="tbl"><table>
+          <thead><tr><th>Error you see</th><th>Cause</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td><code>ImportError: apply_chat_template requires jinja2</code></td><td>jinja2 is missing (actually hit while writing this)</td><td><code>uv pip install jinja2</code></td></tr>
+            <tr><td><code>... requires accelerate</code> when running <code>--local</code></td><td>Using <code>device_map</code></td><td>The code here moves the model with <code>.to(device)</code>; don't add <code>device_map</code></td></tr>
+            <tr><td>The model searches for "keywords" and answers "final answer"</td><td>The prompt has placeholders and the small model copies them verbatim (actually hit)</td><td>Keep the concrete example in <code>SYSTEM</code></td></tr>
+            <tr><td><code>end</code> is all <code>no_action</code></td><td>The model writes an explanation without any tag</td><td>Read the traces; restate the tag rules at the end of <code>SYSTEM</code></td></tr>
+            <tr><td><code>RuntimeError: the sampler returned no logprobs</code></td><td>The sampler returned no logprobs</td><td>Stop: RL is wrong without logprobs. Update <code>tinker</code> and check again</td></tr>
+            <tr><td><code>test_user_turn_matches_chat_template</code> fails</td><td>You switched to a model whose template differs from Qwen's</td><td>Rewrite <code>user_turn</code> for the new template before running anything else</td></tr>
+            <tr><td>Index build gets killed</td><td>Out of RAM (needs ~2.5 GB)</td><td>Close some apps, or run it on Colab</td></tr>
+            <tr><td>Eval is slow or returns 429</td><td>Too many parallel requests</td><td><code>--concurrency 8</code></td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section class="block" id="cost">
+        <h2>Cost, worked out from tokens</h2>
+        <p class="lede">Qwen3.5-4B prices on Tinker as of Nov 1, 2026: prefill $0.33, sample $1.005, train $0.737 per million tokens. One episode ≈ 3 turns, ~2,000 prefill tokens and ~80 generated tokens, so ≈ $0.0007. Every script prints its own real cost.</p>
+        <div class="tbl"><table>
+          <thead><tr><th>Step</th><th>What runs</th><th>Estimate</th></tr></thead>
+          <tbody>
+            <tr><td>1 Eval</td><td>200 closed-book questions</td><td class="num">≈ $0.05</td></tr>
+            <tr><td>2 Harness</td><td>200 base questions ($0 locally)</td><td class="num">≈ $0.20</td></tr>
+            <tr><td>3 SFT</td><td>6,000 episodes to collect traces + ~3.6M training tokens + 3 evals</td><td class="num">≈ $8</td></tr>
+            <tr><td>4 GRPO</td><td>30 steps × 256 episodes + training on groups with variance + 3 evals</td><td class="num">≈ $12</td></tr>
+            <tr><td>5 Ablation</td><td>2,500 episodes on test</td><td class="num">≈ $2</td></tr>
+            <tr><td><strong>Total</strong></td><td>A $40 limit leaves plenty of room</td><td class="num"><strong>≈ $22</strong></td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <section class="block sources">
+        <h2>Sources</h2>
+        <ol>
+          <li><a href="https://samaya.ai/blog/rl-post-trained-agentic-model">Samaya AI: Samaya Sterling (Oct 28, 2026)</a>: the Eval → Harness → SFT → GRPO → Ablation recipe and the reference numbers on the map</li>
+          <li><a href="https://tinker-docs.thinkingmachines.ai/tinker/quickstart/">Tinker Quickstart</a> and <a href="https://tinker-docs.thinkingmachines.ai/tinker/sdk-cheatsheet/">SDK Cheatsheet</a>: the API used in the code</li>
+          <li><a href="https://tinker-docs.thinkingmachines.ai/tinker/models/models_and_pricing/">Tinker Models &amp; Pricing</a> (read on Nov 1, 2026)</li>
+          <li><a href="https://github.com/thinking-machines-lab/tinker-cookbook/tree/main/tinker_cookbook/recipes/search_tool">tinker-cookbook: search_tool recipe</a>: RL settings and Qwen3.5-4B reference numbers on HotpotQA</li>
+          <li><a href="https://hotpotqa.github.io/">HotpotQA</a> (<a href="https://huggingface.co/datasets/hotpotqa/hotpot_qa">Hugging Face version</a>)</li>
+          <li><a href="https://arxiv.org/abs/2503.09516">Search-R1</a> and <a href="https://arxiv.org/abs/2203.14465">STaR</a>: the search/answer tag protocol and rejection sampling</li>
+          <li><a href="https://github.com/xhluca/bm25s">bm25s</a></li>
+        </ol>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+(function () {
+  document.querySelectorAll("figure.code .copy").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const text = btn.closest("figure").querySelector("code").textContent;
+      let ok = false;
+      try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {
+        const ta = document.createElement("textarea");
+        ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+        document.body.appendChild(ta); ta.select();
+        try { ok = document.execCommand("copy"); } catch (e2) { ok = false; }
+        ta.remove();
+      }
+      btn.textContent = ok ? "Copied" : "Copy manually";
+      btn.classList.toggle("ok", ok);
+      setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("ok"); }, 1600);
+    });
+  });
+
+  // Per-viewer progress: one checkbox per sub-step
+  const KEY = "wiki-researcher-tutorial";
+  let state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { state = {}; }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
+  function refresh() {
+    document.querySelectorAll("[data-step]").forEach((sec) => {
+      const boxes = sec.querySelectorAll(".sub-head input");
+      const done = Array.from(boxes).filter((b) => b.checked).length;
+      const p = document.querySelector('[data-prog="' + sec.dataset.step + '"]');
+      if (p) { p.textContent = done + "/" + boxes.length; p.classList.toggle("full", done === boxes.length); }
+    });
+  }
+  document.querySelectorAll(".sub-head input").forEach((box) => {
+    const sub = box.closest(".substep");
+    box.checked = !!state[box.dataset.k];
+    sub.classList.toggle("done", box.checked);
+    box.addEventListener("change", () => {
+      state[box.dataset.k] = box.checked;
+      sub.classList.toggle("done", box.checked);
+      save(); refresh();
+    });
+  });
+  refresh();
+  if (window.hljs) window.hljs.highlightAll();
+})();
+</script>
+<script>
+(function () {
+  // Factory map: one entry per bay, in line order. level = how many score segments are reached.
+  const ST = [
+    { no: "INPUT", title: "Raw materials",
+      why: "Three things go into the factory: questions with answers, a body of text to look things up in, and a base model that hasn't been taught to use tools.",
+      in: ["HotpotQA distractor: 90,447 train questions, 7,405 dev questions", "Every Wikipedia paragraph that appears in HotpotQA: 507,494 paragraphs", "Qwen/Qwen3.5-4B on Tinker"],
+      do: ["Nothing runs yet: these are just raw materials"],
+      out: ["Raw data on Hugging Face"],
+      product: "raw materials", level: 0,
+      note: "No score yet. A score needs a yardstick, and the yardstick is built in Step 1." },
+    { no: "STEP 0", title: "Setup", href: "#setup", time: "10 min", cost: "$0", where: "Laptop",
+      why: "A Python environment with pinned versions, an API key, and one test call to make sure everything is connected.",
+      in: ["Python 3.11+, uv", "A Tinker account with a spending limit"],
+      do: ["requirements.txt", "export TINKER_API_KEY", "config.py", "hello_tinker.py"],
+      out: ["The model answers through the API"],
+      product: "machines running", level: 0,
+      note: "No score yet. This station only makes sure everything runs." },
+    { no: "STEP 1", title: "Eval: data, yardstick, floor score", href: "#eval", time: "30 min", cost: "≈ $0.05", where: "Laptop + Tinker",
+      why: "Lock the test set and have one command that prints the score + the cost. Every station after this reruns exactly that command.",
+      in: ["HotpotQA", "Base model, no search yet"],
+      do: ["prep_data.py: train / val 200 / test 500 + corpus", "score.py + 7 tests", "harness.py: the agent loop", "eval.py --closed-book"],
+      out: ["data/*.jsonl, hash of the test set", "runs/closed: the floor score"],
+      product: "yardstick + floor score", level: 0,
+      note: "The yardstick is ready. The closed-book score is only a floor; comparable numbers start once the model can search." },
+    { no: "STEP 2", title: "Harness: turn on search, read the traces", href: "#harness", time: "1–2 hours", cost: "≈ $0.20", where: "Laptop (BM25 runs on CPU)",
+      why: "Give the model a search tool. Model and harness grow up together: this is also exactly the environment used for training.",
+      in: ["507k-paragraph corpus", "Base model", "harness.py"],
+      do: ["search.py: BM25, 28-second build", "test_harness.py: 6 tests, including a chat-template match", "eval.py --local: free trial", "eval.py base + show.py"],
+      out: ["runs/base: the real starting point", "A labeled list of failures"],
+      product: "raw agent + traces", level: 1,
+      note: "Base model in the harness: the real starting point. Samaya started at 42.5%." },
+    { no: "STEP 3", title: "SFT: learn from its correct runs", href: "#sft", time: "2–3 hours", cost: "≈ $8", where: "Tinker",
+      why: "The base model tries each question 4 times; keep the shortest correct attempt, then train LoRA on those very traces.",
+      in: ["1,500 train questions", "Base model in the harness"],
+      do: ["make_sft.py: 6,000 episodes, keep the correct ones", "train_sft.py: LoRA rank 32, 3 epochs", "eval.py per epoch + ablate.py"],
+      out: ["The best sft-eN checkpoint by val"],
+      product: "model that learned the trade", level: 2,
+      note: "The biggest gain is here: Samaya +12.3 points, up to 54.8%." },
+    { no: "STEP 4", title: "GRPO: try, reinforce the good runs", href: "#grpo", time: "3–5 hours", cost: "≈ $12", where: "Tinker",
+      why: "8 episodes per question; an episode whose F1 beats its group's average is pushed up. No reference answers needed, only a scoring function.",
+      in: ["State of the SFT checkpoint", "Train questions not used yet"],
+      do: ["train_grpo.py: 32 questions × 8 episodes × 30 steps", "Read the log: reward, skipped_groups, budget_hit", "eval.py s10 / s20 / s30"],
+      out: ["grpo-sN checkpoint"],
+      product: "tempered model", level: 3,
+      note: "Samaya +4.1 points, up to 58.9%: beating Fable 5.1 (55.9%) at $0.61 instead of $6.89 per question." },
+    { no: "STEP 5", title: "Ablation: open the test set", href: "#ablation", time: "1–2 hours", cost: "≈ $2", where: "Tinker",
+      why: "The first and only run on test. Take each part out to learn where the score comes from.",
+      in: ["Base, SFT, GRPO", "test.jsonl (opened for the first time)"],
+      do: ["eval.py --split test for each model", "ablate.py: 1,000 bootstrap resamples", "--top-k 1, --max-searches 2"],
+      out: ["A scoreboard with confidence intervals", "How much each part contributes"],
+      product: "model + evidence", level: 3,
+      note: "Same final number, but now with confidence intervals and a breakdown of what each part contributes." },
+    { no: "OUTPUT", title: "Ship it",
+      why: "What you ship isn't just a model: it's a model with evidence and a price tag.",
+      in: ["Everything from the five previous steps"],
+      do: ["Fill in the report template in Step 5.3"],
+      out: ["A Wikipedia research agent running on a 4B model", "F1/EM, $/question, searches/question table with confidence intervals", "A README with the test hash"],
+      product: "agent + report", level: 3,
+      note: "Your goal has the same shape: a small model, many times cheaper, scoring as well as or better than a frontier model in the same harness." }
+  ];
+
+  const $ = (id) => document.getElementById(id);
+  const floor = $("fx-floor"), belt = $("fx-belt"), crate = $("fx-crate");
+  const bays = Array.from(floor.querySelectorAll(".bay"));
+  const segs = Array.from($("fx-track").querySelectorAll(".seg"));
+  const keys = Array.from(document.querySelectorAll(".meter .keys span"));
+  const playBtn = $("fx-play");
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let cur = 0, playing = !reduce, visible = !("IntersectionObserver" in window), timer = null;
+
+  const list = (el, items) => {
+    el.textContent = "";
+    items.forEach((t) => { const li = document.createElement("li"); li.textContent = t; el.appendChild(li); });
+  };
+
+  function placeCrate(jump) {
+    const b = belt.getBoundingClientRect(), c = bays[cur].getBoundingClientRect();
+    if (jump) crate.classList.add("jump");
+    if (b.height > b.width) { crate.style.top = (c.top + c.height / 2 - b.top) + "px"; crate.style.left = ""; }
+    else { crate.style.left = (c.left + c.width / 2 - b.left) + "px"; crate.style.top = ""; }
+    if (jump) { void crate.offsetWidth; crate.classList.remove("jump"); }
+  }
+
+  function render(jump) {
+    const s = ST[cur];
+    bays.forEach((b, i) => { if (i === cur) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current"); });
+    $("fx-d-no").textContent = s.no;
+    $("fx-d-title").textContent = s.title;
+    $("fx-d-why").textContent = s.why;
+    list($("fx-d-in"), s.in); list($("fx-d-do"), s.do); list($("fx-d-out"), s.out);
+    $("fx-d-product").textContent = s.product;
+    segs.forEach((g, i) => { g.style.width = i < s.level ? g.dataset.w + "%" : "0"; });
+    keys.forEach((k, i) => k.classList.toggle("off", i >= s.level));
+    $("fx-m-note").textContent = s.note;
+    $("fx-track").setAttribute("aria-label", s.note);
+    const foot = $("fx-d-foot");
+    foot.textContent = "";
+    [s.time, s.cost, s.where].filter(Boolean).forEach((t, i) => {
+      const c = document.createElement("span"); c.className = "chip" + (i === 1 ? " cost" : ""); c.textContent = t; foot.appendChild(c);
+    });
+    if (s.href) { const a = document.createElement("a"); a.href = s.href; a.textContent = "Do " + s.no.toLowerCase() + " ↓"; foot.appendChild(a); }
+    placeCrate(jump);
+  }
+
+  function go(i) {
+    const next = (i + ST.length) % ST.length;
+    const wrapped = (cur === ST.length - 1 && next === 0) || (cur === 0 && next === ST.length - 1);
+    cur = next;
+    render(wrapped);
+  }
+
+  function sync() {
+    clearInterval(timer); timer = null;
+    const run = playing && visible;
+    if (run) timer = setInterval(() => go(cur + 1), 3400);
+    floor.classList.toggle("playing", run);
+    playBtn.textContent = playing ? "⏸ Pause" : "▶ Play";
+    playBtn.setAttribute("aria-pressed", String(playing));
+  }
+  const pause = () => { playing = false; sync(); };
+
+  bays.forEach((b, i) => b.addEventListener("click", () => { pause(); go(i); }));
+  $("fx-prev").addEventListener("click", () => { pause(); go(cur - 1); });
+  $("fx-next").addEventListener("click", () => { pause(); go(cur + 1); });
+  playBtn.addEventListener("click", () => { playing = !playing; if (playing && cur === ST.length - 1) go(0); sync(); });
+  window.addEventListener("resize", () => placeCrate(true));
+  if (!visible) {
+    new IntersectionObserver((es) => { visible = es[0].isIntersecting; sync(); }, { threshold: 0.35 }).observe(floor);
+  }
+  render(true);
+  sync();
+})();
+</script>
+
+</body>
+</html>

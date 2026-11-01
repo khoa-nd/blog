@@ -1,11 +1,11 @@
 [
   {
-    "title": "Bootstraining a Wikipedia Research Agent",
+    "title": "Hands-on Building Wikipedia Research Agent By Post Training using SFT and GRPO",
     "kicker": "Hands-on tutorial",
     "date": "2026-10-30",
-    "desc": "A copy-paste tutorial: post-train Qwen3.5-4B into an agent that researches Wikipedia, following Samaya's recipe: Eval, Harness, SFT, GRPO, Ablation. 16 tested Python files, every command, real outputs, about $22 on Tinker. Written in Vietnamese.",
-    "file": "wiki-researcher-bootstraining.html",
-    "image": "thumbs/wiki-researcher-bootstraining.jpg",
+    "desc": "A copy-paste tutorial: post-train Qwen3.5-4B into an agent that researches Wikipedia, following Samaya's recipe: Eval, Harness, SFT, GRPO, Ablation. 16 tested Python files, every command, real outputs, about $22 on Tinker.",
+    "file": "hands-on-wiki-research-agent-post-training-using-sft-grpo-techniques.html",
+    "image": "thumbs/hands-on-wiki-research-agent-post-training-using-sft-grpo-techniques.jpg",
     "imageAlt": "Hands-on tutorial: post-train Qwen3.5-4B into a Wikipedia research agent",
     "cta": "Start the tutorial"
   },

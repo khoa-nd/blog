@@ -2,7 +2,7 @@
 
 Post-train Qwen3.5-4B into a Wikipedia research agent on Tinker:
 Eval → Harness → SFT → GRPO → Ablation. Full walkthrough:
-https://nguyendangkhoa.info/blogs/wiki-researcher-bootstraining.html
+https://nguyendangkhoa.info/blogs/hands-on-wiki-research-agent-post-training-using-sft-grpo-techniques.html
 
 ```bash
 uv venv --python 3.12 .venv && source .venv/bin/activate
