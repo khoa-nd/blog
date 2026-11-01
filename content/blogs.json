@@ -1,13 +1,13 @@
 [
   {
     "title": "Bootstraining a Wikipedia Research Agent",
-    "kicker": "Hands-on roadmap",
+    "kicker": "Hands-on tutorial",
     "date": "2026-10-30",
-    "desc": "Post-train a small open model into an agent that researches Wikipedia, following Samaya's recipe step by step: Eval, Harness, SFT, GRPO, Ablation. Learn each concept when you hit it, with a Tinker budget calculator. Written in Vietnamese.",
+    "desc": "A copy-paste tutorial: post-train Qwen3.5-4B into an agent that researches Wikipedia, following Samaya's recipe: Eval, Harness, SFT, GRPO, Ablation. 16 tested Python files, every command, real outputs, about $22 on Tinker. Written in Vietnamese.",
     "file": "wiki-researcher-bootstraining.html",
     "image": "thumbs/wiki-researcher-bootstraining.jpg",
-    "imageAlt": "Bootstraining a Wikipedia Research Agent: the Eval to Ablation pipeline and progress checklist",
-    "cta": "Start the roadmap"
+    "imageAlt": "Hands-on tutorial: post-train Qwen3.5-4B into a Wikipedia research agent",
+    "cta": "Start the tutorial"
   },
   {
     "title": "Applied AI in Business and Solution Design Atlas",
