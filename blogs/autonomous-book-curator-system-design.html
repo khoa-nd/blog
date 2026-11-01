@@ -363,6 +363,13 @@ figure.code.out pre { max-height: 420px; }
 .hljs-meta { color: var(--hl-com); }
 .hljs-subst { color: var(--ink); }
 /* Curator page */
+.bigpic { margin: 4px 0 0; display: grid; gap: 8px; }
+.bigpic iframe { display: block; width: 100%; height: 820px; border: 1px solid var(--rule); border-radius: 10px; background: var(--sheet); }
+@media (max-width: 900px) { .bigpic iframe { height: 900px; } }
+.bigpic-img { display: none; }
+.bigpic-img img { display: block; width: 100%; height: auto; border: 1px solid var(--rule); border-radius: 10px; }
+.bigpic figcaption { font-size: 13px; color: var(--muted); }
+@media (max-width: 760px) { .bigpic iframe { display: none; } .bigpic-img { display: block; } }
 .status { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--cost); background: var(--cost-soft); border-radius: 999px; padding: 4px 12px; width: fit-content; }
 .status i { width: 8px; height: 8px; border-radius: 50%; background: var(--cost); }
 .floor.loop { grid-template-columns: repeat(7, minmax(0, 1fr)); }
@@ -411,6 +418,14 @@ figure.code.out pre { max-height: 420px; }
   <header class="hero">
     <span class="eyebrow">System design · draft v0.1 for review</span>
     <h1>Shelf: an autonomous book curator that learns my taste</h1>
+    <figure class="bigpic">
+      <iframe src="diagrams/shelf-big-picture.html" title="Shelf big-picture diagram"></iframe>
+      <picture class="bigpic-img">
+        <source srcset="diagrams/shelf-big-picture-dark.png" media="(prefers-color-scheme: dark)">
+        <img src="diagrams/shelf-big-picture-light.png" alt="Shelf big picture: taste registry feeds a nightly pipeline of Discover, Shortlist, Review check and Recommend; Claude judges and writes; the pick reaches me by Telegram, email and blog; my reactions become rewards that Learn uses to update the taste registry.">
+      </picture>
+      <figcaption>The whole system at a glance. <a href="diagrams/shelf-big-picture.html">Open the interactive diagram ↗</a> · Everything below is the detail.</figcaption>
+    </figure>
     <p class="sub">One book a day, picked for me. Shelf finds candidates, shortlists them against my recorded taste, checks what readers and critics say, sends me one recommendation, and treats my reaction as the reward that tunes tomorrow's pick. This page is the design; nothing is built yet.</p>
     <span class="status"><i></i>Status: design for review. No code until the open decisions at the end are settled.</span>
     <div class="facts">

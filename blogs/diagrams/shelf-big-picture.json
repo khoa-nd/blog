@@ -1,0 +1,278 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Shelf: the big picture",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1150,
+      560
+    ]
+  },
+  "components": [
+    {
+      "id": "sources",
+      "type": "external",
+      "label": "Book sources",
+      "sublabel": "APIs · prizes · search",
+      "pos": [
+        270,
+        50
+      ],
+      "size": [
+        150,
+        72
+      ]
+    },
+    {
+      "id": "claude",
+      "type": "cloud",
+      "label": "Claude API",
+      "sublabel": "Opus 5.5 · Haiku 5.5",
+      "pos": [
+        615,
+        50
+      ],
+      "size": [
+        150,
+        72
+      ]
+    },
+    {
+      "id": "taste",
+      "type": "database",
+      "label": "Taste registry",
+      "sublabel": "tastes + history",
+      "pos": [
+        40,
+        220
+      ],
+      "size": [
+        150,
+        72
+      ]
+    },
+    {
+      "id": "discover",
+      "type": "backend",
+      "label": "1 Discover",
+      "sublabel": "candidate pool",
+      "pos": [
+        270,
+        220
+      ],
+      "size": [
+        150,
+        72
+      ]
+    },
+    {
+      "id": "shortlist",
+      "type": "backend",
+      "label": "2 Shortlist",
+      "sublabel": "score · bandit",
+      "pos": [
+        500,
+        220
+      ],
+      "size": [
+        150,
+        72
+      ]
+    },
+    {
+      "id": "review",
+      "type": "backend",
+      "label": "3 Review check",
+      "sublabel": "evidence + digest",
+      "pos": [
+        730,
+        220
+      ],
+      "size": [
+        150,
+        72
+      ]
+    },
+    {
+      "id": "recommend",
+      "type": "backend",
+      "label": "4 Recommend",
+      "sublabel": "1 book a day",
+      "pos": [
+        960,
+        220
+      ],
+      "size": [
+        150,
+        72
+      ]
+    },
+    {
+      "id": "me",
+      "type": "external",
+      "label": "Me",
+      "sublabel": "the reader",
+      "pos": [
+        960,
+        440
+      ],
+      "size": [
+        150,
+        72
+      ]
+    },
+    {
+      "id": "reactions",
+      "type": "backend",
+      "label": "5 Reactions",
+      "sublabel": "buttons · comments",
+      "pos": [
+        500,
+        440
+      ],
+      "size": [
+        150,
+        72
+      ]
+    },
+    {
+      "id": "learn",
+      "type": "backend",
+      "label": "Learn",
+      "sublabel": "bandit · scorer",
+      "pos": [
+        40,
+        440
+      ],
+      "size": [
+        150,
+        72
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Nightly pipeline · GitHub Actions cron",
+      "wraps": [
+        "discover",
+        "shortlist",
+        "review",
+        "recommend"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "taste-to-discover",
+      "from": "taste",
+      "to": "discover",
+      "label": "facets",
+      "variant": "emphasis"
+    },
+    {
+      "id": "sources-to-discover",
+      "from": "sources",
+      "to": "discover",
+      "label": "weekly + daily",
+      "labelDy": 24
+    },
+    {
+      "id": "discover-to-shortlist",
+      "from": "discover",
+      "to": "shortlist",
+      "label": "pool",
+      "variant": "emphasis"
+    },
+    {
+      "id": "shortlist-to-review",
+      "from": "shortlist",
+      "to": "review",
+      "label": "top 3",
+      "variant": "emphasis"
+    },
+    {
+      "id": "claude-to-shortlist",
+      "from": "claude",
+      "to": "shortlist",
+      "label": "judge",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "claude-to-review",
+      "from": "claude",
+      "to": "review",
+      "label": "digest",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "review-to-recommend",
+      "from": "review",
+      "to": "recommend",
+      "label": "1 pick",
+      "variant": "emphasis"
+    },
+    {
+      "id": "recommend-to-me",
+      "from": "recommend",
+      "to": "me",
+      "label": "Telegram · email · blog",
+      "variant": "emphasis",
+      "labelDy": 24
+    },
+    {
+      "id": "me-to-reactions",
+      "from": "me",
+      "to": "reactions",
+      "label": "like · dislike · comment"
+    },
+    {
+      "id": "reactions-to-learn",
+      "from": "reactions",
+      "to": "learn",
+      "label": "rewards"
+    },
+    {
+      "id": "learn-to-taste",
+      "from": "learn",
+      "to": "taste",
+      "label": "update weights",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Runs on",
+      "items": [
+        "GitHub Actions: nightly cron, no server",
+        "Supabase Postgres + pgvector holds all state",
+        "Edge functions take Telegram and reaction clicks"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "AI inside the stages",
+      "items": [
+        "Opus 5.5 judges books and writes the digest",
+        "Haiku 5.5 parses comments and taste changes",
+        "Batch API overnight: half price"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Rules",
+      "items": [
+        "No claim without a source",
+        "Official APIs only, no scraping",
+        "Taste changes need my OK · ≈ $8–10 a month"
+      ]
+    }
+  ]
+}
