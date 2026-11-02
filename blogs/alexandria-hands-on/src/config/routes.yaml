@@ -1,0 +1,30 @@
+# AI gateway routes. Change a model here and every stage follows; no code change.
+# Prices are USD per 1M tokens (input, output), checked Nov 2, 2026. Check model IDs in
+# each provider's console before switching: names change faster than this file.
+
+models:
+  gemini-3.8-flash:      {provider: gemini, id: gemini-3.8-flash, price: [0.75, 3.75]}
+  gemini-3.1-flash-lite: {provider: gemini, id: gemini-3.1-flash-lite, price: [0.25, 1.50]}
+  deepseek-v4-pro:       {provider: openai_compat, base_url: https://api.deepseek.com, key_env: DEEPSEEK_API_KEY, id: deepseek-v4-pro, price: [0.66, 1.98]}
+  deepseek-flash:        {provider: openai_compat, base_url: https://api.deepseek.com, key_env: DEEPSEEK_API_KEY, id: deepseek-flash, price: [0.15, 0.60]}
+  openrouter-free:       {provider: openai_compat, base_url: https://openrouter.ai/api/v1, key_env: OPENROUTER_API_KEY, id: openrouter/free, price: [0, 0], json_mode: false}
+  claude-opus-5.5:       {provider: anthropic, id: claude-opus-5-5, price: [4, 20], effort: medium, server_fallback: true}
+  claude-sonnet-5.5:     {provider: anthropic, id: claude-sonnet-5-5, price: [2, 10], effort: medium, server_fallback: true}
+  claude-haiku-5.5:      {provider: anthropic, id: claude-haiku-5-5, price: [0.10, 0.50], effort: low}
+  fake:                  {provider: fake, price: [0, 0]}
+
+# Route A from the design: free tiers first, a paid model only as the last fallback.
+tasks:
+  extract:       {model: gemini-3.1-flash-lite, fallback: [openrouter-free]}
+  judge:         {model: gemini-3.8-flash,      fallback: [openrouter-free, deepseek-v4-pro]}
+  digest:        {model: gemini-3.8-flash,      fallback: [openrouter-free, deepseek-v4-pro]}
+  write:         {model: gemini-3.8-flash,      fallback: [openrouter-free, claude-haiku-5.5]}
+  parse_comment: {model: gemini-3.1-flash-lite, fallback: [openrouter-free]}
+  parse_taste:   {model: gemini-3.1-flash-lite, fallback: [openrouter-free]}
+  reflect:       {model: gemini-3.8-flash,      fallback: [claude-sonnet-5.5]}
+
+budget:
+  usd_per_day: 0.50          # once spent, only free models (price 0) are tried
+
+shadow:
+  judge: {model: deepseek-v4-pro, share: 0.2}   # second opinion on 20% of judge calls, logged for comparison

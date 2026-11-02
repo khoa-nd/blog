@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alexandria — book suggestions</title>
+<meta name="description" content="One book a day, picked by Alexandria, an autonomous book curator that learns my taste.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,600&display=swap">
+<link rel="stylesheet" href="alexandria.css">
+</head>
+<body>
+<main class="wrap">
+  <div>
+    <span class="eyebrow">Alexandria · book suggestions</span>
+    <h1>One book a day</h1>
+    <p class="meta">Picked by an autonomous curator that learns from my reactions. <a href="{{ design_url }}">How it works</a></p>
+  </div>
+  <div class="list">
+    {% for p in picks %}
+    <a href="{{ p.page_path }}"><div class="item">
+      <span class="eyebrow">{{ p.date.isoformat() }} · {{ p.facet_name }}{% if p.exploration %} · wildcard{% endif %}</span>
+      <div><strong>{{ p.title }}</strong> — {{ p.authors | join(", ") }}</div>
+    </div></a>
+    {% else %}
+    <p class="meta">No picks yet. The first one arrives at 07:00 ICT.</p>
+    {% endfor %}
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ rec.title }} — Alexandria, {{ rec.date.isoformat() }}</title>
+<meta name="description" content="{{ rec.why }}">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono&display=swap">
+<link rel="stylesheet" href="../alexandria.css">
+<script src="../config.js"></script>
+</head>
+<body>
+<main class="wrap">
+  <div>
+    <span class="eyebrow">Alexandria · Book of the day · {{ rec.date.isoformat() }}{% if rec.exploration %} · wildcard day{% endif %}</span>
+    <h1>{{ rec.title }}</h1>
+    <div class="meta">{{ rec.authors | join(", ") }}{% if rec.year %} · {{ rec.year }}{% endif %}{% if rec.pages %} · {{ rec.pages }} pages{% endif %} · slot: {{ rec.facet_name or rec.facet_slug }}</div>
+  </div>
+  <p class="why">{{ rec.why }}</p>
+  <p>{{ digest.intro }}</p>
+
+  <section class="card">
+    <h2>What readers and critics say</h2>
+    <ul>
+      {% for s in digest.sentences %}
+      <li>{{ s.text }}<br><span class="src">{% for src in s.sources %}<a href="{{ src.url }}" rel="nofollow">{{ src.source }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</span></li>
+      {% endfor %}
+    </ul>
+    <div class="chips">
+      <span class="chip">For: {{ digest.who_for }}</span>
+      <span class="chip">Math: {{ digest.math_level }}</span>
+      {% for flag in digest.red_flags %}<span class="chip">⚑ {{ flag }}</span>{% endfor %}
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Find it</h2>
+    <div class="links">
+      {% for l in links %}<a href="{{ l.url }}" rel="nofollow">{{ l.label }}</a>{% if l.note %}<span class="src">({{ l.note }})</span> {% endif %}{% endfor %}
+    </div>
+    {% if vn %}
+    <div>Possible Vietnamese edition (same author):
+      {% for v in vn %}<a href="{{ v.url }}" rel="nofollow">{{ v.title }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</div>
+    {% endif %}
+  </section>
+
+  <section class="card react" data-rec="{{ rec.id }}">
+    <h2>Your reaction</h2>
+    <div class="buttons">
+      <button type="button" data-kind="want">👍 Want it</button>
+      <button type="button" data-kind="not">👎 Not for me</button>
+      <button type="button" data-kind="finished">✅ Finished</button>
+    </div>
+    <textarea id="comment" rows="3" placeholder="A comment, in your own words…"></textarea>
+    <div><button type="button" id="send">💬 Send comment</button></div>
+    <div class="status" id="status" aria-live="polite"></div>
+  </section>
+
+  <footer>Picked by Alexandria, an autonomous book curator. <a href="../index.html">All picks</a> · <a href="{{ design_url }}">How it works</a></footer>
+</main>
+<script>
+(function () {
+  const box = document.querySelector(".react");
+  const status = document.getElementById("status");
+  const recId = Number(box.dataset.rec);
+  let key = "";
+  try { key = localStorage.getItem("alexandria-owner-key") || ""; } catch (e) {}
+  async function react(kind, comment) {
+    const cfg = window.ALEXANDRIA || {};
+    if (!cfg.url) { status.textContent = "Not connected yet (config.js has no Supabase URL)."; return; }
+    status.textContent = "Saving…";
+    try {
+      const r = await fetch(cfg.url + "/rest/v1/rpc/alx_react", {
+        method: "POST",
+        headers: { apikey: cfg.anonKey, Authorization: "Bearer " + cfg.anonKey, "Content-Type": "application/json" },
+        body: JSON.stringify({ p_key: key, p_rec_id: recId, p_kind: kind, p_comment: comment || null })
+      });
+      const who = await r.json();
+      if (!r.ok) throw new Error(who.message || r.status);
+      status.textContent = who === "owner" ? "Saved. Alexandria will learn from it tonight." : "Thanks! (Only the owner's reactions train Alexandria.)";
+      return true;
+    } catch (e) { status.textContent = "Could not save: " + e.message; }
+  }
+  box.querySelectorAll("[data-kind]").forEach((b) => b.addEventListener("click", async () => {
+    if (await react(b.dataset.kind)) b.classList.add("on");
+  }));
+  document.getElementById("send").addEventListener("click", async () => {
+    const text = document.getElementById("comment").value.trim();
+    if (text && await react("comment", text)) document.getElementById("comment").value = "";
+  });
+})();
+</script>
+</body>
+</html>

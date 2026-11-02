@@ -1,0 +1,104 @@
+# Starting tastes and tracked sites. `python -m alexandria seed` loads them once;
+# after that, change them from the console page, not here.
+
+facets:
+  - slug: math-history
+    name: History and stories of mathematics
+    priority: 1.0
+    keywords: [mathematics, mathematician, mathematical, theorem, geometry, calculus, algebra, proof, number theory, statistics]
+  - slug: physics-history
+    name: History and stories of physics
+    priority: 1.0
+    keywords: [physics, physicist, quantum, relativity, atom, atomic, nuclear, cosmology, universe, einstein, particle, gravity]
+  - slug: science-history
+    name: History of other sciences
+    priority: 0.7
+    keywords: [science, scientist, scientific, biology, chemistry, medicine, evolution, discovery, darwin, genetics]
+  - slug: ai-cs
+    name: AI and computer science
+    priority: 0.7
+    keywords: [artificial intelligence, machine learning, computer, computing, software, algorithm, programming, data, robot, internet]
+  - slug: philosophy
+    name: Philosophy
+    priority: 0.55
+    keywords: [philosophy, philosopher, ethics, consciousness, meaning, stoic, reason, morality]
+  - slug: psychology
+    name: Psychology
+    priority: 0.55
+    keywords: [psychology, psychologist, behavior, behaviour, cognitive, brain, decision, emotion, habit, mind]
+  - slug: pulitzer
+    name: Pulitzer Prize winners
+    priority: 0.5
+    keywords: [pulitzer]
+  - slug: classics
+    name: Classics
+    priority: 0.4
+    keywords: [classic, classics, masterpiece, timeless]
+  - slug: new-releases
+    name: Hot new releases
+    priority: 0.4
+    keywords: []          # matched by publication date (last 12 months), not by words
+
+sites:
+  - name: Penguin Random House
+    url: https://www.penguinrandomhouse.com
+    kind: publisher
+    language: en
+    watch: [https://www.penguinrandomhouse.com/books/new-releases/]
+    link_pattern: '/books/\d+/[a-z0-9-]+'
+    search_template: 'https://www.penguinrandomhouse.com/search/site?q={q}'
+    delay_s: 10
+  - name: Tiki
+    url: https://tiki.vn
+    kind: bookstore
+    language: vi
+    watch: [https://tiki.vn/sach-tieng-anh/c320]
+    link_pattern: '/[a-z0-9-]+-p\d+\.html'
+    search_template: 'https://tiki.vn/search?q={q}'
+    delay_s: 15
+  - name: Fahasa
+    url: https://www.fahasa.com
+    kind: bookstore
+    language: vi
+    watch: [https://www.fahasa.com/foreigncategory.html]
+    link_pattern: 'https://www\.fahasa\.com/[a-z0-9-]+\.html'
+    search_template: 'https://www.fahasa.com/searchengine?q={q}'
+    delay_s: 10
+  - name: Nhã Nam
+    url: https://nhanam.vn
+    kind: publisher
+    language: vi
+    watch: [https://nhanam.vn/collections/all]
+    link_pattern: 'nhanam\.vn/[a-z0-9-]+-\d{2,3}-000d?$'   # product slugs end with the price; no structured data, so --llm reads them
+    search_template: 'https://nhanam.vn/search?query={q}'
+    delay_s: 10
+  - name: The Guardian books
+    url: https://www.theguardian.com
+    kind: review
+    language: en
+    watch: [https://www.theguardian.com/books/scienceandnature]
+    link_pattern: '/books/\d{4}/[a-z]{3}/\d{2}/[a-z0-9-]+'
+    delay_s: 10
+  - name: Pulitzer Prize
+    url: https://www.pulitzer.org
+    kind: prize
+    language: en
+    watch: []             # a prize-page parser is a later step; the facet matches "Pulitzer" in descriptions
+  - name: Amazon
+    url: https://www.amazon.com
+    kind: bookstore
+    language: en
+    mode: link-only       # Conditions of Use forbid robots and data extraction
+    search_template: 'https://www.amazon.com/s?k={q}&i=stripbooks'
+  - name: Shopee
+    url: https://shopee.vn
+    kind: bookstore
+    language: vi
+    mode: link-only       # until its terms are checked
+    search_template: 'https://shopee.vn/search?keyword={q}'
+  - name: O'Reilly
+    url: https://www.oreilly.com
+    kind: publisher
+    language: en
+    search_template: 'https://www.oreilly.com/search/?q={q}'
+    # no mode: the robots check sets it (its robots.txt answers bots with 403, so it becomes link-only)
