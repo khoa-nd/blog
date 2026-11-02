@@ -36,6 +36,10 @@ itself still works for anyone who has the URL: private means unlisted, not secre
 (the entry is still in this repository's `content/blogs.json`). To publish it, delete
 the field or set it to `"public"`.
 
+To see every post, private ones included, open `/blogs/?display=yes`. Private
+cards are in the listing page's HTML but hidden; that flag un-hides them and
+marks each with a "Private" badge.
+
 JSON is used rather than JavaScript because it is far less punishing to
 hand-edit: every editor validates it as you type, and a stray comma is caught
 immediately instead of silently blanking the page.

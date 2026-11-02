@@ -153,10 +153,14 @@ const fmtDate = (d) => { const [y, m, day] = d.split("-").map(Number); return `$
 const isPublic = (b) => (b.visibility || "public") === "public";
 const PUBLIC_BLOGS = BLOGS.filter(isPublic);
 const blogsByDate = () => PUBLIC_BLOGS.slice().sort((a, b) => b.date.localeCompare(a.date));
+/* Private cards are rendered too, but hidden; /blogs/?display=yes shows them
+   (the small script at the bottom of blogs/index.html). */
+const allBlogsByDate = () => BLOGS.slice().sort((a, b) => b.date.localeCompare(a.date));
 function blogCard(b) {
   return highlightCard({ title: b.title, kicker: b.kicker, date: fmtDate(b.date), desc: b.desc, url: b.file,
-    cta: b.cta || "Read", image: b.image, imageAlt: b.imageAlt }, 1, esc)
-    .replace('<a class="highlight-card', '<a class="highlight-card blog-card')
+    cta: b.cta || "Read", image: b.image, imageAlt: b.imageAlt, badge: isPublic(b) ? "" : "Private" }, 1, esc)
+    .replace('<a class="highlight-card', isPublic(b) ? '<a class="highlight-card blog-card'
+      : '<a hidden data-visibility="private" class="highlight-card blog-card')
     .replace(/<span>([^<]*)<\/span><\/p>/, (m, meta) => `<span>${meta.replace(/ · (\d+ \w+ \d{4})$/, ' · <time datetime="' + b.date + '">$1</time>')}</span></p>`);
 }
 
@@ -195,7 +199,7 @@ tags ? `\n<div class="tags">${tags}</div>` : ""}</div></article>`;
     .sort((a, b) => (STATUS_ORDER[a.status] ?? 3) - (STATUS_ORDER[b.status] ?? 3) || a.title.localeCompare(b.title))
     .map(bookCard).join("\n"),
 
-  "blog-list": blogsByDate().map(blogCard).join("\n"),
+  "blog-list": allBlogsByDate().map(blogCard).join("\n"),
   "blog-count": String(PUBLIC_BLOGS.length),
 
   "hero-intro": rich(SITE.intro || ""),

@@ -430,6 +430,10 @@ figure.code.out pre { max-height: 420px; }
   .hero.banner { min-height: 0; padding-top: 140px; background: linear-gradient(180deg, rgba(22, 13, 6, .35) 0%, rgba(22, 13, 6, .92) 46%), url("alexandria/alexandria-hero.jpg") center top / auto 300px no-repeat, #1a1008; }
   .bigpic-frame { padding: 4px; }
 }
+.bigpic-sec > h2.after-fig { font-size: 26px; margin-top: 22px; }
+.bigpic-sec .cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 960px) { .bigpic-sec .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .bigpic-sec .cards { grid-template-columns: minmax(0, 1fr); } }
 </style>
 </head>
 <body>
@@ -463,12 +467,25 @@ figure.code.out pre { max-height: 420px; }
       <span class="fact"><b>AI</b> any model through one gateway</span>
       <span class="fact"><b>Run cost</b> $0 on free tiers, ≈ $3–8 / month paid</span>
     </div>
+    <h2 class="after-fig" id="what-you-learn">What you could learn</h2>
+    <p class="lede">Finishing Alexandria teaches more than the code. These lessons carry over to any AI product you build next.</p>
+    <div class="cards">
+      <div class="card"><h3>Turning a wish into something measurable</h3><p>&ldquo;I want good books&rdquo; has to become tastes you can name, one pick a day, and a reaction you can count. Most AI projects stall at this step.</p></div>
+      <div class="card"><h3>When to use AI, and when not to</h3><p>Plain rules do most of the work, and the model steps in only where judgment is needed. You learn not to make everything an agent.</p></div>
+      <div class="card"><h3>Making AI earn your trust</h3><p>Every claim on the page points to a real review, and nothing changes your profile without your approval. You design for &ldquo;show me&rdquo;, not &ldquo;trust me&rdquo;.</p></div>
+      <div class="card"><h3>Learning from a few taps a day</h3><p>Four buttons are enough to steer the system. You see the balance between serving what you already like and trying something new.</p></div>
+      <div class="card"><h3>Building to a budget</h3><p>Free tiers, a daily spending cap and backup models. Cost becomes a choice you make up front, not a surprise bill.</p></div>
+      <div class="card"><h3>Being a good guest on the web</h3><p>Reading each site&rsquo;s rules, going slowly, and leaving alone the sites that say no. This is where &ldquo;can I collect this&rdquo; meets &ldquo;should I&rdquo;.</p></div>
+      <div class="card"><h3>Life after launch</h3><p>Something that runs while you sleep still needs looking after: a glance each week, a review each month, and knowing what &ldquo;broken&rdquo; looks like.</p></div>
+      <div class="card"><h3>Something about your own taste</h3><p>The weekly reflection and the record of your reactions show patterns in your reading you may not have noticed.</p></div>
+    </div>
   </section>
 
   <div class="shell">
     <nav class="rail" aria-label="Sections">
       <span class="label">Sections</span>
       <a href="#map"><span class="n">◎</span><span>Big picture</span><span class="p"></span></a>
+      <a href="#what-you-learn"><span class="n">★</span><span>What you could learn</span><span class="p"></span></a>
       <a href="#scope"><span class="n">1</span><span>Scope</span><span class="p"></span></a>
       <a href="#taste"><span class="n">2</span><span>Taste registry</span><span class="p"></span></a>
       <a href="#discover"><span class="n">3</span><span>Discover</span><span class="p"></span></a>
