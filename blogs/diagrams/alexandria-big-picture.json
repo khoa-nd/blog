@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Alexandria: the big picture",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "viewBox": [1150, 560]
+  },
+  "components": [
+    { "id": "sites", "type": "external", "label": "Tracked sites", "sublabel": "bookstores · publishers", "pos": [270, 50], "size": [150, 72] },
+    { "id": "gateway", "type": "cloud", "label": "AI gateway", "sublabel": "any model, one API", "pos": [615, 50], "size": [150, 72] },
+    { "id": "taste", "type": "database", "label": "Taste registry", "sublabel": "web form + history", "pos": [40, 220], "size": [150, 72] },
+    { "id": "discover", "type": "backend", "label": "1 Discover", "sublabel": "candidate pool", "pos": [270, 220], "size": [150, 72] },
+    { "id": "shortlist", "type": "backend", "label": "2 Shortlist", "sublabel": "score · bandit", "pos": [500, 220], "size": [150, 72] },
+    { "id": "review", "type": "backend", "label": "3 Review check", "sublabel": "evidence + digest", "pos": [730, 220], "size": [150, 72] },
+    { "id": "recommend", "type": "backend", "label": "4 Recommend", "sublabel": "1 book a day", "pos": [960, 220], "size": [150, 72] },
+    { "id": "me", "type": "external", "label": "Me", "sublabel": "the reader", "pos": [960, 440], "size": [150, 72] },
+    { "id": "reactions", "type": "backend", "label": "5 Reactions", "sublabel": "4 signals", "pos": [500, 440], "size": [150, 72] },
+    { "id": "learn", "type": "backend", "label": "Learn", "sublabel": "bandit · scorer", "pos": [40, 440], "size": [150, 72] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Nightly pipeline · GitHub Actions cron", "wraps": ["discover", "shortlist", "review", "recommend"] }
+  ],
+  "connections": [
+    { "id": "taste-to-discover", "from": "taste", "to": "discover", "label": "facets", "variant": "emphasis" },
+    { "id": "sites-to-discover", "from": "sites", "to": "discover", "label": "polite crawl", "labelDy": 24 },
+    { "id": "discover-to-shortlist", "from": "discover", "to": "shortlist", "label": "pool", "variant": "emphasis" },
+    { "id": "shortlist-to-review", "from": "shortlist", "to": "review", "label": "top 3", "variant": "emphasis" },
+    { "id": "gateway-to-shortlist", "from": "gateway", "to": "shortlist", "label": "judge", "variant": "dashed", "fromSide": "bottom", "toSide": "top" },
+    { "id": "gateway-to-review", "from": "gateway", "to": "review", "label": "digest", "variant": "dashed", "fromSide": "bottom", "toSide": "top" },
+    { "id": "review-to-recommend", "from": "review", "to": "recommend", "label": "1 pick", "variant": "emphasis" },
+    { "id": "recommend-to-me", "from": "recommend", "to": "me", "label": "page on my blog", "variant": "emphasis", "labelDy": 24 },
+    { "id": "me-to-reactions", "from": "me", "to": "reactions", "label": "want · not · finished · comment" },
+    { "id": "reactions-to-learn", "from": "reactions", "to": "learn", "label": "rewards" },
+    { "id": "learn-to-taste", "from": "learn", "to": "taste", "label": "update weights", "variant": "emphasis" }
+  ]
+}

@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Shelf System Design — Nguyễn Đăng Khoa</title>
-<meta name="description" content="System design for Shelf, an autonomous book curator: discover, shortlist by taste, check reviews, recommend one book a day, and learn from reactions. Draft for review.">
+<title>Alexandria System Design — Nguyễn Đăng Khoa</title>
+<meta name="description" content="Alexandria, an autonomous personalized book curator: polite crawling of tracked bookstores, taste-based shortlisting, evidence-checked reviews, one book a day on my blog, an AI gateway with a cost comparison including free tiers, and a learning loop driven by my reactions.">
 <link rel="canonical" href="https://nguyendangkhoa.info/blogs/autonomous-book-curator-system-design.html">
 <meta property="og:type" content="article">
-<meta property="og:title" content="System Design: An Autonomous Book Curator That Learns My Taste">
-<meta property="og:description" content="Five fixed stages, one book a day, a taste registry that changes over time, and a learning loop driven by my reactions. Design draft, not built yet.">
+<meta property="og:title" content="Alexandria: An Autonomous Personalized Book Curator That Learns My Taste - P1 System Design">
+<meta property="og:description" content="One book a day, picked against my taste from bookstores I track, checked against reviews, and tuned by my reactions. Any AI model through one gateway, from $0 on free tiers.">
 <meta property="og:url" content="https://nguyendangkhoa.info/blogs/autonomous-book-curator-system-design.html">
 <meta property="og:image" content="https://nguyendangkhoa.info/blogs/thumbs/autonomous-book-curator-system-design.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#f7f8f6">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>📚</text></svg>">
+<meta name="theme-color" content="#2a1b0e">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>📜</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -363,13 +363,6 @@ figure.code.out pre { max-height: 420px; }
 .hljs-meta { color: var(--hl-com); }
 .hljs-subst { color: var(--ink); }
 /* Curator page */
-.bigpic { margin: 4px 0 0; display: grid; gap: 8px; }
-.bigpic iframe { display: block; width: 100%; height: 820px; border: 1px solid var(--rule); border-radius: 10px; background: var(--sheet); }
-@media (max-width: 900px) { .bigpic iframe { height: 900px; } }
-.bigpic-img { display: none; }
-.bigpic-img img { display: block; width: 100%; height: auto; border: 1px solid var(--rule); border-radius: 10px; }
-.bigpic figcaption { font-size: 13px; color: var(--muted); }
-@media (max-width: 760px) { .bigpic iframe { display: none; } .bigpic-img { display: block; } }
 .status { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--cost); background: var(--cost-soft); border-radius: 999px; padding: 4px 12px; width: fit-content; }
 .status i { width: 8px; height: 8px; border-radius: 50%; background: var(--cost); }
 .floor.loop { grid-template-columns: repeat(7, minmax(0, 1fr)); }
@@ -411,111 +404,71 @@ figure.code.out pre { max-height: 420px; }
   .arch { grid-template-columns: minmax(0, 1fr); }
   .arch .flow { transform: rotate(90deg); height: 18px; }
 }
+
+/* Alexandria */
+.hero.banner { position: relative; display: grid; gap: 14px; align-content: end; min-height: 420px; padding: clamp(26px, 5vw, 56px); border: 0; border-radius: 14px; overflow: hidden; color: #fdf4e3;
+  background: linear-gradient(90deg, rgba(22, 13, 6, .92) 0%, rgba(22, 13, 6, .78) 42%, rgba(22, 13, 6, .28) 100%), url("alexandria/alexandria-hero.jpg") center 40% / cover no-repeat, #2a1b0e; }
+.hero.banner .eyebrow { color: #e9cf98; }
+.hero.banner h1 { color: #fff7e8; max-width: 26ch; font-size: clamp(28px, 4.2vw, 46px); }
+.hero.banner .h1-part { font-weight: 500; color: #e9cf98; }
+.hero.banner .sub { color: #f2e4c4; max-width: 62ch; }
+.hero.banner .credit { font-size: 11.5px; color: rgba(242, 228, 196, .72); max-width: 70ch; }
+.hero.banner .credit a { color: inherit; }
+.bigpic-sec { margin-top: 40px; gap: 14px; }
+.bigpic-sec > h2 { font-size: 30px; }
+.bigpic { margin: 0; display: grid; gap: 8px; }
+.bigpic-frame { display: block; background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 10px; }
+.bigpic-frame img { display: block; width: 100%; height: auto; }
+.bigpic figcaption { font-size: 13px; color: var(--muted); }
+.bigpic-sec .facts { margin-top: 4px; }
+.sub-h { font-family: var(--body); font-size: 17px; font-weight: 600; margin-top: 6px; }
+.tg .cbox { font-size: 13px; color: var(--muted); border: 1px dashed var(--rule); border-radius: 8px; padding: 8px 10px; }
+.tag { display: inline-block; font-size: 11.5px; font-weight: 600; letter-spacing: .02em; padding: 1px 8px; border-radius: 999px; margin-right: 4px; }
+.tag.done { color: var(--ok); background: var(--ok-soft); }
+.tag.open { color: var(--cost); background: var(--cost-soft); }
+@media (max-width: 700px) {
+  .hero.banner { min-height: 0; padding-top: 140px; background: linear-gradient(180deg, rgba(22, 13, 6, .35) 0%, rgba(22, 13, 6, .92) 46%), url("alexandria/alexandria-hero.jpg") center top / auto 300px no-repeat, #1a1008; }
+  .bigpic-frame { padding: 4px; }
+}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header class="hero">
-    <span class="eyebrow">System design · draft v0.1 for review</span>
-    <h1>Shelf: an autonomous book curator that learns my taste</h1>
+  <header class="hero banner">
+    <span class="eyebrow">P1 · System design · draft for review</span>
+    <h1>Alexandria: An Autonomous Personalized Book Curator That Learns My Taste<span class="h1-part"> - P1 System Design</span></h1>
+    <p class="sub">Named after the Library of Alexandria, which set out to collect every book in the known world. This one collects only the books worth my time: one a day, picked against my taste, checked against what readers and critics say, and tuned by how I react.</p>
+    <span class="credit">Banner: <em>The Great Library of Alexandria</em>, engraving by O. Von Corven, 19th century. Public domain; scan via <a href="https://commons.wikimedia.org/wiki/File:The_Great_Library_of_Alexandria_-_Colorized.jpg">Wikimedia Commons</a> (CC0), toned sepia.</span>
+  </header>
+
+  <!-- Big picture -->
+  <section class="block bigpic-sec" id="map" aria-labelledby="map-title">
+    <span class="eyebrow">The big picture</span>
+    <h2 id="map-title">A loop, not an agent</h2>
+    <p class="lede">Seven parts in a fixed order, run on a schedule. The LLM works inside a part with a narrow job and a typed output; it never decides what runs next.</p>
     <figure class="bigpic">
-      <iframe src="diagrams/shelf-big-picture.html" title="Shelf big-picture diagram"></iframe>
-      <picture class="bigpic-img">
-        <source srcset="diagrams/shelf-big-picture-dark.png" media="(prefers-color-scheme: dark)">
-        <img src="diagrams/shelf-big-picture-light.png" alt="Shelf big picture: taste registry feeds a nightly pipeline of Discover, Shortlist, Review check and Recommend; Claude judges and writes; the pick reaches me by Telegram, email and blog; my reactions become rewards that Learn uses to update the taste registry.">
-      </picture>
-      <figcaption>The whole system at a glance. <a href="diagrams/shelf-big-picture.html">Open the interactive diagram ↗</a> · Everything below is the detail.</figcaption>
+      <a class="bigpic-frame" href="diagrams/alexandria-big-picture.html" aria-label="Open the interactive version of the diagram">
+        <picture>
+          <source srcset="diagrams/alexandria-big-picture-dark.png" media="(prefers-color-scheme: dark)">
+          <img src="diagrams/alexandria-big-picture-light.png" width="1150" height="560" alt="Alexandria big picture: the taste registry feeds a nightly pipeline of Discover, Shortlist, Review check and Recommend, run by GitHub Actions. Tracked sites are crawled politely into Discover; the AI gateway judges at Shortlist and writes the digest at Review check. The pick reaches me as a page on my blog; my want, not, finished and comment signals become rewards that Learn uses to update the taste registry.">
+        </picture>
+      </a>
+      <figcaption><a href="diagrams/alexandria-big-picture.html">Open the interactive version ↗</a> · Everything below is the detail.</figcaption>
     </figure>
-    <p class="sub">One book a day, picked for me. Shelf finds candidates, shortlists them against my recorded taste, checks what readers and critics say, sends me one recommendation, and treats my reaction as the reward that tunes tomorrow's pick. This page is the design; nothing is built yet.</p>
-    <span class="status"><i></i>Status: design for review. No code until the open decisions at the end are settled.</span>
+    <span class="status"><i></i>Status: P1 system design, for review. No code until the open decisions in section 12 are settled.</span>
     <div class="facts">
       <span class="fact"><b>Cadence</b> 1 book / day, 07:00 ICT</span>
       <span class="fact"><b>Stages</b> Discover → Shortlist → Review → Recommend → React</span>
-      <span class="fact"><b>Learning</b> bandit now, reward model later</span>
-      <span class="fact"><b>Run cost</b> ≈ $8–10 / month</span>
-      <span class="fact"><b>Servers</b> none to manage</span>
-    </div>
-  </header>
-
-  <!-- The loop -->
-  <section class="factory" id="map" aria-labelledby="map-title">
-    <div class="fx-top">
-      <div class="fx-intro">
-        <span class="eyebrow">The big picture</span>
-        <h2 id="map-title">A loop, not an agent</h2>
-        <p class="lede">Seven parts in a fixed order, run on a schedule. The LLM works inside a part with a narrow job and a typed output; it never decides what runs next. Click a part to see what goes in, what runs, and what comes out.</p>
-      </div>
-      <div class="fx-ctrl">
-        <button type="button" id="fx-prev" aria-label="Previous part">‹ Prev</button>
-        <button type="button" id="fx-play" aria-pressed="false">▶ Play</button>
-        <button type="button" id="fx-next" aria-label="Next part">Next ›</button>
-      </div>
-    </div>
-
-    <div class="floor loop" id="fx-floor">
-      <div class="fx-rail qc" aria-hidden="true"><span>Evidence rule: no claim without a source</span></div>
-
-      <button type="button" class="bay" data-i="0" aria-current="step">
-        <span class="ic"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/></svg></span>
-        <span class="tx"><span class="no">STATE</span><span class="nm">Taste registry</span><span class="mt">What I like, with history</span></span>
-        <span class="tags"><span>Postgres</span></span>
-      </button>
-      <button type="button" class="bay" data-i="1">
-        <span class="ic"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5.5 5.5"/></svg></span>
-        <span class="tx"><span class="no">STAGE 1</span><span class="nm">Discover</span><span class="mt">APIs, lists, prizes, search</span></span>
-        <span class="tags"><span>weekly + daily</span></span>
-      </button>
-      <button type="button" class="bay" data-i="2">
-        <span class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h16l-6 7v6l-4 2v-8z"/></svg></span>
-        <span class="tx"><span class="no">STAGE 2</span><span class="nm">Shortlist</span><span class="mt">Filter, score, pick a slot</span></span>
-        <span class="tags"><span>nightly</span></span>
-      </button>
-      <button type="button" class="bay" data-i="3">
-        <span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg></span>
-        <span class="tx"><span class="no">STAGE 3</span><span class="nm">Review check</span><span class="mt">Ratings, critics, Reddit</span></span>
-        <span class="tags"><span>nightly</span></span>
-      </button>
-      <button type="button" class="bay" data-i="4">
-        <span class="ic"><svg viewBox="0 0 24 24"><path d="M3 11l18-8-8 18-2-8z"/></svg></span>
-        <span class="tx"><span class="no">STAGE 4</span><span class="nm">Recommend</span><span class="mt">Chat, email, blog post</span></span>
-        <span class="tags"><span>07:00 ICT</span></span>
-      </button>
-      <button type="button" class="bay" data-i="5">
-        <span class="ic"><svg viewBox="0 0 24 24"><path d="M7 11v9H4v-9zM7 11l4-8a2 2 0 0 1 2 2v4h5.5a2 2 0 0 1 2 2.3l-1.2 7A2 2 0 0 1 17.3 20H7"/></svg></span>
-        <span class="tx"><span class="no">STAGE 5</span><span class="nm">Reactions</span><span class="mt">Buttons, comments, silence</span></span>
-        <span class="tags"><span>any time</span></span>
-      </button>
-      <button type="button" class="bay" data-i="6">
-        <span class="ic"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 13.7-5.6L20 9"/><path d="M20 4v5h-5"/><path d="M20 12a8 8 0 0 1-13.7 5.6L4 15"/><path d="M4 20v-5h5"/></svg></span>
-        <span class="tx"><span class="no">LOOP</span><span class="nm">Learn</span><span class="mt">Rewards tune weights</span></span>
-        <span class="tags"><span>instant + weekly</span></span>
-      </button>
-
-      <div class="conveyor" id="fx-belt" aria-hidden="true"><span class="crate" id="fx-crate"></span></div>
-      <div class="fx-rail back" aria-hidden="true"><span>Learning loop: every reaction becomes a reward that updates taste weights, the slot bandit and the scorer</span></div>
-    </div>
-
-    <div class="fx-detail" id="fx-detail" aria-live="polite">
-      <div class="fx-dhead">
-        <span class="no" id="fx-d-no"></span>
-        <h3 id="fx-d-title"></h3>
-        <p id="fx-d-why"></p>
-      </div>
-      <div class="fx-io">
-        <div><b>In</b><ul id="fx-d-in"></ul></div>
-        <span class="to" aria-hidden="true">→</span>
-        <div><b>Run</b><ul id="fx-d-do"></ul></div>
-        <span class="to" aria-hidden="true">→</span>
-        <div class="out"><b>Out</b><ul id="fx-d-out"></ul></div>
-      </div>
-      <div class="fx-tech" id="fx-d-tech"></div>
+      <span class="fact"><b>Data</b> polite web crawl, no paid APIs</span>
+      <span class="fact"><b>AI</b> any model through one gateway</span>
+      <span class="fact"><b>Run cost</b> $0 on free tiers, ≈ $3–8 / month paid</span>
     </div>
   </section>
 
   <div class="shell">
     <nav class="rail" aria-label="Sections">
       <span class="label">Sections</span>
-      <a href="#map"><span class="n">◎</span><span>The loop</span><span class="p"></span></a>
+      <a href="#map"><span class="n">◎</span><span>Big picture</span><span class="p"></span></a>
       <a href="#scope"><span class="n">1</span><span>Scope</span><span class="p"></span></a>
       <a href="#taste"><span class="n">2</span><span>Taste registry</span><span class="p"></span></a>
       <a href="#discover"><span class="n">3</span><span>Discover</span><span class="p"></span></a>
@@ -524,31 +477,31 @@ figure.code.out pre { max-height: 420px; }
       <a href="#recommend"><span class="n">6</span><span>Recommend</span><span class="p"></span></a>
       <a href="#react"><span class="n">7</span><span>Reactions</span><span class="p"></span></a>
       <a href="#learn"><span class="n">8</span><span>Learning</span><span class="p"></span></a>
-      <a href="#arch"><span class="n">9</span><span>Architecture</span><span class="p"></span></a>
+      <a href="#stack"><span class="n">9</span><span>Tech stack</span><span class="p"></span></a>
       <a href="#guard"><span class="n">10</span><span>Guardrails</span><span class="p"></span></a>
-      <a href="#cost"><span class="n">$</span><span>Cost</span><span class="p"></span></a>
-      <a href="#plan"><span class="n">→</span><span>Roadmap</span><span class="p"></span></a>
-      <a href="#decide"><span class="n">?</span><span>Decisions</span><span class="p"></span></a>
+      <a href="#cost"><span class="n">11</span><span>Cost estimation</span><span class="p"></span></a>
+      <a href="#decide"><span class="n">12</span><span>Open decisions</span><span class="p"></span></a>
     </nav>
 
     <main>
       <!-- 1 -->
       <section class="block" id="scope">
-        <h2>1. What Shelf is, and what it isn't</h2>
+        <h2>1. What Alexandria is, and what it isn't</h2>
         <p class="lede">"Autonomous" here means it runs every day without me: it wakes on a schedule, does the same five stages in the same order, and stops. It is not an open-ended agent that decides its own next step. That choice makes it cheap, testable, and easy to replay when a pick goes wrong.</p>
         <div class="tbl"><table>
           <thead><tr><th>Requirement</th><th>What it means in practice</th></tr></thead>
           <tbody>
-            <tr><td><strong>F1 Taste registry</strong></td><td>My tastes live in a database with their history. I can add, reweight or pause a taste at any time from chat.</td></tr>
-            <tr><td><strong>F2 Discover</strong></td><td>Pull candidates from book APIs, bestseller lists, prize lists and web search, including stores that ship to Vietnam.</td></tr>
+            <tr><td><strong>F1 Taste registry</strong></td><td>My tastes live in a database with their history. I add, reweight or pause a taste from a web form on this site; Telegram commands come later.</td></tr>
+            <tr><td><strong>F2 Discover</strong></td><td>Crawl the bookstore and publisher sites I track. I add sites from the same web form; a seed list comes preloaded.</td></tr>
             <tr><td><strong>F3 Shortlist</strong></td><td>Filter and score candidates against my taste; plan which taste gets today's slot.</td></tr>
-            <tr><td><strong>F4 Review check</strong></td><td>Gather ratings and reviews (Goodreads, Google, Reddit, critics) and write an honest digest with sources.</td></tr>
-            <tr><td><strong>F5 Recommend</strong></td><td>One book a day by chat message, email, and an auto-published post in a "Book suggestions" section of this site.</td></tr>
-            <tr><td><strong>F6 Reactions</strong></td><td>Capture likes, dislikes, comments, purchases, finishes, and silence.</td></tr>
+            <tr><td><strong>F4 Review check</strong></td><td>Gather ratings and reviews from the tracked sites and critics' pages, and write an honest digest with sources.</td></tr>
+            <tr><td><strong>F5 Recommend</strong></td><td>One book a day, published as a page on this site. That page is the whole channel for the proof of concept; Telegram comes later.</td></tr>
+            <tr><td><strong>F6 Reactions</strong></td><td>Record four signals on that page: Want it, Not for me, Finished, and a comment.</td></tr>
             <tr><td><strong>F7 Learn</strong></td><td>Turn reactions into rewards that change future picks, the way RL does, at a data rate of one label a day.</td></tr>
-            <tr><td><strong>N1 Truthful</strong></td><td>Every rating, quote and price comes from a fetched source with a date. No source, no claim.</td></tr>
-            <tr><td><strong>N2 Within the rules</strong></td><td>Official APIs first. No scraping of sites whose terms forbid it.</td></tr>
-            <tr><td><strong>N3 Cheap and quiet</strong></td><td>Around $10 a month, no server to babysit, one summary line a day when everything is fine.</td></tr>
+            <tr><td><strong>N1 Truthful</strong></td><td>Every rating, quote and price comes from a fetched page with a date. No source, no claim.</td></tr>
+            <tr><td><strong>N2 Polite</strong></td><td>The crawler obeys robots.txt and crawl delays, says who it is, and keeps a site link-only when its terms forbid robots.</td></tr>
+            <tr><td><strong>N3 Affordable and Quiet</strong></td><td>No paid data APIs. The only paid service is the AI model, and free tiers can cover the proof of concept. No server to babysit; one status line a day on the console page.</td></tr>
+            <tr><td><strong>N4 Model-agnostic</strong></td><td>Every AI call goes through one gateway, so changing the model is a config edit, and models can be compared on my own data.</td></tr>
           </tbody>
         </table></div>
       </section>
@@ -556,7 +509,7 @@ figure.code.out pre { max-height: 420px; }
       <!-- 2 -->
       <section class="block" id="taste">
         <h2>2. The taste registry</h2>
-        <p class="lede">Taste is data with a timeline. Every change is an event, so Shelf can answer "what did I like in March?" and the learning loop can tell a real shift in taste from a bad week.</p>
+        <p class="lede">Taste is data with a timeline. Every change is an event, so Alexandria can answer "what did I like in March?" and the learning loop can tell a real shift in taste from a bad week.</p>
         <div class="tbl"><table>
           <thead><tr><th>Facet</th><th>Starting priority</th><th>Notes the scorer uses</th></tr></thead>
           <tbody>
@@ -568,38 +521,43 @@ figure.code.out pre { max-height: 420px; }
             <tr><td>Psychology</td><td class="num">0.55</td><td>Seeded by <em>Thinking, Fast and Slow</em> (rated 4★)</td></tr>
             <tr><td>Pulitzer Prize winners</td><td class="num">0.50</td><td>A quality signal that boosts any facet, plus its own slot</td></tr>
             <tr><td>Classics</td><td class="num">0.40</td><td>Rotates with new releases</td></tr>
-            <tr><td>Hot new releases</td><td class="num">0.40</td><td>Published in the last 12 months, from bestseller lists and reviews</td></tr>
+            <tr><td>Hot new releases</td><td class="num">0.40</td><td>Published in the last 12 months, from the tracked sites' new-release pages</td></tr>
           </tbody>
         </table></div>
         <div class="cards">
-          <div class="card"><h3>Register a new taste</h3><p>From chat: <code>/taste add "history of chemistry" high</code>, <code>/taste pause classics</code>, <code>/taste weight ai 0.9</code>. A free-text message like "I want more books like The Code Breaker" is parsed by a small model into a proposed change, and I confirm with one tap.</p></div>
+          <div class="card"><h3>Register a new taste</h3><p>A web form on this site first: a console page lists the current facets and lets me add, reweight or pause one. Only requests carrying my owner key count. A free-text box ("more books like The Code Breaker") is parsed into a proposed change that I confirm with one click. Telegram commands come later.</p></div>
           <div class="card"><h3>Kept time by time</h3><p><code>taste_event</code> is append-only (add, reweight, pause, remove, note). The current profile is a view over it. A monthly snapshot gives a taste timeline I can read later.</p></div>
-          <div class="card"><h3>Cold start</h3><p>Seed from the 8 books already on <a href="../books.html">my reading list</a> (titles, ratings, notes), a short chat interview (10 favorites, 5 books I didn't enjoy), and a Goodreads CSV export if I have one. Day 1 picks use these priors.</p></div>
+          <div class="card"><h3>Cold start</h3><p>Seed from the 8 books already on <a href="../books.html">my reading list</a> (titles, ratings, notes), a short form (10 favorites, 5 books I didn't enjoy), and a Goodreads CSV export if I have one. Day 1 picks use these priors.</p></div>
         </div>
       </section>
 
       <!-- 3 -->
       <section class="block" id="discover">
         <h2>3. Stage 1: Discover</h2>
-        <p class="lede">A wide crawl every Sunday builds the candidate pool (a few hundred books a week). A small daily pull adds fresh releases and new lists. Everything is stored per <em>work</em> (one book, many editions), keyed by ISBN-13 and Open Library work ID, so the same book from five sources is one candidate.</p>
-        <p>Several sources changed their rules in 2025–2026. The table records what was true when I checked on Nov 1, 2026, and how Shelf uses each one.</p>
+        <p class="lede">Alexandria crawls the sites I track: bookstores and publishers I register in a web form, the same way I register tastes. A wide crawl every Sunday builds the candidate pool; a small daily crawl picks up new releases. No paid data APIs.</p>
+        <p>The form takes a site URL, its kind (bookstore, publisher, prize, review), the pages to watch (new releases, a category), and the language. Before the first crawl, Alexandria reads the site's robots.txt and sets its mode: <strong>crawl</strong>, or <strong>link-only</strong> (no fetching; store search links only). The seed list below is preloaded, with modes from robots.txt checked on Nov 2, 2026.</p>
         <div class="tbl"><table>
-          <thead><tr><th>Source</th><th>Access today</th><th>Role in Shelf</th></tr></thead>
+          <thead><tr><th>Seed site</th><th>What it watches</th><th>Mode</th><th>Why</th></tr></thead>
           <tbody>
-            <tr><td>Google Books API</td><td>Official, free with a key</td><td>Metadata backbone: subjects, descriptions, page counts, editions</td></tr>
-            <tr><td>Open Library</td><td>Official, free; asks clients to identify themselves and stay under its rate limits</td><td>Canonical work IDs, subjects, covers for blog posts</td></tr>
-            <tr><td>NYT Books API</td><td>Official, free key for non-commercial use</td><td>"Hot new release" signal: weekly bestseller lists</td></tr>
-            <tr><td>Pulitzer.org, Royal Society Science Book Prize</td><td>Public winner lists</td><td>Prize seeds, refreshed once a year</td></tr>
-            <tr><td>Hardcover</td><td>GraphQL API in beta; personal token; terms may change</td><td>Ratings and reader counts, the closest open substitute for Goodreads data</td></tr>
-            <tr><td>Goodreads</td><td>No new API keys since Dec 2020; scraping is blocked and against its terms</td><td>Only the rating shown in web search results, and my own library export</td></tr>
-            <tr><td>Reddit</td><td>Data API needs approval under the Responsible Builder Policy (Nov 2025)</td><td>Apply for personal, non-commercial access; until approved, find threads through web search</td></tr>
-            <tr><td>Web search</td><td>Google's Custom Search JSON API is closed to new customers and shuts down Jan 1, 2027</td><td>Brave Search API instead (pay per query, small monthly credit)</td></tr>
-            <tr><td>Amazon</td><td>PA-API 5 was deprecated in May 2026; its replacement, the Creators API, needs an Associates account</td><td>Search links only at first; prices if I join Associates</td></tr>
-            <tr><td>Shopee</td><td>Affiliate Open API for approved affiliates (documented for Brazil; Vietnam not confirmed)</td><td>Search links only at first; prices if the Vietnam affiliate API is available to me</td></tr>
-            <tr><td>Tiki, Fahasa</td><td>No public API</td><td>Search links, including for Vietnamese translations</td></tr>
+            <tr><td>Penguin Random House</td><td>New releases; science, history and philosophy categories</td><td>crawl</td><td>robots.txt allows catalog pages (blocks only search)</td></tr>
+            <tr><td>Tiki</td><td>Book categories and new arrivals; Vietnamese and imported editions with VN prices</td><td>crawl, slow</td><td>robots.txt allows product and category pages, and publishes a sitemap</td></tr>
+            <tr><td>Fahasa</td><td>Book categories; Vietnamese editions and prices</td><td>crawl</td><td>robots.txt blocks only account, cart and checkout pages</td></tr>
+            <tr><td>Nhã Nam</td><td>Vietnamese translations of the books I'm offered</td><td>crawl, 10 s apart</td><td>robots.txt asks for a 10-second crawl delay</td></tr>
+            <tr><td>Pulitzer Prize</td><td>Winners by category</td><td>crawl, yearly</td><td>allowed</td></tr>
+            <tr><td>The Guardian books</td><td>Critics' reviews (used in Stage 3)</td><td>crawl</td><td>allowed</td></tr>
+            <tr><td>Amazon</td><td>—</td><td>link-only</td><td>robots.txt allows many pages, but Amazon's Conditions of Use forbid robots and data extraction</td></tr>
+            <tr><td>Shopee</td><td>—</td><td>link-only</td><td>until its terms are checked; a search link is enough to buy</td></tr>
+            <tr><td>O'Reilly</td><td>—</td><td>link-only for now</td><td>its robots.txt returned 403 to a bot request</td></tr>
           </tbody>
         </table></div>
-        <div class="tip"><b>Design rule.</b> Each source is an adapter with the same contract: <code>search(query, facet) → [WorkHit]</code>, its own rate limit and cache, and a health flag. When a source breaks or changes its terms, Shelf drops it and keeps going; it never falls back to scraping.</div>
+        <div class="cards">
+          <div class="card"><h3>Read the rules first</h3><p>robots.txt, crawl-delay, and the site's terms decide the mode. A site that forbids robots stays link-only, however useful it would be.</p></div>
+          <div class="card"><h3>Find pages</h3><p>Start from sitemaps and the watched listing pages. Never crawl search result pages, and never log in.</p></div>
+          <div class="card"><h3>Extract</h3><p>Read schema.org <code>Book</code> / <code>Product</code> data embedded in the page when it's there. Otherwise a small model behind the AI gateway extracts title, author, ISBN, price and rating into a typed record.</p></div>
+          <div class="card"><h3>Be gentle</h3><p>At least 10 seconds between requests to one site, a daily page cap per site, conditional requests (ETag) so unchanged pages cost nothing, and a user agent that names Alexandria and links back here.</p></div>
+        </div>
+        <p>Everything is stored per <em>work</em> (one book, many editions), keyed by ISBN-13 or normalized title and author, so the same book found on five sites is one candidate.</p>
+        <div class="tip"><b>Design rule.</b> Each tracked site has a mode, a rate limit, a cache and a health flag. When a site starts blocking or changes its terms, it drops to link-only and Alexandria keeps going; it never works around a block.</div>
       </section>
 
       <!-- 4 -->
@@ -608,10 +566,10 @@ figure.code.out pre { max-height: 420px; }
         <p class="lede">From a few hundred candidates to five, in three passes: hard filters, a cheap score, then an LLM judge on the top twenty.</p>
         <div class="cards">
           <div class="card"><span class="lvl">Pass 1</span><h3>Hard filters</h3><ul><li>Not already read, recommended or rejected</li><li>Author cooldown: 30 days</li><li>Buyable in Vietnam, or a Vietnamese edition exists</li><li>Enough ratings to judge, except for releases under 3 months old</li></ul></div>
-          <div class="card"><span class="lvl">Pass 2</span><h3>Cheap score</h3><p><code>score = taste_match + quality + freshness + novelty − penalties</code>, each weighted. Taste match is embedding similarity between the book and each facet. Quality is a Bayesian average rating, so a 4.6 from 12 readers doesn't beat a 4.3 from 40,000, plus a prize bonus.</p></div>
-          <div class="card"><span class="lvl">Pass 3</span><h3>LLM judge</h3><p>Claude Opus 5.5 reads my profile and the top 20 book cards and scores each against a fixed rubric (fit per facet, depth, readability, why now), with a one-line reason. Output is typed JSON, so the reasons are stored and auditable.</p></div>
+          <div class="card"><span class="lvl">Pass 2</span><h3>Cheap score</h3><p><code>score = taste_match + quality + freshness + novelty − penalties</code>, each weighted. Taste match is embedding similarity between the book and each facet. Quality is a Bayesian average of the ratings found on tracked pages, so a 4.6 from 12 readers doesn't beat a 4.3 from 40,000, plus a prize bonus.</p></div>
+          <div class="card"><span class="lvl">Pass 3</span><h3>LLM judge</h3><p>The judge model, called through the AI gateway, reads my profile and the top 20 book cards and scores each against a fixed rubric (fit per facet, depth, readability, why now), with a one-line reason. Output is typed JSON, so the reasons are stored and auditable.</p></div>
         </div>
-        <p><strong>Which taste gets today?</strong> A slot planner picks the facet before the book. It uses Thompson sampling: each facet keeps a Beta distribution of "how often I liked its picks", seeded from my priorities, and the planner samples from each and takes the highest. Math and physics history start ahead, but a facet that keeps getting thumbs-down loses slots on its own. One day a week is a labeled wildcard outside my top facets, so the loop doesn't shrink my taste to what it already knows.</p>
+        <p><strong>Which taste gets today?</strong> A slot planner picks the facet before the book. It uses Thompson sampling: each facet keeps a Beta distribution of "how often I liked its picks", seeded from my priorities, and the planner samples from each and takes the highest. Math and physics history start ahead, but a facet that keeps getting "Not for me" loses slots on its own. One day a week is a labeled wildcard outside my top facets, so the loop doesn't shrink my taste to what it already knows.</p>
       </section>
 
       <!-- 5 -->
@@ -619,8 +577,8 @@ figure.code.out pre { max-height: 420px; }
         <h2>5. Stage 3: Review check</h2>
         <p class="lede">The top three of the shortlist get a full review check. The best of the three after reviews becomes today's pick; the other two are kept as runner-ups.</p>
         <div class="cards">
-          <div class="card"><h3>Gather evidence</h3><ul><li>Ratings and counts: Hardcover, Open Library, Google Books, and the Goodreads rating shown in search results</li><li>Critics: NYT, Guardian, Kirkus, Nature and Science reviews, found by search</li><li>Readers: Reddit threads (API or search)</li></ul><p>Each piece is stored with its URL and fetch time.</p></div>
-          <div class="card"><h3>Write the digest</h3><p>Claude Opus 5.5 writes a structured digest: consensus, strengths, common criticisms, who it's for, how much math it assumes, and red flags (dated science, disputed claims). Every sentence carries the ID of the evidence it came from.</p></div>
+          <div class="card"><h3>Gather evidence</h3><ul><li>Ratings and review counts on the tracked store and publisher pages</li><li>Critics' reviews on tracked review sites, such as The Guardian</li><li>Optional: the model's own web search, when the provider chosen in the gateway offers it, with every result cited</li></ul><p>Each piece is stored with its URL and fetch time.</p></div>
+          <div class="card"><h3>Write the digest</h3><p>The digest model writes a structured summary: consensus, strengths, common criticisms, who it's for, how much math it assumes, and red flags (dated science, disputed claims). Every sentence carries the ID of the evidence it came from.</p></div>
           <div class="card"><h3>Check the digest</h3><p>A validator drops any sentence whose evidence ID doesn't exist or whose source text doesn't support it. Ratings are copied from evidence, never written by the model. If too little survives, the book goes back to the pool and the runner-up moves up.</p></div>
         </div>
         <p>The comparison of the three books is stored too: which one won and why. That gives a ranked group every day, the same group-relative signal GRPO learns from in the <a href="hands-on-wiki-research-agent-post-training-using-sft-grpo-techniques.html">Wikipedia agent tutorial</a>.</p>
@@ -629,12 +587,12 @@ figure.code.out pre { max-height: 420px; }
       <!-- 6 -->
       <section class="block" id="recommend">
         <h2>6. Stage 4: Recommend, one book a day</h2>
-        <p class="lede">At 07:00 ICT the pick goes out on three channels from one stored recommendation, so they never disagree.</p>
+        <p class="lede">At 07:00 ICT the pick is published as a page on this site. For the proof of concept that page is the only channel, and it is also where I react. Telegram comes later.</p>
         <div class="cols">
           <div class="panel">
-            <h3>Chat message (mock-up)</h3>
-            <div class="tg" role="img" aria-label="Mock-up of the daily Telegram message">
-              <span class="who">Shelf · 07:00</span>
+            <h3>Daily pick page (mock-up)</h3>
+            <div class="tg" role="img" aria-label="Mock-up of the daily pick page">
+              <span class="who">Alexandria · Book of the day</span>
               <div class="book">
                 <span class="cover"></span>
                 <div>
@@ -645,20 +603,21 @@ figure.code.out pre { max-height: 420px; }
               </div>
               <div><strong>Why you:</strong> narrative history of physics, your top facet, and a Pulitzer winner.</div>
               <div><strong>Readers say:</strong> three-line digest with sources…</div>
-              <div class="m">Ratings ★ x.x (n) · Buy: Amazon · Shopee · Tiki · Vietnamese edition: …</div>
-              <div class="btns"><span>👍 Want it</span><span>👎 Not for me</span><span>💬 Comment</span><span>📖 Reading</span><span>✅ Finished</span><span>⏸ Hold post</span></div>
+              <div class="m">Ratings ★ x.x (n) · Find it: Tiki · Fahasa · Amazon · Shopee · Vietnamese edition: …</div>
+              <div class="btns"><span>👍 Want it</span><span>👎 Not for me</span><span>✅ Finished</span></div>
+              <div class="cbox">💬 Comment…</div>
             </div>
-            <p class="mock-note">Mock-up only: ratings, prices and the digest are placeholders.</p>
+            <p class="mock-note">Mock-up only: ratings, links and the digest are placeholders.</p>
           </div>
           <div class="panel">
-            <h3>Channels</h3>
+            <h3>How the page works</h3>
             <ul>
-              <li><strong>Chat:</strong> a Telegram bot that answers only my chat ID. Buttons record reactions; replying to the message records a comment.</li>
-              <li><strong>Email:</strong> the same card as HTML, with signed reaction links.</li>
-              <li><strong>Blog post:</strong> a short introduction and review digest with sources, published to a new "Book suggestions" section of this site. Shelf commits the post through the GitHub API, and the site's existing build and GitHub Pages deploy it.</li>
+              <li><strong>One page a day</strong> in a new "Book suggestions" list on this site, with a short introduction, the review digest with sources, and links to find the book.</li>
+              <li><strong>Reactions on the page:</strong> three buttons and a comment box. A small edge function stores the click. Only requests carrying my owner key count, saved once in my browser; visitors' clicks are kept apart and never train anything.</li>
+              <li><strong>Later:</strong> a Telegram bot with the same buttons, sending the same stored recommendation.</li>
             </ul>
-            <p><strong>Publishing gate.</strong> The post goes live at 12:00 unless I press <em>Hold post</em>. Fully automatic, with a five-hour veto.</p>
-            <p><strong>Site change needed.</strong> One post a day would flood the blog index, so suggestions get their own list (<code>content/book-suggestions.json</code>, rendered on <a href="../books.html">Books</a>), and the blog index shows only the latest three.</p>
+            <p><strong>Publishing.</strong> The page is built overnight and goes public at 07:00. From the console page I can hold today's page or skip a day.</p>
+            <p><strong>Site change needed.</strong> One page a day would flood the blog index, so suggestions get their own list (<code>content/book-suggestions.json</code>, rendered on <a href="../books.html">Books</a>), and the blog index shows only the latest three.</p>
           </div>
         </div>
       </section>
@@ -666,97 +625,122 @@ figure.code.out pre { max-height: 420px; }
       <!-- 7 -->
       <section class="block" id="react">
         <h2>7. Stage 5: Recognize my reaction</h2>
-        <p class="lede">Every signal becomes a row in <code>reaction</code>, then a number in <code>reward</code>. Rewards can be revised: finishing a book weeks later updates the reward of the day it was recommended.</p>
+        <p class="lede">Only four signals, all on the daily page. Each becomes a row in <code>reaction</code>, then a number in <code>reward</code>. Rewards can be revised: finishing a book weeks later updates the reward of the day it was recommended.</p>
         <div class="tbl"><table>
-          <thead><tr><th>Signal</th><th>Where it comes from</th><th>Reward</th></tr></thead>
+          <thead><tr><th>Signal</th><th>Where</th><th>Reward</th></tr></thead>
           <tbody>
-            <tr><td>Finished, rated 5★ / 4★ / 3★ or less</td><td>Chat buttons</td><td class="num">1.0 / 0.8 / 0.3</td></tr>
-            <tr><td>Bought (clicked a store link, then confirmed)</td><td>Link redirect + chat</td><td class="num">0.7</td></tr>
-            <tr><td>Want it</td><td>Chat, email, blog</td><td class="num">0.6</td></tr>
-            <tr><td>No reaction in 72 hours</td><td>Timer</td><td class="num">0.35 (weak)</td></tr>
-            <tr><td>Not for me</td><td>Chat, email, blog</td><td class="num">0.0</td></tr>
-            <tr><td>"Already read"</td><td>Chat</td><td>No reward; book marked read, author kept</td></tr>
-            <tr><td>Free-text comment</td><td>Reply to the message</td><td>Parsed into sentiment, aspects and taste suggestions</td></tr>
+            <tr><td>✅ Finished</td><td>Button on that day's page, any time later</td><td class="num">1.0</td></tr>
+            <tr><td>👍 Want it</td><td>Button on the daily page</td><td class="num">0.6</td></tr>
+            <tr><td>👎 Not for me</td><td>Button on the daily page</td><td class="num">0.0</td></tr>
+            <tr><td>💬 Comment</td><td>Comment box on the daily page</td><td>Parsed into sentiment and aspects; moves the reward by up to ±0.2 and can propose a taste change</td></tr>
           </tbody>
         </table></div>
-        <p>A comment such as "great story but too much equation-heavy for a morning read" is parsed by Claude Haiku 5.5 into structured fields: sentiment, aspects (<em>narrative +</em>, <em>math density −</em>), and a suggested change ("lower math depth for weekday picks"). Suggestions never change the registry by themselves; they arrive as a one-tap confirm.</p>
-        <p>Reactions on the public blog post count only when they come from me (a signed link in my email). Visitors' likes are stored separately and don't train anything.</p>
+        <p>A comment such as "great story but too equation-heavy for a morning read" is parsed by a small model behind the gateway into structured fields: sentiment, aspects (<em>narrative +</em>, <em>math density −</em>), and a suggested change ("lower math depth for weekday picks"). Suggestions never change the registry by themselves; they wait on the console page for one-click confirmation.</p>
+        <p>Nothing else is recorded: no purchase tracking, no reading-time guesses, and silence is not treated as a reaction.</p>
       </section>
 
       <!-- 8 -->
       <section class="block" id="learn">
         <h2>8. The learning loop, like RL but sized for one reader</h2>
-        <p class="lede">One reader produces about 365 labels a year. Full RL on an LLM would starve on that. So Shelf climbs in levels, and each level only switches on when there is enough data to beat the one below it on the offline eval.</p>
+        <p class="lede">One reader produces about 365 labels a year. Full RL on an LLM would starve on that. So Alexandria climbs in levels, and each level only switches on when there is enough data to beat the one below it on the offline eval.</p>
         <div class="cards">
           <div class="card"><span class="lvl">Level 0 · day 1</span><h3>Priors and rules</h3><p>Starting priorities, cold-start seed books, the judge's rubric. Works with zero reactions.</p></div>
           <div class="card"><span class="lvl">Level 1 · from the first reaction</span><h3>Slot bandit</h3><p>Thompson sampling over taste facets, updated the moment a reaction arrives. Decides which kind of book I get.</p></div>
           <div class="card"><span class="lvl">Level 2 · about 50 reactions</span><h3>Learned scorer</h3><p>A small logistic model on book features and embeddings, refit weekly on my rewards, replacing the hand-set weights in pass 2. Decides which book.</p></div>
           <div class="card"><span class="lvl">Level 3 · about 300 reactions, optional</span><h3>Post-trained judge</h3><p>SFT on accepted picks plus DPO or GRPO on my preferences, trained on Tinker like the Wikipedia agent. Only if the Level 2 eval shows the off-the-shelf judge is the bottleneck.</p></div>
         </div>
-        <p><strong>Weekly reflection.</strong> Every Sunday, Claude Opus 5.5 reads the week's reactions and comments and proposes a profile diff in plain words ("you liked narrative physics history more than technical treatments; lower math depth on weekdays"). I approve or edit it in chat, and it becomes a new <code>profile_version</code>.</p>
+        <p><strong>Weekly reflection.</strong> Every Sunday, the reflection model reads the week's reactions and comments and proposes a profile diff in plain words ("you liked narrative physics history more than technical treatments; lower math depth on weekdays"). I approve or edit it on the console page, and it becomes a new <code>profile_version</code>.</p>
         <div class="tbl"><table>
-          <thead><tr><th>Wikipedia agent tutorial</th><th>Same idea in Shelf</th></tr></thead>
+          <thead><tr><th>Wikipedia agent tutorial</th><th>Same idea in Alexandria</th></tr></thead>
           <tbody>
-            <tr><td>Eval first: lock a test set</td><td>Offline replay: books I've already rated, held out. Metric: how many I rated ≥ 4★ land in the shortlist's top 5. Online: 30-day like rate and finish rate</td></tr>
+            <tr><td>Eval first: lock a test set</td><td>Offline replay: books I've already rated, held out. Metric: how many I rated ≥ 4★ land in the shortlist's top 5. Online: 30-day Want-it rate and finish rate</td></tr>
             <tr><td>Harness: the same loop for eval and training</td><td>The five stages are one pipeline; replaying a past day runs the same code</td></tr>
-            <tr><td>SFT on its own correct answers</td><td>Picks I liked, with the judge's reasons, become few-shot examples (and training data for Level 3)</td></tr>
-            <tr><td>GRPO: compare a group of attempts</td><td>Each day's three reviewed books are a group; occasional "this or that?" questions give clean pairwise preferences</td></tr>
+            <tr><td>SFT on its own correct answers</td><td>Picks I wanted or finished, with the judge's reasons, become few-shot examples (and training data for Level 3)</td></tr>
+            <tr><td>GRPO: compare a group of attempts</td><td>Each day's three reviewed books are a group, ranked by the judge; my reaction scores the one I was shown</td></tr>
             <tr><td>Ablation with confidence intervals</td><td>Monthly report: turn off reviews, the bandit, or embeddings on the replay set, with bootstrap intervals</td></tr>
           </tbody>
         </table></div>
       </section>
 
       <!-- 9 -->
-      <section class="block" id="arch">
-        <h2>9. Architecture</h2>
-        <p class="lede">A scheduled Python pipeline, one Postgres database, a few small webhooks, and the channels I already use. Nothing to keep running except the database.</p>
+      <section class="block" id="stack">
+        <h2>9. Tech stack</h2>
+        <p class="lede">A scheduled Python pipeline, one Postgres database, a few small edge functions, an AI gateway, and pages on this site. Nothing to keep running except the database.</p>
         <div class="arch">
           <div class="lane">
-            <b>Sources</b>
-            <div class="box"><strong>Book APIs</strong><span>Google Books, Open Library, NYT, Hardcover</span></div>
-            <div class="box"><strong>Lists</strong><span>Pulitzer, Royal Society prize</span></div>
-            <div class="box"><strong>Search</strong><span>Brave Search API</span></div>
-            <div class="box"><strong>Stores</strong><span>Amazon, Shopee, Tiki, Fahasa links</span></div>
+            <b>Inputs</b>
+            <div class="box"><strong>Tracked sites</strong><span>bookstores, publishers, prize and review pages</span></div>
+            <div class="box"><strong>Polite crawler</strong><span>robots-aware, cached, 10 s per site</span></div>
+            <div class="box"><strong>Console forms</strong><span>tastes and tracked sites, owner key only</span></div>
           </div>
           <div class="flow" aria-hidden="true">→</div>
           <div class="lane">
             <b>Core</b>
-            <div class="box core"><strong>Pipeline (Python), GitHub Actions cron</strong><span>Nightly 00:00 ICT; weekly crawl and reflection on Sunday. Each stage idempotent and resumable by run ID</span></div>
-            <div class="box"><strong>Claude API</strong><span>Opus 5.5 for judge, digest, writing, reflection · Haiku 5.5 for parsing · overnight work through the Batch API</span></div>
-            <div class="box db"><strong>Supabase Postgres + pgvector</strong><span>Tastes, books, evidence, recommendations, reactions, rewards, bandit state, run log</span></div>
-            <div class="box"><strong>Edge functions</strong><span>Telegram webhook, signed reaction links, store-link redirect</span></div>
+            <div class="box core"><strong>Pipeline (Python), GitHub Actions cron</strong><span>Nightly 00:00 ICT; Sunday wide crawl and reflection. Each stage idempotent and resumable by run ID</span></div>
+            <div class="box core"><strong>AI gateway</strong><span>one call for every AI job; routes per task; fallback, budget, logging, shadow comparison</span></div>
+            <div class="box db"><strong>Supabase Postgres + pgvector</strong><span>tastes, sites, books, evidence, picks, reactions, rewards, AI call log</span></div>
+            <div class="box"><strong>Edge functions</strong><span>console forms and reaction buttons</span></div>
           </div>
           <div class="flow" aria-hidden="true">→</div>
           <div class="lane">
-            <b>Channels</b>
-            <div class="box"><strong>Telegram bot</strong><span>Daily card, buttons, commands</span></div>
-            <div class="box"><strong>Email</strong><span>Same card, signed links</span></div>
-            <div class="box"><strong>This website</strong><span>Commit via GitHub API → build → GitHub Pages</span></div>
+            <b>Outputs</b>
+            <div class="box"><strong>This website</strong><span>daily pick page and console; commit via GitHub API → GitHub Pages</span></div>
+            <div class="box"><strong>Telegram</strong><span>later</span></div>
           </div>
         </div>
+
+        <h3 class="sub-h">The AI gateway</h3>
+        <p>Every AI job (extract, judge, digest, write, parse a comment, reflect) goes through one function: <code>gateway.run(task, input, schema)</code>. It returns typed output plus the model used, tokens, cost and latency. Which model serves which task lives in one config file, so switching providers is an edit, not a code change.</p>
+        <figure class="code"><figcaption><span class="fname">routes.yaml (example)</span></figcaption><pre><code>judge:      { model: gemini-3.8-flash,      fallback: [deepseek-v4-pro, claude-sonnet-5.5] }
+digest:     { model: gemini-3.8-flash,      fallback: [deepseek-v4-pro] }
+write:      { model: gemini-3.8-flash,      fallback: [claude-haiku-5.5] }
+extract:    { model: gemini-3.1-flash-lite, fallback: [openrouter/free] }
+parse:      { model: gemini-3.1-flash-lite, fallback: [openrouter/free] }
+reflect:    { model: claude-sonnet-5.5 }
+budget:     { usd_per_day: 0.50, on_exceed: free_routes_only }
+shadow:     { judge: deepseek-v4-pro, share: 0.2 }</code></pre></figure>
+        <div class="cards">
+          <div class="card"><h3>Adapters</h3><p>Anthropic, OpenAI, Google Gemini, DeepSeek and OpenRouter. DeepSeek and OpenRouter speak the OpenAI-compatible API, so they share one adapter; OpenRouter also reaches the free models. A local model can be added later.</p></div>
+          <div class="card"><h3>Same shape every time</h3><p>Each task has a JSON schema. The gateway validates the answer, retries once with the error, and otherwise moves to the next model in the fallback list.</p></div>
+          <div class="card"><h3>Fallback and budget</h3><p>Rate limits, server errors, refusals and timeouts fall through to the next model. When the daily budget is spent, only free routes run.</p></div>
+          <div class="card"><h3>Compare on my data</h3><p>Shadow mode runs a second model on a share of a task and stores both answers. The replay eval scores both against my past reactions, so choosing a model is a measured decision. Every call is logged in <code>llm_call</code>.</p></div>
+        </div>
+        <div class="tbl"><table>
+          <thead><tr><th>Build or buy</th><th>Verdict</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Thin gateway in the pipeline's code</strong></td><td>Recommended. A few hundred lines; no extra server; full control of routing, schemas and logs</td></tr>
+            <tr><td>LiteLLM proxy</td><td>More features, but it is a server to deploy and keep running</td></tr>
+            <tr><td>OpenRouter alone</td><td>One key for many models, but every call depends on one company. Used as one adapter instead</td></tr>
+            <tr><td>Cloudflare AI Gateway</td><td>Logging and caching in front of providers; can be added later without changing the code</td></tr>
+          </tbody>
+        </table></div>
+
+        <h3 class="sub-h">Choices and why</h3>
         <div class="tbl"><table>
           <thead><tr><th>Decision</th><th>Choice</th><th>Why not the alternative</th></tr></thead>
           <tbody>
-            <tr><td>Orchestration</td><td>Fixed pipeline in code</td><td>An agent framework or Claude Managed Agents could run this on a schedule, but the order of steps never changes. Code is cheaper, and every day can be replayed exactly</td></tr>
+            <tr><td>Orchestration</td><td>Fixed pipeline in code</td><td>An agent framework could run this on a schedule, but the order of steps never changes. Code is cheaper, and every day can be replayed exactly</td></tr>
+            <tr><td>Data</td><td>Polite crawler over tracked sites</td><td>Paid data APIs are what this design avoids; crawling the sites I choose also covers Vietnamese stores that have no API</td></tr>
             <tr><td>Scheduler</td><td>GitHub Actions cron (private repo)</td><td>A VPS would sit idle 23 hours a day. A run takes minutes</td></tr>
-            <tr><td>Database</td><td>Supabase Postgres with pgvector</td><td>One store for rows and embeddings, reachable from Actions and from webhooks. Free projects pause after a week of inactivity; the daily run keeps it awake</td></tr>
-            <tr><td>LLM calls</td><td>Batch API overnight, standard API for chat replies</td><td>Nothing overnight is urgent, and batches cost half. If a batch hasn't finished by 06:30, the pipeline falls back to standard calls</td></tr>
-            <tr><td>Chat</td><td>Telegram</td><td>Free bot API with buttons and webhooks. Zalo would need an Official Account</td></tr>
+            <tr><td>Database</td><td>Supabase Postgres with pgvector</td><td>One store for rows and embeddings, reachable from Actions and from edge functions. Free projects pause after a week of inactivity; the daily run keeps it awake</td></tr>
+            <tr><td>AI</td><td>AI gateway with per-task routes</td><td>Hard-wiring one provider makes cost and quality comparisons impossible</td></tr>
+            <tr><td>Channel</td><td>A page on this site; Telegram later</td><td>The site already builds and deploys itself, and a page can carry the reaction buttons</td></tr>
           </tbody>
         </table></div>
-        <h3 style="font-size:20px">Data model</h3>
+
+        <h3 class="sub-h">Data model</h3>
         <div class="tbl"><table>
           <thead><tr><th>Table</th><th>Key columns</th></tr></thead>
           <tbody>
             <tr><td><code>taste_facet</code>, <code>taste_event</code></td><td>facet, priority, status · event type, payload, source, time</td></tr>
             <tr><td><code>profile_version</code></td><td>profile text, embedding, facet snapshot, approved_at</td></tr>
-            <tr><td><code>work</code>, <code>edition</code></td><td>Open Library work ID, title, authors, year, subjects, description, embedding · ISBN-13, language, format</td></tr>
-            <tr><td><code>offer</code></td><td>edition, store, price, ships to Vietnam, URL, checked_at</td></tr>
-            <tr><td><code>evidence</code></td><td>work, source, URL, rating, count, excerpt, fetched_at</td></tr>
-            <tr><td><code>candidate</code></td><td>run ID, work, slot facet, scores, rank</td></tr>
-            <tr><td><code>recommendation</code></td><td>date (unique), work, facet, digest, judge reasons, runner-ups, exploration flag, model versions</td></tr>
-            <tr><td><code>delivery</code>, <code>reaction</code>, <code>reward</code></td><td>channel, message ID, URL · kind, value, comment · value, components, updated_at</td></tr>
-            <tr><td><code>bandit_state</code>, <code>model_version</code>, <code>run_log</code></td><td>facet α/β · scorer params and eval metrics · stage, status, tokens, cost, error</td></tr>
+            <tr><td><code>tracked_site</code>, <code>page_cache</code></td><td>URL, kind, watched pages, mode (crawl / link-only), crawl delay, health · URL, ETag, content hash, fetched_at</td></tr>
+            <tr><td><code>work</code>, <code>edition</code>, <code>offer</code></td><td>title, authors, year, subjects, description, embedding · ISBN-13, language, format · store, price seen, URL, checked_at</td></tr>
+            <tr><td><code>evidence</code></td><td>work, source URL, rating, count, excerpt, fetched_at</td></tr>
+            <tr><td><code>candidate</code>, <code>recommendation</code></td><td>run ID, work, slot facet, scores, rank · date (unique), work, digest, judge reasons, runner-ups, exploration flag</td></tr>
+            <tr><td><code>reaction</code>, <code>reward</code></td><td>kind (want, not, finished, comment), comment text · value, components, updated_at</td></tr>
+            <tr><td><code>bandit_state</code>, <code>model_version</code></td><td>facet α/β · scorer params and eval metrics</td></tr>
+            <tr><td><code>llm_call</code>, <code>run_log</code></td><td>task, provider, model, tokens, cost, latency, ok · stage, status, pages crawled, error</td></tr>
           </tbody>
         </table></div>
       </section>
@@ -765,195 +749,92 @@ figure.code.out pre { max-height: 420px; }
       <section class="block" id="guard">
         <h2>10. Guardrails</h2>
         <div class="cards">
-          <div class="card"><h3>What it may do alone</h3><ul><li>Fetch, score and store</li><li>Message me</li><li>Publish a post after the grace window</li></ul></div>
-          <div class="card"><h3>What needs me</h3><ul><li>Any change to the taste registry</li><li>Adding a new source</li><li>Spending above the monthly cap</li></ul></div>
-          <div class="card"><h3>Hard limits</h3><ul><li>Daily caps on LLM spend and search calls; the run stops cleanly when hit</li><li>One recommendation per date (unique key), so a rerun never double-posts</li><li><code>/pause</code>, <code>/skip</code>, <code>/why</code> in chat</li></ul></div>
-          <div class="card"><h3>Honest content</h3><ul><li>No claim without evidence; ratings copied, never generated</li><li>Prices show their check time</li><li>Posts in my own words, at most one short quote; covers credited to Open Library</li></ul></div>
-          <div class="card"><h3>Private by default</h3><ul><li>Reactions and the taste history stay in the database</li><li>The blog shows the recommendation, not my reaction</li><li>The bot answers one chat ID</li></ul></div>
+          <div class="card"><h3>What it may do alone</h3><ul><li>Crawl tracked sites in crawl mode</li><li>Score and store</li><li>Publish the daily page</li></ul></div>
+          <div class="card"><h3>What needs me</h3><ul><li>Any change to the taste registry</li><li>Adding or removing a tracked site</li><li>Raising the spend cap</li></ul></div>
+          <div class="card"><h3>Hard limits</h3><ul><li>Daily caps on AI spend and pages crawled per site; the run stops cleanly when hit</li><li>One recommendation per date (unique key), so a rerun never double-posts</li><li>Pause, Skip today and Why this book on the console page</li></ul></div>
+          <div class="card"><h3>Honest content</h3><ul><li>No claim without evidence; ratings copied, never generated</li><li>Prices show their check time</li><li>Pages in my own words, at most one short quote</li></ul></div>
+          <div class="card"><h3>Polite crawler</h3><ul><li>robots.txt and crawl-delay obeyed</li><li>Names itself and links back here</li><li>Link-only when terms forbid robots</li></ul></div>
+          <div class="card"><h3>Private by default</h3><ul><li>Reactions and taste history stay in the database</li><li>The public page shows the recommendation, not my reaction</li><li>Only my owner key can change tastes or react</li></ul></div>
         </div>
       </section>
 
-      <!-- cost -->
+      <!-- 11 -->
       <section class="block" id="cost">
-        <h2>Cost</h2>
-        <p class="lede">Claude prices as of Oct 2026: Opus 5.5 $4 / $20 and Haiku 5.5 $0.10 / $0.50 per million input / output tokens; the Batch API halves both. Token counts below are estimates for one day.</p>
+        <h2>11. Cost estimation</h2>
+        <p class="lede">Crawling and scheduling run inside free tiers, so the only real cost is the AI model. Depending on the route through the gateway, that is $0 on free tiers or about $3–8 a month on paid models.</p>
+        <h3 class="sub-h">Daily AI workload</h3>
         <div class="tbl"><table>
-          <thead><tr><th>Work per day</th><th>Model</th><th>Tokens in / out</th><th>Standard</th></tr></thead>
+          <thead><tr><th>Job</th><th>Kind</th><th>Calls / day</th><th>Tokens in / out</th></tr></thead>
           <tbody>
-            <tr><td>Normalize ~100 new candidates</td><td>Haiku 5.5</td><td class="num">80k / 15k</td><td class="num">$0.02</td></tr>
-            <tr><td>Judge the top 20</td><td>Opus 5.5</td><td class="num">25k / 6k</td><td class="num">$0.22</td></tr>
-            <tr><td>Review digests for 3 books</td><td>Opus 5.5</td><td class="num">27k / 4.5k</td><td class="num">$0.20</td></tr>
-            <tr><td>Write message and post</td><td>Opus 5.5</td><td class="num">6k / 2.5k</td><td class="num">$0.07</td></tr>
-            <tr><td>Weekly reflection, per day</td><td>Opus 5.5</td><td class="num">6k / 0.7k</td><td class="num">$0.04</td></tr>
-            <tr><td><strong>Total</strong></td><td></td><td></td><td class="num"><strong>≈ $0.55 / day</strong></td></tr>
+            <tr><td>Extract new books from crawled pages, parse comments</td><td>light</td><td class="num">~10 (batched)</td><td class="num">80k / 15k</td></tr>
+            <tr><td>Judge the top 20</td><td>heavy</td><td class="num">1</td><td class="num">25k / 6k</td></tr>
+            <tr><td>Review digests for 3 books</td><td>heavy</td><td class="num">3</td><td class="num">27k / 4.5k</td></tr>
+            <tr><td>Write the daily page</td><td>heavy</td><td class="num">1</td><td class="num">6k / 2.5k</td></tr>
+            <tr><td>Weekly reflection, averaged per day</td><td>heavy</td><td class="num">1 a week</td><td class="num">6k / 0.7k</td></tr>
+            <tr><td><strong>Heavy total</strong></td><td></td><td class="num">≈ 6</td><td class="num"><strong>64k / 13.7k</strong></td></tr>
           </tbody>
         </table></div>
-        <p>That is about $17 a month at standard rates, or about $8 with the overnight work on the Batch API. Search runs about 15 queries a day; at Brave's reported $5 per 1,000 queries that is about $2 a month, which its monthly credit may cover. Supabase, GitHub Actions and Telegram fit in free tiers at this volume. Using Sonnet 5.5 ($2 / $10) for the judge and digests would roughly halve the Claude line.</p>
-      </section>
 
-      <!-- plan -->
-      <section class="block" id="plan">
-        <h2>Roadmap</h2>
+        <h3 class="sub-h">AI API comparison for this workload</h3>
+        <p>Monthly cost of the heavy jobs (30 days × 64k in / 13.7k out) at each model's standard price. "Tier" is where the model sits in its own provider's line-up; how well a model actually picks books for me is measured by the gateway's shadow runs, not by this table.</p>
+        <div class="tbl"><table>
+          <thead><tr><th>Model</th><th>Tier in its family</th><th>Price in / out per 1M</th><th>Free tier</th><th>Heavy jobs / month</th></tr></thead>
+          <tbody>
+            <tr><td>Claude Opus 5.5</td><td>Top</td><td class="num">$4 / $20</td><td>No</td><td class="num">$15.90 (batch $7.95)</td></tr>
+            <tr><td>Claude Sonnet 5.5</td><td>Middle</td><td class="num">$2 / $10</td><td>No</td><td class="num">$7.95 (batch $3.98)</td></tr>
+            <tr><td>GPT-6.1 Sol</td><td>Middle (GPT-6 Astra is the top)</td><td class="num">$2 / $10</td><td>No</td><td class="num">$7.95 (batch $3.98)</td></tr>
+            <tr><td>Gemini 4 Argon</td><td>Newest generation</td><td class="num">$2 / $10, then $4 / $20 from Dec 1</td><td>No</td><td class="num">$7.95, then $15.90</td></tr>
+            <tr><td>Kimi K3.1 Pro</td><td>Top; leads open-weight models</td><td class="num">$2 / $10</td><td>No</td><td class="num">$7.95</td></tr>
+            <tr><td>Gemini 3.8 Flash</td><td>Middle</td><td class="num">$0.75 / $3.75, then $1.50 / $7.50 from Jan 1</td><td><strong>Yes</strong></td><td class="num">$2.98, then $5.96</td></tr>
+            <tr><td>Mistral Large 4</td><td>Top</td><td class="num">$0.70 / $2.10</td><td>No</td><td class="num">$2.21</td></tr>
+            <tr><td>DeepSeek V4 Pro (off-peak)</td><td>Top</td><td class="num">$0.66 / $1.98</td><td>No</td><td class="num">$2.08</td></tr>
+            <tr><td>Gemini 3.1 Flash-Lite</td><td>Small</td><td class="num">$0.25 / $1.50</td><td><strong>Yes</strong></td><td class="num">$1.10</td></tr>
+            <tr><td>DeepSeek Flash (off-peak)</td><td>Small</td><td class="num">$0.15 / $0.60</td><td>No</td><td class="num">$0.53</td></tr>
+            <tr><td>Claude Haiku 5.5</td><td>Small</td><td class="num">$0.10 / $0.50</td><td>No</td><td class="num">$0.40</td></tr>
+            <tr><td>GPT-6 Luna</td><td>Small</td><td class="num">$0.10 / $0.50</td><td>No</td><td class="num">$0.40</td></tr>
+            <tr><td>OpenRouter free models (e.g. Inkling, Nemotron 3 Ultra, Gemma 4 31B)</td><td>Varies</td><td class="num">$0</td><td><strong>Yes</strong></td><td class="num">$0</td></tr>
+          </tbody>
+        </table></div>
         <div class="cards">
-          <div class="card"><span class="lvl">M0 · week 1</span><h3>Registry and bot</h3><p>Tables, cold-start import from my reading list, Telegram bot with <code>/taste</code> commands.</p><p class="when">Done when: I can add a taste from chat and see it in the database.</p></div>
-          <div class="card"><span class="lvl">M1 · week 2</span><h3>First daily pick</h3><p>Discovery from Google Books, Open Library, NYT and prize lists; shortlist; a daily Telegram card without reviews.</p><p class="when">Done when: 7 picks in a row arrive at 07:00.</p></div>
-          <div class="card"><span class="lvl">M2 · week 3</span><h3>Reviews and publishing</h3><p>Evidence gathering, digest with validator, email, blog posts with the grace window.</p><p class="when">Done when: a post goes live with every claim linked.</p></div>
-          <div class="card"><span class="lvl">M3 · week 4</span><h3>Reactions and bandit</h3><p>Buttons, comments, link redirect, reward table, Thompson sampling for slots.</p><p class="when">Done when: a thumbs-down visibly shifts next week's slots.</p></div>
-          <div class="card"><span class="lvl">M4 · months 2–3</span><h3>Measure and learn</h3><p>Offline replay eval, learned scorer, weekly reflection, monthly ablation report.</p><p class="when">Done when: the scorer beats hand weights on replay, with intervals.</p></div>
-          <div class="card"><span class="lvl">M5 · month 10+, optional</span><h3>Post-trained judge</h3><p>SFT plus DPO or GRPO on my preferences, on Tinker.</p><p class="when">Done when: it beats Level 2 on replay and live like rate.</p></div>
+          <div class="card"><h3>Gemini free tier</h3><p>Covers Gemini 3.8 Flash, 3.6 Flash, 3.1 Flash-Lite, 2.5 Pro and Gemma 4, among others. Google doesn't publish per-model daily limits in its docs (AI Studio shows them per account), and third-party reports range from about 20 to 1,500 requests a day. Under Google's terms, free-tier prompts can be used to improve its products: fine for public book data, so keep personal notes on paid routes if that matters.</p></div>
+          <div class="card"><h3>OpenRouter free models</h3><p>17 free models in its catalog on Nov 2, 2026. Limits: 20 requests a minute and 50 a day, or 1,000 a day after buying at least $10 of credits. The list changes often, so they are a fallback, not the main route.</p></div>
+          <div class="card"><h3>Quality, roughly</h3><p>Public leaderboards in October 2026 put Gemini 4 Carbon, GPT-5.6 Sol and Claude Opus 5.5 at the top, with Kimi K3.1 Pro leading open-weight models, and the order shifts between index versions. Judging fit, summarizing reviews and writing a short page are mid-tier work, so a middle-tier model is likely enough; shadow runs will show whether the top tier earns its price.</p></div>
+          <div class="card"><h3>Does free fit?</h3><p>Yes for a proof of concept: about 6 heavy and 10 light calls a day. Route heavy jobs to Gemini 3.8 Flash (free) and light jobs to Flash-Lite (free), with OpenRouter free models as the fallback.</p></div>
         </div>
+        <h3 class="sub-h">Four routes</h3>
+        <div class="tbl"><table>
+          <thead><tr><th>Route</th><th>Heavy jobs</th><th>Light jobs</th><th>≈ per month</th></tr></thead>
+          <tbody>
+            <tr><td><strong>A. Free POC</strong></td><td>Gemini 3.8 Flash, free tier</td><td>Gemini 3.1 Flash-Lite, free tier</td><td class="num">$0</td></tr>
+            <tr><td><strong>B. Budget</strong></td><td>DeepSeek V4 Pro, off-peak</td><td>DeepSeek Flash, off-peak</td><td class="num">$2.71</td></tr>
+            <tr><td><strong>C. Balanced</strong></td><td>Claude Sonnet 5.5 or GPT-6.1 Sol, batch</td><td>Claude Haiku 5.5</td><td class="num">$4.44</td></tr>
+            <tr><td><strong>D. Best quality</strong></td><td>Claude Opus 5.5, batch</td><td>Claude Haiku 5.5, batch</td><td class="num">$8.18</td></tr>
+          </tbody>
+        </table></div>
+        <p>Plan: start on route A, shadow-run route B or C on 20% of judge calls (well under $1 a month), and let the replay eval decide after a month. DeepSeek's off-peak price applies to the nightly run: 00:00 ICT is 17:00 UTC, outside its peak hours.</p>
+        <p><strong>Everything else:</strong> GitHub Actions (about 10 minutes a day, inside the free monthly minutes), Supabase free tier, GitHub Pages, and embeddings on Gemini's free tier. No paid data APIs.</p>
+        <p class="note">Prices as of Nov 2, 2026: Google and DeepSeek from their own pricing pages, Anthropic from its price list, and OpenAI, Moonshot (Kimi) and Mistral from OpenRouter's public catalog. Gemini prices above change on Dec 1, 2026 and Jan 1, 2027, as noted. Check before switching routes.</p>
       </section>
 
-      <!-- decisions -->
+      <!-- 12 -->
       <section class="block" id="decide">
-        <h2>Open decisions for my review</h2>
-        <p class="lede">Each has a recommended default. Nothing gets built until these are settled.</p>
+        <h2>12. Open decisions</h2>
+        <p class="lede">Decided items are recorded so the design stays honest about what changed. Open items have a recommended default.</p>
         <ol class="decisions">
-          <li><strong>Chat channel.</strong> Telegram, Zalo, Slack or Discord? <span class="rec">Recommended: Telegram.</span></li>
-          <li><strong>Publishing.</strong> Five-hour veto window, approve every post first, or fully automatic? <span class="rec">Recommended: veto window.</span></li>
-          <li><strong>Where posts live.</strong> A separate "Book suggestions" list plus the latest three on the blog index, or every post in the blog index? <span class="rec">Recommended: separate list.</span></li>
-          <li><strong>Editions.</strong> English originals, Vietnamese translations, or both? <span class="rec">Recommended: show both when a translation exists.</span></li>
-          <li><strong>Buying.</strong> Plain store links, or apply to Amazon Associates and the Shopee affiliate program for prices? <span class="rec">Recommended: plain links first.</span></li>
-          <li><strong>Reddit.</strong> Apply for Data API approval, or rely on search results? <span class="rec">Recommended: apply, and use search until approved.</span></li>
-          <li><strong>Models.</strong> Opus 5.5 for judging and writing (≈ $8/month with batches), or Sonnet 5.5 (about half)? <span class="rec">Recommended: Opus 5.5, then compare on the replay eval.</span></li>
-          <li><strong>Monthly cap.</strong> <span class="rec">Recommended: $20 hard cap.</span></li>
-          <li><strong>Formats.</strong> Print, ebook, audiobook? This changes which stores and prices matter.</li>
-          <li><strong>Delivery time.</strong> <span class="rec">Recommended: 07:00 ICT.</span></li>
-        </ol>
-      </section>
-
-      <section class="block sources">
-        <h2>Sources (checked Nov 1, 2026)</h2>
-        <ol>
-          <li><a href="https://affiliate-program.amazon.com/creatorsapi/docs/en-us/paapiv5-deprecation">Amazon: PA-API 5 deprecation and the Creators API</a></li>
-          <li><a href="https://www.firecrawl.dev/blog/google-search-json-api-alternative">Google Custom Search JSON API shutdown on Jan 1, 2027</a> (vendor summary)</li>
-          <li><a href="https://www.reddit.com/r/redditdev/comments/1oug31u/introducing_the_responsible_builder_policy_new/">Reddit: Introducing the Responsible Builder Policy (Nov 2025)</a></li>
-          <li><a href="https://docs.hardcover.app/api/getting-started">Hardcover API: getting started</a></li>
-          <li><a href="https://www.infodocket.com/2020/12/13/report-goodreads-plans-to-retire-api-access-disables-existing-api-keys/">Goodreads stops issuing API keys (Dec 2020)</a></li>
-          <li><a href="https://github.com/gregojoao/shopee-affiliate">Shopee Affiliate Open API client (Brazil endpoint)</a></li>
-          <li><a href="https://developer.nytimes.com/docs/books-product/1/overview">NYT Books API</a>, <a href="https://developers.google.com/books">Google Books API</a>, <a href="https://openlibrary.org/developers/api">Open Library API</a></li>
-          <li><a href="https://brave.com/search/api/">Brave Search API</a></li>
-          <li><a href="https://www.pulitzer.org/prize-winners-by-category">Pulitzer Prize winners by category</a></li>
-          <li><a href="https://core.telegram.org/bots/api">Telegram Bot API</a>, <a href="https://supabase.com/docs/guides/database/extensions/pgvector">Supabase pgvector</a></li>
-          <li><a href="https://platform.claude.com/docs/en/about-claude/pricing">Claude pricing</a></li>
-          <li><a href="https://arxiv.org/abs/1707.02038">Russo et al., A Tutorial on Thompson Sampling</a></li>
+          <li><span class="tag done">Decided</span> <strong>Channel.</strong> The proof of concept publishes a page on this site and collects my reactions there. Telegram comes later.</li>
+          <li><span class="tag done">Decided</span> <strong>Editions.</strong> Show both the original and the Vietnamese edition when a translation exists.</li>
+          <li><span class="tag done">Decided</span> <strong>Models.</strong> Through the AI gateway, compared by shadow runs and the replay eval.</li>
+          <li><span class="tag done">Decided</span> <strong>Formats.</strong> Any format; no filter on print, ebook or audiobook.</li>
+          <li><span class="tag open">Open</span> <strong>Starting route.</strong> A (free), B, C or D from section 11? <span class="rec">Recommended: A, with B shadowed.</span></li>
+          <li><span class="tag open">Open</span> <strong>Seed sites.</strong> Keep the nine seed sites and their modes, or add others now? <span class="rec">Recommended: keep, add more from the form later.</span></li>
+          <li><span class="tag open">Open</span> <strong>Where pages live.</strong> A separate "Book suggestions" list plus the latest three on the blog index, or every page in the blog index? <span class="rec">Recommended: separate list.</span></li>
+          <li><span class="tag open">Open</span> <strong>Publishing.</strong> Public at 07:00 with a Hold button on the console, or a private preview I approve first? <span class="rec">Recommended: public at 07:00 with Hold.</span></li>
+          <li><span class="tag open">Open</span> <strong>Monthly cap.</strong> <span class="rec">Recommended: $10 hard cap, which only matters once a paid route is on.</span></li>
+          <li><span class="tag open">Open</span> <strong>Delivery time.</strong> <span class="rec">Recommended: 07:00 ICT.</span></li>
         </ol>
       </section>
     </main>
   </div>
 </div>
-
-<script>
-(function () {
-  const ST = [
-    { no: "STATE", title: "Taste registry",
-      why: "Everything Shelf knows about what I like, stored as events so it can change over time and be replayed.",
-      in: ["Starting priorities from my message", "8 rated books on my reading list", "/taste commands and approved reflection diffs"],
-      do: ["Append to taste_event", "Rebuild the current profile view", "Monthly snapshot for the taste timeline"],
-      out: ["Current facets with priorities", "Profile text and embedding for the judge"],
-      tech: [["Store", "Postgres"], ["LLM", "Haiku 5.5 parses free-text taste changes"], ["Changes", "always confirmed by me"]] },
-    { no: "STAGE 1", title: "Discover",
-      why: "Fill the candidate pool from official APIs, bestseller and prize lists, and web search, one record per book.",
-      in: ["Facets and their search queries", "Source adapters with rate limits"],
-      do: ["Sunday wide crawl, small daily pull", "Merge editions into works by ISBN-13 and work ID", "Map subjects to my facets"],
-      out: ["A few hundred new candidates a week"],
-      tech: [["When", "Sunday + nightly"], ["LLM", "Haiku 5.5 for subject mapping"], ["Rule", "no scraping"]] },
-    { no: "STAGE 2", title: "Shortlist by taste",
-      why: "From hundreds to five: hard filters, a cheap score, then an LLM judge on the top twenty.",
-      in: ["Candidate pool", "Profile, bandit state, history"],
-      do: ["Filters: read, cooldown, buyable in Vietnam", "Score: taste, quality, freshness, novelty", "Thompson sampling picks today's facet", "Opus 5.5 judges the top 20"],
-      out: ["Top 5 with typed scores and reasons"],
-      tech: [["When", "nightly"], ["LLM", "Opus 5.5 via Batch API"], ["Exploration", "1 wildcard day a week"]] },
-    { no: "STAGE 3", title: "Review check",
-      why: "Find out what readers and critics actually say, then write a digest where every sentence points at its source.",
-      in: ["Top 3 of the shortlist"],
-      do: ["Collect ratings, critic reviews, Reddit threads", "Opus 5.5 writes a digest with evidence IDs", "Validator drops unsupported sentences", "Rank the 3 and store why"],
-      out: ["Today's pick, 2 runner-ups, a sourced digest"],
-      tech: [["When", "nightly"], ["Search", "Brave Search API"], ["Rule", "no source, no claim"]] },
-    { no: "STAGE 4", title: "Recommend",
-      why: "One stored recommendation, sent three ways so the channels never disagree.",
-      in: ["Pick, digest, store links"],
-      do: ["Telegram card with buttons", "Email with signed links", "Blog post committed to the site repo"],
-      out: ["Message at 07:00 ICT", "Post live at 12:00 unless held"],
-      tech: [["Chat", "Telegram bot, my chat ID only"], ["Site", "GitHub API → Pages"], ["Gate", "5-hour veto"]] },
-    { no: "STAGE 5", title: "Reactions",
-      why: "Turn whatever I do, including nothing, into a reward on the day it was recommended.",
-      in: ["Buttons, replies, link clicks, silence"],
-      do: ["Store in reaction", "Haiku 5.5 parses comments into aspects", "Map to a reward, revisable later"],
-      out: ["Reward per recommendation", "Proposed taste changes for me to confirm"],
-      tech: [["Endpoint", "Supabase edge functions"], ["Weak signal", "no reaction in 72 h"], ["Ignored", "visitors' likes"]] },
-    { no: "LOOP", title: "Learn",
-      why: "Climb from priors to a bandit to a learned scorer, and only post-train a model when the data says it would help.",
-      in: ["Rewards", "Offline replay set"],
-      do: ["Update facet Beta posteriors at once", "Weekly scorer refit and reflection diff", "Monthly eval and ablation report"],
-      out: ["New bandit state, scorer and profile version"],
-      tech: [["Level 1", "Thompson sampling"], ["Level 2", "learned scorer at ~50 reactions"], ["Level 3", "post-trained judge, optional"]] }
-  ];
-
-  const $ = (id) => document.getElementById(id);
-  const floor = $("fx-floor"), belt = $("fx-belt"), crate = $("fx-crate");
-  const bays = Array.from(floor.querySelectorAll(".bay"));
-  const playBtn = $("fx-play");
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let cur = 0, playing = !reduce, visible = !("IntersectionObserver" in window), timer = null;
-
-  const list = (el, items) => {
-    el.textContent = "";
-    items.forEach((t) => { const li = document.createElement("li"); li.textContent = t; el.appendChild(li); });
-  };
-
-  function placeCrate(jump) {
-    const b = belt.getBoundingClientRect(), c = bays[cur].getBoundingClientRect();
-    if (jump) crate.classList.add("jump");
-    if (b.height > b.width) { crate.style.top = (c.top + c.height / 2 - b.top) + "px"; crate.style.left = ""; }
-    else { crate.style.left = (c.left + c.width / 2 - b.left) + "px"; crate.style.top = ""; }
-    if (jump) { void crate.offsetWidth; crate.classList.remove("jump"); }
-  }
-
-  function render(jump) {
-    const s = ST[cur];
-    bays.forEach((b, i) => { if (i === cur) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current"); });
-    $("fx-d-no").textContent = s.no;
-    $("fx-d-title").textContent = s.title;
-    $("fx-d-why").textContent = s.why;
-    list($("fx-d-in"), s.in); list($("fx-d-do"), s.do); list($("fx-d-out"), s.out);
-    const tech = $("fx-d-tech");
-    tech.textContent = "";
-    s.tech.forEach(([k, v]) => {
-      const c = document.createElement("span"), b = document.createElement("b");
-      b.textContent = k; c.appendChild(b); c.appendChild(document.createTextNode(v)); tech.appendChild(c);
-    });
-    placeCrate(jump);
-  }
-
-  function go(i) {
-    const next = (i + ST.length) % ST.length;
-    const wrapped = (cur === ST.length - 1 && next === 0) || (cur === 0 && next === ST.length - 1);
-    cur = next;
-    render(wrapped);
-  }
-
-  function sync() {
-    clearInterval(timer); timer = null;
-    const run = playing && visible;
-    if (run) timer = setInterval(() => go(cur + 1), 3400);
-    floor.classList.toggle("playing", run);
-    playBtn.textContent = playing ? "⏸ Pause" : "▶ Play";
-    playBtn.setAttribute("aria-pressed", String(playing));
-  }
-  const pause = () => { playing = false; sync(); };
-
-  bays.forEach((b, i) => b.addEventListener("click", () => { pause(); go(i); }));
-  $("fx-prev").addEventListener("click", () => { pause(); go(cur - 1); });
-  $("fx-next").addEventListener("click", () => { pause(); go(cur + 1); });
-  playBtn.addEventListener("click", () => { playing = !playing; sync(); });
-  window.addEventListener("resize", () => placeCrate(true));
-  if (!visible) {
-    new IntersectionObserver((es) => { visible = es[0].isIntersecting; sync(); }, { threshold: 0.35 }).observe(floor);
-  }
-  render(true);
-  sync();
-})();
-</script>
 </body>
 </html>

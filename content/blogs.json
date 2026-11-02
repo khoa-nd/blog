@@ -1,12 +1,12 @@
 [
   {
-    "title": "System Design: An Autonomous Book Curator That Learns My Taste",
-    "kicker": "System design · draft",
+    "title": "Alexandria: An Autonomous Personalized Book Curator That Learns My Taste - P1 System Design",
+    "kicker": "System design · P1",
     "date": "2026-11-01",
-    "desc": "Design for Shelf, a system that finds books, shortlists them against my recorded taste, checks reviews, recommends one book a day by chat, email and this blog, and learns from my reactions. A draft for review; nothing is built yet.",
+    "desc": "Design for Alexandria, a system that crawls the bookstores I track, shortlists books against my recorded taste, checks reviews, publishes one pick a day on this blog, and learns from my reactions. Includes an AI gateway and a cost comparison of AI APIs, free tiers included. Draft for review; nothing is built yet.",
     "file": "autonomous-book-curator-system-design.html",
     "image": "thumbs/autonomous-book-curator-system-design.jpg",
-    "imageAlt": "Shelf system design: a seven-part loop from taste registry to learning",
+    "imageAlt": "Alexandria: an engraving of the ancient Library of Alexandria, toned sepia",
     "cta": "Review the design"
   },
   {
