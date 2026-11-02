@@ -25,6 +25,16 @@ there is no build step for the site.
 | `content/books.json` | Home preview (3) + the full `books.html` list |
 | `content/side-projects.json` | Side project cards on the home page |
 | `content/highlights.json` | **Highlights** on the home page (first entry is featured) |
+| `content/blogs.json` | The `/blogs/` listing, its count, and the sitemap |
+
+### Public and private posts
+
+Every entry in `content/blogs.json` is public unless it says `"visibility": "private"`.
+A private post is left out of the `/blogs/` listing, the post count and `sitemap.xml`,
+and the build adds `<meta name="robots" content="noindex">` to its page. The page
+itself still works for anyone who has the URL: private means unlisted, not secret
+(the entry is still in this repository's `content/blogs.json`). To publish it, delete
+the field or set it to `"public"`.
 
 JSON is used rather than JavaScript because it is far less punishing to
 hand-edit: every editor validates it as you type, and a stray comma is caught

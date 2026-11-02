@@ -163,6 +163,8 @@ if (Array.isArray(blogs)) {
   blogs.forEach(function (b, i) {
     need("blogs.json", b, i, ["title", "date", "desc", "file"]);
     if (b.date && !/^\d{4}-\d{2}-\d{2}$/.test(b.date)) err("blogs.json", `entry ${i} "date" must be YYYY-MM-DD`);
+    if (b.visibility !== undefined && !["public", "private"].includes(b.visibility))
+      err("blogs.json", `entry ${i} "visibility" must be "public" or "private" (missing means public)`);
     ["file", "image"].forEach(function (k) {
       if (!b[k]) return;
       if (/^\/|^https?:/.test(b[k])) err("blogs.json", `entry ${i} "${k}" must be relative to blogs/`);

@@ -1,10 +1,11 @@
 [
   {
-    "title": "Alexandria: An Autonomous Personalized Book Curator That Learns My Taste - P1 Hands-on",
-    "kicker": "Hands-on · P1",
+    "title": "Alexandria: An Autonomous Personalized Book Curator That Learns My Taste - P2 Hands-on",
+    "kicker": "Hands-on · P2",
     "date": "2026-11-02",
     "desc": "Build, deploy, ship and operate Alexandria step by step: a polite crawler, an AI gateway, Postgres with owner-only functions, GitHub Actions, and a daily book page on GitHub Pages. 33 files, 36 tests, $0 on free tiers.",
     "file": "autonomous-book-curator-hands-on.html",
+    "visibility": "private",
     "image": "thumbs/autonomous-book-curator-hands-on.jpg",
     "imageAlt": "Alexandria hands-on: build the autonomous book curator from an empty folder",
     "cta": "Start building"

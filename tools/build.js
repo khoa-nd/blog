@@ -148,7 +148,11 @@ function bookCard(b) {
    content/blogs.json are relative to the blogs/ folder, where the page lives. */
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const fmtDate = (d) => { const [y, m, day] = d.split("-").map(Number); return `${day} ${MONTHS[m - 1]} ${y}`; };
-const blogsByDate = () => BLOGS.slice().sort((a, b) => b.date.localeCompare(a.date));
+/* "visibility": "private" keeps a post off the listing, the count and the sitemap
+   (and gets it a noindex tag below); the page itself stays reachable by its URL. */
+const isPublic = (b) => (b.visibility || "public") === "public";
+const PUBLIC_BLOGS = BLOGS.filter(isPublic);
+const blogsByDate = () => PUBLIC_BLOGS.slice().sort((a, b) => b.date.localeCompare(a.date));
 function blogCard(b) {
   return highlightCard({ title: b.title, kicker: b.kicker, date: fmtDate(b.date), desc: b.desc, url: b.file,
     cta: b.cta || "Read", image: b.image, imageAlt: b.imageAlt }, 1, esc)
@@ -192,7 +196,7 @@ tags ? `\n<div class="tags">${tags}</div>` : ""}</div></article>`;
     .map(bookCard).join("\n"),
 
   "blog-list": blogsByDate().map(blogCard).join("\n"),
-  "blog-count": String(BLOGS.length),
+  "blog-count": String(PUBLIC_BLOGS.length),
 
   "hero-intro": rich(SITE.intro || ""),
   "site-name": esc(SITE.name),
@@ -213,7 +217,7 @@ function headFor(page) {
     },
     "blogs/index.html": {
       title: `Using AI to Learn AI — ${SITE.name}`,
-      desc: `AI Learning Collection: ${BLOGS.length} interactive maps, course radars and market reports on learning AI engineering, built with AI.`,
+      desc: `AI Learning Collection: ${PUBLIC_BLOGS.length} interactive maps, course radars and market reports on learning AI engineering, built with AI.`,
       url: SITE_URL + "/blogs/",
     },
     "books.html": {
@@ -278,6 +282,20 @@ let changed = 0;
   if (html !== before) { fs.writeFileSync(file, html); changed++; console.log("  rebuilt " + page); }
   else console.log("  unchanged " + page);
 });
+
+/* ---------- private posts: noindex on the page itself ----------
+   A private post has no link from the site, but anyone with its URL can open it.
+   The noindex tag asks search engines not to list it if they ever find the URL. */
+const NOINDEX = '<meta name="robots" content="noindex" data-visibility="private">';
+BLOGS.forEach(function (b) {
+  const file = path.join(ROOT, "blogs", b.file);
+  if (!fs.existsSync(file)) return;
+  const before = fs.readFileSync(file, "utf8");
+  let html = before.replace(/\n?[ \t]*<meta name="robots" content="noindex" data-visibility="private">/g, "");
+  if (!isPublic(b)) html = html.replace(/(<meta charset="[^"]*">)/i, "$1\n" + NOINDEX);
+  if (html !== before) { fs.writeFileSync(file, html); changed++; console.log("  " + (isPublic(b) ? "public " : "private") + " blogs/" + b.file); }
+});
+console.log(`  ${PUBLIC_BLOGS.length} public post(s), ${BLOGS.length - PUBLIC_BLOGS.length} private`);
 
 /* ---------- sitemap + robots ---------- */
 const today = new Date().toISOString().slice(0, 10);
