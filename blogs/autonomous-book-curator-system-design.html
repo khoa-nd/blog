@@ -478,6 +478,39 @@ figure.code.out pre { max-height: 420px; }
       <li><strong>Life after launch.</strong> Something that runs while you sleep still needs looking after: a glance each week, a review each month, and knowing what &ldquo;broken&rdquo; looks like.</li>
       <li><strong>Something about your own taste.</strong> The weekly reflection and the record of your reactions show patterns in your reading you may not have noticed.</li>
     </ul>
+
+    <h2 class="after-fig" id="key-takeaways">Key Takeaways</h2>
+    <p class="lede">Short answers to the questions people ask first.</p>
+    <div class="cards">
+      <div class="card">
+        <h3>Is this production-ready, or just a proof of concept?</h3>
+        <p>Both, depending on who it serves. For one reader it is a working production system. For many readers it is still a proof of concept.</p>
+        <p><strong>Why it counts as production for one reader</strong></p>
+        <ul>
+          <li>It runs unattended: two scheduled GitHub Actions jobs a day, one to pick and one to publish.</li>
+          <li>The database is closed to the public and reachable only through owner-checked functions.</li>
+          <li>AI spend has a daily cap, and every task has fallback models. In the first live runs Gemini returned overload errors and timeouts, and the free OpenRouter model took over, so the runs still finished.</li>
+          <li>An offline test suite covers the crawl, the extraction, the scoring, the database lock-down and the full pipeline.</li>
+        </ul>
+        <p><strong>Why it is still a proof of concept beyond that</strong></p>
+        <ul>
+          <li>One owner, one taste profile, one pick a day. There are no accounts and no per-reader profiles.</li>
+          <li>The public reaction call has no rate limit of its own.</li>
+          <li>Crawling runs from GitHub&rsquo;s shared servers, and some stores refuse them. Two Vietnamese bookstores returned nothing when crawled from there, and the crawler does not yet record why.</li>
+          <li>It has only just gone live, so the weekly and monthly upkeep described in &ldquo;Life after launch&rdquo; is still untested.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag open">Open concern</span>
+        <h3>It will not scale to 100,000 simultaneous readers as designed</h3>
+        <p>GitHub Actions is a scheduler for batch jobs, not a way to serve users. Two different things hide in this concern:</p>
+        <ul>
+          <li><strong>Reading and reacting do not run on Actions.</strong> The pages are static files and the reaction buttons call the database directly, so Actions still runs just two jobs a day however many people read. The limits that matter there belong to the page host and to Supabase: bandwidth, request rates and free-tier quotas. I have not load-tested either.</li>
+          <li><strong>Personal picks for 100,000 readers would.</strong> The crawl can be shared, but the shortlist, judge and digest steps would repeat for every reader every day. One scheduled job with run-time limits and capped parallel runs cannot do that. It would need a job queue with stateless workers, a profile and a spend cap for each reader, and per-reader publishing.</li>
+        </ul>
+        <p class="note">Status: open. It is not needed for the one-reader version and it is not designed yet. The first step would be to decide whether Alexandria stays a personal tool or becomes a service.</p>
+      </div>
+    </div>
   </section>
 
   <div class="shell">
@@ -485,6 +518,7 @@ figure.code.out pre { max-height: 420px; }
       <span class="label">Sections</span>
       <a href="#map"><span class="n">◎</span><span>Big picture</span><span class="p"></span></a>
       <a href="#what-you-learn"><span class="n">★</span><span>What you could learn</span><span class="p"></span></a>
+      <a href="#key-takeaways"><span class="n">✦</span><span>Key takeaways</span><span class="p"></span></a>
       <a href="#scope"><span class="n">1</span><span>Scope</span><span class="p"></span></a>
       <a href="#taste"><span class="n">2</span><span>Taste registry</span><span class="p"></span></a>
       <a href="#discover"><span class="n">3</span><span>Discover</span><span class="p"></span></a>
