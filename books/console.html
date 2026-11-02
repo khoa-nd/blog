@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Alexandria console</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,600&family=JetBrains+Mono&display=swap">
+<link rel="stylesheet" href="alexandria.css">
+<script src="config.js"></script>
+<style>.wrap { max-width: 980px; } .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; } td input, td select { padding: 4px 6px; }</style>
+</head>
+<body>
+<main class="wrap">
+  <div><span class="eyebrow">Alexandria · owner console</span><h1>Console</h1>
+    <p class="meta">Everything here needs the owner key. It stays in this browser (localStorage) and is never sent anywhere except the database functions.</p></div>
+
+  <section class="card">
+    <h2>Owner key</h2>
+    <div class="row"><input id="key" type="password" placeholder="paste the key from `python -m alexandria owner-key`"><button id="save-key">Save and load</button></div>
+    <div class="status" id="status" aria-live="polite"></div>
+  </section>
+
+  <section class="card"><h2>Today and recent picks</h2>
+    <div class="buttons"><button id="pause"></button></div>
+    <table><thead><tr><th>Date</th><th>Book</th><th>Status</th><th>Reactions</th><th></th></tr></thead><tbody id="picks"></tbody></table>
+  </section>
+
+  <section class="card"><h2>Proposals waiting for me</h2><div id="proposals" class="list"></div></section>
+
+  <section class="card"><h2>Tastes</h2>
+    <table><thead><tr><th>Facet</th><th>Priority</th><th>Status</th><th>Keywords</th><th></th></tr></thead><tbody id="facets"></tbody></table>
+    <h3>Add a taste</h3>
+    <div class="row"><input id="f-slug" placeholder="slug, e.g. chemistry-history"><input id="f-name" placeholder="name"><input id="f-priority" type="number" min="0" max="1" step="0.05" value="0.6"></div>
+    <input id="f-keywords" placeholder="keywords, comma separated">
+    <div><button id="add-facet">Add taste</button></div>
+    <h3>Or describe it in words</h3>
+    <textarea id="note" rows="2" placeholder="More books like The Code Breaker; fewer textbooks"></textarea>
+    <div><button id="add-note">Send note (parsed tonight, then waits here for approval)</button></div>
+  </section>
+
+  <section class="card"><h2>Tracked sites</h2>
+    <table><thead><tr><th>Site</th><th>Kind</th><th>Mode</th><th>Health</th><th></th></tr></thead><tbody id="sites"></tbody></table>
+    <h3>Track a site</h3>
+    <div class="row"><input id="s-name" placeholder="name"><input id="s-url" placeholder="https://example.com"><select id="s-kind"><option>bookstore</option><option>publisher</option><option>review</option><option>prize</option></select><select id="s-lang"><option>en</option><option>vi</option></select></div>
+    <input id="s-watch" placeholder="pages to watch, comma separated (new releases, a category)">
+    <div class="row"><input id="s-pattern" placeholder="product link regex, e.g. /books/\d+/"><input id="s-search" placeholder="search link with {q}, optional"></div>
+    <div><button id="add-site">Track site (robots.txt decides crawl or link-only tonight)</button></div>
+  </section>
+
+  <section class="card"><h2>Health</h2><div id="health" class="meta"></div><table><tbody id="runs"></tbody></table></section>
+</main>
+<script>
+(function () {
+  const cfg = window.ALEXANDRIA || {};
+  const $ = (id) => document.getElementById(id);
+  let key = ""; try { key = localStorage.getItem("alexandria-owner-key") || ""; } catch (e) {}
+  $("key").value = key;
+  const say = (t) => { $("status").textContent = t; };
+  const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  async function rpc(fn, args) {
+    const r = await fetch(cfg.url + "/rest/v1/rpc/" + fn, { method: "POST",
+      headers: { apikey: cfg.anonKey, "Content-Type": "application/json" },
+      body: JSON.stringify(Object.assign({ p_key: key }, args || {})) });
+    const body = await r.json().catch(() => null);
+    if (!r.ok) throw new Error((body && body.message) || r.status);
+    return body;
+  }
+  async function act(fn, args, done) {
+    try { await rpc(fn, args); say(done); await load(); } catch (e) { say("Failed: " + e.message); }
+  }
+
+  async function load() {
+    if (!cfg.url) { say("config.js has no Supabase URL yet."); return; }
+    let s;
+    try { s = await rpc("alx_console_state"); } catch (e) { say("Could not load: " + e.message); return; }
+    say("Loaded.");
+    const paused = s.paused === "true";
+    $("pause").textContent = paused ? "▶ Resume Alexandria" : "⏸ Pause Alexandria";
+    $("pause").onclick = () => act("alx_set_paused", { p_paused: !paused }, paused ? "Resumed." : "Paused.");
+    $("picks").innerHTML = s.picks.map((p) => `<tr><td>${esc(p.date)}</td><td>${p.page ? `<a href="${esc(p.page)}">${esc(p.title)}</a>` : esc(p.title)}</td>
+      <td>${esc(p.status)}</td><td>${esc(p.reactions.join(", "))}</td><td>${p.status === "ready" ? `<button data-hold="${esc(p.date)}">Hold</button> <button data-skip="${esc(p.date)}">Skip</button>`
+      : p.status === "held" ? `<button data-ready="${esc(p.date)}">Release</button>` : ""}</td></tr>`).join("");
+    $("picks").querySelectorAll("[data-hold]").forEach((b) => b.onclick = () => act("alx_set_pick_status", { p_date: b.dataset.hold, p_status: "held" }, "Held."));
+    $("picks").querySelectorAll("[data-skip]").forEach((b) => b.onclick = () => act("alx_set_pick_status", { p_date: b.dataset.skip, p_status: "skipped" }, "Skipped."));
+    $("picks").querySelectorAll("[data-ready]").forEach((b) => b.onclick = () => act("alx_set_pick_status", { p_date: b.dataset.ready, p_status: "ready" }, "Released."));
+    $("proposals").innerHTML = s.proposals.length ? s.proposals.map((p) => `<div class="item"><span class="eyebrow">${esc(p.kind)} · ${esc(p.reason)}</span>
+      <pre style="white-space:pre-wrap;margin:6px 0">${esc(JSON.stringify(p.payload, null, 1))}</pre>
+      <button data-yes="${p.id}">Approve</button> <button data-no="${p.id}">Reject</button></div>`).join("") : '<p class="meta">Nothing waiting.</p>';
+    $("proposals").querySelectorAll("[data-yes]").forEach((b) => b.onclick = () => act("alx_decide_proposal", { p_id: Number(b.dataset.yes), p_approve: true }, "Approved."));
+    $("proposals").querySelectorAll("[data-no]").forEach((b) => b.onclick = () => act("alx_decide_proposal", { p_id: Number(b.dataset.no), p_approve: false }, "Rejected."));
+    $("facets").innerHTML = s.facets.map((f, i) => `<tr><td>${esc(f.name)}<br><code>${esc(f.slug)}</code></td>
+      <td><input data-i="${i}" class="prio" type="number" min="0" max="1" step="0.05" value="${f.priority}"></td>
+      <td><select data-i="${i}" class="st"><option ${f.status === "active" ? "selected" : ""}>active</option><option ${f.status === "paused" ? "selected" : ""}>paused</option><option>removed</option></select></td>
+      <td>${esc(f.keywords.join(", "))}</td><td><button data-save="${i}">Save</button></td></tr>`).join("");
+    $("facets").querySelectorAll("[data-save]").forEach((b) => b.onclick = () => {
+      const f = s.facets[Number(b.dataset.save)], row = b.closest("tr");
+      act("alx_set_facet", { p_slug: f.slug, p_name: f.name, p_priority: Number(row.querySelector(".prio").value),
+        p_keywords: f.keywords, p_status: row.querySelector(".st").value }, "Saved " + f.slug + ".");
+    });
+    $("sites").innerHTML = s.sites.map((x) => `<tr><td><a href="${esc(x.url)}">${esc(x.name)}</a></td><td>${esc(x.kind)}</td>
+      <td title="${esc(x.mode_reason)}">${esc(x.mode)}</td><td>${esc(x.health)}</td><td><button data-rm="${esc(x.url)}">Remove</button></td></tr>`).join("");
+    $("sites").querySelectorAll("[data-rm]").forEach((b) => b.onclick = () => confirm("Stop tracking " + b.dataset.rm + "?") && act("alx_remove_site", { p_url: b.dataset.rm }, "Removed."));
+    $("health").textContent = "AI spend, last 7 days: $" + s.spend_7d;
+    $("runs").innerHTML = s.runs.map((r) => `<tr><td>${esc(String(r.at).slice(0, 16).replace("T", " "))}</td><td>${esc(r.command)}</td><td>${esc(r.stage)}</td><td>${esc(r.status)}</td></tr>`).join("");
+  }
+
+  $("save-key").onclick = () => { key = $("key").value.trim(); try { localStorage.setItem("alexandria-owner-key", key); } catch (e) {} load(); };
+  $("add-facet").onclick = () => act("alx_set_facet", { p_slug: $("f-slug").value.trim(), p_name: $("f-name").value.trim(),
+    p_priority: Number($("f-priority").value), p_keywords: $("f-keywords").value.split(",").map((k) => k.trim()).filter(Boolean), p_status: "active" }, "Taste added.");
+  $("add-note").onclick = () => act("alx_note_taste", { p_text: $("note").value.trim() }, "Note saved; it is parsed tonight.");
+  $("add-site").onclick = () => act("alx_add_site", { p_name: $("s-name").value.trim(), p_url: $("s-url").value.trim(), p_kind: $("s-kind").value,
+    p_language: $("s-lang").value, p_watch: $("s-watch").value.split(",").map((k) => k.trim()).filter(Boolean),
+    p_link_pattern: $("s-pattern").value.trim() || null, p_search_template: $("s-search").value.trim() || null }, "Site added; robots.txt is checked tonight.");
+  if (key) load();
+})();
+</script>
+</body>
+</html>
