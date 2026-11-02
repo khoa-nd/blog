@@ -1,0 +1,824 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mechatronics and Sensor Systems Technology Atlas — Nguyễn Đăng Khoa</title>
+<meta name="description" content="A 23-stage dependency graph built on the VGU Master's in Mechatronics and Sensor Systems Technology, re-weighted toward hands-on, AI-powered robots, with MIT OpenCourseWare, Coursera and edX routes and 13 hands-on labs.">
+<link rel="canonical" href="https://nguyendangkhoa.info/blogs/mechatronics-sensor-systems-technology-atlas.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mechatronics and Sensor Systems Technology Atlas">
+<meta property="og:description" content="98 concepts in one dependency graph, from sensors and control to robot learning and sim-to-real, with MIT OpenCourseWare, Coursera and edX routes and 13 hands-on labs.">
+<meta property="og:url" content="https://nguyendangkhoa.info/blogs/mechatronics-sensor-systems-technology-atlas.html">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#0B1220">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>◈</text></svg>">
+<style>
+:root{--ink:#0B1220;--ink2:#121B2C;--panel:#16213A;--line:#24314E;--fg:#E8EDF7;--fg2:#9AA9C4;--fg3:#65748F;
+ --amber:#F2A93B;--rose:#E2725B;--violet:#8B7FD4;--cyan:#3FB8C4;--green:#5FB88A;--pink:#FF7EB6;color-scheme:dark}
+*{box-sizing:border-box}html{color-scheme:dark;scroll-behavior:smooth}
+body{margin:0;background:var(--ink);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:16px;line-height:1.65}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:16px}
+a{color:var(--amber);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--amber) 40%,transparent)}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+header{padding-block:48px 20px}
+.kicker{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg3);margin:0 0 12px}.kicker b{color:var(--amber)}
+h1{font-size:clamp(30px,5.6vw,50px);line-height:1.05;margin:0 0 14px;letter-spacing:-.02em;text-wrap:balance}h1 em{font-style:italic;color:var(--amber)}
+.lede{color:var(--fg2);font-size:18px;max-width:76ch;margin:0 0 10px}
+.small{font-size:13px;color:var(--fg3)}
+nav.toc{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--ink) 93%,transparent);backdrop-filter:blur(6px);border-block:1px solid var(--line);margin-top:22px}
+nav.toc .wrap{display:flex;gap:6px;overflow-x:auto;padding-block:9px}
+nav.toc a{flex:none;font-size:12.5px;border:1px solid var(--line);border-radius:99px;padding:4px 11px;color:var(--fg2);background:var(--ink2)}
+section{padding-block:44px 6px;scroll-margin-top:52px}
+h2{font-size:clamp(22px,3.8vw,30px);margin:0 0 6px;letter-spacing:-.01em;line-height:1.2}h2 .n{color:var(--fg3);font-weight:500;margin-right:10px}
+h3{font-size:18px;margin:26px 0 10px}
+.sub{color:var(--fg2);margin:0 0 20px;max-width:80ch}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--ink2)}
+table.t{width:100%;border-collapse:collapse;font-size:14.5px;min-width:760px}
+table.t th,table.t td{border-bottom:1px solid var(--line);padding:11px 14px;text-align:left;vertical-align:top}
+table.t tr:last-child td{border-bottom:0}
+table.t th{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--fg3);font-weight:600;background:#0e1626}
+table.t td:first-child{font-weight:600;white-space:nowrap}
+table.t td.what{color:var(--fg2)}
+table.vgu{min-width:900px;font-size:13.5px}table.vgu td:first-child{font-family:ui-monospace,Menlo,monospace;font-weight:500;font-size:12.5px;color:var(--fg2)}
+.callout{border-left:3px solid var(--amber);background:var(--ink2);padding:13px 17px;border-radius:0 6px 6px 0;margin:16px 0;color:var(--fg2)}.callout b{color:var(--fg)}
+.callout.cyan{border-left-color:var(--cyan)}.callout.pink{border-left-color:var(--pink)}
+.phase{display:grid;grid-template-columns:170px 1fr;gap:16px;margin-bottom:18px}
+.phase-h{border-right:2px solid var(--c);padding-right:12px}
+.phase-h b{display:block;color:var(--c);font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+.phase-h span{font-size:13px;color:var(--fg3)}
+.courses{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.course{background:var(--ink2);border:1px solid var(--line);border-radius:8px;padding:13px 15px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.course .top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.course .code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--fg2)}
+.course h4{margin:0;font-size:15.5px;line-height:1.3}
+.course p{margin:0;font-size:14px;color:var(--fg2)}
+.course .meta{font-size:12.5px;color:var(--fg3);margin-top:auto}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.schip{font-size:11.5px;border:1px solid color-mix(in srgb,var(--c,var(--cyan)) 55%,var(--line));color:var(--c,var(--cyan));border-radius:99px;padding:1px 8px;white-space:nowrap}
+.tag{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:3px;padding:2px 6px;white-space:nowrap}
+.off{background:color-mix(in srgb,var(--green) 25%,var(--ink2));color:var(--green);border:1px solid var(--green)}
+.old{background:color-mix(in srgb,var(--amber) 16%,var(--ink2));color:var(--amber);border:1px solid color-mix(in srgb,var(--amber) 60%,var(--line))}
+.lvl{background:color-mix(in srgb,var(--cyan) 16%,var(--ink2));color:var(--cyan);border:1px solid color-mix(in srgb,var(--cyan) 60%,var(--line))}
+.ev{font-size:11px;color:var(--fg3)}
+.cov{display:inline-block;margin-bottom:5px;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border-radius:3px;padding:2px 7px;white-space:nowrap}
+table.cmp{min-width:980px;font-size:13.5px}table.cmp td:not(:first-child){width:29%}table.cmp td:first-child{white-space:normal;width:13%}
+.full{background:var(--green);color:#06140C}.part{background:var(--amber);color:#1A1206}.gap{background:var(--rose);color:#1d0b07}
+footer{color:var(--fg3);font-size:13px;padding-block:28px 56px;margin-top:40px;border-top:1px solid var(--line)}
+@media (max-width:760px){.phase{grid-template-columns:1fr}.phase-h{border-right:0;border-bottom:2px solid var(--c);padding:0 0 6px}}
+
+/* ---- atlas graph, scoped ---- */
+#atlas{--glow:rgba(242,169,59,.5);--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;line-height:1.55}
+#atlas{margin:0;background:var(--ink);color:var(--fg);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+#atlas .wrap{padding-inline:20px;max-width:1440px;margin:0 auto}
+#atlas h2{font-size:clamp(22px,3.8vw,30px)}
+#atlas .sub{color:var(--fg2);max-width:80ch;margin:0 0 20px;font-size:14.5px}
+#atlas .stats{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 6px}
+#atlas .stat{background:var(--ink2);border:1px solid var(--line);border-radius:3px;padding:9px 13px;display:flex;gap:9px;align-items:baseline}
+#atlas .stat b{font-family:inherit;font-size:21px;color:var(--amber);font-variant-numeric:tabular-nums}
+#atlas .stat span{font-size:10.5px;color:var(--fg3);text-transform:uppercase;letter-spacing:.09em}
+#atlas .bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-block:16px;border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);background:var(--ink);z-index:20}
+#atlas .seg{display:flex;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+#atlas .seg button{font:inherit;font-size:11.5px;background:var(--ink2);color:var(--fg2);border:0;padding:7px 13px;cursor:pointer;letter-spacing:.05em}
+#atlas .lg{font:inherit}
+#atlas button+button{border-left:1px solid var(--line)}
+#atlas .seg button[aria-pressed=true]{background:var(--amber);color:#1A1206;font-weight:700}
+#atlas button:focus-visible{outline:2px solid var(--cyan);outline-offset:-2px}
+#atlas .hint{color:var(--fg3);font-size:11px;margin-left:auto}
+#atlas .stage{position:relative;overflow:auto;border:1px solid var(--line);border-radius:4px;
+  background:radial-gradient(1100px 420px at 12% 0%,rgba(242,169,59,.09),transparent 62%),linear-gradient(180deg,var(--ink2),var(--ink));
+  margin-block:18px;max-height:76vh}
+#atlas svg{display:block}
+#atlas .lane{fill:var(--fg3);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase}
+#atlas .lane-rule{stroke:var(--line);stroke-width:1;stroke-dasharray:2 5}
+#atlas .edge{stroke:var(--line);fill:none;stroke-width:1}
+#atlas .edge.hot{stroke:var(--amber);stroke-width:1.9;opacity:.95}
+#atlas .edge.cool{stroke:var(--cyan);stroke-width:1.6;opacity:.85}
+#atlas .node rect{stroke-width:1.2;rx:3}
+#atlas .node text{font-size:10.5px;fill:var(--fg);pointer-events:none}
+#atlas .node .cnt{font-size:9px;fill:var(--ink);font-weight:700}
+#atlas .node{cursor:pointer}
+#atlas .node.dim{opacity:.17}
+#atlas .seg #m-labs[aria-pressed=true]{background:var(--green);color:#06140C}
+#atlas .node.app rect{stroke:var(--green);stroke-width:2;filter:drop-shadow(0 0 7px rgba(95,184,138,.55))}
+#atlas .node.app text{fill:#fff}
+#atlas .app-key{display:none;flex-wrap:wrap;gap:7px;align-items:center;padding-block:12px 14px}
+#atlas .app-key.on{display:flex}
+#atlas .app-key .lead{font-size:11px;color:var(--fg2);margin-right:4px}
+#atlas .app-key .chip{border-color:color-mix(in srgb,var(--green) 55%,var(--line));color:var(--fg);cursor:pointer}
+#atlas .app-key .chip:hover{border-color:var(--green)}
+#atlas .app-key .chip b{color:var(--green)}
+#atlas .tag.app{border-color:var(--green);color:var(--green)}
+#atlas .appnote{margin:-6px 0 18px;padding:10px 12px;background:var(--ink2);border-left:2px solid var(--green);border-radius:0 3px 3px 0;font-size:12.5px;color:var(--fg2)}
+#atlas .appnote b{display:block;color:var(--green);font-size:12.5px;margin-bottom:4px}
+#atlas .appnote .lbl{display:block;margin-top:8px;font-size:9.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--fg3)}
+#atlas .node.sel rect{stroke:var(--amber);stroke-width:2.4}
+#atlas .legend{display:flex;flex-wrap:wrap;gap:7px;padding-bottom:22px}
+#atlas .lg{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--fg2);border:1px solid var(--line);border-radius:99px;padding:4px 10px;cursor:pointer;background:var(--ink2)}
+#atlas .lg i{width:9px;height:9px;border-radius:2px;display:block}
+#atlas .lg[aria-pressed=true]{border-color:var(--fg2);color:var(--fg)}
+#atlas .lg[aria-pressed=false]{opacity:.42}
+#atlas .lg[aria-pressed=false] i{filter:grayscale(1)}
+#atlas #panel{position:fixed;right:0;top:0;height:100%;width:min(390px,92vw);background:var(--panel);border-left:1px solid var(--line);padding:24px 22px;overflow:auto;z-index:40;
+  transform:translateX(100%);transition:transform .22s ease;box-shadow:-18px 0 44px rgba(0,0,0,.45);visibility:hidden}
+#atlas #panel.open{transform:none;visibility:visible}
+#atlas #panel h2{font-family:inherit;font-size:23px;margin:0 0 6px;line-height:1.15;text-wrap:balance}
+#atlas .tagrow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+#atlas .tag{font-size:10px;padding:3px 8px;border-radius:99px;border:1px solid var(--line);color:var(--fg2)}
+#atlas .why{color:var(--fg2);font-size:12.5px;margin:0 0 18px}
+#atlas .mrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
+#atlas .m{background:var(--ink2);border:1px solid var(--line);border-radius:3px;padding:9px}
+#atlas .m b{display:block;font-family:inherit;font-size:19px;color:var(--amber);font-variant-numeric:tabular-nums}
+#atlas .m span{font-size:9.5px;color:var(--fg3);text-transform:uppercase;letter-spacing:.07em}
+#atlas h3{font-size:10.5px;text-transform:uppercase;letter-spacing:.11em;color:var(--fg3);margin:0 0 9px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+#atlas .list{list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:5px}
+#atlas .list li{font-size:12px;color:var(--fg2);padding:6px 9px;background:var(--ink2);border-left:2px solid var(--line);border-radius:0 3px 3px 0;cursor:pointer}
+#atlas .list li:hover{color:var(--fg);border-left-color:var(--amber)}
+#atlas .empty{color:var(--fg3);font-size:12px;font-style:italic}
+#atlas #close{position:absolute;top:14px;right:16px;background:0;border:1px solid var(--line);border-radius:3px;color:var(--fg2);width:28px;height:28px;padding:0;cursor:pointer}
+#atlas .path{margin-block:14px 30px;padding:18px;border:1px solid var(--line);border-radius:4px;background:var(--ink2)}
+#atlas .path h3{border:0;padding:0;margin-bottom:12px}
+#atlas .chain{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+#atlas .chip{font-size:11px;padding:5px 10px;border-radius:3px;background:var(--panel);border:1px solid var(--line);color:var(--fg2)}
+#atlas .chip b{color:var(--amber);font-weight:700}
+#atlas .arrow{color:var(--fg3);font-size:11px}
+@media (max-width:640px){#atlas .hint{display:none}}
+@media (prefers-reduced-motion:reduce){#atlas #panel{transition:none}}
+
+.labs{display:flex;flex-direction:column;gap:10px;min-width:0}
+.lab{background:var(--ink2);border:1px solid var(--line);border-radius:8px;min-width:0}
+.lab[open]{border-color:color-mix(in srgb,var(--c) 45%,var(--line))}
+.lab summary{display:flex;align-items:baseline;gap:10px;padding:11px 14px;cursor:pointer;list-style:none;flex-wrap:wrap}
+.lab summary::-webkit-details-marker{display:none}
+.labn{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--c);min-width:46px}
+.labt{font-weight:650;flex:1 1 240px}
+.labm{font-size:12.5px;color:var(--fg3)}
+.done{font-size:12px;color:var(--fg3);display:flex;align-items:center;gap:4px;cursor:pointer}
+.lab.is-done .labt{color:var(--fg3);text-decoration:line-through}
+.labb{padding:0 14px 14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.labb .goal{margin:0;color:var(--fg)}
+.labb ol{margin:0;padding-left:20px;color:var(--fg2);font-size:14.5px;display:flex;flex-direction:column;gap:8px}
+.labb li{min-width:0}
+.code{position:relative;margin-top:6px;min-width:0}
+.code pre{margin:0;background:#0a1120;border:1px solid var(--line);border-radius:6px;padding:10px 12px;overflow-x:auto;font-size:12.5px;line-height:1.5;color:#cfe0f5}
+.code code,.callout code{font-family:ui-monospace,Menlo,monospace}
+.copy{position:absolute;top:6px;right:6px;font-size:11px;border:1px solid var(--line);background:var(--ink2);color:var(--fg2);border-radius:4px;padding:2px 8px;cursor:pointer}
+.check{margin:0;font-size:14px;color:var(--fg2)}
+.check b{color:var(--green);margin-right:6px;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.stan{font-size:14px;color:var(--fg2)}.stan b{color:var(--cyan);margin-right:6px;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.stan ul{margin:4px 0 0;padding-left:0;list-style:none;display:flex;flex-wrap:wrap;gap:4px 14px}.stan a{white-space:nowrap;font-weight:600}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <p class="kicker"><b>Interactive map</b> · mechatronics &amp; sensors · smart (AI-powered) robots · MIT OpenCourseWare, Coursera &amp; edX routes</p>
+  <h1>Mechatronics and Sensor Systems Technology <em>Atlas</em></h1>
+  <p class="lede">A 23-stage path mapped from the curriculum of the Vietnamese-German University's Master's in Mechatronics and Sensor Systems Technology, then re-weighted for one goal: hands-on robots that learn, not traditional programmed ones. It adds the AI stages that the 2020 catalogue does not list, and links each stage to free MIT OpenCourseWare, Coursera and edX material for self-study.</p>
+  <p class="small">Created <time datetime="2026-11-02">2 Nov 2026</time> · Companion to <a href="ai-engineering-atlas.html">The AI Engineering Atlas</a></p>
+</header>
+<nav class="toc" aria-label="Sections"><div class="wrap">
+  <a href="#atlas">Atlas graph</a><a href="#vgu">1 · VGU curriculum</a><a href="#path">2 · Smart-robot path</a><a href="#lower">3 · Lower priority</a><a href="#mit">4 · MIT OCW route</a><a href="#open">5 · Coursera, edX &amp; open</a><a href="#coverage">6 · Coverage map</a><a href="#diy">7 · Hands-on labs</a>
+</div></nav>
+
+<main class="wrap">
+<section id="atlas">
+  <h2>The atlas graph</h2>
+  <p class="sub">Click any concept to see what to learn first, what it unlocks, and its stage's lab. Stages 1 to 18 follow the VGU modules; the pink stages 19 to 23 are the AI layer added for smart robots.</p>
+  <div class="stats">
+    <div class="stat"><b id="s-nodes"></b><span>concepts</span></div>
+    <div class="stat"><b>23</b><span>stages</span></div>
+    <div class="stat"><b id="s-layers"></b><span>learning layers</span></div>
+    <div class="stat"><b>13</b><span>hands-on labs</span></div>
+  </div>
+<div class="bar">
+  <div class="seg">
+    <button id="m-all" aria-pressed="true">Full graph</button>
+    <button id="m-core" aria-pressed="false">Critical Path</button>
+    <button id="m-labs" aria-pressed="false" title="The concept each stage's lab exercises">Labs</button>
+  </div>
+  <span class="hint" id="hint">Click any concept to trace its prerequisites</span>
+</div>
+<div class="app-key" id="labs-key" aria-live="polite"></div>
+
+<div class="legend" id="legend"></div>
+
+<div class="stage"><svg id="svg" role="img" aria-label="Dependency graph of mechatronics, sensor systems and smart-robot concepts"></svg></div>
+
+<div class="path">
+  <h3>The critical path: longest prerequisite chain in the graph</h3>
+  <div class="chain" id="chain"></div>
+</div>
+
+<aside id="panel" aria-live="polite">
+  <button id="close" aria-label="Close details">&times;</button>
+  <h2 id="p-title"></h2>
+  <div class="tagrow" id="p-tags"></div>
+  <p class="why" id="p-why"></p>
+  <div class="mrow">
+    <div class="m"><b id="p-dep"></b><span>dependents</span></div>
+    <div class="m"><b id="p-pre"></b><span>prereqs</span></div>
+    <div class="m"><b id="p-lay"></b><span>layer</span></div>
+  </div>
+  <div class="appnote" id="p-stage" hidden>
+    <b id="p-stage-t"></b>
+    <span class="lbl" id="p-vgu-l">VGU module</span><span id="p-stage-vgu"></span>
+    <span class="lbl">Learn</span><span id="p-stage-learn"></span>
+    <span class="lbl">Lab</span><span id="p-stage-lab"></span>
+    <span class="lbl">Why it matters</span><span id="p-stage-why"></span>
+  </div>
+  <h3>Learn these first</h3>
+  <ul class="list" id="p-before"></ul>
+  <h3>Unlocks directly</h3>
+  <ul class="list" id="p-after"></ul>
+</aside>
+</section>
+
+<section id="vgu">
+  <h2><span class="n">1</span>The VGU curriculum this atlas is built on</h2>
+  <p class="sub">The Master of Science in Mechatronics and Sensor Systems Technology at the Vietnamese-German University is a four-semester, 120-credit programme taught in English, with a 27-credit thesis. This table follows its <a href="https://vgu.edu.vn/documents/10192/2374570/1.+Module+catalogue_new+vesion+2020_v5_2.pdf/2e075b26-c768-4d47-9b8a-68ee2298a42f" target="_blank" rel="noopener">June 2020 module catalogue</a>. Core modules sum to 108 credits; one Elective I (6) and two Elective II modules (3 each) bring it to 120.</p>
+  <div class="scroll"><table class="t vgu">
+    <thead><tr><th>Code</th><th>Module</th><th>Lectures and labs</th><th>CP</th><th>Sem.</th><th>Type</th><th>Atlas stage</th></tr></thead>
+    <tbody><tr><td>61MST501</td><td>Physical and Chemical Sensor Principles</td><td class="what">Physical Chemistry · Fundamentals of Physical Sensors</td><td>6</td><td>1</td><td class="what">Core</td><td class="what">1</td></tr><tr><td>61MST502</td><td>Sensor Labs</td><td class="what">Analog Electronic Lab · Digital Electronic Lab</td><td>6</td><td>1</td><td class="what">Core</td><td class="what">2</td></tr><tr><td>61MST503</td><td>Technology and Materials</td><td class="what">Smart Materials · Technology of Sensors</td><td>6</td><td>1</td><td class="what">Core</td><td class="what">3</td></tr><tr><td>61MST504</td><td>Programming</td><td class="what">Advanced Programming · Digital Signal Processing</td><td>6</td><td>1</td><td class="what">Core</td><td class="what">4</td></tr><tr><td>61MST505</td><td>Advanced Dynamic Control</td><td class="what">Advanced Control Systems · Modelling, Simulation, Verification</td><td>6</td><td>1</td><td class="what">Core</td><td class="what">5, 7</td></tr><tr><td>61MST506</td><td>Automotive Sensor Applications</td><td class="what">Bus Systems · Automotive Sensors, Safety &amp; Reliability</td><td>6</td><td>2</td><td class="what">Core</td><td class="what">6</td></tr><tr><td>61MST507</td><td>Advanced Simulation</td><td class="what">Numerical Simulation · Application of FEM</td><td>6</td><td>2</td><td class="what">Core</td><td class="what">7</td></tr><tr><td>61MST508</td><td>Embedded Systems</td><td class="what">Microcontroller · Microcontroller Lab</td><td>6</td><td>2</td><td class="what">Core</td><td class="what">8</td></tr><tr><td>61MST509</td><td>Automation</td><td class="what">Automation System · Automation Lab</td><td>6</td><td>2</td><td class="what">Core</td><td class="what">9</td></tr><tr><td>61MST5010</td><td>Robotics (Elective I)</td><td class="what">Fundamentals of Robotics · Advanced Robotics</td><td>6</td><td>2</td><td class="what">Elective: one of two</td><td class="what">10</td></tr><tr><td>61MST5010</td><td>Fluid Mechanics and Heat Transfer (Elective I)</td><td class="what">Fluid Mechanics · Heat Transfer</td><td>6</td><td>2</td><td class="what">Elective: one of two</td><td class="what">11</td></tr><tr><td>61MST601</td><td>Environment Sensor Technology</td><td class="what">Environmental Process Technology · Environmental Lab</td><td>6</td><td>3</td><td class="what">Core</td><td class="what">12</td></tr><tr><td>61MST602</td><td>Advanced System Engineering</td><td class="what">Modern Intelligent Control · Control Lab</td><td>6</td><td>3</td><td class="what">Core</td><td class="what">13</td></tr><tr><td>61MST603</td><td>Management</td><td class="what">Project Management · Research Methodology</td><td>6</td><td>3</td><td class="what">Core</td><td class="what">14</td></tr><tr><td>61MST604</td><td>Scientific Project</td><td class="what">Industry Project</td><td>6</td><td>3</td><td class="what">Core</td><td class="what">18</td></tr><tr><td>61MST605</td><td>Image Processing (Elective II)</td><td class="what">—</td><td>3</td><td>3</td><td class="what">Elective: two of three</td><td class="what">15</td></tr><tr><td>61MST605</td><td>System Identification (Elective II)</td><td class="what">—</td><td>3</td><td>3</td><td class="what">Elective: two of three</td><td class="what">16</td></tr><tr><td>61MST605</td><td>Digital Control Systems (Elective II)</td><td class="what">—</td><td>3</td><td>3</td><td class="what">Elective: two of three</td><td class="what">17</td></tr><tr><td>61MST606</td><td>Thesis</td><td class="what">—</td><td>27</td><td>4</td><td class="what">Core</td><td class="what">18</td></tr><tr><td>61MST607</td><td>Final Examination</td><td class="what">—</td><td>3</td><td>4</td><td class="what">Core</td><td class="what">18</td></tr></tbody>
+  </table></div>
+  <div class="callout"><b>Two cautions.</b> The catalogue does not say which module sits in which semester, so the semester column is inferred from credit totals (30 per semester). It is also the 2020 edition; VGU's current page refers to a 2025–2030 curriculum that I could not read, so check with VGU before relying on the module list.</div>
+  <div class="callout pink"><b>The catalogue lists no machine-learning module.</b> None of the 20 module titles mentions machine learning, deep learning, reinforcement learning or robot learning. I only saw titles, so Modern Intelligent Control or Image Processing may touch on learning methods; check the module handbook. For a goal of AI-powered robots, this is the gap the atlas fills with five extra stages (19 to 23), shown in pink.</div>
+</section>
+
+<section id="path">
+  <h2><span class="n">2</span>The smart-robot path through the stages</h2>
+  <p class="sub">The stages that matter most when the goal is a robot that senses, learns and acts. Each row names the concepts (atlas nodes) and something you could actually build.</p>
+  <div class="scroll"><table class="t">
+    <thead><tr><th>Atlas stage</th><th>Specific concepts</th><th>What you would build</th></tr></thead>
+    <tbody><tr><td>1 · Sensor Principles</td><td class="what">Transduction, specs and error, calibration</td><td class="what">Characterise the exact sensor you will later feed to a model, and know its noise floor.</td></tr><tr><td>2 · Electronics Labs</td><td class="what">Op-amp conditioning, ADC sampling, motor drivers</td><td class="what">Build the analogue front end for an IMU or load cell and a driver for a small motor.</td></tr><tr><td>4 · Programming &amp; DSP</td><td class="what">Python, C, FFT, digital filters</td><td class="what">A filtering pipeline that removes hum and vibration, with its lag measured.</td></tr><tr><td>5 · Advanced Dynamic Control</td><td class="what">PID, state space, observers, Kalman filter</td><td class="what">A speed or position loop with an estimator, tuned in simulation first.</td></tr><tr><td>7 · Simulation &amp; FEM</td><td class="what">Numerical integration, modelling, validation</td><td class="what">A simulator of your own robot that you have checked against data.</td></tr><tr><td>8 · Embedded Systems</td><td class="what">Microcontroller, interrupts, RTOS, embedded Linux</td><td class="what">A 1 kHz loop on a microcontroller under a Linux board that runs the AI.</td></tr><tr><td>10 · Robotics</td><td class="what">Kinematics, planning, ROS 2, grasping</td><td class="what">A robot arm you can command in Cartesian space, in simulation and on hardware.</td></tr><tr><td>13 · Intelligent Control</td><td class="what">MPC, nonlinear and learning-based control</td><td class="what">A predictive controller with input limits, compared against LQR.</td></tr><tr><td>15 · Image Processing &amp; Vision</td><td class="what">Cameras, geometry, classical tracking</td><td class="what">A camera-to-action loop that works without any training data.</td></tr><tr><td>16 · System Identification</td><td class="what">Least squares, step tests, grey-box fitting</td><td class="what">Parameters for your simulator identified from real logs.</td></tr><tr><td>19 · Machine Learning Foundations</td><td class="what">Supervised and classical ML on sensor features</td><td class="what">A tiny classifier that recognises motion from an IMU.</td></tr><tr><td>20 · Deep Learning &amp; Perception</td><td class="what">CNNs, detection, transformers, sensor fusion</td><td class="what">A perception module that outputs object positions in the robot frame.</td></tr><tr><td>21 · Robot Learning</td><td class="what">RL, imitation learning, VLA models</td><td class="what">An arm that does a task it was shown 50 times, with a measured success rate.</td></tr><tr><td>22 · Simulation &amp; Sim-to-Real</td><td class="what">Simulators, domain randomisation, sim-to-real</td><td class="what">A policy trained in simulation and stress-tested against shifted physics.</td></tr><tr><td>23 · Edge AI Deployment</td><td class="what">Quantisation, TinyML, edge GPUs, safe fallbacks</td><td class="what">A policy that runs within a real latency and power budget, with a safe stop.</td></tr></tbody>
+  </table></div>
+  <div class="callout"><b>Classical control stays in the path.</b> A learned policy still outputs targets for a PID or MPC loop, runs on a microcontroller at a fixed rate, and depends on well-conditioned sensors. Stages 2, 5, 8 and 16 are the unglamorous reason a learned arm behaves or does not.</div>
+</section>
+
+<section id="lower">
+  <h2><span class="n">3</span>Stages you can treat as lower priority for this goal</h2>
+  <p class="sub">Real skills, but they belong to other careers more than to learning robots. If you are enrolled at VGU, these modules are still part of the degree; this is advice for self-study.</p>
+  <div class="scroll"><table class="t">
+    <thead><tr><th>Stage</th><th>Why it is lower priority</th></tr></thead>
+    <tbody><tr><td>3 · Smart Materials &amp; Sensor Tech</td><td class="what">Worth a skim for tactile and MEMS sensing, but the materials science itself is optional unless you build soft or compliant robots.</td></tr><tr><td>6 · Automotive Sensors &amp; Buses</td><td class="what">CAN and functional safety matter for vehicles. For a bench robot they are a short topic, not a module.</td></tr><tr><td>9 · Automation</td><td class="what">Classical industrial automation. It is the &#x27;traditional robot&#x27; side of the field, so skip it for a smart-robot path.</td></tr><tr><td>11 · Fluids &amp; Heat Transfer</td><td class="what">Only the Elective I alternative. Take it if you want pneumatic soft robots; otherwise robotics replaces it.</td></tr><tr><td>12 · Environmental Sensors</td><td class="what">Process technology is niche. Keep the wireless sensor network and remote-sensing ideas.</td></tr><tr><td>14 · Management &amp; Research</td><td class="what">Needed for the thesis but learned fastest by running a project. 16.842 on OCW is enough as reading.</td></tr></tbody>
+  </table></div>
+</section>
+
+<section id="mit">
+  <h2><span class="n">4</span>An MIT OpenCourseWare route that covers the stages</h2>
+  <p class="sub">37 MIT OpenCourseWare courses, each mapped to the atlas stages it supports. The tag shows the term of the OpenCourseWare version: <span class="tag off">green</span> for 2019 or later, <span class="tag old">amber</span> for older material, where the concepts hold but tools and examples may be dated. <b>Evidence</b> says how much I read: <b>description</b> means the course's OpenCourseWare description or syllabus; <b>title only</b> means I confirmed the page exists but did not read its description.</p>
+  <div class="callout"><b>Start here for the AI half.</b> 6.4210 Robotic Manipulation, 6.832 Underactuated Robotics and 6.8300 Advances in Computer Vision are the three that touch learned robot behaviour directly, and the first two have living notes on Tedrake's own sites.</div>
+  <div class="phase" style="--c:#9AA9C4"><div class="phase-h"><b>Foundations</b><span>programming and signals</span></div><div class="courses"><div class="course"><div class="top"><span class="code">6.0001</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Fall 2016</span></div><h4>Introduction to Computer Science and Programming in Python</h4><p>A half-semester Python course for beginners: 6 problem sets and two quizzes. Its full-semester successor, 6.100L, covers the same material more slowly.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">4 · Programming &amp; DSP</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/6-0001-introduction-to-computer-science-and-programming-in-python-fall-2016/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">6.087</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">IAP 2010</span></div><h4>Practical Programming in C</h4><p>The language behind most microcontroller firmware. Course description not read for this atlas.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">4 · Programming &amp; DSP</span><span class="schip" style="--c:var(--cyan)">8 · Embedded Systems</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: title only</span> · <a href="https://ocw.mit.edu/courses/6-087-practical-programming-in-c-january-iap-2010/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">6.003</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Fall 2011</span></div><h4>Signals and Systems</h4><p>Discrete- and continuous-time signals, Fourier, Laplace and z transforms and sampling, with lecture videos, notes and exams.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">4 · Programming &amp; DSP</span><span class="schip" style="--c:var(--cyan)">5 · Advanced Dynamic Control</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/6-003-signals-and-systems-fall-2011/" target="_blank" rel="noopener">course page ↗</a></div></div></div></div><div class="phase" style="--c:#F2A93B"><div class="phase-h"><b>Sensing &amp; electronics</b><span>from physics to a clean signal</span></div><div class="courses"><div class="course"><div class="top"><span class="code">5.60</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Spring 2008</span></div><h4>Thermodynamics &amp; Kinetics</h4><p>Physical chemistry: equilibrium, thermodynamics and reaction rates, with video lectures. The basis for how a chemical sensor responds.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">1 · Sensor Principles</span><span class="schip" style="--c:var(--violet)">12 · Environmental Sensors</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/5-60-thermodynamics-kinetics-spring-2008/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">5.111SC</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Fall 2014</span></div><h4>Principles of Chemical Science</h4><p>A gentler chemistry start: electronic structure, thermodynamics, acid-base and redox equilibria, kinetics. No formal prerequisites.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">1 · Sensor Principles</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/5-111sc-principles-of-chemical-science-fall-2014/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">6.071J</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Spring 2006</span></div><h4>Introduction to Electronics, Signals, and Measurement</h4><p>Hands-on electronics with a measurement focus: filters, diodes, transistors and op-amps, with labs built on LabVIEW virtual instruments.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">2 · Electronics Labs</span><span class="schip" style="--c:var(--cyan)">1 · Sensor Principles</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/6-071j-introduction-to-electronics-signals-and-measurement-spring-2006/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">6.002</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Spring 2007</span></div><h4>Circuits and Electronics</h4><p>The lumped circuit abstraction, MOS transistors and amplifiers, and first- and second-order dynamics.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">2 · Electronics Labs</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/6-002-circuits-and-electronics-spring-2007/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">6.101</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Spring 2007</span></div><h4>Introductory Analog Electronics Laboratory</h4><p>Six lab projects on diodes, transistors, JFETs and op-amps, including a small audio amplifier. The closest OCW match to an analogue lab.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">2 · Electronics Labs</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/6-101-introductory-analog-electronics-laboratory-spring-2007/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">6.111</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Spring 2006</span></div><h4>Introductory Digital Systems Laboratory</h4><p>Digital design with Verilog and FPGAs: finite-state machines, memory, and a lab sequence that ends in a Pong game.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">2 · Electronics Labs</span><span class="schip" style="--c:var(--cyan)">8 · Embedded Systems</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/6-111-introductory-digital-systems-laboratory-spring-2006/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">6.777J</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Spring 2007</span></div><h4>Design and Fabrication of Microelectromechanical Devices</h4><p>Graduate microsystem design: microfabrication, elasticity, lumped-element models, noise and capacitive accelerometers. Teams build sensors and actuators.</p><div class="chips"><span class="schip" style="--c:var(--violet)">3 · Smart Materials &amp; Sensor Tech</span><span class="schip" style="--c:var(--cyan)">1 · Sensor Principles</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/6-777j-design-and-fabrication-of-microelectromechanical-devices-spring-2007/" target="_blank" rel="noopener">course page ↗</a></div></div></div></div><div class="phase" style="--c:#E2725B"><div class="phase-h"><b>Building things</b><span>hands-on design and embedded work</span></div><div class="courses"><div class="course"><div class="top"><span class="code">2.017J</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Fall 2009</span></div><h4>Design of Electromechanical Robotic Systems</h4><p>A lab introduces the Arduino and C code that reads sensors and drives actuators, plus field-robotics project briefs.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">8 · Embedded Systems</span><span class="schip" style="--c:var(--cyan)">10 · Robotics</span><span class="schip" style="--c:var(--cyan)">18 · Industry Project &amp; Thesis</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/2-017j-design-of-electromechanical-robotic-systems-fall-2009/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">MAS.863</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Fall 2002</span></div><h4>How to Make (Almost) Anything</h4><p>A graduate hands-on course on designing and fabricating smart systems: CAD/CAM, 3D printing, PCB fabrication, sensors and wireless. The 2002 version is dated.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">8 · Embedded Systems</span><span class="schip" style="--c:var(--cyan)">18 · Industry Project &amp; Thesis</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/mas-863-how-to-make-almost-anything-fall-2002/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">2.007</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Spring 2009</span></div><h4>Design and Manufacturing I</h4><p>A first engineering design subject where students build a robot for a yearly challenge.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">10 · Robotics</span><span class="schip" style="--c:var(--cyan)">18 · Industry Project &amp; Thesis</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/2-007-design-and-manufacturing-i-spring-2009/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">2.009</span><span class="tag off" title="Recent version">Fall 2021</span></div><h4>Product Engineering Process</h4><p>Large student teams build alpha prototypes of new products and present them live.</p><div class="chips"><span class="schip" style="--c:var(--violet)">14 · Management &amp; Research</span><span class="schip" style="--c:var(--cyan)">18 · Industry Project &amp; Thesis</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/2-009-product-engineering-process-fall-2021/" target="_blank" rel="noopener">course page ↗</a></div></div></div></div><div class="phase" style="--c:#3FB8C4"><div class="phase-h"><b>Control &amp; dynamics</b><span>from PID to optimal control</span></div><div class="courses"><div class="course"><div class="top"><span class="code">2.14</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Spring 2014</span></div><h4>Analysis and Design of Feedback Control Systems</h4><p>Time- and frequency-domain analysis, root locus and loop shaping, observer-based control and discrete-time design, with labs and a design case study.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">5 · Advanced Dynamic Control</span><span class="schip" style="--c:var(--cyan)">13 · Intelligent Control</span><span class="schip" style="--c:var(--cyan)">17 · Digital Control</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/2-14-analysis-and-design-of-feedback-control-systems-spring-2014/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">6.302</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Spring 2007</span></div><h4>Feedback Systems</h4><p>Introductory feedback design: stability, root locus, the Nyquist criterion and frequency-domain compensation, with op-amp and power-converter applications.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">5 · Advanced Dynamic Control</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/6-302-feedback-systems-spring-2007/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">16.30</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Fall 2010</span></div><h4>Feedback Control Systems</h4><p>State-space design: full-state feedback, state estimation, output feedback, and model uncertainty. Lecture notes posted.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">5 · Advanced Dynamic Control</span><span class="schip" style="--c:var(--cyan)">13 · Intelligent Control</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/16-30-feedback-control-systems-fall-2010/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">6.241J</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Spring 2011</span></div><h4>Dynamic Systems and Control</h4><p>Graduate course: linear algebra and least squares review, MIMO systems, robust stability and optimal and robust design.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">5 · Advanced Dynamic Control</span><span class="schip" style="--c:var(--cyan)">13 · Intelligent Control</span><span class="schip" style="--c:var(--cyan)">16 · System Identification</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/6-241j-dynamic-systems-and-control-spring-2011/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">6.832</span><span class="tag off" title="Recent version">Spring 2022</span></div><h4>Underactuated Robotics</h4><p>Tedrake&#x27;s graduate course on nonlinear dynamics and control of underactuated machines: optimal control, motion planning and reinforcement learning. The 2009 version has the video lectures.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">13 · Intelligent Control</span><span class="schip" style="--c:var(--pink)">21 · Robot Learning</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/6-832-underactuated-robotics-spring-2022/" target="_blank" rel="noopener">course page ↗</a> · <a href="https://underactuated.mit.edu/" target="_blank" rel="noopener">up-to-date notes ↗</a></div></div></div></div><div class="phase" style="--c:#5FB88A"><div class="phase-h"><b>Robotics &amp; autonomy</b><span>arms, vehicles and planning</span></div><div class="courses"><div class="course"><div class="top"><span class="code">2.12</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Fall 2005</span></div><h4>Introduction to Robotics</h4><p>Robot mechanisms, kinematics, dynamics and intelligent control, with labs and a group project. The 2005 material predates learning-based methods.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">10 · Robotics</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/2-12-introduction-to-robotics-fall-2005/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">6.4210</span><span class="tag off" title="Recent version">Fall 2022</span></div><h4>Robotic Manipulation</h4><p>Tedrake&#x27;s course on perception (deep learning and 3D geometry), planning and control for arms. Homework builds a manipulation stack for cluttered scenes.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">10 · Robotics</span><span class="schip" style="--c:var(--pink)">20 · Deep Learning &amp; Perception</span><span class="schip" style="--c:var(--pink)">21 · Robot Learning</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/6-4210-robotic-manipulation-fall-2022/" target="_blank" rel="noopener">course page ↗</a> · <a href="https://manipulation.mit.edu/" target="_blank" rel="noopener">living course notes ↗</a></div></div><div class="course"><div class="top"><span class="code">16.410</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Fall 2010</span></div><h4>Principles of Autonomy and Decision Making</h4><p>Planning and decision making for autonomous systems. Course description not read for this atlas.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">10 · Robotics</span><span class="schip" style="--c:var(--cyan)">13 · Intelligent Control</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: title only</span> · <a href="https://ocw.mit.edu/courses/16-410-principles-of-autonomy-and-decision-making-fall-2010/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">16.412J</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Spring 2016</span></div><h4>Cognitive Robotics</h4><p>Planning and reasoning for autonomous agents. Only the title and one lecture on incremental path planning were read.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">10 · Robotics</span><span class="schip" style="--c:var(--pink)">21 · Robot Learning</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: title only</span> · <a href="https://ocw.mit.edu/courses/16-412j-cognitive-robotics-spring-2016/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">16.485</span><span class="tag off" title="Recent version">Fall 2020</span></div><h4>Visual Navigation for Autonomous Vehicles (VNAV)</h4><p>Carlone&#x27;s course: coordinate frames and rotations, lidar odometry, ICP and visual-inertial odometry.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">10 · Robotics</span><span class="schip" style="--c:var(--cyan)">15 · Image Processing &amp; Vision</span><span class="schip" style="--c:var(--pink)">20 · Deep Learning &amp; Perception</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/16-485-visual-navigation-for-autonomous-vehicles-vnav-fall-2020/" target="_blank" rel="noopener">course page ↗</a></div></div></div></div><div class="phase" style="--c:#FF7EB6"><div class="phase-h"><b>Vision &amp; learning</b><span>the AI layer</span></div><div class="courses"><div class="course"><div class="top"><span class="code">6.801</span><span class="tag off" title="Recent version">Fall 2020</span></div><h4>Machine Vision</h4><p>Horn&#x27;s course: image formation and analysis, filtering, photometric stereo and motion, with robotics applications.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">15 · Image Processing &amp; Vision</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/6-801-machine-vision-fall-2020/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">6.8300</span><span class="tag off" title="Recent version">Spring 2025</span></div><h4>Advances in Computer Vision</h4><p>Graduate course: multi-view geometry, differentiable rendering, neural scene representations, generative models and vision for embodied agents.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">15 · Image Processing &amp; Vision</span><span class="schip" style="--c:var(--pink)">20 · Deep Learning &amp; Perception</span><span class="schip" style="--c:var(--pink)">21 · Robot Learning</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/6-8300-advances-in-computer-vision-spring-2025/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">6.036</span><span class="tag off" title="Recent version">Fall 2020</span></div><h4>Introduction to Machine Learning</h4><p>Modelling and prediction, overfitting and generalisation, with reinforcement learning basics. Since renumbered 6.390.</p><div class="chips"><span class="schip" style="--c:var(--pink)">19 · Machine Learning Foundations</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/6-036-introduction-to-machine-learning-fall-2020/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">6.S191</span><span class="tag off" title="Recent version">IAP 2020</span></div><h4>Introduction to Deep Learning</h4><p>A hands-on January course on deep learning with networks built in TensorFlow. Re-taught each year at MIT.</p><div class="chips"><span class="schip" style="--c:var(--pink)">20 · Deep Learning &amp; Perception</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/6-s191-introduction-to-deep-learning-january-iap-2020/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">6.7960</span><span class="tag off" title="Recent version">Fall 2024</span></div><h4>Deep Learning</h4><p>Graduate-level deep learning: training neural networks and graph networks, with lecture notes.</p><div class="chips"><span class="schip" style="--c:var(--pink)">20 · Deep Learning &amp; Perception</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/6-7960-deep-learning-fall-2024/" target="_blank" rel="noopener">course page ↗</a></div></div></div></div><div class="phase" style="--c:#8B7FD4"><div class="phase-h"><b>Simulation, fluids &amp; environment</b><span>the optional and physical stages</span></div><div class="courses"><div class="course"><div class="top"><span class="code">2.092</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Fall 2009</span></div><h4>Finite Element Analysis of Solids and Fluids I</h4><p>Bathe&#x27;s course on finite element methods for solids, fluids, field and heat-transfer problems. Homework uses the ADINA program.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">7 · Simulation &amp; FEM</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/2-092-finite-element-analysis-of-solids-and-fluids-i-fall-2009/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">RES.2-002</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Spring 2010</span></div><h4>Finite Element Procedures for Solids and Structures</h4><p>Video lectures on linear and nonlinear finite element analysis.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">7 · Simulation &amp; FEM</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/res-2-002-finite-element-procedures-for-solids-and-structures-spring-2010/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">2.51</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Fall 2008</span></div><h4>Intermediate Heat and Mass Transfer</h4><p>Conduction, convection, boiling, condensation and radiation. Prerequisites are Thermal-Fluids Engineering I and II.</p><div class="chips"><span class="schip" style="--c:var(--violet)">11 · Fluids &amp; Heat Transfer</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/2-51-intermediate-heat-and-mass-transfer-fall-2008/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">2.25</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Fall 2013</span></div><h4>Advanced Fluid Mechanics</h4><p>Graduate fluid mechanics: Navier-Stokes, boundary layers, lubrication and turbulence. Prerequisite: 2.006.</p><div class="chips"><span class="schip" style="--c:var(--violet)">11 · Fluids &amp; Heat Transfer</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/2-25-advanced-fluid-mechanics-fall-2013/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">12.815</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Fall 2008</span></div><h4>Atmospheric Radiation</h4><p>Atmospheric radiation and remote sensing, including lidar and radar retrieval of gases and particles.</p><div class="chips"><span class="schip" style="--c:var(--violet)">12 · Environmental Sensors</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/12-815-atmospheric-radiation-fall-2008/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">2.S998</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Spring 2012</span></div><h4>Marine Autonomy, Sensing and Communications</h4><p>Graduate seminar on acoustic, biological and chemical sensing for underwater vehicles, with a field testbed.</p><div class="chips"><span class="schip" style="--c:var(--violet)">12 · Environmental Sensors</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/2-s998-marine-autonomy-sensing-and-communications-spring-2012/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">RES.LL-003</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">IAP 2011</span></div><h4>Build a Small Radar System</h4><p>Build a radar that senses range and Doppler and does synthetic-aperture imaging. A rare hands-on sensing build.</p><div class="chips"><span class="schip" style="--c:var(--violet)">12 · Environmental Sensors</span><span class="schip" style="--c:var(--cyan)">1 · Sensor Principles</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/res-ll-003-build-a-small-radar-system-capable-of-sensing-range-doppler-and-synthetic-aperture-radar-imaging-january-iap-2011/" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">16.842</span><span class="tag old" title="Older material: concepts hold, tools and examples may be dated">Fall 2015</span></div><h4>Fundamentals of Systems Engineering</h4><p>Systems engineering with the V-model and model-based methods, and a team project taking a cyber-electro-mechanical system to a design review.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">13 · Intelligent Control</span><span class="schip" style="--c:var(--violet)">14 · Management &amp; Research</span><span class="schip" style="--c:var(--cyan)">18 · Industry Project &amp; Thesis</span></div><div class="meta">MIT OpenCourseWare · <span class="ev">evidence: description</span> · <a href="https://ocw.mit.edu/courses/16-842-fundamentals-of-systems-engineering-fall-2015/" target="_blank" rel="noopener">course page ↗</a></div></div></div></div><p class="small"><span class="schip" style="--c:var(--cyan)">VGU stage, core for this path</span> &nbsp; <span class="schip" style="--c:var(--violet)">VGU stage, lower priority</span> &nbsp; <span class="schip" style="--c:var(--pink)">AI layer, not in VGU</span></p>
+</section>
+
+<section id="open">
+  <h2><span class="n">5</span>Coursera, edX and open courses that fill the rest</h2>
+  <p class="sub">15 courses and guides, mostly where OpenCourseWare has no match: embedded hardware, edge AI, and hands-on robot learning. <b>Evidence</b>: <b>read</b> means I read a description of the course; <b>url checked</b> means the page loads but I did not read it, so confirm the content, price and availability before enrolling.</p>
+  <div class="phase" style="--c:#9AA9C4"><div class="phase-h"><b>Machine learning</b><span>the base for the AI layer</span></div><div class="courses"><div class="course"><div class="top"><span class="code">Coursera · DeepLearning.AI, Stanford</span><span class="tag lvl">Specialization</span></div><h4>Machine Learning Specialization</h4><p>Andrew Ng&#x27;s three-course introduction to supervised learning, neural networks and recommenders.</p><div class="chips"><span class="schip" style="--c:var(--pink)">19 · Machine Learning Foundations</span></div><div class="meta"><span class="ev">evidence: url checked</span> · <a href="https://www.coursera.org/specializations/machine-learning-introduction" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">Coursera · DeepLearning.AI</span><span class="tag lvl">Specialization</span></div><h4>Deep Learning Specialization</h4><p>Neural networks, CNNs and sequence models: the standard follow-on once the basics are clear.</p><div class="chips"><span class="schip" style="--c:var(--pink)">19 · Machine Learning Foundations</span><span class="schip" style="--c:var(--pink)">20 · Deep Learning &amp; Perception</span></div><div class="meta"><span class="ev">evidence: url checked</span> · <a href="https://www.coursera.org/specializations/deep-learning" target="_blank" rel="noopener">course page ↗</a></div></div></div></div><div class="phase" style="--c:#E2725B"><div class="phase-h"><b>Embedded &amp; edge</b><span>from a microcontroller to a model on it</span></div><div class="courses"><div class="course"><div class="top"><span class="code">edX · UTAustinX</span><span class="tag lvl">Course · hands-on</span></div><h4>Embedded Systems - Shape the World: Microcontroller Input/Output</h4><p>A lab-based course built on a TI TM4C123G board. Listings say an instrument kit is needed for the full course, and that the audit track is free.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">8 · Embedded Systems</span></div><div class="meta"><span class="ev">evidence: read</span> · <a href="https://www.edx.org/learn/embedded-systems/the-university-of-texas-at-austin-embedded-systems-shape-the-world-microcontroller-input-output" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">edX · HarvardX</span><span class="tag lvl">Course</span></div><h4>Fundamentals of TinyML</h4><p>Machine learning on microcontrollers: the course behind the TinyML idea.</p><div class="chips"><span class="schip" style="--c:var(--pink)">23 · Edge AI Deployment</span></div><div class="meta"><span class="ev">evidence: url checked</span> · <a href="https://www.edx.org/learn/machine-learning/harvard-university-fundamentals-of-tinyml" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">DeepLearning.AI</span><span class="tag lvl">Short course</span></div><h4>Introduction to On-Device AI</h4><p>Convert and quantise models for phones and edge devices and see how CPU, GPU and NPU change performance.</p><div class="chips"><span class="schip" style="--c:var(--pink)">23 · Edge AI Deployment</span></div><div class="meta"><span class="ev">evidence: url checked</span> · <a href="https://www.deeplearning.ai/courses/introduction-to-on-device-ai" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">NVIDIA</span><span class="tag lvl">Guide</span></div><h4>Jetson Orin Nano Developer Kit: getting started</h4><p>Setup guide for an edge GPU board: the usual place a vision model and a policy run next to the microcontroller.</p><div class="chips"><span class="schip" style="--c:var(--pink)">23 · Edge AI Deployment</span><span class="schip" style="--c:var(--cyan)">8 · Embedded Systems</span></div><div class="meta"><span class="ev">evidence: url checked</span> · <a href="https://developer.nvidia.com/embedded/learn/get-started-jetson-orin-nano-devkit" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">Edge Impulse</span><span class="tag lvl">Docs</span></div><h4>Edge Impulse documentation</h4><p>A platform for collecting sensor data, training a small model and deploying it to a microcontroller.</p><div class="chips"><span class="schip" style="--c:var(--pink)">23 · Edge AI Deployment</span><span class="schip" style="--c:var(--pink)">19 · Machine Learning Foundations</span></div><div class="meta"><span class="ev">evidence: url checked</span> · <a href="https://docs.edgeimpulse.com/" target="_blank" rel="noopener">course page ↗</a></div></div></div></div><div class="phase" style="--c:#5FB88A"><div class="phase-h"><b>Robotics &amp; vehicles</b><span>the classical robot, taught well</span></div><div class="courses"><div class="course"><div class="top"><span class="code">Coursera · Northwestern</span><span class="tag lvl">Specialization · 6 courses</span></div><h4>Modern Robotics: Mechanics, Planning, and Control</h4><p>Kevin Lynch&#x27;s six-course series on kinematics, dynamics, motion planning and control of robot arms and mobile robots.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">10 · Robotics</span><span class="schip" style="--c:var(--cyan)">5 · Advanced Dynamic Control</span></div><div class="meta"><span class="ev">evidence: read</span> · <a href="https://www.coursera.org/specializations/modernrobotics" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">Coursera · University of Toronto</span><span class="tag lvl">Specialization · advanced</span></div><h4>Self-Driving Cars Specialization</h4><p>Four courses from Waslander and Kelly on vehicle sensing, state estimation, perception and planning, ending with driving a simulated car.</p><div class="chips"><span class="schip" style="--c:var(--violet)">6 · Automotive Sensors &amp; Buses</span><span class="schip" style="--c:var(--cyan)">10 · Robotics</span><span class="schip" style="--c:var(--pink)">20 · Deep Learning &amp; Perception</span></div><div class="meta"><span class="ev">evidence: read</span> · <a href="https://www.coursera.org/specializations/self-driving-cars" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">ROS</span><span class="tag lvl">Official docs</span></div><h4>ROS 2 tutorials</h4><p>The official, free tutorials for nodes, topics, services and tools.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">10 · Robotics</span></div><div class="meta"><span class="ev">evidence: url checked</span> · <a href="https://docs.ros.org/en/jazzy/Tutorials.html" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">Coursera · Duke</span><span class="tag lvl">Course · 9 weeks</span></div><h4>Image and Video Processing: From Mars to Hollywood</h4><p>How digital images and video are made, altered and stored. Optional MATLAB exercises, with MATLAB Online access for enrolled learners.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">15 · Image Processing &amp; Vision</span></div><div class="meta"><span class="ev">evidence: read</span> · <a href="https://www.coursera.org/learn/image-processing" target="_blank" rel="noopener">course page ↗</a></div></div></div></div><div class="phase" style="--c:#FF7EB6"><div class="phase-h"><b>Robot learning</b><span>hands-on, AI-powered</span></div><div class="courses"><div class="course"><div class="top"><span class="code">Hugging Face</span><span class="tag lvl">Free course</span></div><h4>Robotics Course</h4><p>A free course that moves from classical robotics to learning-based methods, using LeRobot throughout.</p><div class="chips"><span class="schip" style="--c:var(--cyan)">10 · Robotics</span><span class="schip" style="--c:var(--pink)">21 · Robot Learning</span></div><div class="meta"><span class="ev">evidence: read</span> · <a href="https://huggingface.co/learn/robotics-course" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">Hugging Face</span><span class="tag lvl">Docs</span></div><h4>LeRobot documentation</h4><p>Step-by-step guides for building the SO-101 arm, teleoperating, recording demonstrations, training ACT and running the policy.</p><div class="chips"><span class="schip" style="--c:var(--pink)">21 · Robot Learning</span><span class="schip" style="--c:var(--cyan)">10 · Robotics</span></div><div class="meta"><span class="ev">evidence: read</span> · <a href="https://huggingface.co/docs/lerobot" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">Hugging Face</span><span class="tag lvl">Free course</span></div><h4>Deep Reinforcement Learning Course</h4><p>Reinforcement learning from the basics to modern algorithms, with hands-on notebooks.</p><div class="chips"><span class="schip" style="--c:var(--pink)">21 · Robot Learning</span></div><div class="meta"><span class="ev">evidence: url checked</span> · <a href="https://huggingface.co/learn/deep-rl-course" target="_blank" rel="noopener">course page ↗</a></div></div><div class="course"><div class="top"><span class="code">NVIDIA</span><span class="tag lvl">Learning path · free</span></div><h4>Physical AI Learning: Getting Started With Isaac Lab</h4><p>Courses on robot learning and Isaac Lab, including training a first robot with reinforcement learning. Needs an NVIDIA GPU.</p><div class="chips"><span class="schip" style="--c:var(--pink)">22 · Simulation &amp; Sim-to-Real</span><span class="schip" style="--c:var(--pink)">21 · Robot Learning</span></div><div class="meta"><span class="ev">evidence: read</span> · <a href="https://docs.nvidia.com/learning/physical-ai/getting-started-with-isaac-lab/latest/index.html" target="_blank" rel="noopener">course page ↗</a></div></div></div></div><p class="small"><span class="schip" style="--c:var(--cyan)">VGU stage, core for this path</span> &nbsp; <span class="schip" style="--c:var(--violet)">VGU stage, lower priority</span> &nbsp; <span class="schip" style="--c:var(--pink)">AI layer, not in VGU</span></p>
+</section>
+
+<section id="coverage">
+  <h2><span class="n">6</span>Coverage map: MIT OpenCourseWare against the stages</h2>
+  <p class="sub">Each stage against the two sources. A stage is <b>covered</b> when a named course teaches its main topics, <b>partly</b> when only some are covered, and a <b>gap</b> when I found nothing. Gaps mean my search found nothing, not that nothing exists.</p>
+  <div class="scroll"><table class="t cmp">
+    <thead><tr><th>Stage</th><th>MIT OpenCourseWare</th><th>Coursera, edX &amp; open</th><th>To fill the gap</th></tr></thead>
+    <tbody><tr><td>1 · Sensor Principles</td><td class="what"><span class="cov part">Partly</span><br>6.071J measurement, 6.777J microsensors, 5.60 for the chemistry. No course on physical-sensor principles was found.</td><td class="what"><span class="cov gap">Gap</span><br>No course found.</td><td class="what">Read a sensor datasheet end to end, then do Lab 0.</td></tr><tr><td>2 · Electronics Labs</td><td class="what"><span class="cov full">Covered</span><br>6.002 circuits, 6.101 analogue lab, 6.071J, 6.111 digital lab.</td><td class="what"><span class="cov part">Partly</span><br>UTAustinX covers microcontroller I/O, not analogue design.</td><td class="what">Build the Lab 5 breakout with a conditioning stage.</td></tr><tr><td>3 · Smart Materials &amp; Sensor Tech</td><td class="what"><span class="cov part">Partly</span><br>6.777J covers MEMS sensors. No smart-materials course found.</td><td class="what"><span class="cov gap">Gap</span><br>No course found.</td><td class="what">Read MEMS and piezo application notes from sensor makers.</td></tr><tr><td>4 · Programming &amp; DSP</td><td class="what"><span class="cov full">Covered</span><br>6.0001 Python, 6.087 C, 6.003 signals and systems.</td><td class="what"><span class="cov part">Partly</span><br>The ML specializations teach Python; no DSP course was confirmed.</td><td class="what">Labs 0 and 1.</td></tr><tr><td>5 · Advanced Dynamic Control</td><td class="what"><span class="cov full">Covered</span><br>2.14, 6.302, 16.30, 6.241J.</td><td class="what"><span class="cov part">Partly</span><br>Modern Robotics covers robot control, not general control design.</td><td class="what">Labs 2 and 3.</td></tr><tr><td>6 · Automotive Sensors &amp; Buses</td><td class="what"><span class="cov gap">Gap</span><br>No OCW course on automotive buses or sensors was found. 16.485 covers visual-inertial navigation only.</td><td class="what"><span class="cov part">Partly</span><br>Self-Driving Cars covers vehicle sensing and state estimation, not CAN.</td><td class="what">python-can docs and a CAN log.</td></tr><tr><td>7 · Simulation &amp; FEM</td><td class="what"><span class="cov full">Covered</span><br>2.092 and RES.2-002 for finite elements.</td><td class="what"><span class="cov gap">Gap</span><br>No finite-element course found in the search.</td><td class="what">MuJoCo and Drake documentation for robot simulation.</td></tr><tr><td>8 · Embedded Systems</td><td class="what"><span class="cov part">Partly</span><br>2.017J Arduino lab, 6.111, 6.087. No microcontroller course found.</td><td class="what"><span class="cov full">Covered</span><br>UTAustinX Embedded Systems; HarvardX TinyML.</td><td class="what">Lab 5.</td></tr><tr><td>9 · Automation</td><td class="what"><span class="cov gap">Gap</span><br>No OCW course on PLCs or industrial automation was found.</td><td class="what"><span class="cov gap">Gap</span><br>No course found.</td><td class="what">Optional. Use a PLC simulator.</td></tr><tr><td>10 · Robotics</td><td class="what"><span class="cov full">Covered</span><br>2.12, 6.4210, 16.410, 16.412J, 16.485.</td><td class="what"><span class="cov full">Covered</span><br>Modern Robotics; Hugging Face Robotics Course; ROS 2 tutorials.</td><td class="what">Labs 9 to 12.</td></tr><tr><td>11 · Fluids &amp; Heat Transfer</td><td class="what"><span class="cov part">Partly</span><br>2.51 heat transfer and 2.25 fluids. 2.005 was not found.</td><td class="what"><span class="cov gap">Gap</span><br>No course found.</td><td class="what">Optional.</td></tr><tr><td>12 · Environmental Sensors</td><td class="what"><span class="cov part">Partly</span><br>12.815 remote sensing, 2.S998 sensing, RES.LL-003 radar.</td><td class="what"><span class="cov gap">Gap</span><br>No course found.</td><td class="what">Optional.</td></tr><tr><td>13 · Intelligent Control</td><td class="what"><span class="cov full">Covered</span><br>16.30, 6.241J, 6.832, 16.842.</td><td class="what"><span class="cov part">Partly</span><br>Underactuated Robotics notes and Modern Robotics control chapters.</td><td class="what">Build an MPC in the stage lab.</td></tr><tr><td>14 · Management &amp; Research</td><td class="what"><span class="cov part">Partly</span><br>16.842 and 2.009 touch on it.</td><td class="what"><span class="cov gap">Gap</span><br>No course found.</td><td class="what">Learn it on the thesis.</td></tr><tr><td>15 · Image Processing &amp; Vision</td><td class="what"><span class="cov full">Covered</span><br>6.801, 6.8300, 16.485.</td><td class="what"><span class="cov full">Covered</span><br>Duke Image and Video Processing.</td><td class="what">Lab 7.</td></tr><tr><td>16 · System Identification</td><td class="what"><span class="cov part">Partly</span><br>6.241J reviews least squares. No dedicated system-identification course found (6.435 did not turn up).</td><td class="what"><span class="cov gap">Gap</span><br>No course found.</td><td class="what">Lab 4 and any system-identification textbook.</td></tr><tr><td>17 · Digital Control</td><td class="what"><span class="cov part">Partly</span><br>2.14 includes discrete-time design.</td><td class="what"><span class="cov gap">Gap</span><br>No course found.</td><td class="what">Port Lab 2 to discrete form.</td></tr><tr><td>18 · Industry Project &amp; Thesis</td><td class="what"><span class="cov part">Partly</span><br>2.007, 2.009, 2.017J, MAS.863 for building.</td><td class="what"><span class="cov part">Partly</span><br>LeRobot guides for an end-to-end project.</td><td class="what">Lab 12.</td></tr><tr><td>19 · Machine Learning Foundations</td><td class="what"><span class="cov full">Covered</span><br>6.036 (now 6.390).</td><td class="what"><span class="cov full">Covered</span><br>Machine Learning Specialization.</td><td class="what">Labs 6 and 7.</td></tr><tr><td>20 · Deep Learning &amp; Perception</td><td class="what"><span class="cov full">Covered</span><br>6.S191, 6.7960, 6.8300.</td><td class="what"><span class="cov full">Covered</span><br>Deep Learning Specialization.</td><td class="what">Lab 7.</td></tr><tr><td>21 · Robot Learning</td><td class="what"><span class="cov full">Covered</span><br>6.4210, 6.832 and Tedrake&#x27;s notes.</td><td class="what"><span class="cov full">Covered</span><br>Hugging Face Robotics and Deep RL courses; LeRobot.</td><td class="what">Labs 8 to 10.</td></tr><tr><td>22 · Simulation &amp; Sim-to-Real</td><td class="what"><span class="cov part">Partly</span><br>6.4210 and 6.832 touch on simulation and learning. No dedicated sim-to-real course found.</td><td class="what"><span class="cov full">Covered</span><br>NVIDIA Isaac Lab learning path.</td><td class="what">Labs 8 and 11.</td></tr><tr><td>23 · Edge AI Deployment</td><td class="what"><span class="cov gap">Gap</span><br>No OCW course on embedded or edge AI was found.</td><td class="what"><span class="cov part">Partly</span><br>HarvardX TinyML, DeepLearning.AI On-Device AI, Edge Impulse and Jetson guides.</td><td class="what">Lab 6.</td></tr></tbody>
+  </table></div>
+  <div class="callout cyan"><b>OpenCourseWare covers 10 of 23 stages fully; the open routes cover 7.</b> The two fill each other's gaps: MIT gives the control, vision and theory, the open courses give the embedded hardware, edge AI and robot-learning practice. Automotive buses, system identification, PLC automation and edge AI have no OpenCourseWare course that I found, so the labs and vendor documentation carry those.</div>
+</section>
+
+<section id="diy">
+  <h2><span class="n">7</span>Learning smart robots by building them</h2>
+  <p class="sub">Thirteen labs that climb from a simulated motor on your laptop to a learning robot arm and a capstone. Each has the code, a <b>done when</b> check and the courses that teach the same skill. Tick a lab when it is done; your progress stays in this browser.</p>
+  <div class="callout cyan"><b>What was run.</b> The Python scripts in Labs 0 to 4, the tiny classifier in Lab 6, the colour tracker's detection function in Lab 7 (on a synthetic image) and the PPO script in Lab 8 were all run on a Mac while this page was written, and their reference numbers come from those runs. Labs 5 and 9 to 12 need hardware or a GPU I did not have: they follow the sensor's register map and the official LeRobot and NVIDIA guides, and say so. Flags and versions change, so check <code>--help</code> if a command is rejected.</div>
+  <p class="small" id="diy-progress"></p>
+  <div class="phase" style="--c:#9AA9C4"><div class="phase-h"><b>Your laptop: signals &amp; control</b><span>no hardware</span></div><div class="labs"><details class="lab" id="lab-0"><summary><span class="labn">Lab 0</span><span class="labt">Model a sensor before you trust it</span><span class="labm">30 min</span><label class="done" title="Mark done"><input type="checkbox" data-lab="0"> done</label></summary><div class="labb"><div class="chips"><span class="schip" style="--c:var(--cyan)">1 · Sensor Principles</span><span class="schip" style="--c:var(--cyan)">4 · Programming &amp; DSP</span></div><p class="goal">See what resolution, noise and quantisation do to a reading, and why averaging sometimes works and sometimes does not.</p><ol><li>Save this script as sensor_model.py. It uses only the Python standard library.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-python"># sensor_model.py: what does a noisy 12-bit sensor reading really tell you?
+# usage: python3 sensor_model.py [noise_volts]      (try 0.004, then 0)
+import random, statistics, sys
+random.seed(1)
+VREF, BITS = 3.3, 12
+LSB = VREF / 2**BITS                      # volts per ADC step
+SENS, OFFSET = 0.010, 0.500               # sensor: 10 mV per degC, 0.5 V at 0 degC (TMP36-like)
+NOISE = float(sys.argv[1]) if len(sys.argv) &gt; 1 else 0.004
+
+def read_adc(temp_c):
+    v = OFFSET + SENS * temp_c + random.gauss(0, NOISE)     # analog value plus electronic noise
+    return min(max(round(v / LSB), 0), 2**BITS - 1)         # quantisation to an ADC code
+
+def to_temp(code):
+    return (code * LSB - OFFSET) / SENS
+
+true_c = 25.03                            # a value that falls between two ADC steps
+print(f&quot;one ADC step = {LSB*1000:.2f} mV = {LSB/SENS:.3f} C   (noise = {NOISE*1000:.1f} mV)&quot;)
+for n in (1, 4, 16, 64, 256):
+    est = [statistics.fmean(to_temp(read_adc(true_c)) for _ in range(n)) for _ in range(300)]
+    print(f&quot;average {n:&gt;3} samples: mean {statistics.fmean(est):6.2f} C   spread {statistics.pstdev(est):.3f} C&quot;)</code></pre></div></li><li>Run it with the default 4 mV of noise, then again with none.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-bash">python3 sensor_model.py
+python3 sensor_model.py 0</code></pre></div></li><li>Compare the two tables: the spread, and how far the mean sits from the true 25.03 C.</li></ol><p class="check"><b>Done when</b> You can explain, in two sentences, why averaging shrinks the spread when noise is present (the noise dithers the reading across ADC steps) and why it cannot help when there is no noise (quantisation error is then a fixed offset). In the reference run the noise-free mean stays at 25.01 C however many samples you average.</p><div class="stan"><b>Study with</b><ul><li><a href="https://ocw.mit.edu/courses/6-071j-introduction-to-electronics-signals-and-measurement-spring-2006/" target="_blank" rel="noopener">MIT 6.071J ↗</a></li><li><a href="https://ocw.mit.edu/courses/6-003-signals-and-systems-fall-2011/" target="_blank" rel="noopener">MIT 6.003 ↗</a></li></ul></div></div></details><details class="lab" id="lab-1"><summary><span class="labn">Lab 1</span><span class="labt">Filter a noisy signal and read its spectrum</span><span class="labm">45 min</span><label class="done" title="Mark done"><input type="checkbox" data-lab="1"> done</label></summary><div class="labb"><div class="chips"><span class="schip" style="--c:var(--cyan)">4 · Programming &amp; DSP</span></div><p class="goal">Find a 50 Hz hum with the FFT, remove it two ways, and measure the price of filtering in real time: lag.</p><ol><li>Install NumPy and save this script as spectrum.py.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-bash">pip install numpy</code></pre></div></li><li>The script builds a 5 Hz signal plus hum and noise.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-python"># spectrum.py: see a signal in the frequency domain, then filter it
+import numpy as np
+rng = np.random.default_rng(0)
+fs, T = 1000, 2.0                                    # 1 kHz sampling, 2 s of data
+t = np.arange(0, T, 1 / fs)
+clean = np.sin(2 * np.pi * 5 * t)                    # the 5 Hz motion we want
+x = clean + 0.5 * np.sin(2 * np.pi * 50 * t) + 0.3 * rng.standard_normal(t.size)   # + 50 Hz hum + noise
+
+X = np.abs(np.fft.rfft(x)) / (t.size / 2)            # amplitude spectrum
+f = np.fft.rfftfreq(t.size, 1 / fs)
+print(&quot;strongest frequencies (Hz):&quot;, sorted(float(v) for v in f[np.argsort(X)[-2:]]))
+
+def moving_average(x, n):
+    return np.convolve(x, np.ones(n) / n, mode=&quot;same&quot;)
+
+def lowpass(x, alpha):                               # first-order IIR: y += alpha * (x - y)
+    y = np.empty_like(x); y[0] = x[0]
+    for i in range(1, x.size):
+        y[i] = y[i - 1] + alpha * (x[i] - y[i - 1])
+    return y
+
+rms = lambda e: float(np.sqrt(np.mean(e ** 2)))
+print(&quot;raw signal error (RMS)  :&quot;, round(rms(x - clean), 3))
+print(&quot;moving average, 20 taps :&quot;, round(rms(moving_average(x, 20) - clean), 3))
+print(&quot;IIR low-pass, alpha 0.05:&quot;, round(rms(lowpass(x, 0.05) - clean), 3))
+# lag: the IIR output trails the true signal. Find the delay that lines them up best.
+y = lowpass(x, 0.05)
+best = min(range(0, 60), key=lambda d: rms(y[d:] - clean[:clean.size - d]))
+print(f&quot;IIR output lags the truth by about {best} ms&quot;)</code></pre></div></li><li>Run it. Then change alpha to 0.2 and 0.01 and watch the error and the lag move in opposite directions.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-bash">python3 spectrum.py</code></pre></div></li></ol><p class="check"><b>Done when</b> A table of error and lag for three alpha values. You can say why the centred moving average has the lowest error here (it uses future samples, so a robot cannot run it live) while the causal IIR filter trails the truth by about 17 ms at alpha 0.05.</p><div class="stan"><b>Study with</b><ul><li><a href="https://ocw.mit.edu/courses/6-003-signals-and-systems-fall-2011/" target="_blank" rel="noopener">MIT 6.003 ↗</a></li><li><a href="https://ocw.mit.edu/courses/2-14-analysis-and-design-of-feedback-control-systems-spring-2014/" target="_blank" rel="noopener">MIT 2.14 ↗</a></li></ul></div></div></details><details class="lab" id="lab-2"><summary><span class="labn">Lab 2</span><span class="labt">Tune a PID loop on a simulated motor</span><span class="labm">1 h</span><label class="done" title="Mark done"><input type="checkbox" data-lab="2"> done</label></summary><div class="labb"><div class="chips"><span class="schip" style="--c:var(--cyan)">5 · Advanced Dynamic Control</span><span class="schip" style="--c:var(--cyan)">17 · Digital Control</span></div><p class="goal">Feel what proportional, integral and anti-windup action each do, on a motor with a saturating supply.</p><ol><li>Save this script as pid_motor.py. The motor is a first-order lag with a 12 V supply limit.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-python"># pid_motor.py: tune a PID loop on a simulated DC motor, no hardware needed
+def simulate(kp, ki=0.0, kd=0.0, antiwindup=True, dt=0.005, T=3.0, target=100.0):
+    tau, gain, umax = 0.15, 12.0, 12.0     # motor: 0.15 s time constant, 12 rad/s per volt, +/-12 V supply
+    w, integ, prev_e, out = 0.0, 0.0, target, []
+    for _ in range(int(T / dt)):
+        e = target - w
+        u_raw = kp * e + ki * integ + kd * (e - prev_e) / dt
+        u = max(-umax, min(umax, u_raw))               # the supply saturates
+        if not antiwindup or u == u_raw:               # clamp the integrator while saturated
+            integ += e * dt
+        prev_e = e
+        w += dt * (-w + gain * u) / tau                # first-order motor model
+        out.append(w)
+    peak = max(out)
+    overshoot = max(0.0, (peak - target) / target * 100)
+    settle = next((i * dt for i in range(len(out)) if all(abs(v - target) &lt; 0.02 * target for v in out[i:])), None)
+    return overshoot, settle, target - out[-1]
+
+print(f&quot;{&#x27;controller&#x27;:&lt;28}{&#x27;overshoot %&#x27;:&gt;12}{&#x27;settle (s)&#x27;:&gt;12}{&#x27;final error&#x27;:&gt;13}&quot;)
+for name, kw in [(&quot;P only, kp=0.3&quot;, dict(kp=0.3)),
+                 (&quot;PI, kp=0.3 ki=2&quot;, dict(kp=0.3, ki=2)),
+                 (&quot;PI, kp=0.3 ki=8&quot;, dict(kp=0.3, ki=8)),
+                 (&quot;PI, kp=0.3 ki=8, no anti-windup&quot;, dict(kp=0.3, ki=8, antiwindup=False)),
+                 (&quot;PI, kp=1.5 ki=8&quot;, dict(kp=1.5, ki=8))]:
+    o, s, err = simulate(**kw)
+    print(f&quot;{name:&lt;28}{o:&gt;12.1f}{(f&#x27;{s:.2f}&#x27; if s is not None else &#x27;never&#x27;):&gt;12}{err:&gt;13.2f}&quot;)</code></pre></div></li><li>Run it and read the five rows.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-bash">python3 pid_motor.py</code></pre></div></li><li>Add your own row. Try to get under 5% overshoot and settling under 0.3 s, then add a delay of three samples to the plant and re-tune.</li></ol><p class="check"><b>Done when</b> Overshoot and settling time for each row, and one sentence on what anti-windup changed. In the reference run it cut overshoot from about 34% to about 3%.</p><div class="stan"><b>Study with</b><ul><li><a href="https://ocw.mit.edu/courses/6-302-feedback-systems-spring-2007/" target="_blank" rel="noopener">MIT 6.302 ↗</a></li><li><a href="https://ocw.mit.edu/courses/2-14-analysis-and-design-of-feedback-control-systems-spring-2014/" target="_blank" rel="noopener">MIT 2.14 ↗</a></li></ul></div></div></details><details class="lab" id="lab-3"><summary><span class="labn">Lab 3</span><span class="labt">Fuse a model and a sensor with a Kalman filter</span><span class="labm">1 h</span><label class="done" title="Mark done"><input type="checkbox" data-lab="3"> done</label></summary><div class="labb"><div class="chips"><span class="schip" style="--c:var(--cyan)">5 · Advanced Dynamic Control</span></div><p class="goal">Estimate position and velocity from position-only readings, and see velocity recovered without ever being measured.</p><ol><li>Save this script as kalman.py.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-python"># kalman.py: fuse a motion model with noisy position readings
+import numpy as np
+rng = np.random.default_rng(1)
+dt, n = 0.1, 300
+F = np.array([[1, dt], [0, 1]])                      # state = [position, velocity]
+H = np.array([[1.0, 0.0]])                           # we only measure position
+q, r = 0.3, 0.8                                      # accel noise (m/s^2) and sensor noise (m), std devs
+Q = q**2 * np.array([[dt**4 / 4, dt**3 / 2], [dt**3 / 2, dt**2]])
+R = np.array([[r**2]])
+
+truth = np.zeros((n, 2))
+for k in range(1, n):                                # truth: a body pushed around by random accelerations
+    a = rng.normal(0, q)
+    truth[k] = F @ truth[k - 1] + np.array([0.5 * a * dt**2, a * dt])
+z = truth[:, 0] + rng.normal(0, r, n)                # noisy position measurements
+
+x, P = np.array([z[0], 0.0]), np.eye(2)
+est = np.zeros((n, 2))
+for k in range(n):
+    x, P = F @ x, F @ P @ F.T + Q                    # predict
+    S = H @ P @ H.T + R
+    K = P @ H.T @ np.linalg.inv(S)                   # Kalman gain
+    x = x + (K @ (z[k] - H @ x)).ravel()             # correct
+    P = (np.eye(2) - K @ H) @ P
+    est[k] = x
+
+rmse = lambda a, b: float(np.sqrt(np.mean((a - b) ** 2)))
+print(&quot;position RMSE, raw sensor :&quot;, round(rmse(z, truth[:, 0]), 3), &quot;m&quot;)
+print(&quot;position RMSE, Kalman     :&quot;, round(rmse(est[:, 0], truth[:, 0]), 3), &quot;m&quot;)
+raw_v = np.gradient(z, dt)
+print(&quot;velocity RMSE, differenced:&quot;, round(rmse(raw_v, truth[:, 1]), 3), &quot;m/s&quot;)
+print(&quot;velocity RMSE, Kalman     :&quot;, round(rmse(est[:, 1], truth[:, 1]), 3), &quot;m/s   (never measured directly)&quot;)</code></pre></div></li><li>Run it. The seeds are fixed, so your numbers should match.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-bash">python3 kalman.py</code></pre></div></li><li>Raise the sensor noise r to 3.0 and lower it to 0.1. Watch how the filter shifts its trust between model and sensor.</li></ol><p class="check"><b>Done when</b> In the reference run, position error falls from about 0.77 m to 0.26 m and velocity error from about 5.5 m/s (differencing the sensor) to 0.16 m/s. You can say how the Kalman gain changed when you moved r.</p><div class="stan"><b>Study with</b><ul><li><a href="https://ocw.mit.edu/courses/16-30-feedback-control-systems-fall-2010/" target="_blank" rel="noopener">MIT 16.30 ↗</a></li><li><a href="https://ocw.mit.edu/courses/6-241j-dynamic-systems-and-control-spring-2011/" target="_blank" rel="noopener">MIT 6.241J ↗</a></li></ul></div></div></details><details class="lab" id="lab-4"><summary><span class="labn">Lab 4</span><span class="labt">Identify a motor from data</span><span class="labm">45 min</span><label class="done" title="Mark done"><input type="checkbox" data-lab="4"> done</label></summary><div class="labb"><div class="chips"><span class="schip" style="--c:var(--cyan)">16 · System Identification</span></div><p class="goal">Recover a motor&#x27;s gain and time constant from input and output logs, the step that makes a simulator match real hardware.</p><ol><li>Save this script as sysid.py. It simulates a motor with known parameters and noise, then fits an ARX model by least squares.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-python"># sysid.py: recover a motor&#x27;s gain and time constant from input/output data
+import numpy as np
+rng = np.random.default_rng(2)
+Ts, N = 0.01, 600
+K_true, tau_true = 12.0, 0.15
+a_true = np.exp(-Ts / tau_true)
+b_true = K_true * (1 - a_true)
+
+u = np.zeros(N)                                      # random on/off voltage input so both signals vary
+level = 0.0
+for k in range(N):
+    if k % 25 == 0:
+        level = rng.choice([0.0, 5.0])
+    u[k] = level
+y = np.zeros(N)
+for k in range(N - 1):                               # y[k+1] = a*y[k] + b*u[k] + noise
+    y[k + 1] = a_true * y[k] + b_true * u[k] + rng.normal(0, 0.05)
+
+Phi = np.column_stack([y[:-1], u[:-1]])              # regressors
+theta, *_ = np.linalg.lstsq(Phi, y[1:], rcond=None)  # least squares
+a, b = theta
+tau, K = -Ts / np.log(a), b / (1 - a)
+print(f&quot;true      : K = {K_true:.2f} rad/s/V   tau = {tau_true:.3f} s&quot;)
+print(f&quot;identified: K = {K:.2f} rad/s/V   tau = {tau:.3f} s&quot;)</code></pre></div></li><li>Run it and compare the identified values with the true ones.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-bash">python3 sysid.py</code></pre></div></li><li>Replace the simulated y with data logged from your own motor or from the Lab 2 simulator with different parameters, and fit again.</li></ol><p class="check"><b>Done when</b> The identified gain and time constant are within about 2% of the truth (the reference run gives 11.98 and 0.150 s against 12 and 0.15). You have fitted parameters from your own log.</p><div class="stan"><b>Study with</b><ul><li><a href="https://ocw.mit.edu/courses/6-241j-dynamic-systems-and-control-spring-2011/" target="_blank" rel="noopener">MIT 6.241J ↗</a></li></ul></div></div></details></div></div><div class="phase" style="--c:#E2725B"><div class="phase-h"><b>A microcontroller and an IMU</b><span>a few dollars of parts</span></div><div class="labs"><details class="lab" id="lab-5"><summary><span class="labn">Lab 5</span><span class="labt">Read an IMU and fuse it on a microcontroller</span><span class="labm">2 h</span><label class="done" title="Mark done"><input type="checkbox" data-lab="5"> done</label></summary><div class="labb"><div class="chips"><span class="schip" style="--c:var(--violet)">3 · Smart Materials &amp; Sensor Tech</span><span class="schip" style="--c:var(--cyan)">8 · Embedded Systems</span></div><p class="goal">Combine a drifting gyroscope with a noisy accelerometer on real hardware. You need a Raspberry Pi Pico (or any MicroPython board) and an MPU-6050 breakout.</p><ol><li>Flash MicroPython onto the board from the MicroPython download page, and wire the sensor: VCC to 3V3, GND to GND, SDA to GP0, SCL to GP1.</li><li>Save this as main.py on the board. Pins are board-specific, so change them for yours. The sensor is read as 14 bytes from register 0x3B at the default ranges.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-python"># main.py for MicroPython on a Raspberry Pi Pico + MPU-6050 (pins are board-specific; change them for your board)
+# wiring: VCC -&gt; 3V3, GND -&gt; GND, SDA -&gt; GP0, SCL -&gt; GP1
+from machine import I2C, Pin
+import time, math, ustruct
+
+i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=400_000)
+ADDR = 0x68
+i2c.writeto_mem(ADDR, 0x6B, b&quot;\x00&quot;)                 # wake the sensor: PWR_MGMT_1 = 0
+
+def read_imu():
+    d = i2c.readfrom_mem(ADDR, 0x3B, 14)             # accel x,y,z, temperature, gyro x,y,z
+    ax, ay, az, _, gx, gy, gz = ustruct.unpack(&quot;&gt;hhhhhhh&quot;, d)
+    return ax / 16384, ay / 16384, az / 16384, gx / 131, gy / 131, gz / 131   # g and deg/s at the default ranges
+
+def complementary(angle, gyro_dps, acc_deg, dt, alpha=0.98):
+    return alpha * (angle + gyro_dps * dt) + (1 - alpha) * acc_deg
+
+angle, t0 = 0.0, time.ticks_us()
+while True:
+    ax, ay, az, gx, gy, gz = read_imu()
+    now = time.ticks_us()
+    dt = time.ticks_diff(now, t0) / 1e6
+    t0 = now
+    acc_deg = math.degrees(math.atan2(ay, az))       # roll angle from the direction of gravity
+    angle = complementary(angle, gx, acc_deg, dt)    # trust the gyro short-term, gravity long-term
+    print(acc_deg, angle)
+    time.sleep_ms(10)</code></pre></div></li><li>Tilt the board by hand while watching the two printed columns: the raw accelerometer angle and the fused angle.</li><li>Check the filter&#x27;s idea on your laptop first, with a gyro that has a 2 deg/s bias. Gyro-only integration drifts; the fused angle stays near the truth.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-python"># desktop check of the complementary filter used on the board (simulated gyro with a drift bias)
+import math, random
+random.seed(0)
+def complementary(angle, gyro_dps, acc_deg, dt, alpha=0.98):
+    return alpha * (angle + gyro_dps * dt) + (1 - alpha) * acc_deg
+dt, true_roll, gyro_only, fused = 0.01, 30.0, 0.0, 0.0
+for k in range(1000):                         # 10 s sitting still at 30 degrees
+    gyro = 0.0 + 2.0 + random.gauss(0, 0.3)   # gyro reads 0 deg/s but has a 2 deg/s bias
+    acc = true_roll + random.gauss(0, 3.0)    # accelerometer is unbiased but noisy
+    gyro_only += gyro * dt
+    fused = complementary(fused, gyro, acc, dt)
+print(f&quot;true {true_roll:.1f} | gyro integration {gyro_only:6.1f} | complementary {fused:6.1f}&quot;)</code></pre></div></li></ol><p class="check"><b>Done when</b> The fused angle is smoother than the accelerometer angle and does not drift like the gyro integral. The desktop check prints a gyro-only error of about 10 degrees against about 0.7 for the complementary filter. This lab was written from the sensor&#x27;s documented register map and was not run on a board when the page was written.</p><div class="stan"><b>Study with</b><ul><li><a href="https://ocw.mit.edu/courses/2-017j-design-of-electromechanical-robotic-systems-fall-2009/" target="_blank" rel="noopener">MIT 2.017J ↗</a></li><li><a href="https://www.edx.org/learn/embedded-systems/the-university-of-texas-at-austin-embedded-systems-shape-the-world-microcontroller-input-output" target="_blank" rel="noopener">UTAustinX Embedded Systems ↗</a></li><li><a href="https://micropython.org/download/RPI_PICO/" target="_blank" rel="noopener">MicroPython for the Raspberry Pi Pico ↗</a></li></ul></div></div></details></div></div><div class="phase" style="--c:#FF7EB6"><div class="phase-h"><b>Your laptop: learning</b><span>perception, RL and edge AI</span></div><div class="labs"><details class="lab" id="lab-6"><summary><span class="labn">Lab 6</span><span class="labt">Train a tiny classifier and shrink it to int8</span><span class="labm">1.5 h</span><label class="done" title="Mark done"><input type="checkbox" data-lab="6"> done</label></summary><div class="labb"><div class="chips"><span class="schip" style="--c:var(--pink)">19 · Machine Learning Foundations</span><span class="schip" style="--c:var(--pink)">23 · Edge AI Deployment</span></div><p class="goal">Recognise motions from sensor windows with a small neural network, then quantise its weights the way a microcontroller deployment would.</p><ol><li>Save this script as tiny_classifier.py. It makes synthetic IMU windows (still, shake, slow swing), extracts two FFT features, trains an 8-neuron network and quantises the weights.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-python"># tiny_classifier.py: train a small neural net on IMU-like windows, then shrink it to int8
+import numpy as np
+rng = np.random.default_rng(0)
+fs, win = 50, 100                                       # 50 Hz, 2 s windows
+t = np.arange(win) / fs
+def window(kind):
+    if kind == 0:   s = 0.02 * rng.standard_normal(win)                                       # still
+    elif kind == 1: s = 1.0 * np.sin(2*np.pi*rng.uniform(5, 8)*t) + 0.1 * rng.standard_normal(win)   # shake
+    else:           s = 1.2 * np.sin(2*np.pi*rng.uniform(1, 2)*t) + 0.1 * rng.standard_normal(win)   # slow swing
+    return s
+def features(s):
+    spec = np.abs(np.fft.rfft(s - s.mean()))
+    freq = np.fft.rfftfreq(win, 1 / fs)[spec.argmax()]
+    return np.array([s.std(), freq / 10])
+X = np.array([features(window(k)) for k in range(3) for _ in range(300)])
+y = np.repeat(np.arange(3), 300)
+idx = rng.permutation(len(y)); X, y = X[idx], y[idx]
+Xtr, ytr, Xte, yte = X[:600], y[:600], X[600:], y[600:]
+
+H = 8                                                   # one hidden layer of 8 neurons
+W1, b1 = rng.normal(0, 0.5, (2, H)), np.zeros(H)
+W2, b2 = rng.normal(0, 0.5, (H, 3)), np.zeros(3)
+def forward(X, W1, b1, W2, b2):
+    h = np.maximum(0, X @ W1 + b1)
+    return h, h @ W2 + b2
+for step in range(3000):                                # plain gradient descent on softmax cross-entropy
+    h, logits = forward(Xtr, W1, b1, W2, b2)
+    p = np.exp(logits - logits.max(1, keepdims=True)); p /= p.sum(1, keepdims=True)
+    g = p.copy(); g[np.arange(len(ytr)), ytr] -= 1; g /= len(ytr)
+    gW2, gb2 = h.T @ g, g.sum(0)
+    gh = (g @ W2.T) * (h &gt; 0)
+    gW1, gb1 = Xtr.T @ gh, gh.sum(0)
+    W1 -= 0.5 * gW1; b1 -= 0.5 * gb1; W2 -= 0.5 * gW2; b2 -= 0.5 * gb2
+acc = lambda W1, b1, W2, b2: float((forward(Xte, W1, b1, W2, b2)[1].argmax(1) == yte).mean())
+print(&quot;float32 accuracy:&quot;, round(acc(W1, b1, W2, b2), 3))
+
+def q8(W):                                              # symmetric int8 quantisation, one scale per tensor
+    s = np.abs(W).max() / 127
+    return np.round(W / s).astype(np.int8), s
+(Q1, s1), (Q2, s2) = q8(W1), q8(W2)
+print(&quot;int8 weights accuracy:&quot;, round(acc(Q1 * s1, b1, Q2 * s2, b2), 3))
+n_params = W1.size + b1.size + W2.size + b2.size
+print(f&quot;parameters: {n_params}  -&gt;  float32 {n_params*4} bytes, int8 weights ~{W1.size + W2.size + (b1.size + b2.size)*4} bytes&quot;)
+print(&quot;C array for layer 1:&quot;, &quot;{&quot; + &quot;, &quot;.join(str(v) for v in Q1.ravel()) + &quot;}&quot;, &quot; scale =&quot;, round(float(s1), 5))</code></pre></div></li><li>Run it and note the accuracy and size before and after.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-bash">python3 tiny_classifier.py</code></pre></div></li><li>Replace the synthetic windows with windows logged in Lab 5 (30 per motion). Real data will not be this clean.</li></ol><p class="check"><b>Done when</b> Float and int8 accuracy within a point of each other, and a model of about 84 bytes of weights against 204 as float32. The synthetic classes are easy, so the point of the lab is the pipeline, not the accuracy.</p><div class="stan"><b>Study with</b><ul><li><a href="https://ocw.mit.edu/courses/6-036-introduction-to-machine-learning-fall-2020/" target="_blank" rel="noopener">MIT 6.036 ↗</a></li><li><a href="https://www.edx.org/learn/machine-learning/harvard-university-fundamentals-of-tinyml" target="_blank" rel="noopener">HarvardX TinyML ↗</a></li><li><a href="https://docs.edgeimpulse.com/" target="_blank" rel="noopener">Edge Impulse docs ↗</a></li></ul></div></div></details><details class="lab" id="lab-7"><summary><span class="labn">Lab 7</span><span class="labt">Camera to action: track an object, then detect it</span><span class="labm">1.5 h</span><label class="done" title="Mark done"><input type="checkbox" data-lab="7"> done</label></summary><div class="labb"><div class="chips"><span class="schip" style="--c:var(--cyan)">15 · Image Processing &amp; Vision</span><span class="schip" style="--c:var(--pink)">20 · Deep Learning &amp; Perception</span></div><p class="goal">Turn pixels into a steering command with classical vision, then see what a pretrained detector adds.</p><ol><li>Install OpenCV and save this script as track_color.py. It finds the largest green blob and converts its offset from the image centre into a proportional pan command. Tune the HSV range for your object.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-bash">pip install opencv-python</code></pre></div></li><li>The tracker.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-python"># track_color.py: find a coloured object in the camera image and turn its position into a steering error
+import cv2
+
+LOWER, UPPER = (35, 80, 80), (85, 255, 255)        # HSV range for a green marker; adjust for your object
+
+def find_target(frame):
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    mask = cv2.inRange(hsv, LOWER, UPPER)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, None, iterations=2)       # remove speckle
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if not contours:
+        return None
+    c = max(contours, key=cv2.contourArea)
+    if cv2.contourArea(c) &lt; 200:
+        return None
+    m = cv2.moments(c)
+    return int(m[&quot;m10&quot;] / m[&quot;m00&quot;]), int(m[&quot;m01&quot;] / m[&quot;m00&quot;])               # centroid in pixels
+
+if __name__ == &quot;__main__&quot;:
+    cap = cv2.VideoCapture(0)
+    pan = 0.0                                       # pretend pan angle in degrees
+    while cap.isOpened():
+        ok, frame = cap.read()
+        if not ok:
+            break
+        h, w = frame.shape[:2]
+        hit = find_target(frame)
+        if hit:
+            err_x = hit[0] - w / 2                  # pixels right of centre
+            pan -= 0.02 * err_x                     # proportional &quot;visual servoing&quot; command
+            cv2.circle(frame, hit, 8, (0, 0, 255), -1)
+            print(f&quot;target at {hit}  error {err_x:+.0f} px  pan command {pan:+.1f} deg&quot;)
+        cv2.imshow(&quot;track&quot;, frame)
+        if cv2.waitKey(1) &amp; 0xFF == ord(&quot;q&quot;):
+            break
+    cap.release()</code></pre></div></li><li>Run it with a webcam and press q to quit.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-bash">python3 track_color.py</code></pre></div></li><li>Optional: try a pretrained detector for the same object. Ultralytics is licensed AGPL-3.0, so check the terms before commercial use. This step was not run when the page was written.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-bash">pip install ultralytics
+python3 -c &quot;from ultralytics import YOLO; YOLO(&#x27;yolo11n.pt&#x27;).predict(source=0, show=True)&quot;</code></pre></div></li></ol><p class="check"><b>Done when</b> The pan command settles on a moving object without oscillating. Then a short table compares the colour tracker and the detector on three objects: works or not, frames per second, failure cases (lighting, clutter).</p><div class="stan"><b>Study with</b><ul><li><a href="https://ocw.mit.edu/courses/6-801-machine-vision-fall-2020/" target="_blank" rel="noopener">MIT 6.801 ↗</a></li><li><a href="https://www.coursera.org/learn/image-processing" target="_blank" rel="noopener">Duke Image and Video Processing ↗</a></li><li><a href="https://ocw.mit.edu/courses/6-s191-introduction-to-deep-learning-january-iap-2020/" target="_blank" rel="noopener">MIT 6.S191 ↗</a></li><li><a href="https://docs.ultralytics.com/" target="_blank" rel="noopener">Ultralytics docs ↗</a></li></ul></div></div></details><details class="lab" id="lab-8"><summary><span class="labn">Lab 8</span><span class="labt">Train a policy in simulation, then break the physics</span><span class="labm">1.5 h</span><label class="done" title="Mark done"><input type="checkbox" data-lab="8"> done</label></summary><div class="labb"><div class="chips"><span class="schip" style="--c:var(--pink)">21 · Robot Learning</span><span class="schip" style="--c:var(--pink)">22 · Simulation &amp; Sim-to-Real</span></div><p class="goal">Train a reinforcement-learning policy with PPO, then change the simulator&#x27;s physics and measure how far it degrades. This is the sim-to-real gap in miniature.</p><ol><li>Install the simulator and the RL library. This runs on a Mac CPU.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-bash">pip install &quot;gymnasium[mujoco]&quot; stable-baselines3</code></pre></div></li><li>Save this script as ppo_pendulum.py.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-python"># ppo_pendulum.py: train a reinforcement-learning policy in a physics simulator,
+# then change the physics and watch it degrade (a taste of the sim-to-real gap)
+import gymnasium as gym
+from stable_baselines3 import PPO
+from stable_baselines3.common.evaluation import evaluate_policy
+from stable_baselines3.common.monitor import Monitor
+
+env = Monitor(gym.make(&quot;InvertedPendulum-v5&quot;))      # a cart that must keep a pole upright (MuJoCo)
+model = PPO(&quot;MlpPolicy&quot;, env, seed=0, verbose=0)
+before, _ = evaluate_policy(model, env, n_eval_episodes=10)
+model.learn(total_timesteps=30_000)
+after, _ = evaluate_policy(model, env, n_eval_episodes=10)
+print(f&quot;mean reward before training: {before:.1f}   after: {after:.1f}   (best possible is 1000)&quot;)
+
+m = env.unwrapped.model                              # the MuJoCo model: change its physics in place
+mass0, damp0 = m.body_mass.copy(), m.dof_damping.copy()
+for name, arr, base, scale in [(&quot;joint damping&quot;, m.dof_damping, damp0, 5), (&quot;joint damping&quot;, m.dof_damping, damp0, 20),
+                               (&quot;body masses&quot;, m.body_mass, mass0, 5)]:
+    arr[:] = base * scale
+    r, _ = evaluate_policy(model, env, n_eval_episodes=10)
+    print(f&quot;{name} x{scale:&lt;3} -&gt; mean reward {r:6.1f}&quot;)
+    arr[:] = base</code></pre></div></li><li>Run it. Training takes about 30 seconds.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-bash">python3 ppo_pendulum.py</code></pre></div></li><li>Retrain with domain randomisation: before each episode, scale joint damping by a random factor between 1 and 20, then compare against the policy above.</li></ol><p class="check"><b>Done when</b> In the reference run the policy goes from about 26 to the maximum of 1000, holds up at 5 times the joint damping (about 720) and collapses at 20 times (about 34). Your randomised policy holds at the shifted physics where this one fails.</p><div class="stan"><b>Study with</b><ul><li><a href="https://huggingface.co/learn/deep-rl-course" target="_blank" rel="noopener">Hugging Face Deep RL Course ↗</a></li><li><a href="https://gymnasium.farama.org/" target="_blank" rel="noopener">Gymnasium docs ↗</a></li><li><a href="https://mujoco.readthedocs.io/" target="_blank" rel="noopener">MuJoCo docs ↗</a></li><li><a href="https://stable-baselines3.readthedocs.io/" target="_blank" rel="noopener">Stable-Baselines3 docs ↗</a></li></ul></div></div></details></div></div><div class="phase" style="--c:#5FB88A"><div class="phase-h"><b>A learning robot arm</b><span>leader and follower SO-101</span></div><div class="labs"><details class="lab" id="lab-9"><summary><span class="labn">Lab 9</span><span class="labt">Build and calibrate an SO-101 arm</span><span class="labm">1 to 2 days</span><label class="done" title="Mark done"><input type="checkbox" data-lab="9"> done</label></summary><div class="labb"><div class="chips"><span class="schip" style="--c:var(--cyan)">10 · Robotics</span><span class="schip" style="--c:var(--pink)">21 · Robot Learning</span></div><p class="goal">Assemble a leader and follower pair of the open-source SO-101 arm and get both calibrated under LeRobot. Hugging Face estimates one arm at about $100 to $130; you need two, a camera, and import costs to Vietnam.</p><ol><li>Source and print the parts from the SO-ARM100 repository&#x27;s bill of materials, and assemble the follower and leader following the LeRobot guide.</li><li>Install LeRobot from the installation guide, then add the servo SDK.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-bash">pip install -e &quot;.[feetech]&quot;</code></pre></div></li><li>Find each arm&#x27;s USB port. The command asks you to unplug the board and press Enter.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-bash">lerobot-find-port</code></pre></div></li><li>Set the servo IDs, one motor at a time, for the follower and then the leader. Replace the ports with yours.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-bash">lerobot-setup-motors \
+    --robot.type=so101_follower \
+    --robot.port=/dev/tty.usbmodem585A0076841
+lerobot-setup-motors \
+    --teleop.type=so101_leader \
+    --teleop.port=/dev/tty.usbmodem575E0031751</code></pre></div></li><li>Calibrate both arms. Move each joint to the middle of its range, then through its full range.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-bash">lerobot-calibrate \
+    --robot.type=so101_follower \
+    --robot.port=/dev/tty.usbmodem58760431551 \
+    --robot.id=my_awesome_follower_arm
+lerobot-calibrate \
+    --teleop.type=so101_leader \
+    --teleop.port=/dev/tty.usbmodem58760431551 \
+    --teleop.id=my_awesome_leader_arm</code></pre></div></li></ol><p class="check"><b>Done when</b> Moving the leader arm moves the follower in step across its whole range. Commands follow the LeRobot SO-101 guide; flags change between releases, so check the guide if one is rejected. Not run when the page was written (no hardware).</p><div class="stan"><b>Study with</b><ul><li><a href="https://huggingface.co/docs/lerobot/en/so101" target="_blank" rel="noopener">LeRobot: SO-101 guide ↗</a></li><li><a href="https://github.com/TheRobotStudio/SO-ARM100" target="_blank" rel="noopener">SO-ARM100 parts and print files ↗</a></li><li><a href="https://huggingface.co/docs/lerobot/en/installation" target="_blank" rel="noopener">LeRobot installation guide ↗</a></li><li><a href="https://ocw.mit.edu/courses/2-12-introduction-to-robotics-fall-2005/" target="_blank" rel="noopener">MIT 2.12 ↗</a></li></ul></div></div></details><details class="lab" id="lab-10"><summary><span class="labn">Lab 10</span><span class="labt">Teach the arm a task: record, train, run</span><span class="labm">2 days</span><label class="done" title="Mark done"><input type="checkbox" data-lab="10"> done</label></summary><div class="labb"><div class="chips"><span class="schip" style="--c:var(--pink)">21 · Robot Learning</span><span class="schip" style="--c:var(--pink)">20 · Deep Learning &amp; Perception</span></div><p class="goal">Run the full imitation-learning loop on real hardware: teleoperate, record demonstrations, train an ACT policy and let it run on its own.</p><ol><li>Check teleoperation first. This should also offer to calibrate any arm that is not calibrated yet.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-bash">lerobot-teleoperate \
+    --robot.type=so101_follower \
+    --robot.port=/dev/tty.usbmodem58760431541 \
+    --robot.id=my_awesome_follower_arm \
+    --teleop.type=so101_leader \
+    --teleop.port=/dev/tty.usbmodem58760431551 \
+    --teleop.id=my_awesome_leader_arm</code></pre></div></li><li>Log in to the Hugging Face Hub with a write token (the recorded dataset is uploaded there by default) and store your user name.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-bash">hf auth login --token ${HUGGINGFACE_TOKEN} --add-to-git-credential
+HF_USER=$(NO_COLOR=1 hf auth whoami | awk -F&#x27;: *&#x27; &#x27;NR==1 {print $2}&#x27;)</code></pre></div></li><li>Record demonstrations of one task, such as picking a cube into a bin. The guide suggests at least 50 episodes, 10 per start position, with the camera fixed.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-bash">lerobot-record \
+    --robot.type=so101_follower \
+    --robot.port=/dev/tty.usbmodem585A0076841 \
+    --robot.id=my_awesome_follower_arm \
+    --robot.cameras=&quot;{ front: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 30}}&quot; \
+    --teleop.type=so101_leader \
+    --teleop.port=/dev/tty.usbmodem58760431551 \
+    --teleop.id=my_awesome_leader_arm \
+    --display_data=true \
+    --dataset.repo_id=${HF_USER}/so101_pick \
+    --dataset.num_episodes=50 \
+    --dataset.single_task=&quot;Pick up the cube and put it in the bin&quot;</code></pre></div></li><li>Replay one episode to test repeatability.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-bash">lerobot-replay \
+    --robot.type=so101_follower \
+    --robot.port=/dev/tty.usbmodem58760431541 \
+    --robot.id=my_awesome_follower_arm \
+    --dataset.repo_id=${HF_USER}/so101_pick \
+    --dataset.episode=0</code></pre></div></li><li>Train an ACT policy. The guide says training takes several hours; use policy.device=cuda on an NVIDIA GPU, or a Colab or Hugging Face Jobs GPU, since mps on Apple silicon works but is slow.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-bash">lerobot-train \
+  --dataset.repo_id=${HF_USER}/so101_pick \
+  --policy.type=act \
+  --output_dir=outputs/train/act_so101_pick \
+  --job_name=act_so101_pick \
+  --policy.device=cuda \
+  --policy.repo_id=${HF_USER}/my_policy</code></pre></div></li><li>Run the trained policy on the robot.<div class="code"><button class="copy" type="button">Copy</button><pre><code class="lang-bash">lerobot-rollout \
+  --strategy.type=base \
+  --policy.path=${HF_USER}/my_policy \
+  --robot.type=so101_follower \
+  --robot.port=/dev/tty.usbmodem585A0076841 \
+  --robot.cameras=&quot;{ front: {type: opencv, index_or_path: 0, width: 640, height: 480, fps: 30}}&quot; \
+  --task=&quot;Pick up the cube and put it in the bin&quot; \
+  --duration=60</code></pre></div></li></ol><p class="check"><b>Done when</b> A table of success rate over 20 trials for the policy trained on 25, 50 and 100 demonstrations, and a one-line diagnosis of the failures (grasp, timing, lighting, new cube position). Commands are copied from the LeRobot imitation-learning guide, adapted to the SO-101; not run when the page was written.</p><div class="stan"><b>Study with</b><ul><li><a href="https://huggingface.co/docs/lerobot/en/il_robots" target="_blank" rel="noopener">LeRobot: imitation learning on real robots ↗</a></li><li><a href="https://huggingface.co/learn/robotics-course" target="_blank" rel="noopener">Hugging Face Robotics Course ↗</a></li><li><a href="https://ocw.mit.edu/courses/6-4210-robotic-manipulation-fall-2022/" target="_blank" rel="noopener">MIT 6.4210 ↗</a></li><li><a href="https://manipulation.mit.edu/" target="_blank" rel="noopener">Robotic Manipulation notes ↗</a></li></ul></div></div></details></div></div><div class="phase" style="--c:#8B7FD4"><div class="phase-h"><b>Optional deep dive &amp; capstone</b><span>GPU rental and a full build</span></div><div class="labs"><details class="lab" id="lab-11"><summary><span class="labn">Lab 11</span><span class="labt">Sim-to-real with Isaac Lab (optional)</span><span class="labm">1 to 2 days</span><label class="done" title="Mark done"><input type="checkbox" data-lab="11"> done</label></summary><div class="labb"><div class="chips"><span class="schip" style="--c:var(--pink)">22 · Simulation &amp; Sim-to-Real</span><span class="schip" style="--c:var(--pink)">21 · Robot Learning</span></div><p class="goal">Train a robot in a GPU simulator with randomised physics, the same method used for legged and arm robots in industry. Needs an NVIDIA GPU, which on a Mac means renting one.</p><ol><li>Work through NVIDIA&#x27;s Getting Started With Isaac Lab path: an introduction to robot learning, then training a first robot with reinforcement learning.</li><li>Train the same task twice: once with fixed physics, once with randomised friction and mass.</li><li>Evaluate both under shifted physics, and plug in the parameters you identified in Lab 4 as the nominal values.</li></ol><p class="check"><b>Done when</b> A table of success rate under nominal and shifted physics for the two policies, and one paragraph on which randomised parameters mattered. This lab is a plan built on NVIDIA&#x27;s course; no commands are given because they depend on the Isaac Lab version.</p><div class="stan"><b>Study with</b><ul><li><a href="https://docs.nvidia.com/learning/physical-ai/getting-started-with-isaac-lab/latest/index.html" target="_blank" rel="noopener">NVIDIA Isaac Lab path ↗</a></li><li><a href="https://ocw.mit.edu/courses/6-832-underactuated-robotics-spring-2022/" target="_blank" rel="noopener">MIT 6.832 ↗</a></li><li><a href="https://underactuated.mit.edu/" target="_blank" rel="noopener">Underactuated Robotics notes ↗</a></li></ul></div></div></details><details class="lab" id="lab-12"><summary><span class="labn">Lab 12</span><span class="labt">Capstone: a smart pick-and-place robot</span><span class="labm">2 to 4 weeks</span><label class="done" title="Mark done"><input type="checkbox" data-lab="12"> done</label></summary><div class="labb"><div class="chips"><span class="schip" style="--c:var(--cyan)">18 · Industry Project &amp; Thesis</span><span class="schip" style="--c:var(--cyan)">10 · Robotics</span><span class="schip" style="--c:var(--pink)">20 · Deep Learning &amp; Perception</span><span class="schip" style="--c:var(--pink)">21 · Robot Learning</span><span class="schip" style="--c:var(--pink)">23 · Edge AI Deployment</span></div><p class="goal">Combine everything into one robot, and prove with measurements that the learned part helps.</p><ol><li>Define one task and a success rule, for example: place any of three objects into a bin within 30 seconds.</li><li>Build a classical baseline: camera detection from Lab 7, inverse kinematics from the robotics stage, and a planner. Measure success over 20 trials.</li><li>Build the learned version with the Lab 10 pipeline. Measure the same 20 trials.</li><li>Wrap both in safety: joint and speed limits, a watchdog that stops the arm if the policy stalls, and a hardware stop. Log every run.</li><li>Publish the repo, the logs, a short video and the comparison table.</li></ol><p class="check"><b>Done when</b> Someone else can rebuild the robot from your repo, and your table shows success rate, cycle time and failure modes for the classical and learned versions side by side. This is the thesis-sized project of the atlas.</p><div class="stan"><b>Study with</b><ul><li><a href="https://ocw.mit.edu/courses/16-842-fundamentals-of-systems-engineering-fall-2015/" target="_blank" rel="noopener">MIT 16.842 ↗</a></li><li><a href="https://ocw.mit.edu/courses/2-009-product-engineering-process-fall-2021/" target="_blank" rel="noopener">MIT 2.009 ↗</a></li><li><a href="https://ocw.mit.edu/courses/mas-863-how-to-make-almost-anything-fall-2002/" target="_blank" rel="noopener">MIT MAS.863 ↗</a></li><li><a href="https://huggingface.co/docs/lerobot" target="_blank" rel="noopener">LeRobot docs ↗</a></li></ul></div></div></details></div></div>
+</section>
+</main>
+<footer class="wrap">Curriculum: VGU Module Catalogue for the Master's programme in Mechatronics and Sensor Systems Technology, June 2020. MIT OpenCourseWare course pages, and the Coursera, edX, Hugging Face, NVIDIA and ROS pages, read 2 Nov 2026. Independent study plan, not affiliated with the Vietnamese-German University, MIT, Coursera, edX, Hugging Face or NVIDIA. · Source: <a href="https://nguyendangkhoa.info/">nguyendangkhoa.info</a></footer>
+
+<script>
+const STAGES=[{"n": "Sensor Principles", "fam": "sense", "vgu": "61MST501 · Physical and Chemical Sensor Principles · 6 CP · semester 1", "learn": "Transduction principles, sensor specifications, calibration and uncertainty, and the physical chemistry behind chemical and gas sensors.", "lab": "Calibrate a temperature sensor against a reference, fit its curve, and report the result with an uncertainty.", "why": "A smart robot is only as good as what it senses. A model trained on badly characterised sensors learns the sensor's flaws."}, {"n": "Electronics Labs", "fam": "elec", "vgu": "61MST502 · Sensor Labs (analog and digital electronics) · 6 CP · semester 1", "learn": "Circuit analysis, op-amp signal conditioning, ADC/DAC and sampling, digital logic, motor drivers and PWM.", "lab": "Build an op-amp amplifier and low-pass filter for a sensor and read it with a 12-bit ADC.", "why": "Between the sensor and the software sits analogue electronics. Noise, aliasing and a weak driver stage cannot be fixed by a bigger neural network."}, {"n": "Smart Materials & Sensor Tech", "fam": "sense", "vgu": "61MST503 · Technology and Materials · 6 CP · semester 1", "learn": "Piezoelectric and shape-memory materials, MEMS accelerometers and gyroscopes, tactile and force sensing.", "lab": "Read a MEMS accelerometer and gyroscope at rest and record their noise and bias.", "why": "Tactile sensing and compliant actuators are what let a robot hand feel an object. Smart materials make both possible."}, {"n": "Programming & DSP", "fam": "model", "vgu": "61MST504 · Programming (advanced programming, digital signal processing) · 6 CP · semester 1", "learn": "Python and C/C++ for engineering, signals and systems, the FFT and digital filters.", "lab": "Remove 50 Hz hum from a noisy signal with an FFT and a digital filter, then measure the lag the filter adds.", "why": "Filtering is the first AI-free step in every sensing pipeline, and its lag turns up later in every control loop."}, {"n": "Advanced Dynamic Control", "fam": "ctrl", "vgu": "61MST505 · Advanced Dynamic Control (advanced control systems; modelling, simulation, verification) · 6 CP · semester 1", "learn": "Transfer functions, PID, root locus, state space, observers, LQR and the Kalman filter.", "lab": "Tune a PID loop on a simulated motor, then add a Kalman filter to estimate speed from noisy readings.", "why": "A learned policy still sits on top of low-level control. Stability, bandwidth and estimation explain why a policy oscillates or drifts."}, {"n": "Automotive Sensors & Buses", "fam": "sense", "vgu": "61MST506 · Automotive Sensor Applications (bus systems; automotive sensors, safety and reliability) · 6 CP · semester 2", "learn": "CAN and other automotive buses, radar, lidar and inertial sensors, functional safety and reliability.", "lab": "Decode two signals from a recorded CAN log with python-can.", "why": "Mobile robots inherit vehicle-style buses and safety thinking. Bus timing and fault handling matter when a learned policy drives a real actuator."}, {"n": "Simulation & FEM", "fam": "model", "vgu": "61MST507 · Advanced Simulation (numerical simulation; application of FEM) · 6 CP · semester 2", "learn": "Numerical integration of ODEs, modelling and simulation, the finite element method, validating a model against data.", "lab": "Simulate a mass-spring-damper with two integrators, show the step-size error, and compare it with measured data.", "why": "Robots learn in simulation before they touch hardware. A simulator is only as good as its numerics and its validation."}, {"n": "Embedded Systems", "fam": "elec", "vgu": "61MST508 · Embedded Systems (microcontroller; microcontroller lab) · 6 CP · semester 2", "learn": "Microcontroller architecture, peripherals (GPIO, ADC, PWM, I2C/SPI), interrupts, an RTOS, and embedded Linux boards.", "lab": "Run a 1 kHz control loop on a microcontroller from a timer interrupt and log its worst-case jitter.", "why": "A smart robot is a stack: a hard-real-time microcontroller under a Linux or GPU board that runs the AI. You need both layers."}, {"n": "Automation", "fam": "elec", "vgu": "61MST509 · Automation (automation system; automation lab) · 6 CP · semester 2", "learn": "PLCs and ladder logic, sequential control and industrial networks.", "lab": "Model a conveyor sequence as a state machine, then implement it as ladder logic in a PLC simulator.", "why": "Most factory robots are still programmed this way. It is a useful contrast with learned behaviour but not the focus of a smart-robot path."}, {"n": "Robotics", "fam": "robot", "vgu": "61MST5010 · Fundamentals of Robotics and Advanced Robotics (Elective I, pick one of two) · 6 CP · semester 2", "learn": "Frames and transforms, kinematics, Jacobians, dynamics, motion planning, ROS 2 and grasping.", "lab": "Compute forward and inverse kinematics for a 2-link arm in Python and check them against a simulator.", "why": "Learned manipulation still runs through joint limits, kinematics and controllers. This stage tells you what the policy is controlling."}, {"n": "Fluids & Heat Transfer", "fam": "model", "vgu": "61MST5010 · Fluid Mechanics and Heat Transfer (Elective I, the other choice) · 6 CP · semester 2", "learn": "Conservation laws, conduction and convection, flow and pressure basics, pneumatic actuation.", "lab": "Model a pneumatic actuator's pressure response as a first-order lag and compare it with a measured curve.", "why": "Soft and pneumatic robots live here. Otherwise it is the alternative elective, so skip it on a smart-robot path."}, {"n": "Environmental Sensors", "fam": "sense", "vgu": "61MST601 · Environment Sensor Technology (environmental process technology; environmental lab) · 6 CP · semester 3", "learn": "Air, water and soil sensing, remote sensing, and wireless sensor networks.", "lab": "Deploy two microcontroller nodes that report to a gateway and plot a day of data.", "why": "Field robots and monitoring drones depend on these sensors, and the low-power networking half applies to any distributed robot."}, {"n": "Intelligent Control", "fam": "ctrl", "vgu": "61MST602 · Advanced System Engineering (modern intelligent control; control lab) · 6 CP · semester 3", "learn": "Model predictive control, nonlinear and robust control, learning-based control, and systems engineering with the V-model.", "lab": "Write an MPC for a cart-pole or double integrator and compare it with LQR under input limits.", "why": "MPC and learning-based control are the bridge between classical control and learned policies."}, {"n": "Management & Research", "fam": "robot", "vgu": "61MST603 · Management (project management; research methodology) · 6 CP · semester 3", "learn": "Project management and research methodology.", "lab": "Write a one-page experiment plan for your capstone with a hypothesis, a metric and a stopping rule.", "why": "Useful for the thesis, but learned fastest by doing a project, so low priority as a stand-alone topic."}, {"n": "Image Processing & Vision", "fam": "sense", "vgu": "61MST605 · Image Processing (Elective II, pick two of three) · 3 CP · semester 3", "learn": "Camera models, filtering and features, multi-view geometry, and classical detection and tracking.", "lab": "Track a coloured object with OpenCV and turn its pixel error into a steering command.", "why": "Vision is the richest robot sensor. Classical vision gives the geometry that deep perception then builds on."}, {"n": "System Identification", "fam": "ctrl", "vgu": "61MST605 · System Identification (Elective II, pick two of three) · 3 CP · semester 3", "learn": "Least squares and ARX models, step-response tests, and grey-box parameter fitting.", "lab": "Recover a motor's gain and time constant from logged voltage and speed data.", "why": "Identified models are what make a simulator match your hardware. That is the heart of sim-to-real transfer."}, {"n": "Digital Control", "fam": "ctrl", "vgu": "61MST605 · Digital Control Systems (Elective II, pick two of three) · 3 CP · semester 3", "learn": "Sampling and the z-domain, discrete PID with anti-windup, and delay and jitter.", "lab": "Port your PID to a fixed-rate discrete form with anti-windup and test it with injected delay.", "why": "Everything runs on a clock. A 10 Hz policy feeding a 1 kHz loop only works if the discrete-time details are right."}, {"n": "Industry Project & Thesis", "fam": "robot", "vgu": "61MST604 Industry Project (6 CP) · 61MST606 Thesis (27 CP) · 61MST607 Final Examination (3 CP) · semesters 3–4", "learn": "Systems integration, experiment design and data logging, and a reproducible thesis project.", "lab": "Integrate sensing, control and a learned component into one demonstrable robot, with a repo anyone can rebuild.", "why": "This is where the stages become a smart robot, and where employers and examiners look."}, {"n": "Machine Learning Foundations", "fam": "ai", "vgu": null, "learn": "Supervised learning, gradient descent and backpropagation, evaluating generalisation, and classical ML on sensor features.", "lab": "Classify gestures from IMU windows using FFT features and a small classifier.", "why": "VGU's 2020 module catalogue lists no machine-learning module. This is the base for the next four stages."}, {"n": "Deep Learning & Perception", "fam": "ai", "vgu": null, "learn": "Neural networks, CNNs, object detection and segmentation, transformers and vision-language models, learned sensor fusion.", "lab": "Run a pretrained detector on camera frames and measure latency and accuracy on your own objects.", "why": "Deep perception turns raw pixels into object positions a robot can act on."}, {"n": "Robot Learning", "fam": "ai", "vgu": null, "learn": "MDPs, reinforcement learning, imitation learning (ACT, diffusion policy), vision-language-action models, trajectory optimisation.", "lab": "Teleoperate a low-cost arm, record 50 demonstrations, train an imitation policy and measure its success rate.", "why": "This is the 'smart' in smart robot: behaviour learned from demonstration or reward instead of hand-coded."}, {"n": "Simulation & Sim-to-Real", "fam": "ai", "vgu": null, "learn": "Physics simulators, domain randomisation, calibrating a simulator from real data, and sim-to-real transfer.", "lab": "Train a policy in simulation, shift the physics, and measure how far it degrades.", "why": "Reward-based learning needs millions of trials, so it happens in simulation first and must then survive contact with hardware."}, {"n": "Edge AI Deployment", "fam": "ai", "vgu": null, "learn": "Quantisation, TinyML on microcontrollers, edge GPUs and NPUs, latency budgets, and safe fallbacks for learned policies.", "lab": "Quantise a small classifier to int8 and measure the change in size, latency and accuracy.", "why": "A policy that only runs on a data-centre GPU is not a robot. Deploying within power, latency and safety limits is the last step."}];
+const FAM={"pre": "#65748F", "sense": "#F2A93B", "elec": "#E2725B", "ctrl": "#3FB8C4", "model": "#8B7FD4", "robot": "#5FB88A", "ai": "#FF7EB6"};
+// concepts: [id, label, stage index (0-based), or -1 for a prerequisite from outside the curriculum, why it matters]
+const NODES=[["linalg", "Linear Algebra", -1, "Vectors, matrices, eigenvalues and least squares: the language of transforms, state space and every learning algorithm."], ["calc", "Calculus & ODEs", -1, "Derivatives, integrals and differential equations: how every physical system and every training loop is described."], ["prob", "Probability & Statistics", -1, "Noise, uncertainty and estimation: sensor error, Kalman filters and learning from data all rest on it."], ["phys", "Physics: Mechanics & E&M", -1, "Forces, motion, circuits and fields: what sensors measure and actuators produce."], ["sensprin", "Transduction Principles", 0, "Resistive, capacitive, inductive, piezoelectric, thermoelectric and optical effects: how a physical quantity becomes a voltage."], ["sensperf", "Sensor Specs & Error", 0, "Sensitivity, range, resolution, accuracy versus precision, drift, hysteresis and noise: the numbers on a datasheet and what they hide."], ["calibr", "Calibration & Uncertainty", 0, "Fit a sensor's response curve against a reference and carry the uncertainty through to the final number."], ["physchem", "Physical Chemistry Basics", 0, "Thermodynamics, equilibrium and reaction rates: why a chemical sensor responds, saturates and drifts."], ["chemsens", "Chemical & Gas Sensing", 0, "Electrochemical and metal-oxide sensors, selectivity and cross-sensitivity."], ["circuits", "Circuit Analysis", 1, "Kirchhoff's laws, RC dynamics and impedance: the model of every sensor interface."], ["opamp", "Op-Amps & Conditioning", 1, "Amplify, offset, filter and buffer a tiny sensor signal so an ADC can use it."], ["adc", "ADC/DAC & Sampling", 1, "Resolution, quantisation, sampling rate and aliasing: where analogue becomes data."], ["digital", "Digital Logic & FSMs", 1, "Gates, flip-flops and finite-state machines: the basis of microcontrollers and sequencers."], ["powerdrv", "Motor Drivers & PWM", 1, "H-bridges, PWM and current limits: how a microcontroller's 3.3 V signal moves a motor."], ["piezo", "Piezo & Smart Materials", 2, "Piezoelectric, shape-memory and electroactive materials that sense and actuate."], ["mems", "MEMS Sensors", 2, "Micro-machined accelerometers and gyroscopes: the IMU in every robot, phone and drone."], ["tactile", "Tactile & Force Sensing", 2, "Pressure, strain and slip sensing, the input a robot hand needs to grasp without crushing."], ["python", "Python for Engineers", 3, "NumPy, plotting and data handling: the working language of simulation, vision and learning."], ["cppnode", "C & C++ Systems Code", 3, "Pointers, memory and real-time constraints: the language of firmware and robot middleware."], ["sigsys", "Signals & Systems", 3, "Convolution, Fourier, Laplace and z transforms: one language for filters, circuits and control."], ["fft", "Sampling & Spectra (FFT)", 3, "See a signal as frequencies. Spot hum, vibration and the sampling rate you actually need."], ["filters", "Digital Filters (FIR/IIR)", 3, "Remove noise in real time, and pay for it in phase lag."], ["tf", "Transfer Functions", 4, "Poles, zeros and stability: predict how a system responds before building it."], ["pid", "PID Control", 4, "The workhorse loop: proportional, integral and derivative action with saturation and windup."], ["rlocus", "Root Locus & Loop Shaping", 4, "Design a controller by moving poles or shaping the frequency response."], ["statespace", "State-Space Models", 4, "Describe multi-input, multi-output systems as matrices. Required for observers, LQR and MPC."], ["observer", "State Feedback & Observers", 4, "Estimate states you cannot measure, then feed them back."], ["lqr", "Optimal Control (LQR)", 4, "Trade tracking error against control effort with a closed-form gain."], ["kalman", "Kalman Filter", 4, "Fuse a motion model with noisy sensors for the best estimate. The seed of learned sensor fusion."], ["canbus", "CAN & Automotive Buses", 5, "Message-based buses with arbitration and error handling, used in vehicles and many robots."], ["autosens", "Automotive Sensors", 5, "Wheel speed, radar, lidar and inertial sensing, and their failure modes."], ["safety", "Functional Safety", 5, "Hazard analysis, FMEA and safe states, the habits that keep a learned policy from hurting anyone."], ["numint", "Numerical Integration", 6, "Euler, Runge-Kutta and step-size error: how simulators turn equations into trajectories."], ["simmodel", "Modelling & Simulation", 6, "Build a block-diagram or physics model of a plant and simulate it in MATLAB or Python."], ["fem", "Finite Element Method", 6, "Discretise a structure or field into elements to compute stress, heat flow and deformation."], ["verif", "Model Verification", 6, "Check a model against data and know when to stop trusting it."], ["mcu", "Microcontroller Basics", 7, "Cores, memory maps and clocks: what runs your firmware."], ["periph", "Peripherals: ADC, PWM, I2C", 7, "Read sensors and drive actuators over GPIO, ADC, PWM, I2C and SPI."], ["interrupt", "Interrupts & Timers", 7, "React to events and run code at a fixed rate."], ["rtos", "RTOS & Scheduling", 7, "Tasks, priorities and deadlines, and what happens when one is missed."], ["embctl", "Control Loop on a MCU", 7, "Read, compute, write at a fixed rate with bounded jitter."], ["linuxsbc", "Embedded Linux & SBCs", 7, "Raspberry Pi and Jetson-class boards: where perception and policies run next to the microcontroller."], ["plc", "PLC & Ladder Logic", 8, "Industrial controllers programmed as relay logic."], ["seqctl", "Sequential Control", 8, "State machines for conveyors, stations and safety interlocks."], ["rigid", "Rigid-Body Frames", 9, "Rotations, homogeneous transforms and coordinate frames."], ["fkine", "Forward Kinematics", 9, "From joint angles to the position of the hand."], ["ikine", "Inverse Kinematics", 9, "From a desired hand pose back to joint angles, via the Jacobian."], ["rdyn", "Robot Dynamics", 9, "Torques, inertia and gravity: what it takes to move a link."], ["motionplan", "Motion Planning", 9, "Find collision-free paths with search, sampling and optimisation."], ["rctl", "Robot Control", 9, "Joint-space, impedance and torque control for arms."], ["ros", "ROS 2", 9, "Nodes, topics and tools: the plumbing that connects sensors, planners and drivers."], ["manip", "Grasping & Manipulation", 9, "Contact, grasp quality and picking objects in clutter."], ["fluid", "Fluid Mechanics Basics", 10, "Pressure, flow and the Navier-Stokes equations."], ["heat", "Heat Transfer", 10, "Conduction, convection and radiation: why motors and processors derate."], ["pneumatic", "Pneumatic Actuation", 10, "Compressed-air actuators and the soft robots built on them."], ["envsens", "Air, Water & Soil Sensing", 11, "Sensors and sampling for environmental monitoring."], ["remote", "Remote Sensing & Lidar", 11, "Measure a scene from a distance with light and radio."], ["sensnet", "Wireless Sensor Networks", 11, "Low-power radios, gateways and duty cycling for distributed sensing."], ["mpc", "Model Predictive Control", 12, "Optimise a short future trajectory at every step under constraints."], ["nonlin", "Nonlinear & Robust Control", 12, "Handle saturation, friction and model error with guarantees."], ["learnctl", "Learning-Based Control", 12, "Use data to tune, replace or augment a controller."], ["sysengv", "Systems Eng. & V-Model", 12, "Requirements, architecture, integration and verification for a whole machine."], ["projmgmt", "Project Management", 13, "Scope, schedule and risk for a multi-month build."], ["resmeth", "Research Methodology", 13, "Hypotheses, controls and honest evaluation of an experiment."], ["imgform", "Image Formation & Cameras", 14, "Pinhole model, lenses and camera calibration."], ["imgproc", "Image Filtering & Features", 14, "Convolution, edges, corners and descriptors."], ["geom", "Multi-View Geometry", 14, "Recover 3D structure and camera motion from several views."], ["classvis", "Classical Tracking", 14, "Colour thresholds, contours and optical flow: fast baselines that need no training."], ["lsq", "Least Squares & ARX", 15, "Fit a dynamic model to input-output data."], ["stepresp", "Step & Frequency Tests", 15, "Excite a system on purpose to read off its gain and time constant."], ["gb", "Grey-Box Parameter Fitting", 15, "Keep the physics, fit only the unknown parameters."], ["zdomain", "Sampling & z-Domain", 16, "Discrete-time transfer functions and the effect of sample rate."], ["discpid", "Discrete PID & Anti-Windup", 16, "A PID that behaves when the actuator saturates."], ["delay", "Delay & Jitter Effects", 16, "How late, uneven or coarse samples degrade a loop."], ["integ", "Systems Integration", 17, "Wire sensors, controllers, planners and a learned component into one working machine."], ["dataset", "Experiments & Data Logging", 17, "Record clean, labelled, reproducible runs."], ["thesis", "Thesis: Smart Robot", 17, "A documented robot that senses, decides and acts, with a repo anyone can rebuild."], ["supervised", "Supervised Learning", 18, "Learn a mapping from labelled examples. Features, labels, loss and the train/test split."], ["gradient", "Backprop & Gradients", 18, "How every neural network is trained."], ["classicml", "Classical ML on Sensors", 18, "Hand-built features such as FFT bands with SVMs or trees: strong, tiny and fast on a microcontroller."], ["nn", "Neural Networks (MLP)", 19, "Layers, activations and capacity."], ["cnn", "CNNs for Images", 19, "Convolutional networks: how a camera frame becomes features."], ["detect", "Detection & Segmentation", 19, "Where the objects are, and which pixels belong to them."], ["transvlm", "Transformers & VLMs", 19, "Attention and vision-language models: the backbone of modern robot policies."], ["fusion", "Learned Sensor Fusion", 19, "Combine camera, IMU and lidar with networks, on top of Kalman-style estimation."], ["mdp", "MDPs & Value Functions", 20, "States, actions, rewards and the Bellman equation."], ["rl", "Reinforcement Learning", 20, "Learn a policy by trial and reward in simulation."], ["il", "Imitation Learning (ACT)", 20, "Learn a policy from teleoperated demonstrations: the fastest way to a working arm."], ["vla", "Vision-Language-Action", 20, "One network that reads images and instructions and outputs robot actions."], ["trajopt", "Trajectory Optimisation", 20, "Plan dynamically feasible motions by optimisation, then learn or track them."], ["physsim", "Physics Simulators", 21, "MuJoCo, Isaac and Drake: contact, friction and actuators in software."], ["domrand", "Domain Randomisation", 21, "Vary masses, friction and delays in training so the policy survives reality."], ["sysidreal", "Calibrate Sim to Hardware", 21, "Use identified parameters to close the gap between model and robot."], ["sim2real", "Sim-to-Real Transfer", 21, "Deploy a simulated policy on hardware and measure what was lost."], ["quant", "Quantisation & Pruning", 22, "Shrink a network to int8 or smaller with little accuracy loss."], ["tinyml", "TinyML on a MCU", 22, "Run a small model inside a microcontroller's kilobytes."], ["edgegpu", "Edge GPUs & NPUs", 22, "Run perception and policies on a Jetson-class board within a power and latency budget."], ["safeai", "Safe Policy Fallbacks", 22, "Limits, watchdogs and safe stops around a learned controller."]];
+// [concept, prerequisite]
+const EDGES=[["sensprin", "phys"], ["sensperf", "sensprin"], ["sensperf", "prob"], ["calibr", "sensperf"], ["calibr", "linalg"], ["physchem", "calc"], ["chemsens", "sensprin"], ["chemsens", "physchem"], ["circuits", "phys"], ["circuits", "calc"], ["opamp", "circuits"], ["adc", "opamp"], ["digital", "circuits"], ["powerdrv", "circuits"], ["piezo", "sensprin"], ["mems", "sensprin"], ["mems", "circuits"], ["tactile", "piezo"], ["tactile", "opamp"], ["python", "linalg"], ["cppnode", "python"], ["sigsys", "calc"], ["sigsys", "linalg"], ["fft", "sigsys"], ["fft", "adc"], ["filters", "fft"], ["tf", "sigsys"], ["pid", "tf"], ["rlocus", "tf"], ["statespace", "linalg"], ["statespace", "tf"], ["observer", "statespace"], ["lqr", "statespace"], ["kalman", "observer"], ["kalman", "prob"], ["canbus", "digital"], ["autosens", "sensprin"], ["safety", "sensperf"], ["numint", "calc"], ["numint", "python"], ["simmodel", "numint"], ["simmodel", "statespace"], ["fem", "numint"], ["fem", "linalg"], ["verif", "simmodel"], ["verif", "calibr"], ["mcu", "digital"], ["mcu", "cppnode"], ["periph", "mcu"], ["periph", "adc"], ["interrupt", "mcu"], ["rtos", "interrupt"], ["embctl", "periph"], ["embctl", "interrupt"], ["embctl", "pid"], ["embctl", "powerdrv"], ["linuxsbc", "mcu"], ["linuxsbc", "python"], ["plc", "digital"], ["seqctl", "plc"], ["rigid", "linalg"], ["fkine", "rigid"], ["ikine", "fkine"], ["rdyn", "fkine"], ["rdyn", "calc"], ["motionplan", "ikine"], ["rctl", "rdyn"], ["rctl", "pid"], ["ros", "python"], ["ros", "linuxsbc"], ["manip", "ikine"], ["manip", "rctl"], ["fluid", "calc"], ["fluid", "phys"], ["heat", "calc"], ["heat", "phys"], ["pneumatic", "fluid"], ["pneumatic", "powerdrv"], ["envsens", "chemsens"], ["remote", "sensprin"], ["remote", "sigsys"], ["sensnet", "periph"], ["mpc", "lqr"], ["mpc", "simmodel"], ["nonlin", "lqr"], ["learnctl", "mpc"], ["learnctl", "supervised"], ["sysengv", "simmodel"], ["projmgmt", "sysengv"], ["resmeth", "prob"], ["imgform", "linalg"], ["imgform", "sensprin"], ["imgproc", "imgform"], ["imgproc", "filters"], ["geom", "imgform"], ["geom", "rigid"], ["classvis", "imgproc"], ["lsq", "linalg"], ["lsq", "prob"], ["stepresp", "tf"], ["gb", "lsq"], ["gb", "simmodel"], ["zdomain", "tf"], ["zdomain", "fft"], ["discpid", "pid"], ["discpid", "zdomain"], ["delay", "zdomain"], ["delay", "rtos"], ["integ", "sysengv"], ["integ", "embctl"], ["integ", "ros"], ["dataset", "resmeth"], ["dataset", "python"], ["thesis", "integ"], ["thesis", "dataset"], ["thesis", "projmgmt"], ["supervised", "prob"], ["supervised", "linalg"], ["supervised", "python"], ["gradient", "calc"], ["gradient", "linalg"], ["gradient", "supervised"], ["classicml", "supervised"], ["classicml", "fft"], ["classicml", "filters"], ["nn", "gradient"], ["cnn", "nn"], ["cnn", "imgproc"], ["detect", "cnn"], ["transvlm", "nn"], ["fusion", "kalman"], ["fusion", "cnn"], ["mdp", "prob"], ["rl", "mdp"], ["rl", "nn"], ["il", "cnn"], ["il", "manip"], ["vla", "il"], ["vla", "transvlm"], ["trajopt", "mpc"], ["trajopt", "motionplan"], ["physsim", "simmodel"], ["physsim", "rdyn"], ["domrand", "physsim"], ["domrand", "rl"], ["sysidreal", "gb"], ["sysidreal", "physsim"], ["sim2real", "domrand"], ["sim2real", "sysidreal"], ["quant", "nn"], ["tinyml", "quant"], ["tinyml", "periph"], ["tinyml", "classicml"], ["edgegpu", "quant"], ["edgegpu", "linuxsbc"], ["edgegpu", "rtos"], ["safeai", "safety"], ["safeai", "edgegpu"], ["safeai", "il"]];
+// the concept each stage's lab exercises, in stage order
+const LABS=["calibr", "adc", "mems", "filters", "pid", "canbus", "simmodel", "embctl", "seqctl", "ikine", "pneumatic", "sensnet", "mpc", "resmeth", "classvis", "gb", "discpid", "thesis", "classicml", "detect", "il", "sim2real", "tinyml"];
+</script>
+<script>
+const D={nodes:NODES.map(([i,l,s,w])=>({i,l,s,w})),edges:EDGES};
+const byId={}; D.nodes.forEach(n=>byId[n.i]=n);
+const pre={},post={};
+D.nodes.forEach(n=>{pre[n.i]=[];post[n.i]=[]});
+D.edges.forEach(([a,b])=>{
+  if(!byId[a]||!byId[b]) throw new Error("unknown node in edge "+a+" → "+b);
+  pre[a].push(b);post[b].push(a);
+});
+const area=n=>n.s<0?"pre":"s"+n.s;
+const color=n=>n.s<0?FAM.pre:FAM[STAGES[n.s].fam];
+const areaName=a=>a==="pre"?"Prerequisites":`${+a.slice(1)+1}. ${STAGES[+a.slice(1)].n}`;
+
+// layer = longest prerequisite chain below a node; dep = every concept it eventually unlocks
+const depth={};
+function layer(id){ if(id in depth)return depth[id];
+  return depth[id]=pre[id].length?1+Math.max(...pre[id].map(layer)):0; }
+function downstream(id,seen=new Set()){ for(const c of post[id]) if(!seen.has(c)){seen.add(c);downstream(c,seen);} return seen; }
+D.nodes.forEach(n=>{n.d=layer(n.i); n.dep=downstream(n.i).size; n.pre=pre[n.i].length;});
+document.getElementById("s-nodes").textContent=D.nodes.length;
+document.getElementById("s-layers").textContent=Math.max(...D.nodes.map(n=>n.d))+1;
+
+let mode="all", sel=null, off=new Set();
+
+// ---- longest path (critical chain) ----
+const memo={};
+function longest(id){ if(memo[id])return memo[id];
+  if(!pre[id].length) return memo[id]=[id];
+  let best=[]; for(const p of pre[id]){const c=longest(p); if(c.length>best.length)best=c;}
+  return memo[id]=best.concat(id); }
+let chain=[]; D.nodes.forEach(n=>{const c=longest(n.i); if(c.length>chain.length)chain=c;});
+const chainSet=new Set(chain);
+const CORE_MIN=Math.ceil(D.nodes.length*0.3);
+document.getElementById("chain").innerHTML = chain.map((id,k)=>
+  `<span class="chip"><b>${k+1}</b> ${byId[id].l}</span>` +
+  (k<chain.length-1?'<span class="arrow">&rarr;</span>':'')).join("");
+
+// ---- labs key ----
+document.getElementById("labs-key").innerHTML =
+  `<span class="lead">One lab concept per stage:</span>` +
+  LABS.map((id,k)=>`<span class="chip" data-go="${id}"><b>${k+1}</b> ${byId[id].l}</span>`).join("");
+document.getElementById("labs-key").addEventListener("click",e=>{
+  const c=e.target.closest("[data-go]"); if(!c)return;
+  const n=byId[c.dataset.go]; sel=n.i; draw(); panel(n);
+});
+
+// ---- legend ----
+const areaOrder=["pre",...STAGES.map((_,k)=>"s"+k)];
+const areaColor=a=>a==="pre"?FAM.pre:FAM[STAGES[+a.slice(1)].fam];
+document.getElementById("legend").innerHTML = areaOrder.map(a=>
+  `<button class="lg" data-a="${a}" aria-pressed="true"><i style="background:${areaColor(a)}"></i>${areaName(a)}</button>`).join("");
+document.getElementById("legend").addEventListener("click",e=>{
+  const b=e.target.closest(".lg"); if(!b)return;
+  const a=b.dataset.a;
+  if(off.has(a)){off.delete(a);b.setAttribute("aria-pressed","true");}
+  else{off.add(a);b.setAttribute("aria-pressed","false");}
+  draw();
+});
+
+const svg=document.getElementById("svg");
+const NS="http://www.w3.org/2000/svg";
+const el=(t,at)=>{const e=document.createElementNS(NS,t);for(const k in at)e.setAttribute(k,at[k]);return e;};
+const labSet=new Set(LABS);
+
+function visible(){
+  return D.nodes.filter(n=>{
+    if(off.has(area(n)))return false;
+    if(mode==="core") return n.dep>=CORE_MIN || chainSet.has(n.i);
+    return true;
+  });
+}
+
+function draw(){
+  const vis=visible(), vset=new Set(vis.map(n=>n.i));
+  const layers={}; vis.forEach(n=>(layers[n.d]=layers[n.d]||[]).push(n));
+  const depths=Object.keys(layers).map(Number).sort((a,b)=>a-b);
+
+  const ROW=74, PADT=34, PADL=64, CW=200, GAP=12, MAXC=9;
+  const rows=[];
+  depths.forEach(d=>{ const row=layers[d].slice().sort((a,b)=>b.dep-a.dep);
+    for(let i=0;i<row.length;i+=MAXC) rows.push({d,items:row.slice(i,i+MAXC),first:i===0}); });
+  const widest=Math.max(...rows.map(r=>r.items.length),1);
+  const W=Math.max(PADL+widest*(CW+GAP)+28, 900);
+  const H=PADT+rows.length*ROW+40;
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  svg.setAttribute("width",W); svg.setAttribute("height",H);
+  svg.innerHTML="";
+
+  const pos={};
+  rows.forEach((r,ri)=>{
+    const y=PADT+ri*ROW;
+    const totalW=r.items.length*CW+(r.items.length-1)*GAP;
+    const x0=PADL+((widest*(CW+GAP)-GAP)-totalW)/2;
+    r.items.forEach((n,ci)=>{pos[n.i]={x:x0+ci*(CW+GAP),y,w:CW,h:34};});
+    svg.appendChild(el("line",{x1:PADL-12,y1:y+17,x2:W-16,y2:y+17,class:"lane-rule"}));
+    if(r.first){const t=el("text",{x:12,y:y+21,class:"lane"}); t.textContent="L"+r.d; svg.appendChild(t);}
+  });
+
+  const eg=el("g",{});
+  D.edges.forEach(([a,b])=>{
+    if(!vset.has(a)||!vset.has(b))return;
+    const A=pos[a],B=pos[b]; if(!A||!B)return;
+    const ax=A.x+A.w/2, ay=A.y, bx=B.x+B.w/2, by=B.y+B.h;
+    const my=(ay+by)/2;
+    let cls="edge";
+    if(sel){ if(a===sel||b===sel) cls+= (b===sel?" cool":" hot"); }
+    eg.appendChild(el("path",{d:`M${ax},${ay} C${ax},${my} ${bx},${my} ${bx},${by}`,class:cls}));
+  });
+  svg.appendChild(eg);
+
+  const maxDep=Math.max(...vis.map(n=>n.dep),1);
+  vis.forEach(n=>{
+    const P=pos[n.i];
+    const metric=n.dep/maxDep;
+    const g=el("g",{class:"node"+(sel&&sel!==n.i&&!pre[sel].includes(n.i)&&!post[sel].includes(n.i)?" dim":"")+(sel===n.i?" sel":"")+(mode==="labs"?(labSet.has(n.i)?" app":" dim"):""),tabindex:"0",role:"button"});
+    g.setAttribute("aria-label",n.l);
+    const fill=color(n);
+    g.appendChild(el("rect",{x:P.x,y:P.y,width:P.w,height:P.h,
+      fill:`color-mix(in srgb, ${fill} ${8+metric*30}%, #16213A)`,stroke:fill,opacity:.96}));
+    const pw=26;
+    g.appendChild(el("rect",{x:P.x+P.w-pw-5,y:P.y+8,width:pw,height:18,rx:2,fill:fill,opacity:.92}));
+    const c=el("text",{x:P.x+P.w-pw/2-5,y:P.y+21,"text-anchor":"middle",class:"cnt"});
+    c.textContent=n.dep; g.appendChild(c);
+
+    const label=el("text",{x:P.x+9,y:P.y+21});
+    let s=n.l; const lim=Math.floor((P.w-pw-22)/5.75);
+    if(s.length>lim) s=s.slice(0,lim-1)+"…";
+    label.textContent=s; g.appendChild(label);
+    const title=el("title"); title.textContent=n.l+" — "+n.dep+" dependents"; g.appendChild(title);
+
+    const open=()=>{sel=(sel===n.i?null:n.i); draw(); if(sel)panel(n);else close();};
+    g.addEventListener("click",open);
+    g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open();}});
+    svg.appendChild(g);
+  });
+}
+
+const P=document.getElementById("panel");
+function panel(n){
+  document.getElementById("p-title").textContent=n.l;
+  const lab=LABS.indexOf(n.i);
+  document.getElementById("p-tags").innerHTML=
+    `<span class="tag">${areaName(area(n))}</span><span class="tag">layer ${n.d}</span>`+
+    (lab>=0?`<span class="tag app">Stage lab ${lab+1}</span>`:"");
+  document.getElementById("p-why").textContent=n.w;
+  document.getElementById("p-dep").textContent=n.dep;
+  document.getElementById("p-pre").textContent=n.pre;
+  document.getElementById("p-lay").textContent=n.d;
+  const st=n.s>=0?STAGES[n.s]:null;
+  document.getElementById("p-stage").hidden=!st;
+  if(st){
+    document.getElementById("p-stage-t").textContent=`Stage ${n.s+1}: ${st.n}`;
+    document.getElementById("p-stage-vgu").textContent=st.vgu||"Not in the VGU catalogue. Added for the smart-robot goal.";
+    document.getElementById("p-stage-learn").textContent=st.learn;
+    document.getElementById("p-stage-lab").textContent=st.lab;
+    document.getElementById("p-stage-why").textContent=st.why;
+  }
+  const mk=(arr,empty)=>arr.length
+    ? arr.map(id=>`<li data-go="${id}">${byId[id].l}</li>`).join("")
+    : `<li class="empty">${empty}</li>`;
+  document.getElementById("p-before").innerHTML=mk(pre[n.i],"Nothing: this is a root concept.");
+  document.getElementById("p-after").innerHTML=mk(post[n.i],"Nothing: this is a destination.");
+  P.classList.add("open");
+}
+function close(){P.classList.remove("open");sel=null;draw();}
+document.getElementById("close").addEventListener("click",close);
+P.addEventListener("click",e=>{const li=e.target.closest("[data-go]");if(!li)return;
+  const n=byId[li.dataset.go]; sel=n.i; draw(); panel(n); });
+document.addEventListener("keydown",e=>{if(e.key==="Escape")close();});
+
+const MODES={"m-all":"all","m-core":"core","m-labs":"labs"};
+const HINTS={all:"Click any concept to trace its prerequisites",
+  core:"Click any concept to trace its prerequisites",
+  labs:"Glowing concepts are the ones each stage's lab exercises"};
+function sync(){
+  for(const id in MODES) document.getElementById(id).setAttribute("aria-pressed",mode===MODES[id]);
+  document.getElementById("labs-key").classList.toggle("on",mode==="labs");
+  document.getElementById("hint").textContent=HINTS[mode];
+  draw();
+}
+for(const id in MODES) document.getElementById(id).addEventListener("click",()=>{mode=MODES[id];sync()});
+
+draw();
+</script>
+<script>
+(()=>{const KEY='mst-atlas-diy-done',boxes=[...document.querySelectorAll('#diy input[data-lab]')];
+ let done={};try{done=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+ const sync=()=>{boxes.forEach(b=>b.closest('.lab').classList.toggle('is-done',b.checked));
+  document.getElementById('diy-progress').textContent=`${boxes.filter(b=>b.checked).length} of ${boxes.length} labs done`;};
+ boxes.forEach(b=>{b.checked=!!done[b.dataset.lab];
+  b.addEventListener('click',e=>e.stopPropagation());
+  b.addEventListener('change',()=>{done[b.dataset.lab]=b.checked;try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){}sync();});});
+ sync();
+ document.querySelectorAll('#diy .copy').forEach(btn=>btn.addEventListener('click',async()=>{
+  const text=btn.parentElement.querySelector('code').textContent;
+  try{await navigator.clipboard.writeText(text);btn.textContent='Copied';}catch(e){btn.textContent='Press Ctrl+C';}
+  setTimeout(()=>btn.textContent='Copy',1600);}));
+})();
+</script>
+</body>
+</html>
