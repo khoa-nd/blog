@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="vi" data-lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Đếm hình chữ nhật · Bài 2</title>
+<meta name="description" content="Hướng dẫn từng bước đếm hình chữ nhật cho bé 7 tuổi (Bài 2).">
+<meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#25304a;--green:#2fbf71;--green-d:#1f9a58;--red:#ff5964;--blue:#3b82f6;--orange:#ff9f1c;--purple:#8b5cf6;--line:#2b2f3a;--shadow:0 8px 0 rgba(37,48,74,.18)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{font-family:'Baloo 2',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);background:linear-gradient(180deg,#b9e6ff 0%,#e6f6ff 45%,#fff2cf 100%) fixed;min-height:100vh;color-scheme:light;overflow-x:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+b,strong{font-weight:800}
+.deco i{position:fixed;font-style:normal;font-size:44px;opacity:.55;pointer-events:none;animation:floaty 9s ease-in-out infinite;z-index:0}
+@keyframes floaty{50%{transform:translateY(-16px) rotate(6deg)}}
+
+.top{position:relative;z-index:2;display:flex;align-items:center;gap:8px;padding:10px 14px;max-width:1200px;margin:0 auto}
+.sp{flex:1}
+.pill{display:inline-block;white-space:nowrap;text-decoration:none;color:var(--ink);background:#fff;border:3px solid var(--ink);border-radius:999px;padding:2px 14px;font-weight:800;font-size:17px;box-shadow:0 4px 0 rgba(37,48,74,.18)}
+.pill.cur{background:#ffd447}
+.tg{background:#fff;border:3px solid var(--ink);border-radius:14px;padding:2px 12px;font-weight:700;font-size:17px;box-shadow:0 4px 0 rgba(37,48,74,.18)}
+.tg:active{transform:translateY(3px);box-shadow:none}
+.tg[hidden]{display:none}
+.tg.off{opacity:.5}
+html[data-lang=vi] .l-en,html[data-lang=en] .l-vi{opacity:.4;font-weight:500}
+
+.wrap{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:18px;padding:4px 14px 28px;max-width:1200px;margin:0 auto;align-items:start}
+@media (max-width:880px){.wrap{grid-template-columns:1fr}}
+
+.stageCard{background:#fff;border:3px solid var(--ink);border-radius:26px;box-shadow:var(--shadow);padding:12px 12px 10px}
+.hud{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px}
+.qtitle{font-weight:800;font-size:clamp(17px,2.3vw,24px);line-height:1.15;padding-top:2px}
+.badge{flex:none;min-width:84px;text-align:center;background:#ffe27a;border:3px solid var(--ink);border-radius:18px;padding:0 10px 2px;line-height:1;box-shadow:0 4px 0 rgba(37,48,74,.18)}
+.badge .n{font-size:40px;font-weight:800;line-height:1.05}
+.badge small{display:block;font-size:13px;font-weight:700;margin-top:-4px;opacity:.8}
+.badge.bump .n{animation:bump .5s cubic-bezier(.2,1.8,.4,1)}
+.badge.glow{animation:glow 1.2s ease-in-out 3;background:#7ee2a0}
+@keyframes bump{0%{transform:scale(.4)}100%{transform:scale(1)}}
+@keyframes glow{50%{transform:scale(1.14)}}
+
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.tabs:empty{display:none}
+.tab{background:#eef6ff;border:3px solid var(--ink);border-radius:14px;padding:0 14px;font-weight:800;font-size:17px;box-shadow:0 3px 0 rgba(37,48,74,.18)}
+.tab.cur{background:#ffd447}
+.tab.done{background:#c8f3d6}
+.tab.cur.done{background:#ffd447}
+
+#stage{display:block;width:100%;height:auto;max-height:64vh;border-radius:18px;border:2px solid #e3d9bd;
+  background-color:#fffbea;background-image:linear-gradient(#f1e8c6 1px,transparent 1px),linear-gradient(90deg,#f1e8c6 1px,transparent 1px);background-size:24px 24px;touch-action:manipulation}
+#stage text{font-family:'Baloo 2',system-ui,sans-serif;user-select:none;-webkit-user-select:none}
+#stage .num{font-weight:800;fill:#4a5568}
+
+.galh{font-weight:800;font-size:15px;margin:8px 2px 2px;opacity:.8}
+.gal{display:flex;flex-wrap:wrap;gap:6px;min-height:64px;padding:6px;background:#f2f7ff;border:2px dashed #b9c8e6;border-radius:14px}
+.gal .th{width:62px;background:#fff;border:2px solid #cfd9ee;border-radius:9px;padding:2px;line-height:0}
+.gal .th svg{width:100%;height:auto}
+.gal .th.pop{animation:popd .5s cubic-bezier(.2,1.7,.4,1) both}
+@keyframes popd{0%{transform:scale(0) rotate(-20deg)}100%{transform:scale(1) rotate(0)}}
+
+.talk{display:flex;flex-direction:column;gap:12px}
+.say{display:flex;gap:10px;align-items:flex-start}
+.owl{flex:none;width:70px;height:70px;border-radius:50%;background:#fff;border:3px solid var(--ink);display:grid;place-items:center;font-size:42px;box-shadow:0 5px 0 rgba(37,48,74,.18)}
+.owl.talking{animation:hop .6s ease-in-out 2}
+@keyframes hop{40%{transform:translateY(-10px) rotate(-6deg)}}
+.bubble{position:relative;flex:1;min-height:150px;background:#fff;border:3px solid var(--ink);border-radius:22px;padding:12px 16px;font-size:clamp(19px,2.2vw,25px);line-height:1.3;font-weight:500;box-shadow:0 6px 0 rgba(37,48,74,.18)}
+.bubble::before{content:'';position:absolute;left:-14px;top:22px;width:22px;height:22px;background:#fff;border-left:3px solid var(--ink);border-bottom:3px solid var(--ink);transform:rotate(45deg)}
+.bubble b{color:#d6245a}
+.bubble.flip{animation:fadein .35s both}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}}
+@media (max-width:880px){.bubble{min-height:120px}}
+
+.choices{display:flex;gap:10px;flex-wrap:wrap}
+.choices:empty{display:none}
+.choice{min-width:76px;background:#fff;border:3px solid var(--ink);border-radius:18px;padding:2px 18px;font-weight:800;font-size:30px;box-shadow:0 5px 0 rgba(37,48,74,.2)}
+.choice:active{transform:translateY(4px);box-shadow:none}
+.choice.ok{background:#7ee2a0}
+.choice.bad{background:#ffb3b9;animation:shk .4s}
+@keyframes shk{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+
+.ctrls{display:flex;gap:10px;position:sticky;bottom:8px;z-index:3}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:3px solid var(--ink);border-radius:18px;padding:4px 18px;font-weight:800;font-size:22px;background:#fff;box-shadow:0 5px 0 rgba(37,48,74,.22);transition:transform .08s}
+.btn:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 rgba(37,48,74,.22)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.pri{background:var(--green);color:#fff;flex:1;text-shadow:0 2px 0 rgba(0,0,0,.18)}
+.btn.sec{background:#fff}
+.btn.big{font-size:28px;padding:8px 30px}
+.btn.pri.ready{animation:readyp 1.1s ease-in-out infinite}
+@keyframes readyp{50%{transform:scale(1.04)}}
+.small{display:flex;gap:8px;flex-wrap:wrap}
+.btn.mini{font-size:16px;padding:0 12px;border-radius:14px;box-shadow:0 3px 0 rgba(37,48,74,.2)}
+.btn.mini.on{background:#ffd447}
+.ic{font-size:.85em}
+
+.dots{display:flex;gap:7px;flex-wrap:wrap}
+.dot{width:22px;height:22px;border-radius:50%;border:3px solid var(--ink);background:#fff;padding:0}
+.dot.done{background:#7ee2a0}
+.dot.cur{background:#ffd447;transform:scale(1.25)}
+
+/* SVG animation helpers */
+.pop{animation:svgpop .45s cubic-bezier(.2,1.7,.4,1) both;transform-box:fill-box;transform-origin:center}
+@keyframes svgpop{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
+.fadein{animation:fadein2 .5s both}
+@keyframes fadein2{from{opacity:0}to{opacity:1}}
+.pulse{animation:pls 1s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes pls{50%{transform:scale(1.07)}}
+.draw{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);animation:drawl .8s ease-out forwards}
+@keyframes drawl{to{stroke-dashoffset:0}}
+.drop{animation:dropin .8s cubic-bezier(.3,1.5,.5,1) both}
+@keyframes dropin{from{transform:translateY(-150px);opacity:0}to{transform:none;opacity:1}}
+.shakeg{animation:shk2 .4s}
+@keyframes shk2{25%{transform:translateX(-9px)}75%{transform:translateX(9px)}}
+
+/* cover + confetti */
+#cover{position:fixed;inset:0;z-index:20;background:linear-gradient(180deg,#b9e6ff,#fff2cf);display:grid;place-items:center;padding:18px}
+#cover[hidden]{display:none}
+.coverCard{max-width:560px;text-align:center;background:#fff;border:4px solid var(--ink);border-radius:32px;box-shadow:0 10px 0 rgba(37,48,74,.2);padding:22px 22px 18px}
+.cemo{font-size:72px;line-height:1.1;animation:floaty 4s ease-in-out infinite}
+.coverCard h1{margin:6px 0 4px;font-size:clamp(26px,5vw,38px);line-height:1.1}
+.coverCard p{margin:6px 0 16px;font-size:clamp(17px,3vw,21px);line-height:1.3}
+.cfoot{margin-top:14px}
+.cf{position:fixed;top:-40px;z-index:30;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(112vh) rotate(540deg)}}
+@media (prefers-reduced-motion:reduce){.deco i,.cemo,.btn.pri.ready,.pulse{animation:none}}
+
+@media (max-width:880px){
+  .pill{font-size:15px;padding:0 10px}
+  .tg{font-size:15px;padding:0 9px}
+  .wrap{padding-bottom:300px}
+  .talk{position:fixed;left:0;right:0;bottom:0;z-index:5;background:rgba(255,255,255,.97);border-top:3px solid var(--ink);border-radius:22px 22px 0 0;padding:10px 12px calc(10px + env(safe-area-inset-bottom));gap:8px;box-shadow:0 -6px 20px rgba(0,0,0,.14);max-height:62vh;overflow:auto}
+  .owl{width:46px;height:46px;font-size:28px;border-width:2px}
+  .bubble{min-height:78px;font-size:17px;padding:8px 12px;border-width:2px;box-shadow:none}
+  .bubble::before{top:14px;border-width:2px}
+  .ctrls{position:static}
+  .btn{font-size:19px;padding:2px 14px;border-radius:14px}
+  .btn.mini{font-size:14px}
+  .dot{width:16px;height:16px;border-width:2px}
+  .dots{gap:5px}
+  .choice{font-size:24px;min-width:64px;padding:0 14px}
+  #stage{max-height:44vh}
+  .galh{display:none}
+  .gal{min-height:50px}
+  .gal .th{width:48px}
+  .qtitle{font-size:16px}
+  .badge{min-width:70px}.badge .n{font-size:30px}
+}
+
+</style>
+</head>
+<body>
+<div class="deco" aria-hidden="true"><i style="left:6%;top:14%">☁️</i><i style="left:86%;top:8%;animation-delay:-3s">⭐</i><i style="left:92%;top:58%;animation-delay:-6s">📐</i><i style="left:3%;top:66%;animation-delay:-2s">🔷</i><i style="left:46%;top:92%;animation-delay:-5s">☁️</i></div>
+
+<header class="top">
+  <a class="pill" id="n1" href="hcn1.html" data-vi="📐 Bài 2" data-en="📐 Problem 2">📐 Bài 2</a>
+  <a class="pill" id="n2" href="hcn2.html" data-vi="🔲 Bài 3" data-en="🔲 Problem 3">🔲 Bài 3</a>
+  <span class="sp"></span>
+  <button class="tg" id="bVoice" title="Voice" aria-label="Voice">🔊</button>
+  <button class="tg" id="bLang" title="Language" aria-label="Language"><b class="l-vi">VI</b>·<b class="l-en">EN</b></button>
+</header>
+
+<main class="wrap">
+  <section class="stageCard">
+    <div class="hud">
+      <div class="qtitle" id="qt"></div>
+      <div class="badge" id="badge"><div class="n" id="cnt">0</div><small data-vi="đã đếm" data-en="counted">đã đếm</small></div>
+    </div>
+    <div id="tabs" class="tabs"></div>
+    <svg id="stage" viewBox="0 0 840 460" role="img" aria-label="figure"><g id="base"></g><g id="ov"></g></svg>
+    <div class="galh" data-vi="🧺 Hình chữ nhật đã tìm được:" data-en="🧺 Rectangles found so far:">🧺 Hình chữ nhật đã tìm được:</div>
+    <div class="gal" id="gal"></div>
+  </section>
+
+  <aside class="talk">
+    <div class="say">
+      <div class="owl" id="owl">🦉</div>
+      <div class="bubble" id="bubble" aria-live="polite"></div>
+    </div>
+    <div id="choices" class="choices"></div>
+    <div class="ctrls">
+      <button class="btn sec" id="bBack"><span class="ic">◀</span> <span data-vi="Lùi" data-en="Back">Lùi</span></button>
+      <button class="btn pri" id="bNext"><span id="nextTxt" data-vi="Tiếp" data-en="Next">Tiếp</span> <span class="ic" id="nextIc">▶</span></button>
+    </div>
+    <div class="small">
+      <button class="btn mini" id="bRe"><span class="ic">↺</span> <span data-vi="Xem lại bước này" data-en="Replay step">Xem lại bước này</span></button>
+      <button class="btn mini" id="bAuto"><span class="ic">⏵</span> <span data-vi="Tự chạy" data-en="Auto-play">Tự chạy</span></button>
+    </div>
+    <div class="dots" id="dots"></div>
+  </aside>
+</main>
+
+<div id="cover">
+  <div class="coverCard">
+    <div class="cemo">🦉🔍</div>
+    <h1 id="cTitle"></h1>
+    <p id="cSub"></p>
+    <button class="btn pri big" id="bStart"><span data-vi="Bắt đầu nào!" data-en="Let's start!">Bắt đầu nào!</span> <span class="ic">▶</span></button>
+    <div class="cfoot"><button class="tg" id="cLang"><b class="l-vi">VI</b>·<b class="l-en">EN</b></button></div>
+  </div>
+</div>
+
+<script>
+const E=(function(){
+const NS='http://www.w3.org/2000/svg';
+const $=s=>document.querySelector(s);
+const svg=$('#stage'),base=$('#base'),ov=$('#ov'),bubble=$('#bubble'),choicesEl=$('#choices'),gal=$('#gal'),
+  cntEl=$('#cnt'),badge=$('#badge'),dotsEl=$('#dots'),owl=$('#owl'),bBack=$('#bBack'),bNext=$('#bNext'),
+  bVoice=$('#bVoice'),bAuto=$('#bAuto'),cover=$('#cover');
+let lang='vi',cfg={},steps=[],cur=-1,token=0,auto=false,voiceOn=true,started=false,
+    found=[],thumbFn=()=>'',galN=0,voice=null,reached={},qtObj=null;
+const synth=window.speechSynthesis||null;
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+
+function t(o){return o==null?'':typeof o==='string'?o:(o[lang]||o.vi)}
+function mk(tag,a,p){const e=document.createElementNS(NS,tag);for(const k in (a||{})){if(a[k]==null)continue;if(k==='text')e.textContent=a[k];else e.setAttribute(k,a[k])}if(p)p.appendChild(e);return e}
+function setView(w,h){svg.setAttribute('viewBox','0 0 '+w+' '+h)}
+
+/* ---------- static text / language ---------- */
+function applyStatic(){
+  document.documentElement.lang=lang;document.documentElement.dataset.lang=lang;
+  document.querySelectorAll('[data-vi]').forEach(e=>{e.textContent=e.getAttribute('data-'+lang)||e.getAttribute('data-vi')});
+  if(cfg.pageTitle)document.title=t(cfg.pageTitle);
+  if(qtObj)$('#qt').innerHTML=t(qtObj);
+  if(cfg.cover){$('#cTitle').innerHTML=t(cfg.cover.title);$('#cSub').innerHTML=t(cfg.cover.sub)}
+  if(cfg.onLang)cfg.onLang();
+  pickVoice();updateNav();
+}
+function setLang(l){lang=l;store.set('hcn-lang',l);applyStatic();if(started&&cur>=0)go(cur)}
+
+/* ---------- voice ---------- */
+function pickVoice(){
+  if(!synth){bVoice.hidden=true;return}
+  const vs=synth.getVoices();const pre=lang==='vi'?'vi':'en';
+  voice=vs.find(v=>v.lang.toLowerCase().replace('_','-').startsWith(pre))||null;
+  bVoice.hidden=vs.length>0&&!voice;
+  bVoice.classList.toggle('off',!voiceOn);
+}
+if(synth){synth.onvoiceschanged=pickVoice}
+function speakable(h){
+  let s=h.replace(/<[^>]+>/g,'').replace(/[\u{1F300}-\u{1FAFF}☀-➿⬀-⯿️]/gu,'');
+  const m=lang==='vi'?{'+':' cộng ','×':' nhân ','=':' bằng ','→':' '}:{'+':' plus ','×':' times ','=':' equals ','→':' '};
+  s=s.replace(/[+×=→]/g,c=>m[c]);
+  return s.replace(/\s+/g,' ').trim();
+}
+function say(o,opt){
+  opt=opt||{};const html=t(o);
+  bubble.innerHTML=html;bubble.classList.remove('flip');void bubble.offsetWidth;bubble.classList.add('flip');
+  owl.classList.remove('talking');void owl.offsetWidth;owl.classList.add('talking');
+  const plain=speakable(html);const est=Math.max(1400,plain.length*62);
+  if(voiceOn&&opt.speak!==false&&synth&&(voice||!synth.getVoices().length)&&started){
+    try{synth.cancel()}catch(e){}
+    return new Promise(res=>{
+      let fin=false;const f=()=>{if(!fin){fin=true;res()}};
+      const u=new SpeechSynthesisUtterance(plain);u.lang=lang==='vi'?'vi-VN':'en-US';if(voice)u.voice=voice;u.rate=.92;u.pitch=1.1;
+      u.onend=f;u.onerror=f;setTimeout(f,est*1.6+1500);
+      setTimeout(()=>{try{synth.speak(u)}catch(e){f()}},60);
+    });
+  }
+  return new Promise(res=>setTimeout(res,opt.speak===false?0:est));
+}
+
+/* ---------- counter / gallery ---------- */
+function setCount(n,anim){cntEl.textContent=n;if(anim){badge.classList.remove('bump');void badge.offsetWidth;badge.classList.add('bump')}}
+function setFound(list,fn){found=list;thumbFn=fn;galN=0;gal.innerHTML=''}
+function pushThumb(anim){
+  if(galN>=found.length)return;
+  const d=document.createElement('div');d.className='th'+(anim?' pop':'');d.innerHTML=thumbFn(found[galN],galN);gal.appendChild(d);galN++;
+}
+function fillGallery(n){gal.innerHTML='';galN=0;for(let k=0;k<n;k++)pushThumb(false)}
+
+/* ---------- fx ---------- */
+function confetti(){
+  const em=['🎉','⭐','✨','🎈','🔷','🌟','🟩'];
+  for(let k=0;k<38;k++){const s=document.createElement('span');s.className='cf';s.textContent=em[k%em.length];
+    s.style.left=Math.random()*100+'vw';s.style.fontSize=(18+Math.random()*24)+'px';
+    s.style.animationDuration=(2.4+Math.random()*2)+'s';s.style.animationDelay=(Math.random()*.7)+'s';
+    document.body.appendChild(s);setTimeout(()=>s.remove(),5600)}
+  badge.classList.remove('glow');void badge.offsetWidth;badge.classList.add('glow');
+}
+function choose(opts,onWrong){
+  return new Promise(res=>{
+    choicesEl.innerHTML='';
+    opts.forEach(o=>{
+      const b=document.createElement('button');b.className='choice';b.textContent=o.label;
+      b.onclick=()=>{
+        if(o.ok){b.classList.add('ok');[...choicesEl.children].forEach(x=>x.disabled=true);setTimeout(()=>{choicesEl.innerHTML='';res()},700)}
+        else{b.classList.remove('bad');void b.offsetWidth;b.classList.add('bad');onWrong&&onWrong(o)}
+      };
+      choicesEl.appendChild(b);
+    });
+  });
+}
+
+/* ---------- step engine ---------- */
+function api(tk){
+  const chk=()=>{if(tk!==token)throw 'cancel'};
+  return {
+    mk:(tag,a,p)=>{chk();return mk(tag,a,p||ov)},
+    wait:ms=>new Promise((res,rej)=>setTimeout(()=>tk===token?res():rej('cancel'),ms)),
+    say:(o,opt)=>{chk();return say(o,opt)},
+    add(){chk();pushThumb(true);setCount(galN,true)},
+    choose:(o,w)=>{chk();return choose(o,w)},
+    until:fn=>{chk();return new Promise(fn)},
+    confetti:()=>{chk();confetti()},
+    alive:()=>tk===token,
+    t,lang:()=>lang
+  };
+}
+function buildDots(){
+  dotsEl.innerHTML='';
+  steps.forEach((s,i)=>{const d=document.createElement('button');d.className='dot';d.setAttribute('aria-label','step '+(i+1));d.onclick=()=>{if(started)go(i)};dotsEl.appendChild(d)});
+}
+function paintDots(){[...dotsEl.children].forEach((d,i)=>{d.classList.toggle('cur',i===cur);d.classList.toggle('done',!!reached[i]&&i!==cur)})}
+function finishInfo(){return typeof cfg.finish==='function'?cfg.finish():cfg.finish}
+function updateNav(){
+  bBack.disabled=cur<=0;
+  const last=cur>=steps.length-1&&steps.length>0;
+  const n=$('#nextTxt'),ic=$('#nextIc');
+  if(last&&cfg.finish){const f=finishInfo();n.removeAttribute('data-vi');n.removeAttribute('data-en');n.textContent=t(f.label);ic.textContent=f.icon||'▶'}
+  else{n.setAttribute('data-vi','Tiếp');n.setAttribute('data-en','Next');n.textContent=lang==='vi'?'Tiếp':'Next';ic.textContent='▶'}
+  bNext.disabled=last&&!cfg.finish;
+}
+async function go(i){
+  if(!started||!steps.length)return;
+  i=Math.max(0,Math.min(steps.length-1,i));cur=i;const tk=++token;
+  if(synth){try{synth.cancel()}catch(e){}}
+  ov.innerHTML='';choicesEl.innerHTML='';bubble.innerHTML='';bNext.classList.remove('ready');
+  const st=steps[i];
+  fillGallery(st.base||0);setCount(st.base||0,false);paintDots();updateNav();
+  const A=api(tk);
+  try{await st.run(A)}catch(e){if(e!=='cancel')console.error(e);return}
+  if(tk!==token)return;
+  reached[i]=true;paintDots();bNext.classList.add('ready');
+  if(auto&&i<steps.length-1){try{await A.wait(1600)}catch(e){return}go(i+1)}
+}
+function setSteps(s){steps=s;cur=-1;reached={};buildDots()}
+function next(){if(cur<steps.length-1)go(cur+1);else if(cfg.finish)finishInfo().run()}
+
+function init(c){
+  cfg=c;qtObj=c.qTitle||null;
+  const saved=store.get('hcn-lang');lang=saved==='en'||saved==='vi'?saved:'vi';
+  (c.nav||[]).forEach(id=>{const e=$('#'+id);if(e)e.classList.add('cur')});
+  bBack.onclick=()=>go(cur-1);bNext.onclick=next;
+  $('#bRe').onclick=()=>go(cur);
+  bAuto.onclick=()=>{auto=!auto;bAuto.classList.toggle('on',auto);if(auto&&bNext.classList.contains('ready')&&cur<steps.length-1)setTimeout(()=>auto&&go(cur+1),500)};
+  bVoice.onclick=()=>{voiceOn=!voiceOn;bVoice.classList.toggle('off',!voiceOn);if(!voiceOn&&synth)synth.cancel()};
+  const lg=()=>setLang(lang==='vi'?'en':'vi');$('#bLang').onclick=lg;$('#cLang').onclick=lg;
+  $('#bStart').onclick=()=>{started=true;cover.hidden=true;if(cfg.onStart)cfg.onStart();go(0)};
+  document.addEventListener('keydown',e=>{
+    if(!started)return;
+    if(e.key==='ArrowRight'){next()}else if(e.key==='ArrowLeft'){go(cur-1)}
+  });
+  applyStatic();
+}
+return {init,mk,setView,base,ov,t,setSteps,setFound,go,setCount,applyStatic,get lang(){return lang},get started(){return started},
+  select:null,confetti:()=>confetti()};
+})();
+
+</script>
+<script>
+(function(){
+const T=(vi,en)=>({vi,en});
+const W=840,H=460;
+const P={
+ 1:[[20,20],[220,20],[220,230],[20,230]],
+ 6:[[20,230],[220,230],[220,440],[20,440]],
+ 5:[[620,20],[820,20],[820,230],[620,230]],
+ 9:[[620,230],[820,230],[820,440],[620,440]],
+ 2:[[220,20],[420,20],[420,120],[300,120],[300,230],[220,230]],
+ 7:[[220,230],[300,230],[300,340],[420,340],[420,440],[220,440]],
+ 4:[[420,20],[620,20],[620,230],[540,230],[540,120],[420,120]],
+ 8:[[540,230],[620,230],[620,440],[420,440],[420,340],[540,340]],
+ 3:[[300,120],[540,120],[540,340],[300,340]]};
+const LAB={1:[120,128],6:[120,338],5:[720,128],9:[720,338],2:[290,72],4:[550,72],7:[290,392],8:[550,392],3:[420,232]};
+const ROT={1:-6,2:4,3:-3,4:5,5:-5,6:4,7:-4,8:6,9:-5};
+const C={green:'#2fbf71',red:'#ff5964',blue:'#3b82f6',orange:'#ff9f1c',purple:'#8b5cf6'};
+const FOUND=[[1],[3],[5],[6],[9],[1,6],[5,9],[2,3,4,7,8],[1,2,3,4,6,7,8],[2,3,4,5,7,8,9],[1,2,3,4,5,6,7,8,9]];
+const pts=id=>P[id].map(p=>p.join(',')).join(' ');
+function bbox(ids){let x0=1e9,y0=1e9,x1=-1,y1=-1;ids.forEach(id=>P[id].forEach(([x,y])=>{x0=Math.min(x0,x);y0=Math.min(y0,y);x1=Math.max(x1,x);y1=Math.max(y1,y)}));return{x:x0,y:y0,w:x1-x0,h:y1-y0,cx:(x0+x1)/2,cy:(y0+y1)/2}}
+
+E.setView(W,H);
+const numEls={};
+(function drawBase(){
+  [1,6,5,9,2,7,4,8,3].forEach(id=>E.mk('polygon',{points:pts(id),fill:'#fff',stroke:'#2b2f3a','stroke-width':5,'stroke-linejoin':'round'},E.base));
+  for(let id=1;id<=9;id++){
+    const [x,y]=LAB[id];
+    numEls[id]=E.mk('text',{x,y,'text-anchor':'middle','dominant-baseline':'central','font-size':id===3?60:54,class:'num',transform:`rotate(${ROT[id]} ${x} ${y})`,text:id},E.base);
+  }
+})();
+
+/* ---- helpers (all take the step API `A`) ---- */
+function hl(A,ids,color,op,cls,p){const g=A.mk('g',{class:cls||'fadein'},p);ids.forEach(id=>A.mk('polygon',{points:pts(id),fill:color,'fill-opacity':op==null?.5:op,stroke:color,'stroke-width':3,'stroke-linejoin':'round'},g));return g}
+function badge(A,x,y,ok,size){return A.mk('text',{x,y,'text-anchor':'middle','dominant-baseline':'central','font-size':size||64,class:'pop',text:ok?'✅':'❌'})}
+function outline(A,ids,color,dash){const b=bbox(ids);const per=2*(b.w+b.h);return A.mk('rect',{x:b.x+4,y:b.y+4,width:b.w-8,height:b.h-8,rx:10,fill:'none',stroke:color,'stroke-width':8,'stroke-dasharray':dash?'14 10':null,class:dash?'fadein':'draw',style:'--len:'+per})}
+function tag(A,x,y,str,color){
+  const w=str.length*17+34;const g=A.mk('g',{class:'pop'});
+  A.mk('rect',{x:x-w/2,y:y-24,width:w,height:48,rx:24,fill:color,stroke:'#25304a','stroke-width':3},g);
+  A.mk('text',{x,y:y+1,'text-anchor':'middle','dominant-baseline':'central','font-size':30,'font-weight':800,fill:'#fff',text:str},g);return g}
+function rightAngle(A,cx,cy,dx,dy,s,color){return A.mk('path',{d:`M${cx+dx*s} ${cy} L${cx+dx*s} ${cy+dy*s} L${cx} ${cy+dy*s}`,fill:'none',stroke:color,'stroke-width':5,'stroke-linecap':'round','stroke-linejoin':'round',class:'pop'})}
+function corners4(A,b,color){return[[b.x,b.y,1,1],[b.x+b.w,b.y,-1,1],[b.x+b.w,b.y+b.h,-1,-1],[b.x,b.y+b.h,1,-1]].map(c=>rightAngle(A,c[0],c[1],c[2],c[3],26,color))}
+
+/* ---- steps ---- */
+const steps=[];
+
+// 0 intro
+steps.push({base:0,run:async A=>{
+  await A.say(T('Chào con! Mình là <b>Cú Thông Thái</b> 🦉. Hôm nay hai ta cùng làm <b>thám tử</b> đi tìm <b>hình chữ nhật</b> nhé!','Hi there! I\'m <b>Wise Owl</b> 🦉. Today we\'re <b>detectives</b> on the hunt for <b>rectangles</b>!'));
+  for(let id=1;id<=9;id++){const e=numEls[id];e.classList.remove('pop');void e.getBoundingClientRect();e.style.animationDelay=((id-1)*0.12)+'s';e.classList.add('pop')}
+  await A.wait(1300);
+  await A.say(T('Bức tranh này được chia thành <b>9 mảnh</b>. Mình đánh số từ <b>1</b> đến <b>9</b>.','This picture is cut into <b>9 pieces</b>, numbered <b>1</b> to <b>9</b>.'));
+  await A.say(T('Một hình chữ nhật có thể là <b>1 mảnh</b>, hoặc <b>nhiều mảnh ghép lại</b>. Ta cùng tìm nào!','A rectangle can be <b>one piece</b> or <b>several pieces put together</b>. Let\'s find them!'));
+}});
+
+// 1 what is a rectangle
+steps.push({base:0,run:async A=>{
+  A.mk('rect',{x:4,y:4,width:832,height:452,rx:18,fill:'#fff','fill-opacity':.98,class:'fadein'});
+  const r={x:70,y:100,w:340,h:210};
+  A.mk('rect',{x:r.x,y:r.y,width:r.w,height:r.h,fill:'#dbeafe',stroke:C.blue,'stroke-width':8,'stroke-linejoin':'round',class:'draw',style:'--len:'+2*(r.w+r.h)});
+  A.say(T('Trước hết: <b>hình chữ nhật</b> có <b>4 góc vuông</b> và 4 cạnh thẳng.','First: a <b>rectangle</b> has <b>4 square corners</b> and 4 straight sides.'));
+  await A.wait(900);
+  const cs=corners4(A,r,'#e11d48');
+  const nums=[[r.x+46,r.y+46],[r.x+r.w-46,r.y+46],[r.x+r.w-46,r.y+r.h-46],[r.x+46,r.y+r.h-46]];
+  for(let i=0;i<4;i++){A.mk('text',{x:nums[i][0],y:nums[i][1],'text-anchor':'middle','dominant-baseline':'central','font-size':34,'font-weight':800,fill:'#e11d48',class:'pop',text:i+1});await A.wait(450)}
+  A.mk('text',{x:r.x+r.w/2,y:r.y+r.h+54,'text-anchor':'middle','font-size':34,'font-weight':800,fill:'#25304a',text:E.lang==='vi'?'Hình chữ nhật: 4 góc vuông':'Rectangle: 4 square corners'});
+  await A.wait(900);
+  A.mk('rect',{x:520,y:100,width:210,height:210,fill:'#ede9fe',stroke:C.purple,'stroke-width':8,'stroke-linejoin':'round',class:'draw',style:'--len:840'});
+  await A.wait(700);
+  [[520,100,1,1],[730,100,-1,1],[730,310,-1,-1],[520,310,1,-1]].forEach(c=>rightAngle(A,c[0],c[1],c[2],c[3],26,'#e11d48'));
+  A.mk('text',{x:625,y:r.y+r.h+54,'text-anchor':'middle','font-size':34,'font-weight':800,fill:'#25304a',text:E.lang==='vi'?'Hình vuông':'Square'});
+  await A.say(T('<b>Hình vuông</b> cũng là hình chữ nhật đặc biệt — bài này ta đếm cả hình vuông nhé!','A <b>square</b> is a special rectangle too — in this puzzle we count squares as well!'));
+}});
+
+// 2 the trap: piece 2 has 6 corners
+steps.push({base:0,run:async A=>{
+  A.say(T('Mảnh số <b>2</b> có phải hình chữ nhật không? Ta cùng <b>đếm góc</b> nhé!','Is piece <b>2</b> a rectangle? Let\'s <b>count its corners</b>!'));
+  hl(A,[2],C.orange,.45);
+  await A.wait(1300);
+  const v=P[2];const dots=A.mk('g');
+  for(let i=0;i<v.length;i++){
+    const g=A.mk('g',{class:'pop'},dots);
+    A.mk('circle',{cx:v[i][0],cy:v[i][1],r:19,fill:'#e11d48',stroke:'#fff','stroke-width':3},g);
+    A.mk('text',{x:v[i][0],y:v[i][1]+1,'text-anchor':'middle','dominant-baseline':'central','font-size':24,'font-weight':800,fill:'#fff',text:i+1},g);
+    await A.wait(650);
+  }
+  A.mk('rect',{x:300,y:120,width:120,height:110,fill:'none',stroke:'#e11d48','stroke-width':5,'stroke-dasharray':'10 8',class:'fadein'});
+  await A.say(T('Có tới <b>6 góc</b>! Mà hình chữ nhật chỉ có <b>4 góc</b>. Mảnh vuông số 3 đã “cắn” mất một góc của mảnh 2.','<b>6 corners</b>! But a rectangle has only <b>4</b>. The square 3 has “bitten” a corner out of piece 2.'));
+  await A.wait(300);dots.remove();
+  badge(A,LAB[2][0]-6,LAB[2][1]+6,false,56);
+  await A.wait(900);
+  for(const id of [4,7,8]){hl(A,[id],C.orange,.45);badge(A,LAB[id][0],LAB[id][1],false,56);await A.wait(700)}
+  await A.say(T('Mảnh <b>4, 7, 8</b> cũng bị cắn mất một góc. Vậy <b>2, 4, 7, 8 không phải</b> hình chữ nhật.','Pieces <b>4, 7, 8</b> got bitten too. So <b>2, 4, 7, 8 are not</b> rectangles.'));
+}});
+
+// 3 quiz: tap the non-rectangles
+steps.push({base:0,run:async A=>{
+  const bad=[2,4,7,8];const got=new Set();let wrong=0;
+  A.say(T('Con thử nhé! <b>Chạm</b> vào các mảnh <b>KHÔNG phải</b> hình chữ nhật. (0/4)','Your turn! <b>Tap</b> the pieces that are <b>NOT</b> rectangles. (0/4)'));
+  await A.until(done=>{
+    for(let id=1;id<=9;id++){
+      const h=A.mk('polygon',{points:pts(id),fill:'#fff','fill-opacity':.02,style:'cursor:pointer'});
+      h.addEventListener('pointerdown',()=>{
+        if(got.has(id))return;
+        if(bad.includes(id)){
+          got.add(id);hl(A,[id],C.red,.4,'fadein');badge(A,LAB[id][0],LAB[id][1],false,56);
+          if(got.size===4){done()}
+          else A.say(T(`Đúng rồi! Mảnh ${id} bị khuyết góc. (${got.size}/4)`,`Yes! Piece ${id} has a bite missing. (${got.size}/4)`),{speak:false});
+        }else{
+          wrong++;
+          const g=hl(A,[id],C.green,.35,'shakeg');setTimeout(()=>g.remove(),700);
+          A.say(T(`Mảnh ${id} có đủ 4 góc vuông nên nó <b>là</b> hình chữ nhật. Tìm mảnh bị khuyết góc nhé!`,`Piece ${id} has 4 square corners, so it <b>is</b> a rectangle. Find the pieces with a bite missing!`),{speak:wrong<3});
+        }
+      });
+    }
+  });
+  await A.say(T('Giỏi quá! Đó là <b>2, 4, 7, 8</b>. Còn <b>1, 3, 5, 6, 9</b> là hình chữ nhật.','Great job! They are <b>2, 4, 7, 8</b>. Pieces <b>1, 3, 5, 6, 9</b> are rectangles.'));
+}});
+
+// 4 singles
+steps.push({base:0,run:async A=>{
+  await A.say(T('Ta đếm có thứ tự, <b>từ nhỏ đến lớn</b>. Đầu tiên là các hình chữ nhật <b>chỉ có 1 mảnh</b>.','Let\'s count in order, <b>small to big</b>. First: rectangles made of <b>just 1 piece</b>.'));
+  for(const id of [1,3,5,6,9]){
+    hl(A,[id],C.green,.5);badge(A,LAB[id][0],LAB[id][1]+4,true,56);A.add();
+    A.say(T(`Mảnh ${id}: 4 góc vuông ✓`,`Piece ${id}: 4 square corners ✓`),{speak:false});
+    await A.wait(850);
+  }
+  await A.say(T('Có <b>5</b> hình chữ nhật 1 mảnh: <b>1, 3, 5, 6, 9</b>.','<b>5</b> one-piece rectangles: <b>1, 3, 5, 6, 9</b>.'));
+}});
+
+// 5 pairs
+steps.push({base:5,run:async A=>{
+  await A.say(T('Tiếp theo ta <b>ghép 2 mảnh</b> sát nhau. Thử ghép <b>1 + 2</b> xem sao?','Next we <b>glue 2 pieces</b> together. Let\'s try <b>1 + 2</b>!'));
+  for(const [a,b] of [[1,2],[6,7]]){
+    const g=hl(A,[a,b],C.orange,.5);const bb=bbox([a,b]);
+    const tg=tag(A,bb.cx,bb.cy,`${a} + ${b}`,'#f97316');
+    await A.wait(700);const bd=badge(A,bb.cx,bb.cy+60,false,60);
+    A.say(a===1?T('Ghép <b>1 + 2</b> bị <b>lõm</b> một góc → không phải hình chữ nhật ❌','<b>1 + 2</b> has a <b>dent</b> → not a rectangle ❌'):T('Ghép <b>6 + 7</b> cũng bị lõm ❌','<b>6 + 7</b> has a dent too ❌'));
+    await A.wait(2000);g.remove();tg.remove();bd.remove();
+  }
+  for(const [a,b] of [[1,6],[5,9]]){
+    hl(A,[a,b],C.green,.45);const bb=bbox([a,b]);outline(A,[a,b],'#15803d');
+    tag(A,bb.cx,bb.cy,`${a} + ${b}`,'#15803d');
+    await A.wait(900);badge(A,bb.cx,bb.cy+70,true,56);A.add();
+    A.say(a===1?T('Ghép <b>1 + 6</b>: thẳng hàng, đủ 4 góc vuông → hình chữ nhật! ✅','<b>1 + 6</b> lines up with 4 square corners → a rectangle! ✅'):T('Ghép <b>5 + 9</b> cũng vậy ✅','<b>5 + 9</b> works too ✅'));
+    await A.wait(1700);
+  }
+  await A.say(T('Thêm <b>2</b> hình chữ nhật nữa. Đếm được <b>5 + 2 = 7</b> hình rồi!','<b>2</b> more rectangles. That\'s <b>5 + 2 = 7</b> so far!'));
+}});
+
+// 6 the middle block
+steps.push({base:7,run:async A=>{
+  A.say(T('Còn mảnh <b>2, 4, 7, 8</b> bị khuyết góc thì sao? Mảnh vuông <b>3</b> sẽ lấp đúng chỗ khuyết!','What about the bitten pieces <b>2, 4, 7, 8</b>? The square <b>3</b> fits exactly into the gaps!'));
+  hl(A,[2,4,7,8],C.orange,.5);
+  await A.wait(1700);
+  hl(A,[3],C.blue,.6,'drop');
+  await A.wait(1300);
+  const bb=bbox([2,3,4,7,8]);
+  outline(A,[2,3,4,7,8],'#15803d');
+  await A.wait(700);
+  corners4(A,{x:bb.x+4,y:bb.y+4,w:bb.w-8,h:bb.h-8},'#e11d48');
+  await A.wait(500);
+  badge(A,bb.cx,bb.cy-130,true,64);A.add();
+  await A.say(T('Ghép <b>2 + 3 + 4 + 7 + 8</b> lại → được một hình chữ nhật to, đủ 4 góc vuông! ✅','Put <b>2 + 3 + 4 + 7 + 8</b> together → one big rectangle with 4 square corners! ✅'));
+  await A.say(T('Thêm <b>1</b> hình nữa: <b>7 + 1 = 8</b>.','One more: <b>7 + 1 = 8</b>.'));
+}});
+
+// 7 bigger ones
+steps.push({base:8,run:async A=>{
+  const sets=[
+    {ids:[1,2,3,4,6,7,8],say:T('Ghép thêm cột bên trái <b>(1 + 6)</b> vào khối giữa → vẫn là hình chữ nhật! ✅ Được <b>9</b> hình.','Add the left column <b>(1 + 6)</b> to the middle block → still a rectangle! ✅ That makes <b>9</b>.')},
+    {ids:[2,3,4,5,7,8,9],say:T('Ghép khối giữa với cột bên phải <b>(5 + 9)</b> → cũng là hình chữ nhật! ✅ Được <b>10</b> hình.','Middle block + right column <b>(5 + 9)</b> → a rectangle too! ✅ That makes <b>10</b>.')},
+    {ids:[1,2,3,4,5,6,7,8,9],say:T('Và cả bức tranh to nhất cũng là một hình chữ nhật! ✅ Được <b>11</b> hình.','And the whole picture is a rectangle too! ✅ That makes <b>11</b>.')}];
+  const names=[T('trái + giữa','left + middle'),T('giữa + phải','middle + right'),T('cả bức tranh','whole picture')];
+  for(let k=0;k<sets.length;k++){
+    const s=sets[k];
+    hl(A,s.ids,C.green,.38,'fadein');outline(A,s.ids,'#15803d');
+    const bb=bbox(s.ids);
+    tag(A,bb.cx,bb.cy-168,E.t(names[k]),'#15803d');
+    await A.wait(800);badge(A,bb.cx,bb.cy,true,80);A.add();
+    await A.say(s.say);
+    await A.wait(700);
+    if(k<sets.length-1){while(E.ov.firstChild)E.ov.removeChild(E.ov.firstChild)}
+  }
+}});
+
+// 8 summary
+steps.push({base:11,run:async A=>{
+  const rows=[
+    [C.green,T('1 mảnh (1, 3, 5, 6, 9)','1 piece (1, 3, 5, 6, 9)'),5],
+    ['#06b6d4',T('2 mảnh (1+6, 5+9)','2 pieces (1+6, 5+9)'),2],
+    [C.orange,T('Khối giữa (2+3+4+7+8)','Middle block (2+3+4+7+8)'),1],
+    [C.purple,T('Trái + giữa','Left + middle'),1],
+    ['#ec4899',T('Giữa + phải','Middle + right'),1],
+    [C.blue,T('Cả bức tranh','Whole picture'),1]];
+  A.mk('rect',{x:4,y:4,width:832,height:452,rx:18,fill:'#fff','fill-opacity':.98,class:'fadein'});
+  A.say(T('Cộng tất cả lại nào!','Let\'s add them all up!'),{speak:false});
+  for(let i=0;i<rows.length;i++){
+    const [col,lab,n]=rows[i];const y=70+i*52;const g=A.mk('g',{class:'fadein'});
+    A.mk('circle',{cx:70,cy:y,r:16,fill:col,stroke:'#25304a','stroke-width':3},g);
+    A.mk('text',{x:100,y,'dominant-baseline':'central','font-size':30,'font-weight':700,fill:'#25304a',text:E.t(lab)},g);
+    A.mk('text',{x:760,y,'text-anchor':'end','dominant-baseline':'central','font-size':36,'font-weight':800,fill:col,text:n},g);
+    await A.wait(650);
+  }
+  A.mk('line',{x1:60,x2:780,y1:372,y2:372,stroke:'#25304a','stroke-width':4,'stroke-linecap':'round',class:'fadein'});
+  A.mk('text',{x:420,y:412,'text-anchor':'middle','dominant-baseline':'central','font-size':46,'font-weight':800,fill:'#d6245a',class:'pop',text:'5 + 2 + 1 + 1 + 1 + 1 = 11'});
+  A.confetti();
+  await A.say(T('Có tất cả <b>11 hình chữ nhật</b>! 🎉 Giỏi lắm, thám tử nhí!','There are <b>11 rectangles</b> in total! 🎉 Well done, little detective!'));
+  await A.say(T('Mẹo thám tử: đếm theo thứ tự <b>nhỏ → lớn</b> và luôn <b>kiểm tra 4 góc vuông</b> nhé!','Detective tip: count in order <b>small → big</b> and always <b>check for 4 square corners</b>!'));
+}});
+
+E.setSteps(steps);
+E.setFound(FOUND,(ids)=>{
+  const polys=[1,6,5,9,2,7,4,8,3].map(id=>`<polygon points="${pts(id)}" fill="${ids.includes(id)?'#7ee2a0':'#fff'}" stroke="#64748b" stroke-width="7" stroke-linejoin="round"/>`).join('');
+  return `<svg viewBox="0 0 840 460" aria-hidden="true">${polys}</svg>`;
+});
+E.init({
+  pageTitle:T('Đếm hình chữ nhật · Bài 2','Count the rectangles · Problem 2'),
+  qTitle:T('Bài 2: Hình dưới đây có bao nhiêu hình chữ nhật?','Problem 2: How many rectangles are in this picture?'),
+  nav:['n1'],
+  cover:{title:T('Thám tử hình chữ nhật','Rectangle Detective'),sub:T('Bài 2 · Hình dưới đây có bao nhiêu hình chữ nhật?<br>Cùng Cú Thông Thái giải từng bước nhé!','Problem 2 · How many rectangles are in the picture?<br>Solve it step by step with Wise Owl!')},
+  finish:{label:T('Sang Bài 3','Go to Problem 3'),icon:'▶',run:()=>{location.href='hcn2.html'}}
+});
+})();
+
+</script>
+</body>
+</html>
