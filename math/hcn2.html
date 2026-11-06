@@ -19,7 +19,7 @@ b,strong{font-weight:800}
 .deco i{position:fixed;font-style:normal;font-size:44px;opacity:.55;pointer-events:none;animation:floaty 9s ease-in-out infinite;z-index:0}
 @keyframes floaty{50%{transform:translateY(-16px) rotate(6deg)}}
 
-.top{position:relative;z-index:2;display:flex;align-items:center;gap:8px;padding:10px 14px;max-width:1200px;margin:0 auto}
+.top{position:relative;z-index:2;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 14px;max-width:1200px;margin:0 auto}
 .sp{flex:1}
 .pill{display:inline-block;white-space:nowrap;text-decoration:none;color:var(--ink);background:#fff;border:3px solid var(--ink);border-radius:999px;padding:2px 14px;font-weight:800;font-size:17px;box-shadow:0 4px 0 rgba(37,48,74,.18)}
 .pill.cur{background:#ffd447}
@@ -157,6 +157,7 @@ html[data-lang=vi] .l-en,html[data-lang=en] .l-vi{opacity:.4;font-weight:500}
 <header class="top">
   <a class="pill" id="n1" href="hcn1.html" data-vi="📐 Bài 2" data-en="📐 Problem 2">📐 Bài 2</a>
   <a class="pill" id="n2" href="hcn2.html" data-vi="🔲 Bài 3" data-en="🔲 Problem 3">🔲 Bài 3</a>
+  <a class="pill" id="n3" href="triangle.html" data-vi="🔺 Tam giác" data-en="🔺 Triangles">🔺 Tam giác</a>
   <span class="sp"></span>
   <button class="tg" id="bVoice" title="Voice" aria-label="Voice">🔊</button>
   <button class="tg" id="bLang" title="Language" aria-label="Language"><b class="l-vi">VI</b>·<b class="l-en">EN</b></button>
@@ -170,7 +171,7 @@ html[data-lang=vi] .l-en,html[data-lang=en] .l-vi{opacity:.4;font-weight:500}
     </div>
     <div id="tabs" class="tabs"></div>
     <svg id="stage" viewBox="0 0 840 460" role="img" aria-label="figure"><g id="base"></g><g id="ov"></g></svg>
-    <div class="galh" data-vi="🧺 Hình chữ nhật đã tìm được:" data-en="🧺 Rectangles found so far:">🧺 Hình chữ nhật đã tìm được:</div>
+    <div class="galh" data-vi="🧺 Đã tìm được:" data-en="🧺 Found so far:">🧺 Đã tìm được:</div>
     <div class="gal" id="gal"></div>
   </section>
 
