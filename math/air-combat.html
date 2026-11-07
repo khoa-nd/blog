@@ -53,7 +53,12 @@ canvas#c{display:block;width:100%;height:100%;image-rendering:pixelated;image-re
 @keyframes bl{50%{filter:brightness(1.25)}}
 .row{display:flex;gap:calc(var(--u)*6);justify-content:center;flex-wrap:wrap}
 h2{margin:0;font-size:calc(var(--u)*13);font-weight:800;color:var(--gold);text-shadow:0 calc(var(--u)*2) 0 #000;letter-spacing:.5px}
-#mlist{display:flex;flex-direction:column;gap:calc(var(--u)*5);width:100%}
+#menu{justify-content:flex-start;gap:calc(var(--u)*5);padding-top:calc(var(--u)*9);padding-bottom:calc(var(--u)*8);touch-action:pan-y}
+.mh{display:flex;align-items:center;justify-content:space-between;width:100%;gap:calc(var(--u)*6)}
+#mstars{font-size:calc(var(--u)*9.5);font-weight:800;color:var(--gold);white-space:nowrap}
+#mlist{display:flex;flex-direction:column;gap:calc(var(--u)*5);width:100%;flex:1;min-height:0;overflow-y:auto;touch-action:pan-y;padding:calc(var(--u)*1) calc(var(--u)*2) calc(var(--u)*6) 0;scrollbar-width:thin;scrollbar-color:#4b5ba3 transparent}
+.gh{font-size:calc(var(--u)*8.4);font-weight:800;color:var(--sky);text-align:left;letter-spacing:.5px;margin-top:calc(var(--u)*3);border-bottom:calc(var(--u)*1) dashed #4b5ba3;padding-bottom:calc(var(--u)*1)}
+.gh:first-child{margin-top:0}
 .mc{display:flex;align-items:center;gap:calc(var(--u)*7);width:100%;text-align:left;background:#16204f;border:calc(var(--u)*2) solid #4b5ba3;padding:calc(var(--u)*3) calc(var(--u)*7);box-shadow:0 calc(var(--u)*2) 0 #000}
 .mc:active{transform:translateY(calc(var(--u)*2));box-shadow:none}
 .mc .mn{font-family:'Press Start 2P',monospace;font-size:calc(var(--u)*9);color:var(--ink);background:var(--gold);padding:calc(var(--u)*3) calc(var(--u)*4);flex:none}
@@ -105,7 +110,7 @@ h2{margin:0;font-size:calc(var(--u)*13);font-weight:800;color:var(--gold);text-s
     </div>
 
     <div class="ov" id="menu" hidden>
-      <h2 data-vi="CHỌN NHIỆM VỤ" data-en="CHOOSE A MISSION">CHỌN NHIỆM VỤ</h2>
+      <div class="mh"><h2 data-vi="CHỌN NHIỆM VỤ" data-en="CHOOSE A MISSION">CHỌN NHIỆM VỤ</h2><span id="mstars"></span></div>
       <div id="mlist"></div>
     </div>
 
@@ -159,7 +164,7 @@ const L=(vi,en)=>lang==='en'?en:vi;
 const GSRC={
 '0':'.###./#...#/#..##/#.#.#/##..#/#...#/.###.','1':'..#../.##../..#../..#../..#../..#../.###.','2':'.###./#...#/....#/...#./..#../.#.../#####','3':'.###./#...#/....#/..##./....#/#...#/.###.','4':'...#./..##./.#.#./#..#./#####/...#./...#.','5':'#####/#..../####./....#/....#/#...#/.###.','6':'..##./.#.../#..../####./#...#/#...#/.###.','7':'#####/....#/...#./..#../.#.../.#.../.#...','8':'.###./#...#/#...#/.###./#...#/#...#/.###.','9':'.###./#...#/#...#/.####/....#/...#./.##..',
 A:'.###./#...#/#...#/#####/#...#/#...#/#...#',B:'####./#...#/#...#/####./#...#/#...#/####.',C:'.###./#...#/#..../#..../#..../#...#/.###.',D:'####./#...#/#...#/#...#/#...#/#...#/####.',E:'#####/#..../#..../####./#..../#..../#####',F:'#####/#..../#..../####./#..../#..../#....',G:'.###./#...#/#..../#.###/#...#/#...#/.###.',H:'#...#/#...#/#...#/#####/#...#/#...#/#...#',I:'.###./..#../..#../..#../..#../..#../.###.',J:'..###/...#./...#./...#./...#./#..#./.##..',K:'#...#/#..#./#.#../##.../#.#../#..#./#...#',L:'#..../#..../#..../#..../#..../#..../#####',M:'#...#/##.##/#.#.#/#.#.#/#...#/#...#/#...#',N:'#...#/##..#/#.#.#/#..##/#...#/#...#/#...#',O:'.###./#...#/#...#/#...#/#...#/#...#/.###.',P:'####./#...#/#...#/####./#..../#..../#....',Q:'.###./#...#/#...#/#...#/#.#.#/#..#./.##.#',R:'####./#...#/#...#/####./#.#../#..#./#...#',S:'.####/#..../#..../.###./....#/....#/####.',T:'#####/..#../..#../..#../..#../..#../..#..',U:'#...#/#...#/#...#/#...#/#...#/#...#/.###.',V:'#...#/#...#/#...#/#...#/#...#/.#.#./..#..',W:'#...#/#...#/#...#/#.#.#/#.#.#/##.##/#...#',X:'#...#/#...#/.#.#./..#../.#.#./#...#/#...#',Y:'#...#/#...#/.#.#./..#../..#../..#../..#..',Z:'#####/....#/...#./..#../.#.../#..../#####',
-'+':'...../..#../..#../#####/..#../..#../.....','-':'...../...../...../#####/...../...../.....','×':'...../#...#/.#.#./..#../.#.#./#...#/.....','=':'...../...../#####/...../#####/...../.....','?':'.###./#...#/....#/...#./..#../...../..#..','!':'..#../..#../..#../..#../..#../...../..#..',':':'...../..#../..#../...../..#../..#../.....','.':'...../...../...../...../...../.##../.##..','/':'....#/...#./...#./..#../.#.../.#.../#....','%':'##..#/##..#/...#./..#../.#.../#..##/#..##','*':'..#../#.#.#/.###./#####/.###./#.#.#/..#..','♥':'.#.#./#####/#####/#####/.###./..#../.....','x':'...../#...#/.#.#./..#../.#.#./#...#/.....'
+'+':'...../..#../..#../#####/..#../..#../.....','-':'...../...../...../#####/...../...../.....','×':'...../#...#/.#.#./..#../.#.#./#...#/.....','=':'...../...../#####/...../#####/...../.....','?':'.###./#...#/....#/...#./..#../...../..#..','!':'..#../..#../..#../..#../..#../...../..#..',':':'...../..#../..#../...../..#../..#../.....','.':'...../...../...../...../...../.##../.##..','/':'....#/...#./...#./..#../.#.../.#.../#....','%':'##..#/##..#/...#./..#../.#.../#..##/#..##','*':'..#../#.#.#/.###./#####/.###./#.#.#/..#..','♥':'.#.#./#####/#####/#####/.###./..#../.....','x':'...../#...#/.#.#./..#../.#.#./#...#/.....','÷':'...../..#../...../#####/...../..#../.....'
 };
 const gcache={};
 function glyph(ch,col){const k=ch+col;let c=gcache[k];if(c)return c;c=document.createElement('canvas');c.width=5;c.height=7;const g=c.getContext('2d');g.fillStyle=col;GSRC[ch].split('/').forEach((r,y)=>{for(let x=0;x<5;x++)if(r[x]==='#')g.fillRect(x,y,1,1)});return gcache[k]=c}
@@ -259,7 +264,12 @@ const THEMES=[
  {base:'#e9c46a',alt:'#dcb257',hi:'#f6dc92',kind:'desert'},
  {base:'#2f8f43',alt:'#287a39',hi:'#46ad55',kind:'jungle'},
  {base:'#dfeefa',alt:'#c9e2f5',hi:'#ffffff',kind:'snow'},
- {base:'#121a3b',alt:'#0f1631',hi:'#1d2a5c',kind:'night'}
+ {base:'#121a3b',alt:'#0f1631',hi:'#1d2a5c',kind:'night'},
+ {base:'#7cc8ff',alt:'#6bbaf5',hi:'#a9dcff',kind:'sky'},
+ {base:'#3a2420',alt:'#2e1c19',hi:'#5a342b',kind:'lava'},
+ {base:'#8d93a8',alt:'#7f869c',hi:'#a6acc0',kind:'moon'},
+ {base:'#1d4f6e',alt:'#194560',hi:'#3d86ad',kind:'sea'},
+ {base:'#d9825b',alt:'#c4704c',hi:'#f0a77f',kind:'desert'}
 ];
 const BH=720;
 function makeBG(ti){
@@ -279,11 +289,20 @@ function makeBG(ti){
     g.fillStyle='#2f8a3a';for(let i=0;i<30;i++)g.fillRect(Math.floor(rnd()*W),Math.floor(rnd()*BH),3,3)}
   else if(th.kind==='jungle'){
     g.fillStyle='#1f6a2f';for(let i=0;i<420;i++){const x=Math.floor(rnd()*W),y=Math.floor(rnd()*BH);g.fillRect(x,y,4,4);g.fillStyle='#46ad55';g.fillRect(x+1,y,2,2);g.fillStyle='#1f6a2f'}
-    const rp=rnd()*6;for(let y=0;y<BH;y+=2){const x=Math.round(120+Math.sin(y/46+rp)*54);g.fillStyle='#2a6aa5';g.fillRect(x-5,y,10,2);g.fillStyle='#5aa3e0';g.fillRect(x-2,y,4,2)}
+    const rp=rnd()*6;for(let y=0;y<BH;y+=2){const x=Math.round(120+Math.sin(y*6.2832*12/BH+rp)*54);g.fillStyle='#2a6aa5';g.fillRect(x-5,y,10,2);g.fillStyle='#5aa3e0';g.fillRect(x-2,y,4,2)}
     spots.slice(0,3).forEach(([x,y,r],i)=>{blob(x,y,r+3,'#cfe9a0',i);blob(x,y,r,'#3b82c4',i+11);blob(x,y,r-5,'#5aa3e0',i+31)})}
   else if(th.kind==='snow'){
     spots.slice(0,6).forEach(([x,y,r],i)=>{blob(x,y,r+3,'#ffffff',i);blob(x,y,r,'#93c5ea',i+11);blob(x,y,r-5,'#6aa7d8',i+31)});
     for(let i=0;i<70;i++){const x=Math.floor(rnd()*W),y=Math.floor(rnd()*BH);g.fillStyle='#1f6a4a';g.fillRect(x,y+3,3,3);g.fillRect(x+1,y,1,3);g.fillStyle='#fff';g.fillRect(x,y+3,1,1)}}
+  else if(th.kind==='sky'){
+    spots.forEach(([x,y,r],i)=>{blob(x,y+4,r+2,'#a9d6f7',i);blob(x,y,r,'#ffffff',i+9);blob(x-2,y-3,r-6,'#f4fbff',i+19)});
+    g.fillStyle='#ffffff';for(let i=0;i<60;i++)g.fillRect(Math.floor(rnd()*W),Math.floor(rnd()*BH),6,2)}
+  else if(th.kind==='lava'){
+    const rp=rnd()*6;for(let k=0;k<3;k++){const off=40+k*80;for(let y=0;y<BH;y+=2){const x=Math.round(off+Math.sin(y*6.2832*(10+k*2)/BH+rp+k*2)*(24+k*5));g.fillStyle='#b83a12';g.fillRect(x-6,y,12,2);g.fillStyle='#ff7a1a';g.fillRect(x-4,y,8,2);g.fillStyle='#ffd447';g.fillRect(x-1,y,3,2)}}
+    spots.slice(0,6).forEach(([x,y,r],i)=>{blob(x,y,r,'#241412',i);blob(x,y,r-5,'#3a2420',i+7)})}
+  else if(th.kind==='moon'){
+    spots.forEach(([x,y,r],i)=>{blob(x,y,r+2,'#b9bfd2',i);blob(x,y,r,'#6e748a',i+9);blob(x+2,y+2,r-5,'#868ca2',i+19)});
+    g.fillStyle='#d5d9e6';for(let i=0;i<80;i++)g.fillRect(Math.floor(rnd()*W),Math.floor(rnd()*BH),2,2)}
   else{
     for(let i=0;i<5;i++){const cx=Math.floor(rnd()*W),cy=Math.floor(rnd()*BH);for(let bx=-3;bx<=3;bx++)for(let by=-3;by<=3;by++){if(rnd()<.18)continue;const x=cx+bx*9,y=cy+by*9;for(const oy of[-BH,0,BH]){g.fillStyle='#1d2a5c';g.fillRect(x,y+oy,7,7);g.fillStyle='#ffd447';for(let k=0;k<3;k++)if(rnd()<.6)g.fillRect(x+1+Math.floor(rnd()*5),y+oy+1+Math.floor(rnd()*5),1,1)}}}
     g.fillStyle='#2b3a78';for(let i=0;i<6;i++)g.fillRect(Math.floor(rnd()*W),0,1,BH)}
@@ -337,8 +356,78 @@ const mulQ=(a,b)=>({op:'*',a,b,ans:a*b,txt:`${a} × ${b} = ?`,full:`${a} × ${b}
 const addQ=(a,b)=>({op:'+',a,b,ans:a+b,txt:`${a} + ${b} = ?`,full:`${a} + ${b} = ${a+b}`,key:`${a}+${b}`});
 const subQ=(a,b)=>({op:'-',a,b,ans:a-b,txt:`${a} - ${b} = ?`,full:`${a} - ${b} = ${a-b}`,key:`${a}-${b}`});
 const misQ=(t,b)=>({op:'?',a:t,b,ans:b,txt:`${t} × ? = ${t*b}`,full:`${t} × ${b} = ${t*b}`,key:`?${t}x${b}`});
+/* ---------- grade-3 generators ---------- */
+const R2=(vi,en)=>({vi,en});
+const cap=t=>t.charAt(0).toUpperCase()+t.slice(1);
+const parts=y=>[Math.floor(y/100)*100,Math.floor((y%100)/10)*10,y%10].filter(v=>v>0);
+function chain(sign,x,ps){let cur=x,vi='',en='';const sg=sign>0?'+':'-';ps.forEach((p,i)=>{const nx=sign>0?cur+p:cur-p;vi+=i?`, rồi ${sg} ${p} = ${nx}`:`${cur} ${sg} ${p} = ${nx}`;en+=i?`, then ${sg} ${p} = ${nx}`:`${cur} ${sg} ${p} = ${nx}`;cur=nx});return{vi,en}}
+function twoD(carry){
+  if(Math.random()<.5){let a,b;do{a=ri(11,88);b=ri(11,88)}while(a+b>99||(carry?(a%10)+(b%10)<10:(a%10)+(b%10)>9));return addQ(a,b)}
+  let a,b;do{a=ri(21,99);b=ri(11,89)}while(b>a-5||(carry?(a%10)>=(b%10):(a%10)<(b%10)));return subQ(a,b)}
+function threeD(){
+  if(Math.random()<.5){const a=ri(101,879),b=ri(101,999-a);return addQ(a,b)}
+  const a=ri(250,999),b=ri(101,a-100);return subQ(a,b)}
+function mulTwo(){
+  let a,b,o;do{a=ri(11,49);b=ri(2,6);o=a%10}while(o===0||a*b>250);
+  const T=a-o,ans=a*b;
+  return{op:'x2',a,b,ans,txt:`${a} × ${b} = ?`,full:`${a} × ${b} = ${ans}`,key:`x2-${a}x${b}`,dis:[T*b+o,ans+10,ans-10,ans+b,(T/10)*b+o*b],
+    hint:R2(`${a} × ${b} = ${ans}. Mẹo: tách ${a} = ${T} + ${o}. ${T} × ${b} = ${T*b}, ${o} × ${b} = ${o*b}, cộng lại: ${T*b} + ${o*b} = ${ans}`,`${a} × ${b} = ${ans}. Trick: split ${a} = ${T} + ${o}. ${T} × ${b} = ${T*b}, ${o} × ${b} = ${o*b}, add: ${T*b} + ${o*b} = ${ans}`)}}
+function divQ(bs,qmin,qmax){
+  const b=pick(bs),q=ri(qmin,qmax),a=b*q,seq=Array.from({length:q},(_,i)=>b*(i+1)).join(', ');
+  return{op:'/',a,b,ans:q,txt:`${a} ÷ ${b} = ?`,full:`${a} ÷ ${b} = ${q}`,key:`d${a}/${b}`,dis:[b,a-b,q+1,q-1,q+2],
+    hint:R2(`${a} ÷ ${b} = ${q}. Mẹo: nghĩ ngược ${b} × ? = ${a}. Đếm nhảy ${b}: ${seq} → ${q} bước`,`${a} ÷ ${b} = ${q}. Trick: think backwards ${b} × ? = ${a}. Skip-count by ${b}: ${seq} → ${q} steps`)}}
+const SHP={tri:{n:3,vi:'tam giác',en:'triangle'},sq:{n:4,vi:'hình vuông',en:'square'},rect:{n:4,vi:'hình chữ nhật',en:'rectangle'},quad:{n:4,vi:'tứ giác',en:'quadrilateral'},pent:{n:5,vi:'ngũ giác',en:'pentagon'},hex:{n:6,vi:'lục giác',en:'hexagon'},hept:{n:7,vi:'thất giác',en:'heptagon'},oct:{n:8,vi:'bát giác',en:'octagon'}};
+function shapeQ(){
+  const nm=pick(Object.keys(SHP)),sh=SHP[nm],ask=Math.random()<.5?'sides':'corners',n=sh.n,word=ask==='sides'?'SIDES':'CORNERS';
+  return{op:'g',ans:n,txt:`${word} = ?`,full:`${word} = ${n}`,key:`g-${nm}-${ask}`,draw:{k:'poly',nm},dis:[n+1,n-1,n+2,n-2],
+    say:ask==='sides'?R2('Đếm số <b>cạnh</b> của hình, rồi bắn đáp án!','Count the <b>sides</b> of the shape, then shoot the answer!'):R2('Đếm số <b>góc</b> (đỉnh) của hình!','Count the <b>corners</b> of the shape!'),
+    hint:R2(`${cap(sh.vi)} có ${n} cạnh và ${n} góc. Đếm từng cạnh theo thứ tự: 1, 2, … ${n}.`,`A ${sh.en} has ${n} sides and ${n} corners. Count each side in order: 1, 2, … ${n}.`)}}
+function perimQ(){
+  const sayP=R2('<b>Chu vi</b> = cộng độ dài tất cả các cạnh!','<b>Perimeter</b> = add the lengths of ALL the sides!');
+  if(Math.random()<.25){const a=ri(2,12),ans=4*a;
+    return{op:'p',ans,txt:'P = ?',full:`P = ${ans}`,key:`psq${a}`,draw:{k:'rect',a,b:a,sq:true},dis:[2*a,a*a,3*a,a+4,ans+4,ans-4],say:sayP,
+      hint:R2(`P = ${ans}. Hình vuông có 4 cạnh bằng nhau: ${a} + ${a} + ${a} + ${a} = ${a} × 4 = ${ans}`,`P = ${ans}. A square has 4 equal sides: ${a} + ${a} + ${a} + ${a} = ${a} × 4 = ${ans}`)}}
+  let a=ri(3,14),b=ri(2,9);if(a===b)b=a-1;if(b<2){b=2;a=Math.max(a,3)}const ans=2*(a+b);
+  return{op:'p',ans,txt:'P = ?',full:`P = ${ans}`,key:`p${a}x${b}`,draw:{k:'rect',a,b},dis:[a+b,a*b,2*a+b,a+2*b,ans+2,ans-2,ans+4],say:sayP,
+    hint:R2(`P = ${ans}. Hai cạnh ${a} và hai cạnh ${b}: ${a} + ${b} + ${a} + ${b} = (${a} + ${b}) × 2 = ${ans}`,`P = ${ans}. Two sides of ${a} and two of ${b}: ${a} + ${b} + ${a} + ${b} = (${a} + ${b}) × 2 = ${ans}`)}}
+function areaQ(){
+  const r=Math.random();
+  if(r>=.75)return perimQ();
+  if(r<.45){const a=ri(3,8),b=ri(2,6),ans=a*b;
+    return{op:'s',ans,txt:'S = ?',full:`S = ${ans}`,key:`sg${a}x${b}`,draw:{k:'grid',a,b},dis:[a+b,2*(a+b),ans+a,ans-a,ans+b,ans-b],
+      say:R2('<b>Diện tích</b> = số ô vuông. Đếm hết các ô nhé!','<b>Area</b> = number of squares. Count them all!'),
+      hint:R2(`S = ${ans}. Đếm theo hàng: ${b} hàng, mỗi hàng ${a} ô → ${a} × ${b} = ${ans} ô`,`S = ${ans}. Count by rows: ${b} rows of ${a} squares → ${a} × ${b} = ${ans}`)}}
+  let a,b;do{a=ri(3,12);b=ri(2,9)}while(a*b>100||a===b);const ans=a*b;
+  return{op:'s',ans,txt:'S = ?',full:`S = ${ans}`,key:`sr${a}x${b}`,draw:{k:'rect',a,b},dis:[a+b,2*(a+b),ans+a,ans-a,ans+b,ans-b],
+    say:R2('<b>Diện tích</b> = dài × rộng. Còn <b>chu vi</b> thì cộng các cạnh!','<b>Area</b> = length × width. <b>Perimeter</b> adds the sides!'),
+    hint:R2(`S = ${ans}. Diện tích hình chữ nhật = dài × rộng = ${a} × ${b} = ${ans}`,`S = ${ans}. Area of a rectangle = length × width = ${a} × ${b} = ${ans}`)}}
+function missQ(){
+  const t=ri(0,3),v=Math.random()<.5;let txt,ans,vi,en,dis=[];
+  if(t===0){const a=ri(11,70),b=ri(11,Math.min(60,99-a)),c=a+b;
+    if(v){txt=`${a} + ? = ${c}`;ans=b;vi=`Làm ngược: ${c} - ${a} = ${b}`;en=`Work backwards: ${c} - ${a} = ${b}`;dis=[a,c+a,ans+10,ans-10]}
+    else{txt=`? + ${b} = ${c}`;ans=a;vi=`Làm ngược: ${c} - ${b} = ${a}`;en=`Work backwards: ${c} - ${b} = ${a}`;dis=[b,c+b,ans+10,ans-10]}}
+  else if(t===1){const a=ri(31,99),b=ri(11,a-10),c=a-b;
+    if(v){txt=`${a} - ? = ${c}`;ans=b;vi=`Làm ngược: ${a} - ${c} = ${b}`;en=`Work backwards: ${a} - ${c} = ${b}`;dis=[c,a+c,ans+10,ans-10]}
+    else{txt=`? - ${b} = ${c}`;ans=a;vi=`Làm ngược: ${c} + ${b} = ${a}`;en=`Work backwards: ${c} + ${b} = ${a}`;dis=[c,c-b>0?c-b:0,ans+10,ans-10]}}
+  else if(t===2){const x=ri(2,9),y=ri(2,10),p=x*y;
+    if(v){txt=`${x} × ? = ${p}`;ans=y;vi=`${p} ÷ ${x} = ${y}, vì ${x} × ${y} = ${p}`;en=`${p} ÷ ${x} = ${y}, because ${x} × ${y} = ${p}`;dis=[x,p-x,ans+1,ans-1]}
+    else{txt=`? × ${y} = ${p}`;ans=x;vi=`${p} ÷ ${y} = ${x}, vì ${x} × ${y} = ${p}`;en=`${p} ÷ ${y} = ${x}, because ${x} × ${y} = ${p}`;dis=[y,p-y,ans+1,ans-1]}}
+  else{const q=ri(2,9),b=ri(2,9),d=q*b;
+    if(v){txt=`? ÷ ${b} = ${q}`;ans=d;vi=`Làm ngược: ${q} × ${b} = ${d}`;en=`Work backwards: ${q} × ${b} = ${d}`;dis=[q+b,ans+b,ans-b,ans+10]}
+    else{txt=`${d} ÷ ? = ${q}`;ans=b;vi=`${d} ÷ ${b} = ${q}, vì ${q} × ${b} = ${d}`;en=`${d} ÷ ${b} = ${q}, because ${q} × ${b} = ${d}`;dis=[q,ans+1,ans-1,d-q]}}
+  const full=txt.replace('?',ans);
+  return{op:'m',ans,txt,full,key:'m:'+txt,dis,hint:R2(`${full}. ${vi}`,`${full}. ${en}`)}}
+function genNew(g){
+  switch(g){
+    case'two0':return twoD(false);case'two1':return twoD(true);
+    case'div1':return divQ([2,3,4,5],2,10);
+    case'div2':return Math.random()<.75?divQ([6,7,8,9],2,9):divQ([2,3,4,5],3,10);
+    case'mul2':return mulTwo();case'shape':return shapeQ();case'perim':return perimQ();case'area':return areaQ();case'three':return threeD();
+    case'grand':{const r=Math.random();if(r<.12)return twoD(true);if(r<.22)return threeD();if(r<.36)return mulTwo();if(r<.5)return Math.random()<.75?divQ([2,3,4,5,6,7,8,9],2,9):mulQ(ri(6,9),ri(6,9));return missQ()}
+  }return null}
 function genQ(m){
   const g=m.gen;
+  const X=genNew(g);if(X)return X;
   if(g==='as20'){
     if(Math.random()<.55){let a,b;do{a=ri(3,17);b=ri(3,17)}while(a+b>20||(S.m&&Math.random()<.6&&a+b<=10));return addQ(a,b)}
     const a=ri(9,20),b=ri(2,Math.min(9,a-2));return subQ(a,b)}
@@ -350,30 +439,34 @@ function genQ(m){
   return misQ(ri(2,9),ri(2,10));
 }
 function distract(q){
+  const ok=v=>Number.isInteger(v)&&v>0&&v!==q.ans&&v<=1200;
+  const pri=shuf([...new Set((q.dis||[]).filter(ok))]);
   const c=[];
-  if(q.op==='+'){c.push(q.ans+1,q.ans-1,q.ans+2,q.ans-2,q.ans+10,q.ans-10,Math.abs(q.a-q.b))}
-  else if(q.op==='-'){c.push(q.ans+1,q.ans-1,q.ans+2,q.ans-2,q.ans+10,q.ans-10,q.a+q.b)}
+  if(q.op==='+'){c.push(q.ans+1,q.ans-1,q.ans+2,q.ans-2,q.ans+10,q.ans-10,Math.abs(q.a-q.b));if(q.ans>=100)c.push(q.ans+100,q.ans-100)}
+  else if(q.op==='-'){c.push(q.ans+1,q.ans-1,q.ans+2,q.ans-2,q.ans+10,q.ans-10,q.a+q.b);if(q.ans>=100)c.push(q.ans+100,q.ans-100)}
   else if(q.op==='*'){c.push(q.ans+q.a,q.ans-q.a,q.ans+q.b,q.ans-q.b,q.ans+1,q.ans-1,q.ans+10,q.ans-10,q.a+q.b)}
-  else{c.push(q.ans+1,q.ans-1,q.ans+2,q.ans-2,q.ans+3)}
-  const s=[...new Set(shuf(c).filter(v=>v>0&&v!==q.ans&&v<=200))];
-  let k=3;while(s.length<2)s.push(q.ans+k++);
-  return s.slice(0,2)}
+  else{c.push(q.ans+1,q.ans-1,q.ans+2,q.ans-2,q.ans+3,q.ans+10,q.ans-10)}
+  const gen=shuf([...new Set(c)].filter(v=>ok(v)&&!pri.includes(v)));
+  const out=pri.concat(gen).slice(0,2);let k=3;
+  while(out.length<2){const v=q.ans+k++;if(ok(v)&&!out.includes(v))out.push(v)}
+  return out}
 function hintFor(q){
+  if(q.hint)return q.hint;
   const R=(vi,en)=>({vi,en});
   const head=`${q.full}. `;
   if(q.op==='+'){
-    const{a,b,ans}=q;
-    if(a<10&&b<10&&ans>10){const big=Math.max(a,b),sm=Math.min(a,b),need=10-big,rest=sm-need;
-      return R(head+`Mẹo: ${big} + ${need} = 10, còn ${rest} nữa → 10 + ${rest} = ${ans}`,head+`Trick: ${big} + ${need} = 10, ${rest} more → 10 + ${rest} = ${ans}`)}
-    if(a>=10||b>=10){const[x,y]=a>=b?[a,b]:[b,a],t=Math.floor(y/10)*10,o=y-t;
-      return R(head+`Mẹo: ${x} + ${t} = ${x+t}${o?`, rồi + ${o} = ${ans}`:''}`,head+`Trick: ${x} + ${t} = ${x+t}${o?`, then + ${o} = ${ans}`:''}`)}
-    return R(head+`Mẹo: bắt đầu từ ${Math.max(a,b)}, đếm thêm ${Math.min(a,b)} → ${ans}`,head+`Trick: start at ${Math.max(a,b)}, count on ${Math.min(a,b)} → ${ans}`)}
+    const{a,b,ans}=q,x=Math.max(a,b),y=Math.min(a,b);
+    if(x<10&&y<10&&ans>10){const need=10-x,rest=y-need;
+      return R(head+`Mẹo: ${x} + ${need} = 10, còn ${rest} nữa → 10 + ${rest} = ${ans}`,head+`Trick: ${x} + ${need} = 10, ${rest} more → 10 + ${rest} = ${ans}`)}
+    if(y>=10){const c=chain(1,x,parts(y));return R(head+'Mẹo: '+c.vi,head+'Trick: '+c.en)}
+    if(x>=10&&x%10+y>10){const tt=10-x%10,rest=y-tt;
+      return R(head+`Mẹo: ${x} + ${tt} = ${x+tt}, rồi + ${rest} = ${ans}`,head+`Trick: ${x} + ${tt} = ${x+tt}, then + ${rest} = ${ans}`)}
+    return R(head+`Mẹo: bắt đầu từ ${x}, đếm thêm ${y} → ${ans}`,head+`Trick: start at ${x}, count on ${y} → ${ans}`)}
   if(q.op==='-'){
     const{a,b,ans}=q;
-    if(a>=30){const t=Math.floor(b/10)*10,o=b-t;
-      return R(head+`Mẹo: ${a} - ${t} = ${a-t}${o?`, rồi - ${o} = ${ans}`:''}`,head+`Trick: ${a} - ${t} = ${a-t}${o?`, then - ${o} = ${ans}`:''}`)}
-    if(a>10&&b>a-10){const t=a-10,r=b-t;
-      return R(head+`Mẹo: ${a} - ${t} = 10, bớt thêm ${r}: 10 - ${r} = ${ans}`,head+`Trick: ${a} - ${t} = 10, take away ${r} more: 10 - ${r} = ${ans}`)}
+    if(b>=10){const c=chain(-1,a,parts(b));return R(head+'Mẹo: '+c.vi,head+'Trick: '+c.en)}
+    if(a>10&&b>a%10){const t0=a%10,r=b-t0;
+      return R(head+`Mẹo: ${a} - ${t0} = ${a-t0}, bớt thêm ${r}: ${a-t0} - ${r} = ${ans}`,head+`Trick: ${a} - ${t0} = ${a-t0}, take away ${r} more: ${a-t0} - ${r} = ${ans}`)}
     return R(head+`Thử lại: ${b} + ${ans} = ${a}`,head+`Check: ${b} + ${ans} = ${a}`)}
   if(q.op==='?'){
     const t=q.a,n=q.ans,seq=Array.from({length:n},(_,i)=>t*(i+1)).join(', ');
@@ -410,7 +503,37 @@ const MIS=[
         ['↔️',{vi:'Đổi chỗ vẫn bằng nhau: 7 × 8 = 8 × 7.',en:'Order does not matter: 7 × 8 = 8 × 7.'}]]},
  {n:5,name:{vi:'Siêu phi công',en:'Super Ace'},sub:{vi:'trộn tất cả + số bị mất',en:'everything + missing number'},gen:'mix',theme:4,diff:4,
   tips:[['🔢',{vi:'Số lớn: <b>tách chục và đơn vị</b>. 47 + 25 = 47 + 20 + 5 = <b>72</b>.',en:'Big numbers: <b>split tens and ones</b>. 47 + 25 = 47 + 20 + 5 = <b>72</b>.'}],
-        ['❓',{vi:'<b>Tìm số bị mất</b>: 7 × ? = 42. Nhớ bảng nhân 7: 7 × 6 = 42 → <b>6</b>.',en:'<b>Missing number</b>: 7 × ? = 42. Use the 7 table: 7 × 6 = 42 → <b>6</b>.'}]]}
+        ['❓',{vi:'<b>Tìm số bị mất</b>: 7 × ? = 42. Nhớ bảng nhân 7: 7 × 6 = 42 → <b>6</b>.',en:'<b>Missing number</b>: 7 × ? = 42. Use the 7 table: 7 × 6 = 42 → <b>6</b>.'}]]},
+ {n:6,name:{vi:'Cộng trừ trong 100',en:'Add & Subtract to 100'},sub:{vi:'chưa có nhớ',en:'no carrying yet'},gen:'two0',theme:5,diff:3,
+  tips:[['➕',{vi:'<b>Tách chục và đơn vị</b>: 34 + 25 → 30 + 20 = 50, 4 + 5 = 9 → <b>59</b>.',en:'<b>Split tens and ones</b>: 34 + 25 → 30 + 20 = 50, 4 + 5 = 9 → <b>59</b>.'}],
+        ['➖',{vi:'Trừ cũng vậy: 78 − 43 → 70 − 40 = 30, 8 − 3 = 5 → <b>35</b>.',en:'Same for subtracting: 78 − 43 → 70 − 40 = 30, 8 − 3 = 5 → <b>35</b>.'}]]},
+ {n:7,name:{vi:'Cộng trừ có nhớ',en:'Carrying & Borrowing'},sub:{vi:'trong phạm vi 100',en:'numbers up to 100'},gen:'two1',theme:8,diff:3,
+  tips:[['🔟',{vi:'47 + 38: đi tới tròn chục trước. 47 + 30 = 77, rồi 77 + 8 = <b>85</b>.',en:'47 + 38: step by tens first. 47 + 30 = 77, then 77 + 8 = <b>85</b>.'}],
+        ['🔄',{vi:'72 − 29: trừ 30 rồi <b>cộng lại 1</b>. 72 − 30 = 42, 42 + 1 = <b>43</b>.',en:'72 − 29: take away 30 then <b>add 1 back</b>. 72 − 30 = 42, 42 + 1 = <b>43</b>.'}]]},
+ {n:8,name:{vi:'Phép chia dễ',en:'Easy Division'},sub:{vi:'chia cho 2 · 3 · 4 · 5',en:'divide by 2 · 3 · 4 · 5'},gen:'div1',theme:6,diff:3,
+  tips:[['➗',{vi:'Chia là phép <b>ngược của nhân</b>: 20 ÷ 4 = ? Vì 4 × 5 = 20 nên bằng <b>5</b>.',en:'Division is the <b>opposite of times</b>: 20 ÷ 4 = ? Since 4 × 5 = 20 the answer is <b>5</b>.'}],
+        ['🍬',{vi:'Chia đều: 12 cái kẹo cho 3 bạn → mỗi bạn được <b>4</b> cái (12 ÷ 3 = 4).',en:'Sharing: 12 sweets between 3 friends → <b>4</b> each (12 ÷ 3 = 4).'}]]},
+ {n:9,name:{vi:'Phép chia khó',en:'Hard Division'},sub:{vi:'chia cho 6 · 7 · 8 · 9',en:'divide by 6 · 7 · 8 · 9'},gen:'div2',theme:9,diff:4,
+  tips:[['🧠',{vi:'Nhớ <b>bảng nhân</b> để chia: 56 ÷ 7 → 7 × 8 = 56 → <b>8</b>.',en:'Use your <b>times tables</b>: 56 ÷ 7 → 7 × 8 = 56 → <b>8</b>.'}],
+        ['🦘',{vi:'Đếm nhảy 7: 7, 14, 21, 28, 35, 42, 49, 56 → <b>8 bước</b>.',en:'Skip-count by 7: 7, 14, 21, 28, 35, 42, 49, 56 → <b>8 jumps</b>.'}]]},
+ {n:10,name:{vi:'Nhân số hai chữ số',en:'Two-digit Times'},sub:{vi:'ví dụ 23 × 3',en:'like 23 × 3'},gen:'mul2',theme:2,diff:4,long:true,
+  tips:[['✂️',{vi:'<b>Tách số</b>: 23 × 3 = 20 × 3 + 3 × 3 = 60 + 9 = <b>69</b>.',en:'<b>Split the number</b>: 23 × 3 = 20 × 3 + 3 × 3 = 60 + 9 = <b>69</b>.'}],
+        ['🧮',{vi:'Nhân chục trước, nhân đơn vị sau, rồi <b>cộng lại</b>.',en:'Times the tens first, then the ones, then <b>add them up</b>.'}]]},
+ {n:11,name:{vi:'Hình học: cạnh & góc',en:'Shapes: Sides & Corners'},sub:{vi:'đếm cạnh, đếm góc',en:'count sides and corners'},gen:'shape',theme:0,diff:3,tall:true,long:true,
+  tips:[['🔺',{vi:'Số cạnh = số góc: tam giác <b>3</b>, tứ giác <b>4</b>, ngũ giác <b>5</b>, lục giác <b>6</b>.',en:'Sides = corners: triangle <b>3</b>, quadrilateral <b>4</b>, pentagon <b>5</b>, hexagon <b>6</b>.'}],
+        ['👆',{vi:'Đếm cạnh <b>theo thứ tự</b> để không bị sót!',en:'Count the sides <b>in order</b> so you do not miss one!'}]]},
+ {n:12,name:{vi:'Hình học: chu vi',en:'Shapes: Perimeter'},sub:{vi:'chu vi P',en:'perimeter P'},gen:'perim',theme:3,diff:3,tall:true,long:true,
+  tips:[['📏',{vi:'<b>Chu vi (P)</b> = cộng độ dài tất cả các cạnh.',en:'<b>Perimeter (P)</b> = add the lengths of all the sides.'}],
+        ['▭',{vi:'Hình chữ nhật: P = (dài + rộng) × 2. Hình vuông: P = cạnh × 4.',en:'Rectangle: P = (length + width) × 2. Square: P = side × 4.'}]]},
+ {n:13,name:{vi:'Hình học: diện tích',en:'Shapes: Area'},sub:{vi:'diện tích S và chu vi P',en:'area S and perimeter P'},gen:'area',theme:1,diff:4,tall:true,long:true,
+  tips:[['🟦',{vi:'<b>Diện tích (S)</b> = số ô vuông. Đếm theo hàng: ô mỗi hàng × số hàng.',en:'<b>Area (S)</b> = number of squares. Count by rows: squares per row × rows.'}],
+        ['✖️',{vi:'Hình chữ nhật: S = dài × rộng. Cẩn thận, đừng lẫn với chu vi!',en:'Rectangle: S = length × width. Careful not to mix it up with perimeter!'}]]},
+ {n:14,name:{vi:'Cộng trừ trong 1000',en:'Add & Subtract to 1000'},sub:{vi:'số có ba chữ số',en:'three-digit numbers'},gen:'three',theme:4,diff:4,long:true,
+  tips:[['💯',{vi:'Tách <b>trăm, chục, đơn vị</b>: 235 + 143 → +100 = 335, +40 = 375, +3 = <b>378</b>.',en:'Split <b>hundreds, tens, ones</b>: 235 + 143 → +100 = 335, +40 = 375, +3 = <b>378</b>.'}],
+        ['🔄',{vi:'Trừ cũng làm từng bước: 482 − 156 → −100, −50, −6.',en:'Subtract step by step too: 482 − 156 → −100, −50, −6.'}]]},
+ {n:15,name:{vi:'Đại chiến lớp 3',en:'Grade-3 Showdown'},sub:{vi:'tất cả + tìm số bị mất',en:'everything + missing numbers'},gen:'grand',theme:7,diff:5,long:true,
+  tips:[['🔁',{vi:'<b>Làm ngược</b>: ? + 38 = 74 → 74 − 38 = <b>36</b>.',en:'<b>Work backwards</b>: ? + 38 = 74 → 74 − 38 = <b>36</b>.'}],
+        ['🏆',{vi:'Chia, nhân, cộng, trừ trộn lẫn. Dùng mọi mẹo con đã học!',en:'Divide, times, add, subtract, all mixed. Use every trick you have learned!'}]]}
 ];
 const starsGet=()=>{try{return JSON.parse(lsGet('air-stars','{}'))||{}}catch(e){return{}}};
 
@@ -430,11 +553,15 @@ function applyLang(){
   document.documentElement.dataset.lang=lang;document.documentElement.lang=lang;
   document.querySelectorAll('[data-vi]').forEach(e=>{e.innerHTML=(e.dataset[lang]!==undefined?e.dataset[lang]:e.dataset.vi)});
   buildMenu();if(!$('brief').hidden)fillBrief();refreshSay()}
+const GROUPS=[{vi:'⭐ KHỞI ĐỘNG',en:'⭐ WARM-UP',a:0,b:4},{vi:'🔢 SỐ HỌC LỚP 3',en:'🔢 GRADE-3 NUMBERS',a:5,b:9},{vi:'📐 HÌNH HỌC',en:'📐 GEOMETRY',a:10,b:12},{vi:'🏆 ĐẠI CHIẾN',en:'🏆 FINAL CHALLENGE',a:13,b:14}];
 function buildMenu(){
   const st=starsGet(),box=$('mlist');box.innerHTML='';let rec=MIS.findIndex((m,i)=>!st[i]);if(rec<0)rec=0;
-  MIS.forEach((m,i)=>{const b=document.createElement('button');b.className='mc'+(i===rec?' rec':'');const s=st[i]||0;
-    b.innerHTML=`<span class="mn">M${m.n}</span><span class="mt"><b>${m.name[lang]}</b><small>${m.sub[lang]}</small></span><span class="ms">${'★'.repeat(s)}<i>${'★'.repeat(3-s)}</i></span>`;
-    b.onclick=()=>{ac();SFX.go();openBrief(i)};box.appendChild(b)})}
+  $('mstars').textContent='⭐ '+MIS.reduce((a,m,i)=>a+(st[i]||0),0)+'/'+MIS.length*3;
+  GROUPS.forEach(g=>{const h=document.createElement('div');h.className='gh';h.textContent=g[lang];box.appendChild(h);
+    for(let i=g.a;i<=g.b;i++){const m=MIS[i],b=document.createElement('button');b.className='mc'+(i===rec?' rec':'');const sc=st[i]||0;
+      b.innerHTML=`<span class="mn">M${m.n}</span><span class="mt"><b>${m.name[lang]}</b><small>${m.sub[lang]}</small></span><span class="ms">${'★'.repeat(sc)}<i>${'★'.repeat(3-sc)}</i></span>`;
+      b.onclick=()=>{ac();SFX.go();openBrief(i)};box.appendChild(b)}})}
+function showMenu(){buildMenu();show('menu');const box=$('mlist'),r=box.querySelector('.rec');if(r)box.scrollTop+=r.getBoundingClientRect().top-box.getBoundingClientRect().top-box.clientHeight/2+r.offsetHeight/2}
 function show(id){['cover','menu','brief','pause','result'].forEach(k=>$(k).hidden=k!==id);$('tower').hidden=!(S.scene==='play'||id==='pause')}
 function openBrief(i){S.mi=i;S.scene='brief';show('brief');fillBrief()}
 function fillBrief(){const m=MIS[S.mi];
@@ -448,7 +575,7 @@ function idleSay(vi,en,cls){if(S.sayHold<=0)setSay(vi,en,0,cls)}
 /* ---------- mission flow ---------- */
 function startMission(i){
   const m=MIS[i];S.m=m;S.mi=i;S.score=0;S.hearts=5;S.combo=0;S.wave=-1;S.asked=0;S.first=0;S.done=0;S.wrong=new Map();S.rq=[];S.lastKey='';S.boss=null;S.w=null;S.q=null;S.qp=[];S.msg=null;S.shake=0;S.dim=0;
-  S.waves=[{k:'f'},{k:'q',n:3},{k:'f'},{k:'q',n:3},{k:'boss',n:5}];
+  const lg=!!m.long;S.waves=[{k:'f'},{k:'q',n:lg?4:3},{k:'f'},{k:'q',n:lg?4:3},{k:'boss',n:lg?6:5}];
   bullets=[];ebul=[];foes=[];fx=[];floats=[];picks=[];S.sp=[];
   P={x:W/2,y:FIELD_H-44,fire:.3,inv:1.2,tx:W/2,ty:FIELD_H-44,useT:false};
   BG=makeBG(m.theme);S.scene='play';S.paused=false;show(null);
@@ -470,8 +597,10 @@ function newQ(){
 function startQuiz(){
   const q=newQ();S.q=q;const opts=shuf([q.ans,...distract(q)]),lanes=[40,120,200];
   S.qp=opts.map((v,i)=>({x:lanes[i],lx:lanes[i],y:-30-i*16,v,ok:v===q.ans,ph:Math.random()*6,held:false,leave:false,vx:0,vy:0,wrong:false,hl:0,flash:0,dmg:0,since:9}));
-  S.ph='ask';S.qt=0;S.qAt=S.t;if(q.re)float('AGAIN!',W/2,64,'#5ee7ff')}
-function qHold(){return S.w&&S.w.k==='boss'?146:110}
+  S.ph='ask';S.qt=0;S.qAt=S.t;if(q.re)float('AGAIN!',W/2,64+PEX(),'#5ee7ff');if(S.sayHold<=0)askSay()}
+const PEX=()=>S.m&&S.m.tall?22:0;
+function qHold(){return(S.w&&S.w.k==='boss'?146:110)+PEX()}
+function askSay(){const q=S.q;if(q&&q.say)setSay(q.say.vi,q.say.en);else setSay('Bắn máy bay mang <b>đáp án ĐÚNG</b>!','Shoot the plane carrying the <b>RIGHT answer</b>!')}
 function escapeFail(){
   const q=S.q;S.qp.forEach(p=>{p.leave=true;p.vy=90;p.vx=0});
   S.combo=0;q.bad=Math.max(1,q.bad);S.wrong.set(q.key,q);S.rq.push({q:q,n:2});
@@ -518,12 +647,12 @@ function buildF(idx){
   const sine=(n)=>{const x0=ri(60,180),A=ri(26,44),vy=48+d*5;for(let i=0;i<n;i++)add(.55,()=>foes.push(mkFoe({x:x0,x0,A,vy,ph:0,mv(f,dt){f.y+=f.vy*dt;f.x=f.x0+f.A*Math.sin(f.t*2.1)}})))};
   const vee=()=>{const o=[[0,0],[-22,-14],[22,-14],[-44,-28],[44,-28]];t+=.8;o.forEach(([dx,dy])=>S.sp.push({t,fn:()=>foes.push(mkFoe({x:120+dx,y:-14+dy,vy:56,mv(f,dt){f.y+=f.vy*dt;if(f.y>120)f.x+=(f.x<120?-1:1)*(35+(f.y-120)*.4)*dt}}))}));t+=1.2};
   const swoop=(n)=>{const dir=Math.random()<.5?1:-1;for(let i=0;i<n;i++)add(.5,()=>foes.push(mkFoe({x:dir>0?-12:W+12,y:34,y0:34,dir,mv(f,dt){f.x+=f.dir*78*dt;f.y=f.y0+38*Math.sin(f.t*2.2)+f.t*20}})))};
-  if(idx===0){sine(5+(d>1?1:0));if(d>=2)swoop(3)}
+  if(idx===0){sine(5+Math.min(3,Math.floor(d/2)));if(d>=2)swoop(3)}
   else{vee();swoop(4);if(d>=3){sine(4)}}
   S.sp[S.sp.length-1].fn=(f=>()=>{f();const l=foes[foes.length-1];if(l)l.drop=true})(S.sp[S.sp.length-1].fn);
   if(d>=3)S.fh=2;else S.fh=1}
 function foeShoot(f){
-  if(f.y<8||f.y>FIELD_H-110||f.y>P.y-40)return;const d=S.m.diff,a=Math.atan2(P.y-f.y,P.x-f.x),sp=58+d*9;
+  if(f.y<8||f.y>FIELD_H-110||f.y>P.y-40)return;const d=Math.min(4,S.m.diff),a=Math.atan2(P.y-f.y,P.x-f.x),sp=58+d*9;
   ebul.push({x:f.x,y:f.y+6,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp});}
 
 /* ---------- boss ---------- */
@@ -552,7 +681,7 @@ function showResult(ok,s){
   if(ok&&S.mi<MIS.length-1)mk(L('Nhiệm vụ tiếp ▶','Next mission ▶'),'blink',()=>openBrief(S.mi+1));
   mk(L('Chơi lại ↺','Retry ↺'),ok?'sec':'blink',()=>startMission(S.mi));
   mk(L('Menu','Menu'),'sec',toMenu)}
-function toMenu(){S.scene='menu';S.paused=false;MUS.boss=false;if(musOn&&AC)musStart(false);else musStop();buildMenu();show('menu')}
+function toMenu(){S.scene='menu';S.paused=false;MUS.boss=false;if(musOn&&AC)musStart(false);else musStop();showMenu()}
 
 /* ---------- update ---------- */
 const keys={};
@@ -563,7 +692,7 @@ function autoPilot(dt){
 function update(dt){
   S.t+=dt;S.scroll=(S.scroll+dt*40)%BH;
   clouds.forEach(c=>{c.y+=c.sp*dt;if(c.y>FIELD_H+30){c.y=-40;c.x=Math.random()*W}});
-  if(S.sayHold>0){S.sayHold-=dt;if(S.sayHold<=0){S.sayHold=0;const ph=S.ph;if(ph==='ask'||ph==='qintro')setSay('Bắn máy bay mang <b>đáp án ĐÚNG</b>!','Shoot the plane carrying the <b>RIGHT answer</b>!');else if(ph==='f')setSay('Né đạn và bắn hạ máy bay địch!','Dodge and shoot the enemy jets!')}}
+  if(S.sayHold>0){S.sayHold-=dt;if(S.sayHold<=0){S.sayHold=0;const ph=S.ph;if(ph==='ask'||ph==='qintro')askSay();else if(ph==='f')setSay('Né đạn và bắn hạ máy bay địch!','Dodge and shoot the enemy jets!')}}
   if(S.scene==='cover'||S.scene==='menu'||S.scene==='brief'){P.dead=false;P.inv=0;P.x=W/2+Math.sin(S.t*.9)*50;P.y=FIELD_H-60+Math.sin(S.t*1.7)*5;return}
   if(S.scene==='result'){fxUpd(dt);return}
   if(S.scene!=='play')return;
@@ -575,13 +704,13 @@ function update(dt){
   if(S.auto)autoPilot(dt);
   else if(dx||dy){P.useT=false;P.x+=dx*125*dt;P.y+=dy*125*dt}
   else if(P.useT){const k=Math.min(1,dt*13);P.x+=(P.tx-P.x)*k;P.y+=(P.ty-P.y)*k}
-  P.x=clamp(P.x,9,W-9);P.y=clamp(P.y,66,FIELD_H-12);
+  P.x=clamp(P.x,9,W-9);P.y=clamp(P.y,66+PEX(),FIELD_H-12);
   P.fire-=dt;if(P.fire<=0){P.fire=.17;bullets.push({x:P.x-4,y:P.y-8},{x:P.x+4,y:P.y-8});if(Math.random()<.5)SFX.shoot()}
   bullets.forEach(b=>b.y-=330*dt);bullets=bullets.filter(b=>b.y>-10&&!b.x_);
   // wave logic
   phase(dt);
   // foes
-  for(const f of foes){f.t+=dt;f.mv(f,dt);f.flash=Math.max(0,f.flash-dt);f.fire-=dt;if(f.fire<=0){f.fire=Math.max(1.5,3.1-S.m.diff*.3)+Math.random()*1.4;foeShoot(f)}}
+  for(const f of foes){f.t+=dt;f.mv(f,dt);f.flash=Math.max(0,f.flash-dt);f.fire-=dt;if(f.fire<=0){f.fire=Math.max(1.6,3.1-Math.min(4,S.m.diff)*.3)+Math.random()*1.4;foeShoot(f)}}
   for(const f of foes){
     for(const b of bullets){if(!b.x_&&Math.abs(b.x-f.x)<9&&Math.abs(b.y-f.y)<9){b.x_=1;f.hp--;f.flash=.07;if(f.hp<=0){f.dead=1;S.score+=50;boom(f.x,f.y,.8);if(f.drop)drop(f.x,f.y,S.hearts<5?'heart':'star');break}else SFX.tink()}}
     if(!f.dead&&Math.abs(P.x-f.x)<9&&Math.abs(P.y-f.y)<9){f.dead=1;boom(f.x,f.y,.8);hurt()}}
@@ -593,7 +722,7 @@ function update(dt){
   for(const p of S.qp){
     if(p.leave){p.x+=p.vx*dt;p.y+=p.vy*dt;continue}
     p.flash=Math.max(0,p.flash-dt);p.hl=Math.max(0,p.hl-dt);p.since+=dt;if(p.since>.15&&p.dmg>0)p.dmg=Math.max(0,p.dmg-8*dt);
-    const hy=qHold();if(!p.held){p.y+=70*dt;if(p.y>=hy)p.held=true}else if(S.qt>10){p.y+=(5+S.m.diff*1.4)*dt}
+    const hy=qHold();if(!p.held){p.y+=70*dt;if(p.y>=hy)p.held=true}else if(S.qt>(S.m.diff>=3?16:10)){p.y+=(5+Math.min(S.m.diff,3)*1.4)*dt}
     p.x=p.lx+13*Math.sin(S.t*.9+p.ph)}
   if(S.ph==='ask'){S.qt+=dt;
     for(const b of bullets){if(b.x_)continue;for(const p of S.qp){if(p.leave||p.wrong)continue;if(Math.abs(b.x-p.x)<19&&b.y>p.y-23&&b.y<p.y+22){b.x_=1;p.dmg++;p.since=0;p.flash=.05;if(Math.random()<.35)SFX.tink();fx.push({type:'p',x:b.x,y:b.y,vx:ri(-50,50),vy:ri(-50,10),l:.2,max:.2,c:'#fff',s:2});if(p.dmg>=8){if(p.ok)onCorrect(p);else onWrong(p)}break}}}
@@ -602,9 +731,10 @@ function update(dt){
   // boss
   const B=S.boss;
   if(B&&!B.dead){B.t+=dt;B.flash=Math.max(0,B.flash-dt);
-    if(S.ph==='bossIn'){B.y=Math.min(74,B.y+40*dt)}
-    else B.y=74+Math.sin(B.t*1.3)*4;
-    if(B.y>=74){B.x=W/2+Math.sin(B.t*.55)*58}
+    const by=82+PEX();
+    if(S.ph==='bossIn'){B.y=Math.min(by,B.y+40*dt)}
+    else B.y=by+Math.sin(B.t*1.3)*4;
+    if(B.y>=by){B.x=W/2+Math.sin(B.t*.55)*58}
     if(S.ph==='ask'||S.ph==='solved'){B.fire-=dt;if(B.fire<=0){B.fire=Math.max(1.35,2.4-S.m.diff*.25);bossFire(B)}}
     for(const b of bullets){if(!b.x_&&Math.abs(b.x-B.x)<26&&Math.abs(b.y-B.y)<18){b.x_=1;if(Math.random()<.4){SFX.tink();fx.push({type:'p',x:b.x,y:b.y,vx:ri(-40,40),vy:ri(-60,-10),l:.25,max:.25,c:'#5ee7ff',s:2})}}}
     if(Math.abs(P.x-B.x)<24&&Math.abs(P.y-B.y)<16)hurt()}
@@ -663,6 +793,33 @@ function drawFx(){
     if(f.type==='p'){ctx.fillStyle=f.c;ctx.globalAlpha=Math.min(1,f.l/.3);ctx.fillRect(Math.round(f.x),Math.round(f.y),f.s,f.s);ctx.globalAlpha=1}
     else if(f.type==='ring'){ctx.fillStyle='rgba(255,230,150,'+Math.max(0,f.l/.35)+')';const n=Math.round(10+f.r/2);for(let i=0;i<n;i++){const a=i/n*6.283;ctx.fillRect(Math.round(f.x+Math.cos(a)*f.r),Math.round(f.y+Math.sin(a)*f.r),2,2)}}
     else if(f.type==='missile'&&f.cx!==undefined){(f.trail||[]).forEach((t,i)=>{ctx.fillStyle=i%2?'#ff9f1c':'#ffd447';ctx.fillRect(Math.round(t[0]),Math.round(t[1]),2,2)});ctx.fillStyle='#fff';ctx.fillRect(Math.round(f.cx)-1,Math.round(f.cy)-2,3,5);ctx.fillStyle='#ef4444';ctx.fillRect(Math.round(f.cx)-1,Math.round(f.cy)+3,3,2)}}}
+function polyPts(nm,cx,cy){
+  if(nm==='sq')return[[cx-16,cy-16],[cx+16,cy-16],[cx+16,cy+16],[cx-16,cy+16]];
+  if(nm==='rect')return[[cx-30,cy-12],[cx+30,cy-12],[cx+30,cy+12],[cx-30,cy+12]];
+  if(nm==='tri')return[[cx,cy-19],[cx+26,cy+17],[cx-26,cy+17]];
+  if(nm==='quad')return[[cx-28,cy-10],[cx+8,cy-19],[cx+30,cy+7],[cx-18,cy+19]];
+  const n={pent:5,hept:7,hex:6,oct:8}[nm];return Array.from({length:n},(_,i)=>{const a=-Math.PI/2+i*6.2832/n;return[cx+Math.cos(a)*24,cy+Math.sin(a)*20]})}
+function drawFig(d,cx,cy,solved){
+  cx=Math.round(cx);cy=Math.round(cy);
+  if(d.k==='poly'){
+    const pts=polyPts(d.nm,cx,cy).map(p=>[Math.round(p[0]),Math.round(p[1])]);
+    ctx.fillStyle='#2f4aa8';ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();ctx.fill();
+    pts.forEach((p,i)=>{const q=pts[(i+1)%pts.length];line(p[0],p[1],q[0],q[1],'#fff');line(p[0]+1,p[1],q[0]+1,q[1],'#fff')});
+    pts.forEach(p=>{ctx.fillStyle='#ffd447';ctx.fillRect(p[0]-1,p[1]-1,3,3)});
+    if(solved)pts.forEach((p,i)=>{const q=pts[(i+1)%pts.length],mx=(p[0]+q[0])/2,my=(p[1]+q[1])/2,vx=mx-cx,vy=my-cy,l=Math.hypot(vx,vy)||1;text(i+1,mx+vx/l*7,my+vy/l*6-3,1,'#4ade80','c','#000')});
+    return}
+  if(d.k==='grid'){
+    const c=Math.max(3,Math.min(10,Math.floor(58/d.a),Math.floor(34/d.b))),x0=Math.round(cx-d.a*c/2),y0=Math.round(cy-d.b*c/2);
+    for(let r=0;r<d.b;r++)for(let k=0;k<d.a;k++){ctx.fillStyle=(r+k)%2?'#3b66e0':'#4f7cf0';ctx.fillRect(x0+k*c,y0+r*c,c-1,c-1)}
+    if(solved){text(d.a+' x '+d.b,cx,y0+d.b*c+3,1,'#4ade80','c')}
+    return}
+  const a=d.a,b=d.b,u=Math.min(52/a,26/b),w=Math.max(8,Math.round(a*u)),h=Math.max(8,Math.round(b*u)),x0=Math.round(cx-w/2)+3,y0=Math.round(cy-h/2)+4;
+  ctx.fillStyle='#2f4aa8';ctx.fillRect(x0,y0,w,h);ctx.fillStyle='#fff';ctx.fillRect(x0,y0,w+1,2);ctx.fillRect(x0,y0+h-1,w+1,2);ctx.fillRect(x0,y0,2,h);ctx.fillRect(x0+w-1,y0,2,h);
+  const tk=(x,y,hz)=>{ctx.fillStyle='#8fd3ff';if(hz){ctx.fillRect(x-2,y,5,1);ctx.fillRect(x-2,y+3,5,1)}else{ctx.fillRect(x,y-2,1,5);ctx.fillRect(x+3,y-2,1,5)}};
+  text(a,x0+w/2,y0-10,1,'#ffd447','c');
+  if(d.sq){tk(x0-4,y0+h/2-1,false);tk(x0+w+3,y0+h/2-1,false);tk(x0+w/2-2,y0+h+3,true)}
+  else{text(b,x0-4,y0+h/2-3,1,'#ffd447','r');tk(x0+w+3,y0+h/2-1,false);tk(x0+w/2-2,y0+h+3,true)}
+  if(solved){text(a,x0+w/2,y0+h+3,1,'#4ade80','c');text(d.sq?a:b,x0+w+3,y0+h/2-3,1,'#4ade80','l')}}
 function drawHUD(){
   ctx.fillStyle='rgba(8,12,34,.78)';ctx.fillRect(0,0,W,14);ctx.fillStyle='#4b5ba3';ctx.fillRect(0,14,W,1);
   text('SC '+String(S.score).padStart(6,'0'),4,4,1,'#ffd447');
@@ -671,10 +828,11 @@ function drawHUD(){
   for(let i=0;i<5;i++)ctx.drawImage(glyph('♥',i<S.hearts?'#ff5964':'#39406b'),W-4-(5-i)*7+1,4);
   if(S.combo>=2)text('X'+Math.min(5,S.combo),64,4,1,'#5ee7ff');
   if(S.ph==='ask'||S.ph==='solved'){
-    const q=S.q,solved=S.ph==='solved'&&S.solved,s=solved?q.full:q.txt,sc=tw(s,3)<=212?3:2;
-    ctx.fillStyle='#14182e';ctx.fillRect(8,17,224,31);ctx.fillStyle=solved?'#4ade80':(q.re?'#5ee7ff':'#8fd3ff');ctx.fillRect(8,17,224,1);ctx.fillRect(8,47,224,1);ctx.fillRect(8,17,1,31);ctx.fillRect(231,17,1,31);
-    text(s,W/2,sc===3?22:25,sc,solved?'#4ade80':'#ffd447','c','#000')}
-  if(S.boss&&S.boss.max){const B=S.boss,n=B.max,seg=(224-(n-1)*3)/n;for(let i=0;i<n;i++){const x=8+i*(seg+3);ctx.fillStyle='#14182e';ctx.fillRect(Math.round(x),51,Math.round(seg),6);ctx.fillStyle=i<B.hp?'#ff5964':'#39406b';ctx.fillRect(Math.round(x)+1,52,Math.round(seg)-2,4)}}
+    const q=S.q,solved=S.ph==='solved'&&S.solved,s=solved?q.full:q.txt,ex=PEX(),ph=31+ex,bc=solved?'#4ade80':(q.re?'#5ee7ff':'#8fd3ff'),tc=solved?'#4ade80':'#ffd447';
+    ctx.fillStyle='#14182e';ctx.fillRect(8,17,224,ph);ctx.fillStyle=bc;ctx.fillRect(8,17,224,1);ctx.fillRect(8,16+ph,224,1);ctx.fillRect(8,17,1,ph);ctx.fillRect(231,17,1,ph);
+    if(q.draw){drawFig(q.draw,54,17+ph/2,solved);ctx.fillStyle='#2b3a78';ctx.fillRect(98,21,1,ph-8);const sc=tw(s,3)<=132?3:2;text(s,166,Math.round(17+ph/2-sc*3.5),sc,tc,'c','#000')}
+    else{const sc=tw(s,3)<=212?3:2;text(s,W/2,sc===3?22:25,sc,tc,'c','#000')}}
+  if(S.boss&&S.boss.max){const B=S.boss,n=B.max,seg=(224-(n-1)*3)/n;for(let i=0;i<n;i++){const x=8+i*(seg+3);ctx.fillStyle='#14182e';ctx.fillRect(Math.round(x),51+PEX(),Math.round(seg),6);ctx.fillStyle=i<B.hp?'#ff5964':'#39406b';ctx.fillRect(Math.round(x)+1,52+PEX(),Math.round(seg)-2,4)}}
   if(S.msg){const m=S.msg,a=Math.min(1,m.l/.4);ctx.globalAlpha=a;const y=m.t==='WARNING!'?120:96;text(m.t,W/2,y,m.sc,m.col,'c','#000');ctx.globalAlpha=1}
   floats.forEach(f=>{ctx.globalAlpha=Math.min(1,f.l*2);text(f.t,f.x,f.y,1,f.c,'c','#000');ctx.globalAlpha=1})}
 function draw(){
@@ -709,7 +867,7 @@ cv.addEventListener('pointermove',e=>{if(S.scene!=='play'||S.paused)return;
   if(e.pointerType==='mouse'){setT(e)}
   else if(e.pointerId===pid){const r=cv.getBoundingClientRect(),k=W/r.width*1.3;P.x+=(e.clientX-lx)*k;P.y+=(e.clientY-ly)*k;lx=e.clientX;ly=e.clientY;P.useT=false}});
 cv.addEventListener('pointerup',e=>{if(e.pointerId===pid)pid=null});
-$('bStart').onclick=()=>{ac();SFX.go();if(musOn)musStart(false);S.scene='menu';buildMenu();show('menu')};
+$('bStart').onclick=()=>{ac();SFX.go();if(musOn)musStart(false);S.scene='menu';showMenu()};
 $('bGo').onclick=()=>{ac();startMission(S.mi)};
 $('bBack').onclick=()=>{toMenu()};
 $('bPause').onclick=()=>pause(!S.paused);
@@ -723,7 +881,7 @@ $('bLang').onclick=()=>{lang=lang==='vi'?'en':'vi';lsSet('air-lang',lang);applyL
 addEventListener('resize',fit);
 fit();syncBtns();applyLang();show('cover');
 requestAnimationFrame(loop);
-window.__g={nextWave,startQuiz,S,get P(){return P},get foes(){return foes},MIS,startMission,hintFor,genQ,distract,get bullets(){return bullets},openBrief,showResult,toMenu,fit};
+window.__g={showMenu,nextWave,startQuiz,S,get P(){return P},get foes(){return foes},MIS,startMission,hintFor,genQ,distract,get bullets(){return bullets},openBrief,showResult,toMenu,fit};
 </script>
 </body>
 </html>
