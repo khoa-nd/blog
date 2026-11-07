@@ -856,7 +856,7 @@ function draw(){
 let last=0;
 function loop(ts){const dt=Math.min(.05,(ts-last)/1000||0)*(S.ts||1);last=ts;if(!S.paused)update(dt);draw();requestAnimationFrame(loop)}
 function pause(on){if(S.scene!=='play')return;S.paused=on;$('pause').hidden=!on;$('tower').hidden=on;if(!on)last=performance.now()}
-addEventListener('keydown',e=>{const k=e.key.toLowerCase();keys[k]=true;if(['arrowleft','arrowright','arrowup','arrowdown',' '].includes(k))e.preventDefault();if((k==='p'||k==='escape')&&S.scene==='play')pause(!S.paused)});
+addEventListener('keydown',e=>{const k=e.key.toLowerCase();keys[k]=true;if(['arrowleft','arrowright','arrowup','arrowdown',' '].includes(k))e.preventDefault();if((k===' '||k==='escape')&&S.scene==='play'){if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();if(!e.repeat)pause(!S.paused)}});
 addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false});
 addEventListener('blur',()=>{if(S.scene==='play'&&!S.paused)pause(true)});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&S.scene==='play'&&!S.paused)pause(true)});
