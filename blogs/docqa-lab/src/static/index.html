@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10-K Lens</title>
+<style>
+:root{--bg:#f5f6f4;--panel:#fff;--ink:#17201c;--muted:#5b6661;--rule:#dde2de;--accent:#14684a;--accent-soft:#e2f1ea;--hl:#d97a00;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--mono:ui-monospace,Menlo,Consolas,monospace}
+@media (prefers-color-scheme:dark){:root{--bg:#121715;--panel:#1a211e;--ink:#e5ebe8;--muted:#9aa7a1;--rule:#2b3531;--accent:#5fd0a0;--accent-soft:#18322a;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--sans)}
+.wrap{max-width:1200px;margin:0 auto;padding:24px 16px;display:grid;gap:18px}
+header{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+h1{font-size:22px;margin:0}
+.sub{color:var(--muted);font-size:13.5px}
+form{display:flex;gap:8px}
+input{flex:1;min-width:0;font:inherit;padding:11px 14px;border:1px solid var(--rule);border-radius:10px;background:var(--panel);color:var(--ink)}
+button{font:inherit;font-weight:600;padding:10px 16px;border-radius:10px;border:1px solid var(--accent);background:var(--accent);color:var(--panel);cursor:pointer}
+button.ghost{background:transparent;color:var(--accent);font-weight:500;padding:5px 10px;font-size:13px}
+button:disabled{opacity:.6;cursor:wait}
+.examples{display:flex;flex-wrap:wrap;gap:6px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:18px;align-items:start}
+.card{background:var(--panel);border:1px solid var(--rule);border-radius:12px;padding:16px;display:grid;gap:12px;min-width:0}
+.answer{font-size:16.5px}
+.label{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.cites{display:flex;flex-wrap:wrap;gap:6px}
+.cite{font-family:var(--mono);font-size:12.5px;padding:4px 9px;border-radius:7px;border:1px solid var(--rule);background:var(--bg);cursor:pointer;color:var(--ink)}
+.cite.on{border-color:var(--accent);background:var(--accent-soft)}
+.cite.cited::after{content:" ✓";color:var(--accent)}
+blockquote{margin:0;padding:8px 12px;border-left:3px solid var(--hl);background:var(--bg);font-size:14px}
+.meta{font-size:12.5px;color:var(--muted);font-family:var(--mono)}
+.viewer img{width:100%;height:auto;border:1px solid var(--rule);border-radius:8px;display:block}
+.empty{color:var(--muted)}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><h1>10-K Lens</h1><span class="sub">Ask the 2024 annual reports of six US banks. Every answer cites its pages and highlights the evidence.</span></header>
+  <form id="f"><input id="q" placeholder="e.g. How much did JPMorgan spend on share repurchases in 2024?" autocomplete="off"><button id="go">Ask</button></form>
+  <div class="examples" id="ex"></div>
+  <div class="grid">
+    <div class="card" id="left"><p class="empty">Answers appear here, with the pages they came from.</p></div>
+    <div class="card viewer" id="right"><p class="empty">Click a page to see it with the evidence highlighted.</p></div>
+  </div>
+</div>
+<script>
+const EX=["How much did JPMorgan spend on share repurchases in 2024?","What was Wells Fargo's net income in 2024?","Compare the CET1 ratios of Citigroup and Bank of America","Which valuation technique does Bank of America use for mortgage servicing rights?"];
+const $=id=>document.getElementById(id), esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let last=null;
+EX.forEach(t=>{const b=document.createElement("button");b.className="ghost";b.type="button";b.textContent=t;b.onclick=()=>{$("q").value=t;ask();};$("ex").appendChild(b);});
+$("f").onsubmit=e=>{e.preventDefault();ask();};
+const shared=new URLSearchParams(location.search).get("q");   // links like /?q=... ask on open
+if(shared){$("q").value=shared;ask();}
+async function ask(){
+  const q=$("q").value.trim(); if(!q) return;
+  $("go").disabled=true; $("left").innerHTML='<p class="empty">Searching the reports and reading the pages…</p>';
+  try{
+    const r=await fetch("/api/ask",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:q})});
+    if(!r.ok) throw new Error((await r.json()).detail||r.statusText);
+    last=await r.json(); render();
+    const first=last.citations[0]||last.pages[0]; if(first) show(first);
+  }catch(err){ $("left").innerHTML=`<p>Could not answer: ${esc(err.message)}. Check the server log.</p>`; }
+  finally{ $("go").disabled=false; }
+}
+function render(){
+  const pills=last.pages.map(p=>`<button type="button" class="cite ${last.citations.includes(p)?"cited":""}" data-p="${esc(p)}">${esc(p.replace("_2024#"," p."))}</button>`).join("");
+  $("left").innerHTML=`<span class="label">Answer</span><div class="answer">${esc(last.answer)}</div>
+    ${last.quote?`<span class="label">Evidence quote</span><blockquote>${esc(last.quote)}</blockquote>`:""}
+    <span class="label">Pages read (✓ = cited)</span><div class="cites">${pills}</div>
+    <div class="meta">retrieve ${last.retrieve_ms} ms · answer ${(last.answer_ms/1000).toFixed(1)} s · $${last.usd.toFixed(4)} · ${esc(last.retriever)} + ${esc(last.answerer)}</div>
+    <div><span class="label">Was this right?</span> <button type="button" class="ghost" data-h="1">Yes</button> <button type="button" class="ghost" data-h="0">No</button> <span id="fbmsg" class="meta"></span></div>`;
+  document.querySelectorAll(".cite").forEach(b=>b.onclick=()=>show(b.dataset.p));
+  document.querySelectorAll("[data-h]").forEach(b=>b.onclick=async()=>{
+    await fetch("/api/feedback",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:last.id,helpful:b.dataset.h==="1"})});
+    $("fbmsg").textContent="Saved. Thank you.";});
+}
+function show(p){
+  document.querySelectorAll(".cite").forEach(b=>b.classList.toggle("on",b.dataset.p===p));
+  const u=`/api/page/${encodeURIComponent(p)}.png?quote=${encodeURIComponent(last.quote||"")}&answer=${encodeURIComponent(last.answer)}`;
+  $("right").innerHTML=`<span class="label">${esc(p.replace(/_/g," ").replace("#"," · page "))}</span><img alt="Page ${esc(p)} with evidence highlighted" src="${u}">`;
+}
+</script>
+</body>
+</html>

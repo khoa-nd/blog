@@ -1,0 +1,16 @@
+# Tested on Python 3.12, macOS (Apple M1, 16 GB), Nov 2026.
+torch==2.13.0
+transformers==5.22.1
+colpali-engine==0.3.18
+peft==0.20.0
+accelerate==1.15.0
+pymupdf==2.1
+pillow==13.0.0
+numpy==2.5.4
+pyarrow==26.0.1
+fsspec==2026.9.0
+aiohttp==3.14.5
+rank-bm25==0.2.2
+fastapi==0.162.2
+uvicorn==0.54.0
+anthropic==2.6.0

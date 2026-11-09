@@ -1,5 +1,15 @@
 [
   {
+    "title": "Hands-on Building a Multimodal Document QA System over Real Annual Reports",
+    "kicker": "Hands-on tutorial",
+    "date": "2026-11-09",
+    "desc": "Build 10-K Lens: search six real bank 10-Ks (2,942 pages) with text, vision and hybrid retrieval, answer with cited pages and highlighted evidence, and ship it as a web app. Measured on 309 human-labeled questions with confidence intervals. Runs on a laptop for $0.",
+    "file": "hands-on-multimodal-document-qa-vision-first-rag.html",
+    "image": "thumbs/hands-on-multimodal-document-qa-vision-first-rag.jpg",
+    "imageAlt": "Hands-on tutorial: a vision-first document QA system over bank 10-K reports",
+    "cta": "Start the tutorial"
+  },
+  {
     "title": "Alexandria: An Autonomous Personalized Book Curator That Learns My Taste - P2 Hands-on",
     "kicker": "Hands-on · P2",
     "date": "2026-11-02",
