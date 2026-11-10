@@ -369,6 +369,17 @@ figure.code.out pre { max-height: 420px; }
 .result b { color: var(--ok); }
 .tbl td.win { font-weight: 700; color: var(--ok); }
 @media (max-width: 760px) { .shots { grid-template-columns: minmax(0, 1fr); } }
+.ev { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: .02em; padding: 0 7px; border-radius: 999px; white-space: nowrap; vertical-align: 1px; }
+.ev.m { color: var(--ok); background: var(--ok-soft); }
+.ev.p { color: var(--link); background: var(--link-soft); }
+.ev.e { color: var(--cost); background: var(--cost-soft); }
+table.decide td { min-width: 120px; font-size: 13.5px; }
+table.decide td:first-child { min-width: 160px; }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.two .box { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; display: grid; gap: 8px; align-content: start; }
+.two .box h3 { font-size: 16px; }
+.two ol, .two ul { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: 14px; }
+@media (max-width: 760px) { .two { grid-template-columns: minmax(0, 1fr); } }
 </style>
 </head>
 <body>
@@ -500,6 +511,7 @@ figure.code.out pre { max-height: 420px; }
     <nav class="rail" aria-label="Progress">
       <span class="label">Your progress</span>
       <a href="#map"><span class="n">◎</span><span>Map</span><span class="p"></span></a>
+      <a href="#decide"><span class="n">?</span><span>Decision guide</span><span class="p"></span></a>
       <a href="#setup"><span class="n">0</span><span>Setup</span><span class="p" data-prog="setup"></span></a>
       <a href="#eval"><span class="n">1</span><span>Eval first</span><span class="p" data-prog="eval"></span></a>
       <a href="#text"><span class="n">2</span><span>Text search</span><span class="p" data-prog="text"></span></a>
@@ -532,6 +544,38 @@ figure.code.out pre { max-height: 420px; }
           </tbody>
         </table></div>
         <div class="tip"><b>Shortcut.</b> Download the zip at the top, unzip it, and run the commands in each step. The code on the page and in the zip is the same version.</div>
+      </section>
+
+      <section class="block" id="decide">
+        <h2>Which architecture should you use? A decision guide (v0)</h2>
+        <p class="lede">The lab answers one practical question: what is the smallest stack that answers your documents correctly, and what does each correct answer cost? This is the first version of the answer. Every number carries its source, and the next round of runs replaces each <span class="ev e">estimated</span> figure with a measured one.</p>
+        <p class="note"><span class="ev m">measured</span> run in this lab · <span class="ev p">published</span> reported by the model's authors on the same benchmark · <span class="ev e">estimated</span> worked out from Nov 2026 price lists, not yet run</p>
+        <div class="tbl"><table class="decide">
+          <thead><tr><th>Situation</th><th>Architecture</th><th>Index needed</th><th>Cost per question</th><th>Evidence on accuracy</th><th>Effort to run</th></tr></thead>
+          <tbody>
+            <tr><td><b>A.</b> A few documents (under ~500 pages each), and the user knows which one to ask about</td><td>Put the <b>whole document</b> in the model's context; cache it for repeat questions</td><td><b>None</b></td><td>One 10-K is ~350k text tokens: Opus 5.5 ≈ $1.40, ≈ $0.08 once cached; Haiku 5.5 ≈ $0.18 (prompts over 100k tokens cost more) <span class="ev e">estimated</span></td><td>The model sees everything, but long contexts can miss details in the middle. Not measured yet</td><td>Very low</td></tr>
+            <tr><td><b>B.</b> Many born-digital PDFs (thousands to hundreds of thousands of pages), mostly text and tables</td><td><b>BM25 + metadata filters</b> (company, year) on a managed search service → top 3 pages → API model, starting with Haiku</td><td>Keyword index, <b>no embeddings</b></td><td>Search ≈ $0; answer: Haiku ≈ $0.001, Opus ≈ $0.037 <span class="ev e">estimated</span></td><td>10-Ks: nDCG@5 0.508, Hit@3 0.737; company filter +0.055 <span class="ev m">measured</span></td><td>Low</td></tr>
+            <tr><td><b>C.</b> Slides, charts, infographics, complex tables</td><td><b>Hybrid: BM25 + vision embeddings</b> (ColQwen3) in a vector DB → page images → API model</td><td>Both: keywords and page embeddings</td><td>Index ≈ $0.5–1 per 1,000 pages; answer as in B; <b>plus a GPU to embed each question</b> (hundreds of $ a month if always on) <span class="ev e">estimated</span></td><td>Table questions: Hit@3 +0.120 even with a small vision model <span class="ev m">measured</span>. FDA slides: BM25 0.44 <span class="ev m">measured</span> vs ColQwen3 0.66 <span class="ev p">published</span></td><td>Medium to high</td></tr>
+            <tr><td><b>D.</b> Scans with no text layer</td><td>Start with <b>OCR + BM25</b>; add vision as in C if that falls short</td><td>Keywords on OCR text, then page embeddings</td><td>OCR ≈ 1.5 s/page on a CPU, close to free; the rest as in C <span class="ev e">estimated</span></td><td>Real scans: BM25 on OCR 0.32 <span class="ev m">measured</span> vs ColQwen3 0.66 <span class="ev p">published</span>: here vision is close to required</td><td>Medium to high</td></tr>
+            <tr><td><b>E.</b> Data may not leave the organization, or more than ~40,000 questions a month</td><td>B, C or D with an <b>open model hosted in-house</b> (Qwen3.5 on your own GPU)</td><td>As in B, C, D</td><td>Batch ≈ $0.001/answer; an always-on GPU ≈ $1,400/month, breaking even with Opus near 38,000 questions/month <span class="ev e">estimated</span>. On cost alone it does not beat Haiku</td><td>Not measured yet</td><td>High</td></tr>
+            <tr><td><b>F.</b> Answers must be right every time (audit figures, legal)</td><td>B, C or D + <b>Opus</b> + cited pages and highlighted evidence + <b>human review</b> of key answers</td><td>As in B, C, D</td><td>≈ $0.04/question plus review time, still far faster than searching by hand <span class="ev e">estimated</span></td><td>Not measured yet</td><td>Medium</td></tr>
+          </tbody>
+        </table></div>
+        <div class="two">
+          <div class="box"><h3>How to choose</h3><ol>
+            <li>Small corpus: do <b>A</b> and build nothing.</li>
+            <li>Large corpus: start with <b>B</b>. Measure it on 30–100 real questions from your organization.</li>
+            <li>Move to <b>C</b> or <b>D</b> only where B measurably falls short on tables, charts or scans.</li>
+            <li>Answer with Haiku by default; move up to Sonnet or Opus only where your own eval shows the gap is worth the price.</li>
+            <li>Host a model yourself (<b>E</b>) for data or regulatory reasons, not to save money.</li>
+          </ol></div>
+          <div class="box"><h3>What v0 does not know yet</h3><ul>
+            <li>Cost <b>per correct answer</b> for each row: so far only cost per question</li>
+            <li>Option A (whole document in context) has not been run</li>
+            <li>Haiku 5.5 against Opus 5.5 on the same questions</li>
+            <li>The vision advantage in C and D rests on published numbers, not yet on runs of our own</li>
+          </ul></div>
+        </div>
       </section>
 
       <!-- STEP 0 -->
