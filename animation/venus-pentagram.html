@@ -1,0 +1,704 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ngôi sao năm cánh của Sao Kim</title>
+<meta name="description" content="Mô phỏng 3D: sau 8 năm, 5 lần Sao Kim giao hội với Trái Đất vẽ nên một ngôi sao năm cánh.">
+<meta property="og:title" content="Ngôi sao năm cánh của Sao Kim">
+<meta property="og:description" content="Mô phỏng 3D: sau 8 năm, 5 lần Sao Kim giao hội với Trái Đất vẽ nên một ngôi sao năm cánh.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Be+Vietnam+Pro:wght@400;500;600&family=JetBrains+Mono:wght@400;500&subset=vietnamese&display=swap">
+<style>
+/* Layout: text column on the left, 3D sky on the right with the instrument bar below it. Nothing is drawn on top of the animation. Single dark world by design. */
+:root {
+  --space: #06070d;
+  --side: #0b0b16;
+  --ink: #ece6f3;
+  --muted: #a49cb8;
+  --gold: #f2c46d;
+  --rose: #ff8fb3;
+  --earth: #6cb8ff;
+  --hair: rgba(236, 230, 243, 0.12);
+  --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --font-body: "Be Vietnam Pro", "Helvetica Neue", Arial, sans-serif;
+  --font-data: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: var(--space);
+  color: var(--ink);
+  font: 16px/1.6 var(--font-body);
+}
+
+.app {
+  display: grid;
+  grid-template-columns: minmax(340px, 410px) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  height: 100%;
+}
+
+/* ---------- Text column ---------- */
+.side {
+  grid-row: 1 / 3;
+  background: var(--side);
+  border-right: 1px solid var(--hair);
+  overflow-y: auto;
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  padding-right: 24px;
+  padding-block: max(24px, env(safe-area-inset-top, 0px)) max(24px, env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.eyebrow {
+  font: 500 12px/1.3 var(--font-data);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+h1 {
+  font: 600 clamp(34px, 3.4vw, 46px)/1.05 var(--font-display);
+  margin: 8px 0 0;
+  text-wrap: balance;
+}
+h1 em { font-style: italic; color: var(--rose); }
+
+.almanac {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 18px;
+  font: 400 14px/1.55 var(--font-data);
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  margin: 0;
+}
+.almanac dt, .almanac dd { margin: 0; }
+.almanac dd { color: var(--ink); font-weight: 500; }
+.almanac dd.date { color: var(--gold); }
+
+.dial { display: grid; gap: 4px; }
+.dial-track { position: relative; height: 26px; margin-inline: 6px; }
+.dial-track::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 10px; height: 2px;
+  background: var(--hair); border-radius: 2px;
+}
+.dial-fill {
+  position: absolute; left: 0; top: 10px; height: 2px; border-radius: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--rose));
+}
+.tick { position: absolute; top: 6px; width: 1px; height: 10px; background: var(--hair); }
+.tick span {
+  position: absolute; top: 13px; left: 50%; transform: translateX(-50%);
+  font: 400 11px/1 var(--font-data); color: var(--muted);
+}
+.cdot {
+  position: absolute; top: 6px; width: 11px; height: 11px; margin-left: -5.5px;
+  border-radius: 50%; border: 1px solid var(--rose); background: var(--side);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+.cdot.on { background: var(--rose); box-shadow: 0 0 10px var(--rose); }
+.dial-caption { font: 400 12px/1.4 var(--font-data); color: var(--muted); margin-top: 6px; }
+
+.event {
+  border: 1px solid var(--hair);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font: 400 13px/1.5 var(--font-data);
+  color: var(--muted);
+  transition: border-color 0.4s, background 0.4s;
+}
+.event b { color: var(--rose); font-weight: 500; }
+.event.flash { border-color: var(--rose); background: rgba(255, 143, 179, 0.08); }
+
+.explain { display: grid; gap: 12px; border-top: 1px solid var(--hair); padding-top: 18px; }
+.explain h2 { font: 600 26px/1.15 var(--font-display); margin: 0; text-wrap: balance; }
+.explain p { margin: 0; color: var(--muted); max-width: 62ch; }
+.explain p strong { color: var(--ink); font-weight: 600; }
+.ratio {
+  width: 100%;
+  border-collapse: collapse;
+  font: 400 13px/1.4 var(--font-data);
+  font-variant-numeric: tabular-nums;
+}
+.ratio td { padding: 7px 0; border-top: 1px solid var(--hair); vertical-align: top; }
+.ratio td:last-child { text-align: right; color: var(--ink); white-space: nowrap; padding-left: 12px; }
+.ratio .v td:first-child { color: var(--gold); }
+.ratio .e td:first-child { color: var(--earth); }
+.ratio .s td:first-child { color: var(--rose); }
+.label-sm { font: 500 11px/1.3 var(--font-data); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+.conj-list { display: grid; gap: 4px; font: 400 14px/1.45 var(--font-data); font-variant-numeric: tabular-nums; }
+.conj-list div { display: flex; justify-content: space-between; color: var(--muted); opacity: 0.55; transition: opacity 0.3s, color 0.3s; }
+.conj-list div.on { opacity: 1; color: var(--ink); }
+.conj-list div.on .n { color: var(--rose); }
+.note { font-size: 14px; }
+
+/* ---------- Stage ---------- */
+.stage {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--space);
+}
+.stage canvas { display: block; position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+.lbl {
+  position: absolute; left: 0; top: 0;
+  font: 500 12px/1 var(--font-body);
+  letter-spacing: 0.06em;
+  pointer-events: none; white-space: nowrap;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.95);
+}
+#lSun { color: var(--gold); } #lVenus { color: #f6dca6; } #lEarth { color: var(--earth); }
+
+/* ---------- Controls ---------- */
+.bar {
+  background: var(--side);
+  border-top: 1px solid var(--hair);
+  padding-left: 20px;
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+  padding-block: 12px max(12px, env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 18px;
+}
+button, .seg label {
+  font: 500 14px/1 var(--font-body);
+  color: var(--ink);
+  background: rgba(236, 230, 243, 0.06);
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  padding: 9px 15px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+button:hover, .seg label:hover { background: rgba(236, 230, 243, 0.12); }
+button:focus-visible, .seg input:focus-visible + label, input[type=range]:focus-visible, input[type=checkbox]:focus-visible {
+  outline: 2px solid var(--gold); outline-offset: 2px;
+}
+#play { min-width: 100px; background: var(--gold); color: #1a1405; border-color: var(--gold); }
+#play:hover { background: #f7d48e; }
+.seg { display: inline-flex; }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg label { border-radius: 0; }
+.seg label:first-of-type { border-radius: 999px 0 0 999px; }
+.seg label:last-of-type { border-radius: 0 999px 999px 0; border-left: 0; }
+.seg input:checked + label { background: rgba(255, 143, 179, 0.18); border-color: var(--rose); color: #fff; }
+.field { display: inline-flex; align-items: center; gap: 8px; font: 400 13px/1 var(--font-body); color: var(--muted); }
+.field output { color: var(--ink); min-width: 6.5em; font: 400 13px/1 var(--font-data); font-variant-numeric: tabular-nums; }
+input[type=range] { width: 110px; accent-color: var(--gold); }
+.check { display: inline-flex; align-items: center; gap: 7px; font: 400 14px/1.2 var(--font-body); color: var(--muted); cursor: pointer; }
+.check input { accent-color: var(--rose); width: 16px; height: 16px; }
+.btns { display: inline-flex; gap: 10px; margin-left: auto; }
+
+/* ---------- Narrow screens: title + readout, then sky, controls, explanation ---------- */
+@media (max-width: 900px) {
+  html, body { height: auto; }
+  .app { display: flex; flex-direction: column; height: auto; }
+  .side { display: contents; }
+  .side > *, .bar {
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .side > header { order: 0; padding-top: max(20px, env(safe-area-inset-top, 0px)); padding-bottom: 14px; }
+  .side > .almanac { order: 0; padding-bottom: 14px; }
+  .side > .dial { order: 0; padding-bottom: 14px; }
+  .side > .event { order: 0; margin: 0 16px 16px; padding: 10px 14px; }
+  .stage { order: 1; height: 62vh; min-height: 340px; max-height: 640px; }
+  .bar { order: 2; }
+  .side > .explain { order: 3; border-top: 0; padding-top: 24px; padding-bottom: max(32px, env(safe-area-inset-bottom, 0px)); }
+  .btns { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <aside class="side" id="side">
+    <header>
+      <div class="eyebrow">Sao Kim · Trái Đất · Chu kỳ 8 năm</div>
+      <h1>Ngôi sao năm cánh <em>của Sao Kim</em></h1>
+    </header>
+
+    <dl class="almanac">
+      <dt>Ngày</dt><dd class="date" id="sDate">—</dd>
+      <dt>Ngày thứ</dt><dd id="sDay">0</dd>
+      <dt>Trái Đất đã quay</dt><dd id="sEarth">0,00 vòng</dd>
+      <dt>Sao Kim đã quay</dt><dd id="sVenus">0,00 vòng</dd>
+      <dt>Số lần giao hội</dt><dd id="sConj">0</dd>
+    </dl>
+
+    <div class="dial" aria-hidden="true">
+      <div class="dial-track" id="dial"><div class="dial-fill" id="dialFill"></div></div>
+      <div class="dial-caption">8 năm Trái Đất · chấm hồng = 5 lần giao hội dưới</div>
+    </div>
+
+    <div class="event" id="event" aria-live="polite">Lần giao hội gần nhất: <b id="eventDate">23/03/2025</b></div>
+
+    <section class="explain">
+      <h2>Vì sao lại là ngôi sao năm cánh?</h2>
+      <p>Cứ mỗi <strong>583,9 ngày</strong>, Sao Kim lại vượt qua Trái Đất và đi ngang giữa chúng ta với Mặt Trời. Hiện tượng này gọi là <em>giao hội dưới</em>. Lúc đó Trái Đất đã quay được <strong>1,6 vòng</strong>, nên mỗi lần gặp lại lùi <strong>144°</strong> so với lần trước.</p>
+      <p>Nối các lần gặp theo thứ tự, đường nối luôn bỏ qua một điểm ở giữa và vẽ thành <strong>ngôi sao năm cánh</strong>. Sau năm lần gặp, gần đúng 8 năm, ngôi sao khép kín.</p>
+      <table class="ratio">
+        <tr class="v"><td>13 năm Sao Kim × 224,70 ngày</td><td>2.921,1 ngày</td></tr>
+        <tr class="e"><td>8 năm Trái Đất × 365,26 ngày</td><td>2.922,0 ngày</td></tr>
+        <tr class="s"><td>5 chu kỳ giao hội × 583,92 ngày</td><td>2.919,6 ngày</td></tr>
+      </table>
+      <p>5, 8 và 13 là ba số Fibonacci liên tiếp. Tỷ số 365,26 / 224,70 = <strong>1,626</strong>, rất gần tỷ lệ vàng φ = 1,618.</p>
+      <p>Sự trùng khớp không hoàn hảo. Ngôi sao trượt khoảng <strong>2,4° sau mỗi 8 năm</strong> và xoay trọn một vòng sau khoảng 1.200 năm. Bấm <em>+8 năm</em> vài lần để thấy nó xoay dần.</p>
+      <div class="label-sm">Các lần giao hội trong chu kỳ này</div>
+      <div class="conj-list" id="conjList"></div>
+      <p class="note">Chế độ <em>Tâm Trái Đất</em>: đường màu là quỹ đạo Sao Kim khi nhìn từ Trái Đất. Năm vòng xoắn nhỏ bên trong là các vòng nghịch hành tại mỗi lần giao hội.</p>
+      <p class="note">Mô hình dùng quỹ đạo tròn với chu kỳ thật, độ nghiêng 3,39° và hướng quỹ đạo thật của Sao Kim. Kích thước Mặt Trời và các hành tinh không theo tỷ lệ.</p>
+    </section>
+  </aside>
+
+  <main class="stage" id="stage" aria-label="Mô phỏng 3D quỹ đạo Sao Kim và Trái Đất">
+    <div class="lbl" id="lSun">Mặt Trời</div>
+    <div class="lbl" id="lVenus">Sao Kim</div>
+    <div class="lbl" id="lEarth">Trái Đất</div>
+  </main>
+
+  <nav class="bar" aria-label="Điều khiển mô phỏng">
+    <button id="play" type="button">Tạm dừng</button>
+    <div class="seg" role="radiogroup" aria-label="Hệ quy chiếu">
+      <input type="radio" name="frame" id="frameSun" value="sun" checked><label for="frameSun">Tâm Mặt Trời</label>
+      <input type="radio" name="frame" id="frameEarth" value="earth"><label for="frameEarth">Tâm Trái Đất</label>
+    </div>
+    <label class="field" for="speed">Tốc độ <input id="speed" type="range" min="5" max="400" step="5" value="70"><output id="speedOut">70 ngày/giây</output></label>
+    <label class="field" for="tilt">Độ nghiêng <input id="tilt" type="range" min="1" max="10" step="1" value="1"><output id="tiltOut">×1</output></label>
+    <label class="check" for="tStrings"><input id="tStrings" type="checkbox" checked>Đường nối Trái Đất–Sao Kim</label>
+    <label class="check" for="tStar"><input id="tStar" type="checkbox" checked>Ngôi sao năm cánh</label>
+    <label class="check" for="tRotate"><input id="tRotate" type="checkbox" checked>Tự xoay</label>
+    <span class="btns">
+      <button id="skip" type="button">+8 năm</button>
+      <button id="clear" type="button">Xoá vệt</button>
+    </span>
+  </nav>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(() => {
+  // ---------- Astronomy (circular orbits, real periods) ----------
+  const AU = 10;                       // scene units per astronomical unit
+  const PE = 365.256, PV = 224.701;    // sidereal periods, days
+  const SYN = 1 / (1 / PV - 1 / PE);   // synodic period ≈ 583.92 d
+  const RV = 0.7233;                   // Venus semi-major axis, AU
+  const INC = 3.3947 * Math.PI / 180;  // Venus inclination to ecliptic
+  const NODE = 76.68 * Math.PI / 180;  // longitude of ascending node
+  const L0 = 183 * Math.PI / 180;      // heliocentric longitude at the 2025-03-23 inferior conjunction
+  const EPOCH = Date.UTC(2025, 2, 23);
+  const CYCLE = 8 * PE;
+  const TAU = Math.PI * 2;
+  let tilt = 1;
+
+  function earthPos(d, out) {
+    const l = L0 + TAU * d / PE;
+    return out.set(AU * Math.cos(l), 0, -AU * Math.sin(l));
+  }
+  function venusPos(d, out) {
+    const l = L0 + TAU * d / PV;
+    const u = l - NODE, i = Math.min(INC * tilt, 1.2), r = RV * AU;
+    const cu = Math.cos(u), su = Math.sin(u), cO = Math.cos(NODE), sO = Math.sin(NODE);
+    const x = r * (cO * cu - sO * su * Math.cos(i));
+    const y = r * (sO * cu + cO * su * Math.cos(i));
+    const z = r * su * Math.sin(i);
+    return out.set(x, z, -y);
+  }
+  const _e = new THREE.Vector3();
+  function geoPos(d, out) { venusPos(d, out); earthPos(d, _e); return out.sub(_e); }
+  const pad = n => String(n).padStart(2, '0');
+  const fmtDate = d => { const t = new Date(EPOCH + d * 86400000); return pad(t.getUTCDate()) + '/' + pad(t.getUTCMonth() + 1) + '/' + t.getUTCFullYear(); };
+  const fmtDec = (x, n) => x.toFixed(n).replace('.', ',');
+  const fmtInt = x => String(Math.floor(x)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+  // ---------- Renderer / scene ----------
+  const stage = document.getElementById('stage');
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setClearColor(0x06070d, 1);
+  stage.insertBefore(renderer.domElement, stage.firstChild);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 3000);
+  let stageW = 1, stageH = 1;
+  function fit() {
+    stageW = Math.max(1, stage.clientWidth); stageH = Math.max(1, stage.clientHeight);
+    renderer.setSize(stageW, stageH, false);
+    camera.aspect = stageW / stageH; camera.updateProjectionMatrix();
+  }
+  fit();
+  const portrait = stageW / stageH < 1.1;
+  camera.position.set(0, portrait ? 42 : 26, portrait ? 38 : 30);
+  if ('ResizeObserver' in window) new ResizeObserver(fit).observe(stage);
+  else window.addEventListener('resize', fit);
+
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.06;
+  controls.minDistance = 6;
+  controls.maxDistance = 160;
+  controls.autoRotate = true;
+  controls.autoRotateSpeed = 0.35;
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) { controls.autoRotate = false; document.getElementById('tRotate').checked = false; }
+
+  scene.add(new THREE.AmbientLight(0x8a86a8, 0.35));
+  const sunLight = new THREE.PointLight(0xfff0d0, 1.7, 0, 1);
+  const world = new THREE.Group();
+  scene.add(world);
+  world.add(sunLight);
+
+  function glowTexture(stops) {
+    const c = document.createElement('canvas'); c.width = c.height = 128;
+    const g = c.getContext('2d');
+    const gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+    stops.forEach(([o, col]) => gr.addColorStop(o, col));
+    g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
+    return new THREE.CanvasTexture(c);
+  }
+  const texSun = glowTexture([[0, 'rgba(255,240,200,1)'], [0.18, 'rgba(255,205,120,0.85)'], [0.45, 'rgba(255,150,60,0.22)'], [1, 'rgba(255,120,40,0)']]);
+  const texRose = glowTexture([[0, 'rgba(255,255,255,1)'], [0.2, 'rgba(255,160,195,0.9)'], [0.55, 'rgba(255,110,160,0.25)'], [1, 'rgba(255,90,150,0)']]);
+  const texGold = glowTexture([[0, 'rgba(255,250,230,1)'], [0.25, 'rgba(246,212,140,0.6)'], [1, 'rgba(242,196,109,0)']]);
+  const texBlue = glowTexture([[0, 'rgba(230,245,255,1)'], [0.25, 'rgba(108,184,255,0.55)'], [1, 'rgba(108,184,255,0)']]);
+  function sprite(tex, size, opacity = 1) {
+    const m = new THREE.SpriteMaterial({ map: tex, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity });
+    const s = new THREE.Sprite(m); s.scale.set(size, size, 1); return s;
+  }
+
+  // Starfield
+  {
+    const n = 2600, pos = new Float32Array(n * 3), col = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) {
+      const u = Math.random() * 2 - 1, th = Math.random() * TAU, r = 600 + Math.random() * 600;
+      const s = Math.sqrt(1 - u * u);
+      pos.set([r * s * Math.cos(th), r * u, r * s * Math.sin(th)], i * 3);
+      const w = 0.55 + Math.random() * 0.45, tint = Math.random();
+      col.set([w * (tint > 0.8 ? 1 : 0.85), w * 0.88, w * (tint < 0.3 ? 1 : 0.9)], i * 3);
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    scene.add(new THREE.Points(g, new THREE.PointsMaterial({ size: 1.6, sizeAttenuation: false, vertexColors: true, transparent: true, opacity: 0.85 })));
+  }
+
+  // Ecliptic grid
+  const grid = new THREE.PolarGridHelper(16, 12, 8, 96, 0x3a3550, 0x3a3550);
+  grid.material.transparent = true; grid.material.opacity = 0.16; grid.material.depthWrite = false;
+  world.add(grid);
+
+  // Sun
+  const sun = new THREE.Mesh(new THREE.SphereGeometry(1.0, 48, 32), new THREE.MeshBasicMaterial({ color: 0xffdf9a }));
+  world.add(sun);
+  const sunGlow = sprite(texSun, 9); world.add(sunGlow);
+
+  // Planets
+  const earth = new THREE.Mesh(new THREE.SphereGeometry(0.36, 40, 24), new THREE.MeshStandardMaterial({ color: 0x4f9fff, emissive: 0x0a2850, roughness: 0.6, metalness: 0 }));
+  const venus = new THREE.Mesh(new THREE.SphereGeometry(0.34, 40, 24), new THREE.MeshStandardMaterial({ color: 0xf6d79a, emissive: 0x3a2a08, roughness: 0.5, metalness: 0 }));
+  world.add(earth, venus);
+  const earthGlow = sprite(texBlue, 1.9, 0.8); const venusGlow = sprite(texGold, 2.0, 0.9);
+  world.add(earthGlow, venusGlow);
+
+  // Orbit rings
+  const earthRing = (() => {
+    const pts = []; for (let i = 0; i <= 256; i++) { const a = i / 256 * TAU; pts.push(new THREE.Vector3(AU * Math.cos(a), 0, -AU * Math.sin(a))); }
+    const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: 0x6cb8ff, transparent: true, opacity: 0.4 }));
+    world.add(l); return l;
+  })();
+  let venusRing = null;
+  function buildVenusRing() {
+    if (venusRing) { world.remove(venusRing); venusRing.geometry.dispose(); venusRing.material.dispose(); }
+    const pts = [], v = new THREE.Vector3();
+    for (let i = 0; i <= 256; i++) pts.push(venusPos(i / 256 * PV, v).clone());
+    venusRing = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: 0xf2c46d, transparent: true, opacity: 0.45 }));
+    world.add(venusRing);
+  }
+  buildVenusRing();
+
+  // Live Earth–Venus line and conjunction flash line
+  function dynLine(color, opacity) {
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
+    const l = new THREE.Line(g, new THREE.LineBasicMaterial({ color, transparent: true, opacity, blending: THREE.AdditiveBlending, depthWrite: false }));
+    l.frustumCulled = false; return l;
+  }
+  const evLine = dynLine(0xffffff, 0.55); world.add(evLine);
+  const flashLine = dynLine(0xff8fb3, 0); world.add(flashLine);
+  function setLine(line, a, b) {
+    const p = line.geometry.attributes.position.array;
+    p[0] = a.x; p[1] = a.y; p[2] = a.z; p[3] = b.x; p[4] = b.y; p[5] = b.z;
+    line.geometry.attributes.position.needsUpdate = true;
+  }
+
+  // Geocentric group: always sits on Earth
+  const geoGroup = new THREE.Group(); world.add(geoGroup);
+
+  // ---------- Trails (ring buffers of line segments) ----------
+  function segBuffer(max, opacity) {
+    const pos = new Float32Array(max * 6), col = new Float32Array(max * 6);
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    g.setDrawRange(0, 0);
+    const mat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity, blending: THREE.AdditiveBlending, depthWrite: false });
+    const obj = new THREE.LineSegments(g, mat); obj.frustumCulled = false;
+    return { pos, col, g, mat, obj, max, count: 0, dirty: false };
+  }
+  const strings = segBuffer(6000, 0.42); world.add(strings.obj);
+  const geoTrail = segBuffer(16000, 0.95); geoGroup.add(geoTrail.obj);
+  const STEP = 3; // days between Earth–Venus lines
+
+  const cA = new THREE.Color(), cB = new THREE.Color();
+  function colorAt(d, out) {
+    const ph = ((d / CYCLE) % 1 + 1) % 1;
+    return out.setHSL(((44 - 80 * ph) + 360) % 360 / 360, 0.85, 0.62);
+  }
+  function pushSeg(buf, a, b, ca, cb) {
+    const i = (buf.count % buf.max) * 6;
+    buf.pos[i] = a.x; buf.pos[i + 1] = a.y; buf.pos[i + 2] = a.z;
+    buf.pos[i + 3] = b.x; buf.pos[i + 4] = b.y; buf.pos[i + 5] = b.z;
+    buf.col[i] = ca.r; buf.col[i + 1] = ca.g; buf.col[i + 2] = ca.b;
+    buf.col[i + 3] = cb.r; buf.col[i + 4] = cb.g; buf.col[i + 5] = cb.b;
+    buf.count++; buf.dirty = true;
+  }
+  function flush(buf) {
+    if (!buf.dirty) return;
+    buf.g.attributes.position.needsUpdate = true;
+    buf.g.attributes.color.needsUpdate = true;
+    buf.g.setDrawRange(0, Math.min(buf.count, buf.max) * 2);
+    buf.dirty = false;
+  }
+  function resetBuf(buf) { buf.count = 0; buf.dirty = true; flush(buf); }
+
+  const tE = new THREE.Vector3(), tV = new THREE.Vector3(), tG0 = new THREE.Vector3(), tG1 = new THREE.Vector3();
+  function addString(d) {
+    earthPos(d, tE); venusPos(d, tV); colorAt(d, cA);
+    cB.copy(cA).multiplyScalar(0.55);
+    pushSeg(strings, tE, tV, cB, cA);
+  }
+  function addGeo(d) {
+    geoPos(d - 1, tG0); geoPos(d, tG1);
+    colorAt(d - 1, cA); colorAt(d, cB);
+    pushSeg(geoTrail, tG0, tG1, cA, cB);
+  }
+
+  // ---------- Conjunctions & pentagram ----------
+  const conjs = [];
+  let clockNow = 0, flashT = -99;
+  function starLine(parent) {
+    const l = dynLine(0xff8fb3, 0.9); parent.add(l); return l;
+  }
+  function addConj(k, instant) {
+    const d = k * SYN;
+    const h = venusPos(d, new THREE.Vector3());
+    const g = h.clone().sub(earthPos(d, new THREE.Vector3()));
+    const prev = conjs[conjs.length - 1];
+    const c = { k, h, g, t0: instant ? -1e9 : clockNow };
+    c.hMark = sprite(texRose, 1.1); c.hMark.position.copy(h); world.add(c.hMark);
+    c.gMark = sprite(texRose, 0.8); c.gMark.position.copy(g); geoGroup.add(c.gMark);
+    if (prev && prev.k === k - 1) {
+      c.hLine = starLine(world); c.gLine = starLine(geoGroup);
+      c.from = { h: prev.h, g: prev.g };
+      setLine(c.hLine, prev.h, prev.h); setLine(c.gLine, prev.g, prev.g);
+    }
+    conjs.push(c);
+    while (conjs.length > 45) disposeConj(conjs.shift());
+    showEvent(d, !instant);
+    if (!instant) flashT = clockNow;
+  }
+  function disposeConj(c) {
+    [c.hMark, c.hLine].forEach(o => o && world.remove(o));
+    [c.gMark, c.gLine].forEach(o => o && geoGroup.remove(o));
+    [c.hLine, c.gLine].forEach(o => o && (o.geometry.dispose(), o.material.dispose()));
+    [c.hMark, c.gMark].forEach(o => o.material.dispose());
+  }
+
+  // ---------- Simulation state ----------
+  let day = 0, playing = !reduceMotion, speed = 70;
+  let nextS = 0, nextG = 1, nextK = 0, trailStart = 0;
+  let frame = 0, frameTarget = 0;
+  let showStrings = true, showStar = true;
+  let lastListKey = -2;
+
+  function sample(instant) {
+    while (nextS <= day) { addString(nextS); nextS += STEP; }
+    while (nextG <= day) { addGeo(nextG); nextG += 1; }
+    while (nextK * SYN <= day + 1e-9) { addConj(nextK, instant); nextK++; }
+  }
+  function rebuild(from) {
+    resetBuf(strings); resetBuf(geoTrail);
+    while (conjs.length) disposeConj(conjs.pop());
+    from = Math.max(from, day - strings.max * STEP + STEP, day - geoTrail.max + 1);
+    trailStart = from;
+    nextS = Math.ceil(from / STEP) * STEP;
+    nextG = Math.floor(from) + 1;
+    nextK = Math.ceil(from / SYN - 1e-9);
+    sample(true);
+    flush(strings); flush(geoTrail);
+    lastListKey = -2;
+  }
+
+  // ---------- UI ----------
+  const $ = id => document.getElementById(id);
+  const playBtn = $('play');
+  function setPlaying(p) { playing = p; playBtn.textContent = p ? 'Tạm dừng' : 'Chạy'; }
+  setPlaying(playing);
+  playBtn.addEventListener('click', () => setPlaying(!playing));
+  window.addEventListener('keydown', e => {
+    if (e.code === 'Space' && e.target === document.body) { e.preventDefault(); setPlaying(!playing); }
+  });
+  document.querySelectorAll('input[name=frame]').forEach(r => r.addEventListener('change', () => { frameTarget = $('frameEarth').checked ? 1 : 0; }));
+  $('speed').addEventListener('input', e => { speed = +e.target.value; $('speedOut').textContent = speed + ' ngày/giây'; });
+  $('tilt').addEventListener('input', e => {
+    tilt = +e.target.value; $('tiltOut').textContent = '×' + tilt;
+    buildVenusRing(); rebuild(trailStart);
+  });
+  $('tStrings').addEventListener('change', e => { showStrings = e.target.checked; });
+  $('tStar').addEventListener('change', e => { showStar = e.target.checked; });
+  $('tRotate').addEventListener('change', e => { controls.autoRotate = e.target.checked; });
+  $('skip').addEventListener('click', () => { day += CYCLE; sample(true); });
+  $('clear').addEventListener('click', () => rebuild(day));
+
+  // Dial ticks
+  const dial = $('dial'); const cdots = [];
+  for (let y = 0; y <= 8; y++) {
+    const t = document.createElement('div'); t.className = 'tick';
+    t.style.left = (y / 8 * 100) + '%';
+    t.innerHTML = '<span>' + y + '</span>'; dial.appendChild(t);
+  }
+  for (let k = 0; k < 5; k++) {
+    const dEl = document.createElement('div'); dEl.className = 'cdot';
+    dEl.style.left = (k * SYN / CYCLE * 100) + '%'; dial.appendChild(dEl); cdots.push(dEl);
+  }
+
+  // Conjunction list (current 5-meeting cycle)
+  const listEl = $('conjList'); const rows = [];
+  for (let j = 0; j < 5; j++) { const r = document.createElement('div'); listEl.appendChild(r); rows.push(r); }
+  function updateList() {
+    const lastK = nextK - 1;
+    if (lastK === lastListKey) return; lastListKey = lastK;
+    const cyc = Math.max(0, Math.floor(lastK / 5));
+    for (let j = 0; j < 5; j++) {
+      const k = cyc * 5 + j;
+      rows[j].className = k <= lastK ? 'on' : '';
+      rows[j].innerHTML = '<span><span class="n">' + ['I', 'II', 'III', 'IV', 'V'][j] + '</span>&nbsp;&nbsp;' + fmtDate(k * SYN) + '</span><span>' + (k <= lastK ? '✓' : 'sắp tới') + '</span>';
+    }
+  }
+
+  // Latest-conjunction line in the text column (never drawn over the sky)
+  let flashTimer = 0;
+  function showEvent(d, live) {
+    const box = $('event');
+    box.innerHTML = 'Lần giao hội gần nhất: <b>' + fmtDate(d) + '</b><br>Sao Kim nằm giữa Trái Đất và Mặt Trời';
+    if (live) {
+      box.classList.add('flash');
+      clearTimeout(flashTimer); flashTimer = setTimeout(() => box.classList.remove('flash'), 1800);
+    }
+  }
+
+  // Body labels (inside the stage)
+  const labels = [[$('lSun'), sun], [$('lVenus'), venus], [$('lEarth'), earth]];
+  const wp = new THREE.Vector3();
+  function placeLabels() {
+    for (const [el, obj] of labels) {
+      obj.getWorldPosition(wp); wp.project(camera);
+      if (wp.z > 1) { el.style.opacity = 0; continue; }
+      el.style.opacity = 1;
+      el.style.transform = 'translate(' + ((wp.x * 0.5 + 0.5) * stageW + 12) + 'px,' + ((-wp.y * 0.5 + 0.5) * stageH - 18) + 'px)';
+    }
+  }
+
+  // ---------- Loop ----------
+  const clock = new THREE.Clock();
+  const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const tmp = new THREE.Vector3(), origin = new THREE.Vector3();
+  let statTick = 1;
+
+  sample(true);
+
+  function tick() {
+    const dt = Math.min(clock.getDelta(), 0.1);
+    clockNow += dt;
+    if (playing) day += dt * speed;
+    sample(false);
+    flush(strings); flush(geoTrail);
+
+    // Bodies
+    earthPos(day, earth.position); venusPos(day, venus.position);
+    earthGlow.position.copy(earth.position); venusGlow.position.copy(venus.position);
+    earth.rotation.y += dt * 2;
+    geoGroup.position.copy(earth.position);
+    setLine(evLine, earth.position, venus.position);
+
+    // Frame blend (Sun-centred <-> Earth-centred)
+    frame += (frameTarget - frame) * Math.min(1, dt * (reduceMotion ? 20 : 2.6));
+    if (Math.abs(frameTarget - frame) < 1e-4) frame = frameTarget;
+    world.position.copy(earth.position).multiplyScalar(-frame);
+    const f = frame, sunSide = 1 - f;
+
+    strings.mat.opacity = showStrings ? 0.42 * (1 - 0.85 * f) : 0;
+    geoTrail.mat.opacity = 0.95 * f;
+    evLine.material.opacity = showStrings ? 0.55 : 0.25;
+    earthRing.material.opacity = 0.4 * (1 - 0.6 * f);
+    venusRing.material.opacity = 0.45 * (1 - 0.6 * f);
+    grid.material.opacity = 0.16 * sunSide;
+
+    // Pentagram lines + markers
+    const lastK = nextK - 1;
+    for (const c of conjs) {
+      const age = lastK - c.k;
+      const a = age < 5 ? 1 : Math.max(0.1, 1 - (age - 4) * 0.13);
+      const t = Math.min(1, Math.max(0, (clockNow - c.t0) / 1.4));
+      const e = ease(t);
+      const vis = showStar ? a : 0;
+      if (c.hLine) {
+        setLine(c.hLine, c.from.h, tmp.copy(c.from.h).lerp(c.h, e));
+        c.hLine.material.opacity = 0.95 * vis * sunSide;
+        setLine(c.gLine, c.from.g, tmp.copy(c.from.g).lerp(c.g, e));
+        c.gLine.material.opacity = 0.95 * vis * f;
+      }
+      const pulse = 1 + 2.2 * (1 - t);
+      c.hMark.scale.setScalar(1.1 * pulse); c.gMark.scale.setScalar(0.8 * pulse);
+      c.hMark.material.opacity = Math.max(0.25, vis) * sunSide;
+      c.gMark.material.opacity = Math.max(0.25, vis) * f;
+    }
+
+    // Conjunction flash: Sun–Venus–Earth alignment
+    const fl = Math.max(0, 1 - (clockNow - flashT) / 1.6);
+    setLine(flashLine, origin, earth.position);
+    flashLine.material.opacity = fl * 0.9;
+    sunGlow.scale.setScalar(9 + 3 * fl);
+
+    controls.update();
+    renderer.render(scene, camera);
+    placeLabels();
+
+    // Text column (throttled)
+    statTick += dt;
+    if (statTick > 0.08) {
+      statTick = 0;
+      $('sDate').textContent = fmtDate(day);
+      $('sDay').textContent = fmtInt(day);
+      $('sEarth').textContent = fmtDec(day / PE, 2) + ' vòng';
+      $('sVenus').textContent = fmtDec(day / PV, 2) + ' vòng';
+      $('sConj').textContent = String(Math.max(0, nextK));
+      const inCycle = ((day % CYCLE) + CYCLE) % CYCLE;
+      $('dialFill').style.width = (inCycle / CYCLE * 100) + '%';
+      cdots.forEach((el, k) => el.classList.toggle('on', inCycle >= k * SYN));
+      updateList();
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
