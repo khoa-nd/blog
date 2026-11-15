@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Thám tử cờ · Flag Detective</title>
+<meta name="description" content="Game giải đố cờ các nước: đoán cờ, mảnh ghép, gợi ý khi bí, và nghe câu chuyện lịch sử đằng sau mỗi lá cờ.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#14213d;--navy:#10294a;--teal:#1b7f95;--card:#fff8e7;--gold:#ffc233;--green:#35c47a;--red:#ff5a5f;--blue:#4ea8de;--shadow:0 6px 0 rgba(0,0,0,.25)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;color:var(--ink);font-family:'Baloo 2',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+body{background:radial-gradient(circle at 15% 20%,rgba(255,255,255,.12) 0 90px,transparent 91px),radial-gradient(circle at 85% 75%,rgba(255,255,255,.1) 0 140px,transparent 141px),radial-gradient(circle at 70% 12%,rgba(255,194,51,.18) 0 60px,transparent 61px),linear-gradient(160deg,#12305a,#1b7f95);user-select:none;-webkit-user-select:none}
+button{font:inherit;color:inherit;cursor:pointer}
+.hide{display:none!important}
+.scr{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;overflow:auto;padding:calc(10px + env(safe-area-inset-top)) 14px calc(10px + env(safe-area-inset-bottom))}
+.scr.center{justify-content:center}
+.dim{background:rgba(8,18,36,.78);z-index:20;justify-content:center}
+.card{width:min(640px,100%);background:var(--card);border:5px solid var(--ink);border-radius:30px;box-shadow:0 10px 0 rgba(0,0,0,.35);padding:16px 20px;text-align:center;margin:auto}
+h1{margin:0;font-size:clamp(38px,9vw,66px);line-height:1;color:#fff;text-shadow:0 4px 0 var(--ink),0 7px 0 rgba(0,0,0,.3)}
+h2{margin:4px 0 6px;font-size:clamp(24px,5vw,34px);line-height:1.1}
+p{margin:6px 0;font-size:clamp(16px,2.6vw,20px);line-height:1.3}
+.sub{font-weight:800;font-size:clamp(18px,3.6vw,24px);color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.35)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:4px solid var(--ink);border-radius:18px;padding:4px 20px;font-weight:800;font-size:21px;background:#fff;box-shadow:0 5px 0 rgba(0,0,0,.3);margin:6px 4px}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.3)}
+.btn.go{background:var(--green);color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.25);font-size:25px;padding:6px 30px}
+.btn.big{font-size:30px;padding:8px 40px;animation:pulse 1.3s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.05)}}
+.row{display:flex;justify-content:center;flex-wrap:wrap;gap:4px;margin-top:6px}
+.ib{background:#fff;border:3px solid var(--ink);border-radius:14px;min-width:42px;height:38px;font-weight:800;font-size:18px;box-shadow:0 4px 0 rgba(0,0,0,.3);padding:0 10px}
+.ib:active{transform:translateY(3px);box-shadow:none}
+.chip{background:rgba(16,41,74,.8);color:#fff;border:3px solid rgba(255,255,255,.85);border-radius:14px;padding:0 12px;font-weight:800;font-size:17px;line-height:1.65;white-space:nowrap}
+.chip.gold{background:var(--gold);color:var(--ink);border-color:var(--ink)}
+.lg b{opacity:.4}.lg b.on{opacity:1}
+
+/* flags */
+.fl{position:relative;aspect-ratio:3/2;display:block}
+.fl svg{width:100%;height:100%;display:block;border-radius:4px}
+.fl:not(.rc) svg{filter:drop-shadow(0 4px 3px rgba(0,0,0,.4))}
+.fl.rc{box-shadow:0 8px 0 rgba(0,0,0,.28);border-radius:4px}
+.fl.wave{transform-origin:left center;animation:sway 5s ease-in-out infinite}
+.fl.rc.wave::after{content:"";position:absolute;inset:0;border-radius:4px;pointer-events:none;background:linear-gradient(100deg,rgba(0,0,0,.2),rgba(255,255,255,.2) 16%,rgba(0,0,0,.16) 34%,rgba(255,255,255,.2) 52%,rgba(0,0,0,.16) 70%,rgba(255,255,255,.18) 86%,rgba(0,0,0,.12));background-size:220% 100%;animation:ripple 3.2s linear infinite}
+@keyframes ripple{to{background-position:-220% 0}}
+@keyframes sway{0%,100%{transform:perspective(800px) rotateY(-6deg)}50%{transform:perspective(800px) rotateY(5deg) skewY(-.8deg)}}
+@media (prefers-reduced-motion:reduce){.fl.wave,.fl.rc.wave::after{animation:none}}
+
+/* cover & menu */
+.pole{font-size:64px;line-height:1;animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-8px) rotate(-4deg)}}
+.flagrow{display:flex;gap:10px;justify-content:center;margin:12px 0 4px}
+.flagrow .fl{width:clamp(62px,15vw,100px)}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;width:min(900px,100%);margin:10px 0}
+.mode{background:var(--card);border:4px solid var(--ink);border-radius:22px;box-shadow:var(--shadow);padding:10px 12px;text-align:center;line-height:1.15}
+.mode:active{transform:translateY(4px);box-shadow:none}
+.mode .e{font-size:44px;line-height:1.1}
+.mode .n{font-weight:800;font-size:22px}
+.mode .d{font-size:15px;opacity:.85;min-height:36px}
+.lv{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:6px 0}
+.lv button{border:3px solid #fff;background:rgba(16,41,74,.55);color:#fff;border-radius:14px;padding:2px 14px;font-weight:800;font-size:18px}
+.lv button.on{background:var(--gold);color:var(--ink);border-color:var(--ink)}
+.bar{width:min(900px,100%);display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.sp{flex:1}
+
+/* play */
+.stage{flex:1;width:min(760px,100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:0}
+#qprompt{font-weight:800;font-size:clamp(20px,4.4vw,30px);color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.35);text-align:center;line-height:1.15}
+#qprompt b{color:var(--gold)}
+#flagBox{position:relative;width:min(520px,86vw,calc((100vh - 360px)*1.5));min-width:170px}
+#flagBox .fl{width:100%}
+#tiles{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr);gap:0}
+#tiles i{font-style:normal;display:grid;place-items:center;font-weight:800;font-size:clamp(20px,5vw,34px);color:#fff;background:linear-gradient(135deg,#5b6ee1,#8a4fd1);border:2px solid rgba(255,255,255,.55);cursor:pointer;transition:opacity .45s,transform .45s}
+#tiles i:nth-child(3n+2){background:linear-gradient(135deg,#e0568a,#f08a5d)}
+#tiles i:nth-child(3n){background:linear-gradient(135deg,#1fa2a6,#3bc58a)}
+#tiles i.open{opacity:0;transform:scale(.6) rotate(8deg);pointer-events:none}
+#bigname{background:var(--card);border:5px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);padding:6px 26px;font-weight:800;font-size:clamp(30px,8vw,52px);text-align:center;line-height:1.2}
+#bigname small{display:block;font-size:17px;opacity:.7}
+.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:min(620px,100%)}
+.choices.six{grid-template-columns:repeat(3,1fr)}
+.ch{background:#fff;border:4px solid var(--ink);border-radius:18px;box-shadow:0 5px 0 rgba(0,0,0,.3);font-weight:800;font-size:clamp(17px,3.6vw,24px);padding:6px 8px;min-height:54px;line-height:1.1;transition:background .2s,transform .1s}
+.ch:active{transform:translateY(4px);box-shadow:none}
+.ch.fch{padding:8px;display:grid;place-items:center}
+.ch.fch .fl{width:100%}
+.ch.ok{background:#aaf0c3;border-color:#14803f;animation:pop .5s}
+.ch.bad{background:#ffc9c9;border-color:#c0392b;animation:shake .35s}
+.ch.out{opacity:.35;pointer-events:none;text-decoration:line-through}
+.ch.fch.out{text-decoration:none}
+@keyframes pop{40%{transform:scale(1.12)}}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+#hintList{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;width:min(640px,100%);min-height:8px}
+.hc{background:#fff3b0;border:3px solid var(--ink);border-radius:14px;padding:0 12px;font-weight:700;font-size:clamp(15px,2.8vw,19px);line-height:1.35;animation:pop .5s}
+.owlbar{width:min(760px,100%);display:flex;gap:8px;align-items:center;margin-top:8px}
+.owlmsg{flex:1;display:flex;align-items:center;gap:8px;background:rgba(255,251,234,.96);border:3px solid var(--ink);border-radius:18px;padding:4px 14px 4px 6px;font-size:clamp(15px,2.5vw,19px);font-weight:700;line-height:1.2;box-shadow:var(--shadow);min-height:52px}
+.owlmsg .o{font-size:32px;flex:none}
+.owlmsg b{color:#d6245a}
+.hintbtn{background:var(--gold);border:4px solid var(--ink);border-radius:18px;box-shadow:0 5px 0 rgba(0,0,0,.3);font-weight:800;font-size:19px;padding:6px 14px;white-space:nowrap}
+.hintbtn:active{transform:translateY(4px);box-shadow:none}
+.hintbtn:disabled{opacity:.45}
+.hintbtn.nudge{animation:nudge .8s ease-in-out infinite}
+@keyframes nudge{50%{transform:scale(1.12) rotate(-3deg);box-shadow:0 0 0 6px rgba(255,194,51,.5)}}
+.conf{position:fixed;top:-30px;font-size:28px;z-index:30;pointer-events:none;animation:fall 1.7s ease-in forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg);opacity:.9}}
+
+/* story */
+.story .fl{width:min(340px,70vw);margin:8px auto 14px}
+.story h2{font-size:clamp(28px,6vw,40px)}
+.story .cont{display:inline-block;background:var(--blue);color:#fff;border-radius:12px;padding:0 12px;font-weight:800;font-size:17px}
+.story .tx{text-align:left;background:#fff;border:3px solid var(--ink);border-radius:18px;padding:8px 14px;margin:10px 0;font-size:clamp(17px,3vw,21px);line-height:1.4;font-weight:500}
+.story .rec{display:inline-block;background:var(--gold);border:3px solid var(--ink);border-radius:14px;padding:0 12px;font-weight:800;font-size:17px;margin:2px}
+.story .new{display:inline-block;background:var(--green);color:#fff;border-radius:12px;padding:0 12px;font-weight:800;font-size:16px;margin:2px;animation:pop .6s}
+.stars{font-size:54px;letter-spacing:6px;line-height:1.1}
+.mini{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0}
+.mini .fl{width:62px}
+
+/* museum */
+.tabs{display:flex;gap:6px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;width:min(900px,100%);margin-bottom:8px}
+.chips button{border:3px solid #fff;background:rgba(16,41,74,.55);color:#fff;border-radius:14px;padding:0 12px;font-weight:800;font-size:17px}
+.chips button.on{background:var(--gold);color:var(--ink);border-color:var(--ink)}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;width:min(900px,100%);padding-bottom:20px}
+.gc{background:var(--card);border:4px solid var(--ink);border-radius:16px;padding:8px 8px 4px;text-align:center;position:relative;box-shadow:0 5px 0 rgba(0,0,0,.25);line-height:1.1}
+.gc:active{transform:translateY(3px)}
+.gc .fl{width:100%}
+.gc .nm{font-weight:800;font-size:16px;margin-top:8px}
+.gc .ck{position:absolute;top:-8px;right:-6px;background:var(--green);color:#fff;border:3px solid var(--ink);border-radius:50%;width:26px;height:26px;font-size:14px;line-height:20px}
+.gc.lock .fl{filter:grayscale(1) opacity(.55)}
+.recs{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;width:min(900px,100%);padding-bottom:20px}
+.rcard{background:var(--card);border:4px solid var(--ink);border-radius:18px;padding:10px 12px;display:flex;gap:12px;align-items:center;text-align:left;box-shadow:0 5px 0 rgba(0,0,0,.25);line-height:1.2}
+.rcard .fl{width:96px;flex:none}
+.rcard b{display:block;font-size:19px}
+.rcard span{font-size:15px}
+.prog{color:#fff;font-weight:800;text-shadow:0 2px 0 rgba(0,0,0,.35);font-size:18px}
+@media (max-width:600px){.chip{font-size:14px;padding:0 8px}.hintbtn{font-size:16px;padding:6px 10px}.owlmsg{font-size:14px}}
+@media (max-height:560px){.card{padding:10px 14px}.pole{font-size:40px}#flagBox{width:min(520px,86vw,calc((100vh - 250px)*1.5))}.flagrow{display:none}}
+</style>
+</head>
+<body>
+
+<section class="scr center" id="cover">
+  <div class="pole">🕵️</div>
+  <h1 data-vi="THÁM TỬ CỜ" data-en="FLAG DETECTIVE"></h1>
+  <div class="sub" data-vi="Đoán cờ các nước &amp; nghe chuyện lịch sử" data-en="Guess the flags &amp; hear their history"></div>
+  <div class="flagrow" id="coverFlags"></div>
+  <div class="card" style="margin:6px 0 0">
+    <p data-vi="Mỗi lá cờ giấu một câu chuyện! Đoán đúng để mở khóa chuyện lạ, từ <b>lá cờ cổ nhất</b> đến <b>lá cờ của nước mới nhất</b>. Bí quá? Đã có <b>💡 gợi ý</b>." data-en="Every flag hides a story! Guess right to unlock it, from the <b>oldest flag</b> to the <b>newest country's flag</b>. Stuck? Ask for a <b>💡 hint</b>."></p>
+    <button class="btn go big" id="bPlay"><span data-vi="Chơi ngay" data-en="Play"></span> ▶</button>
+    <div class="row"><button class="btn lg" id="bLang"><b class="vi">VI</b>·<b class="en">EN</b></button><button class="btn" id="bSnd">🔊</button></div>
+  </div>
+</section>
+
+<section class="scr hide" id="menu">
+  <div class="bar"><button class="ib" id="mBack">◀</button><span class="sp"></span><span class="prog" id="mProg"></span><button class="ib lg" id="bLang2"><b class="vi">VI</b>·<b class="en">EN</b></button><button class="ib" id="bSnd2">🔊</button></div>
+  <h2 style="color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.35);margin-top:0" data-vi="Chọn trò chơi" data-en="Choose a game"></h2>
+  <div class="lv" id="lvBox"></div>
+  <div class="modes">
+    <button class="mode" data-m="f2n"><div class="e">🔍</div><div class="n" data-vi="Đoán cờ" data-en="Guess the flag"></div><div class="d" data-vi="Nhìn lá cờ, chọn tên nước đúng" data-en="Look at the flag, pick the country"></div></button>
+    <button class="mode" data-m="rev"><div class="e">🧩</div><div class="n" data-vi="Mảnh ghép" data-en="Puzzle tiles"></div><div class="d" data-vi="Lá cờ bị che kín. Mở từng mảnh để đoán" data-en="The flag is covered. Open tiles to guess"></div></button>
+    <button class="mode" data-m="n2f"><div class="e">🗺️</div><div class="n" data-vi="Tìm cờ" data-en="Find the flag"></div><div class="d" data-vi="Đọc tên nước, chọn đúng lá cờ" data-en="Read the country, pick its flag"></div></button>
+    <button class="mode" data-m="museum"><div class="e">📚</div><div class="n" data-vi="Bảo tàng cờ" data-en="Flag museum"></div><div class="d" data-vi="Đọc chuyện các lá cờ và các kỷ lục" data-en="Read flag stories and world records"></div></button>
+  </div>
+</section>
+
+<section class="scr hide" id="play">
+  <div class="bar"><button class="ib" id="pBack">✕</button><span class="chip gold" id="pProg"></span><span class="sp"></span><span class="chip" id="pStreak"></span><span class="chip" id="pScore">⭐ 0</span></div>
+  <div class="stage">
+    <div id="qprompt"></div>
+    <div id="flagBox"></div>
+    <div id="bigname" class="hide"></div>
+    <button class="btn hide" id="bOpen" style="margin:0">🔓 <span data-vi="Mở thêm 1 mảnh" data-en="Open one more tile"></span></button>
+    <div class="choices" id="choices"></div>
+    <div id="hintList"></div>
+  </div>
+  <div class="owlbar"><div class="owlmsg"><span class="o">🦉</span><span id="owlT"></span></div><button class="hintbtn" id="bHint">💡</button></div>
+</section>
+
+<section class="scr hide" id="museum">
+  <div class="bar"><button class="ib" id="muBack">◀</button><div class="tabs"><button class="btn" id="tabF" style="margin:0;padding:0 14px"></button><button class="btn" id="tabR" style="margin:0;padding:0 14px"></button></div><span class="sp"></span><span class="prog" id="muProg"></span></div>
+  <div class="chips" id="muChips"></div>
+  <div class="gal" id="gal"></div>
+  <div class="recs hide" id="recs"></div>
+</section>
+
+<section class="scr hide" id="result">
+  <div class="card">
+    <h2 id="rTitle"></h2>
+    <div class="stars" id="rStars"></div>
+    <p id="rScore"></p>
+    <p id="rNew"></p>
+    <div class="mini" id="rMini"></div>
+    <div class="row"><button class="btn" id="rMenu">🏠 <span data-vi="Menu" data-en="Menu"></span></button><button class="btn" id="rMuseum">📚 <span data-vi="Bảo tàng" data-en="Museum"></span></button><button class="btn go" id="rAgain">↺ <span data-vi="Chơi lại" data-en="Again"></span></button></div>
+  </div>
+</section>
+
+<div class="scr dim hide" id="story">
+  <div class="card story">
+    <div id="stFlag"></div>
+    <h2 id="stName"></h2>
+    <span class="cont" id="stCont"></span><span class="new hide" id="stNew"></span>
+    <div id="stRec"></div>
+    <div class="tx" id="stTx"></div>
+    <div class="row"><button class="btn" id="stVoice">🔊 <span data-vi="Nghe" data-en="Listen"></span></button><button class="btn go" id="stNext"></button></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+(function(){
+/* ================= drawing helpers (viewBox 300x200) ================= */
+const W='#fff',BK='#000';
+const rc=(x,y,w,h,c,e)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}" ${e||''}/>`;
+const cc=(x,y,r,c,e)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${c}" ${e||''}/>`;
+const el=(x,y,rx,ry,c,e)=>`<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${c}" ${e||''}/>`;
+const pg=(p,c,e)=>`<polygon points="${p}" fill="${c}" ${e||''}/>`;
+const ln=(a,b,c,d,col,w)=>`<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="${col}" stroke-width="${w}"/>`;
+const H=(cols,w)=>{w=w||cols.map(()=>1);const T=w.reduce((a,b)=>a+b);let y=0;return cols.map((c,i)=>{const h=200*w[i]/T,s=rc(0,y.toFixed(2),300,(h+.6).toFixed(2),c);y+=h;return s}).join('')};
+const V=(cols,w)=>{w=w||cols.map(()=>1);const T=w.reduce((a,b)=>a+b);let x=0;return cols.map((c,i)=>{const ww=300*w[i]/T,s=rc(x.toFixed(2),0,(ww+.6).toFixed(2),200,c);x+=ww;return s}).join('')};
+const star=(x,y,R,c,n,rot,inn,e)=>{n=n||5;inn=inn||(n===5?.382:.5);rot=rot==null?-90:rot;const p=[];for(let i=0;i<n*2;i++){const a=(rot+i*180/n)*Math.PI/180,r=i%2?R*inn:R;p.push((x+Math.cos(a)*r).toFixed(1)+','+(y+Math.sin(a)*r).toFixed(1))}return pg(p.join(' '),c,e)};
+const pent=(x,y,R,c,sw)=>{const p=[0,2,4,1,3].map(i=>{const a=(-90+i*72)*Math.PI/180;return (x+Math.cos(a)*R).toFixed(1)+','+(y+Math.sin(a)*R).toFixed(1)}).join(' ');return `<polygon points="${p}" fill="none" stroke="${c}" stroke-width="${sw}"/>`};
+const cres=(x,y,R,c,bg,off,k)=>cc(x,y,R,c)+cc(x+off,y,R*(k||.8),bg);
+const rays=(x,y,r1,r2,n,c,w,off)=>{let s='';for(let i=0;i<n;i++){const a=(i*360/n+(off||0))*Math.PI/180;s+=ln((x+Math.cos(a)*r1).toFixed(1),(y+Math.sin(a)*r1).toFixed(1),(x+Math.cos(a)*r2).toFixed(1),(y+Math.sin(a)*r2).toFixed(1),c,w)}return s};
+const alt=(n,a,b)=>Array.from({length:n},(_,i)=>i%2?b:a);
+const uj=()=>rc(0,0,300,200,'#012169')+`<path d="M0 0L300 200M300 0L0 200" stroke="#fff" stroke-width="40"/><path d="M0 0L300 200M300 0L0 200" stroke="#c8102e" stroke-width="14"/><path d="M150 0V200M0 100H300" stroke="#fff" stroke-width="66"/><path d="M150 0V200M0 100H300" stroke="#c8102e" stroke-width="40"/>`;
+const trig=(x,y,pat)=>{const d=Math.atan2(100-y,150-x)*180/Math.PI+90;let s='';[...pat].forEach((b,i)=>{const yy=(i-1)*9;s+=b==='1'?rc(-20,yy-3,40,6,BK):rc(-20,yy-3,17,6,BK)+rc(3,yy-3,17,6,BK)});return `<g transform="translate(${x} ${y}) rotate(${d.toFixed(1)})">${s}</g>`};
+const leaf=[[0,-50],[8,-32],[17,-36],[14,-12],[27,-20],[25,-8],[45,-3],[41,6],[44,10],[22,24],[24,34],[2,30],[2,50],[-2,50],[-2,30],[-24,34],[-22,24],[-44,10],[-41,6],[-45,-3],[-25,-8],[-27,-20],[-14,-12],[-17,-36],[-8,-32]].map(p=>(150+p[0]*.9).toFixed(1)+','+(100+p[1]*.9).toFixed(1)).join(' ');
+const tri=(c)=>pg('0,0 173,100 0,200',c);
+
+const DR={
+ vn:()=>rc(0,0,300,200,'#da251d')+star(150,106,62,'#ff0'),
+ jp:()=>rc(0,0,300,200,W)+cc(150,100,60,'#bc002d'),
+ cn:()=>{let s=rc(0,0,300,200,'#ee1c25')+star(50,50,30,'#ff0');[[100,20],[120,40],[120,70],[100,90]].forEach(p=>{s+=star(p[0],p[1],10,'#ff0',5,Math.atan2(50-p[1],50-p[0])*180/Math.PI)});return s},
+ kr:()=>rc(0,0,300,200,W)+`<g transform="rotate(-33.7 150 100)"><path d="M100 100A50 50 0 0 1 200 100A25 25 0 0 1 150 100A25 25 0 0 0 100 100Z" fill="#cd2e3a"/><path d="M200 100A50 50 0 0 1 100 100A25 25 0 0 1 150 100A25 25 0 0 0 200 100Z" fill="#0047a0"/></g>`+trig(52,42,'111')+trig(248,42,'010')+trig(52,158,'101')+trig(248,158,'000'),
+ in:()=>H(['#ff9933',W,'#138808'])+cc(150,100,28,'none','stroke="#000080" stroke-width="3"')+rays(150,100,0,28,24,'#000080',1.5)+cc(150,100,5,'#000080'),
+ th:()=>H(['#a51931','#f4f5f8','#2d2a4a','#f4f5f8','#a51931'],[1,1,2,1,1]),
+ kh:()=>H(['#032ea1','#e00025','#032ea1'],[1,2,1])+rc(98,122,104,8,W)+rc(110,106,80,16,W)+rc(144,72,12,34,W)+pg('144,72 150,54 156,72',W)+rc(125,86,10,20,W)+pg('125,86 130,72 135,86',W)+rc(165,86,10,20,W)+pg('165,86 170,72 175,86',W)+rc(108,94,8,12,W)+pg('108,94 112,84 116,94',W)+rc(184,94,8,12,W)+pg('184,94 188,84 192,94',W),
+ ph:()=>rc(0,0,300,100,'#0038a8')+rc(0,100,300,100,'#ce1126')+pg('0,0 173,100 0,200',W)+cc(56,100,16,'#fcd116')+rays(56,100,21,38,8,'#fcd116',4)+star(17,28,13,'#fcd116')+star(17,172,13,'#fcd116')+star(138,100,13,'#fcd116'),
+ my:()=>H(alt(14,'#cc0001',W))+rc(0,0,150,100,'#010066')+cres(52,50,30,'#fc0','#010066',10,.8)+star(108,50,28,'#fc0',14,-90,.55),
+ sg:()=>{let s=H(['#ef3340',W])+cres(56,50,30,W,'#ef3340',11,.82);for(let i=0;i<5;i++){const a=(-90+i*72)*Math.PI/180;s+=star(100+Math.cos(a)*16,50+Math.sin(a)*16,7.5,W,5,-90+i*72)}return s},
+ id:()=>H(['#e70011',W]),
+ np:()=>pg('80,10 192,96 124,96 224,190 80,190','#dc143c','stroke="#003893" stroke-width="7" stroke-linejoin="miter"')+cres(118,70,14,W,'#dc143c',0,.01)+cc(118,64,12,'#dc143c')+cc(118,55,3,W)+star(118,152,18,W,12,-90,.62)+cc(118,152,9,'#dc143c'),
+ bd:()=>rc(0,0,300,200,'#006a4e')+cc(133,100,60,'#f42a41'),
+ tr:()=>rc(0,0,300,200,'#e30a17')+cres(106,100,50,W,'#e30a17',13,.8)+star(168,100,25,W,5,0),
+ gb:()=>uj(),
+ fr:()=>V(['#0055a4',W,'#ef4135']),
+ de:()=>H([BK,'#dd0000','#ffce00']),
+ it:()=>V(['#009246',W,'#ce2b37']),
+ es:()=>H(['#aa151b','#f1bf00','#aa151b'],[1,2,1])+rc(70,82,36,38,'#c8a200')+rc(74,86,28,30,'#aa151b')+rc(60,84,6,36,'#8a8a8a')+rc(110,84,6,36,'#8a8a8a')+rc(86,92,4,16,'#f1bf00')+rc(80,98,16,4,'#f1bf00'),
+ nl:()=>H(['#ae1c28',W,'#21468b']),
+ be:()=>V([BK,'#fae042','#ed2939']),
+ ch:()=>rc(50,0,200,200,'#da291c')+rc(131.25,37.5,37.5,125,W)+rc(87.5,81.25,125,37.5,W)+rc(50,0,200,200,'none','stroke="rgba(0,0,0,.25)" stroke-width="3"'),
+ at:()=>H(['#ed2939',W,'#ed2939']),
+ dk:()=>rc(0,0,300,200,'#c8102e')+rc(97,0,32,200,W)+rc(0,86,300,28,W),
+ se:()=>rc(0,0,300,200,'#006aa7')+rc(94,0,37,200,'#fecc00')+rc(0,80,300,40,'#fecc00'),
+ no:()=>rc(0,0,300,200,'#ba0c2f')+rc(82,0,55,200,W)+rc(0,75,300,50,W)+rc(95,0,28,200,'#00205b')+rc(0,87,300,26,'#00205b'),
+ fi:()=>rc(0,0,300,200,W)+rc(83,0,50,200,'#003580')+rc(0,73,300,54,'#003580'),
+ is:()=>rc(0,0,300,200,'#02529c')+rc(84,0,48,200,W)+rc(0,78,300,44,W)+rc(96,0,24,200,'#dc1e35')+rc(0,89,300,22,'#dc1e35'),
+ ie:()=>V(['#169b62',W,'#ff883e']),
+ gr:()=>H(alt(9,'#0d5eaf',W))+rc(0,0,111,111,'#0d5eaf')+rc(44.5,0,22,111,W)+rc(0,44.5,111,22,W),
+ pl:()=>H([W,'#dc143c']),
+ ua:()=>H(['#0057b7','#ffd700']),
+ ru:()=>H([W,'#0039a6','#d52b1e']),
+ cz:()=>H([W,'#d7141a'])+pg('0,0 150,100 0,200','#11457e'),
+ ro:()=>V(['#002b7f','#fcd116','#ce1126']),
+ va:()=>rc(50,0,100,200,'#ffe000')+rc(150,0,100,200,W)+ln(172,76,230,152,'#c9a200',9)+ln(230,76,172,152,'#9a9a9a',9)+cc(172,76,8,'#c9a200')+cc(230,76,8,'#9a9a9a')+rc(176,36,50,10,'#c9a200')+pg('182,36 201,14 220,36','#c9a200')+rc(50,0,200,200,'none','stroke="rgba(0,0,0,.25)" stroke-width="3"'),
+ us:()=>{let s=H(alt(13,'#b22234',W))+rc(0,0,120,107.7,'#3c3b6e');for(let r=0;r<9;r++){const n=r%2?5:6;for(let c=0;c<n;c++)s+=star((r%2?20:10)+c*20,9+r*11.5,4.2,W)}return s},
+ ca:()=>V(['#d80621',W,'#d80621'],[1,2,1])+pg(leaf,'#d80621'),
+ mx:()=>V(['#006847',W,'#ce1126'])+`<path d="M126 106A25 25 0 0 0 174 106" fill="none" stroke="#2e8b57" stroke-width="5"/>`+pg('150,96 130,82 134,108','#8a5a2b')+pg('150,96 170,82 166,108','#8a5a2b')+el(150,96,10,15,'#8a5a2b')+cc(150,80,6,'#8a5a2b')+rc(146,114,8,6,'#3c8d2f'),
+ br:()=>rc(0,0,300,200,'#009c3b')+pg('150,14 282,100 150,186 18,100','#ffdf00')+cc(150,100,46,'#002776')+`<path d="M107 104Q150 84 193 112" fill="none" stroke="#fff" stroke-width="7"/>`+star(130,78,3.5,W)+star(168,86,3.5,W)+star(150,128,3.5,W)+star(176,118,3.5,W)+star(122,112,3.5,W),
+ ar:()=>H(['#74acdf',W,'#74acdf'])+rays(150,100,16,30,16,'#f6b40e',2.6)+cc(150,100,14,'#f6b40e'),
+ cl:()=>rc(0,0,300,100,W)+rc(0,100,300,100,'#d52b1e')+rc(0,0,100,100,'#0039a6')+star(50,52,28,W),
+ co:()=>H(['#fcd116','#003893','#ce1126'],[2,1,1]),
+ pe:()=>V(['#d91023',W,'#d91023']),
+ cu:()=>H(alt(5,'#002a8f',W))+tri('#cf142b')+star(58,102,34,W),
+ jm:()=>rc(0,0,300,200,'#009b3a')+pg('0,0 150,100 0,200',BK)+pg('300,0 150,100 300,200',BK)+ln(0,0,300,200,'#fed100',30)+ln(300,0,0,200,'#fed100',30),
+ ht:()=>H(['#00209f','#d21034'])+rc(98,68,104,64,W)+rc(147,84,6,32,'#6b4a2a')+el(150,84,22,8,'#2e8b2e')+rc(112,112,76,6,'#00209f')+rc(112,118,76,4,'#d21034'),
+ za:()=>rc(0,0,300,100,'#de3831')+rc(0,100,300,100,'#002395')+`<path d="M0 0L110 100L0 200M110 100H300" fill="none" stroke="#fff" stroke-width="64"/><path d="M0 0L110 100L0 200M110 100H300" fill="none" stroke="#007a4d" stroke-width="38"/>`+pg('0,22 0,178 82,100','#ffb612')+pg('0,42 0,158 60,100',BK),
+ ng:()=>V(['#008751',W,'#008751']),
+ gh:()=>H(['#ce1126','#fcd116','#006b3f'])+star(150,104,40,BK),
+ et:()=>H(['#078930','#fcdd09','#da121a'])+cc(150,100,46,'#0f47af')+star(150,104,33,'#fcdd09'),
+ eg:()=>H(['#ce1126',W,BK])+pg('150,98 126,86 130,110','#c09300')+pg('150,98 174,86 170,110','#c09300')+el(150,98,9,14,'#c09300')+rc(138,114,24,5,'#c09300'),
+ ly:()=>H(['#e70013',BK,'#239e46'],[1,2,1])+cres(143,100,32,W,BK,9,.8)+star(176,100,11,W,5,-90),
+ ke:()=>H([BK,W,'#bb0000',W,'#006600'],[6,1,8,1,6])+ln(104,38,196,162,W,4)+ln(196,38,104,162,W,4)+el(150,100,28,46,BK,'stroke="#fff" stroke-width="4"')+el(150,100,21,38,'#bb0000')+rc(148,66,4,68,W)+el(150,100,8,16,W),
+ mz:()=>H(['#007168',W,BK,W,'#fce100'],[6,.7,6,.7,6])+pg('0,0 130,100 0,200','#ce1126')+star(46,100,30,'#fce100')+rc(33,96,26,16,W,'transform="rotate(-8 46 104)"')+ln(30,126,62,86,'#222',5)+ln(52,90,64,100,'#222',4),
+ ss:()=>H([BK,W,'#da121a',W,'#078930'],[6,1,6,1,6])+pg('0,0 130,100 0,200','#0f47af')+star(40,100,26,'#fcdd09'),
+ ma:()=>rc(0,0,300,200,'#c1272d')+pent(150,102,46,'#006233',6),
+ au:()=>rc(0,0,300,200,'#012169')+`<svg x="0" y="0" width="150" height="100" viewBox="0 0 300 200">${uj()}</svg>`+star(75,150,24,W,7,-90,.45)+star(225,172,12,W,7,-90,.45)+star(225,52,12,W,7,-90,.45)+star(192,100,12,W,7,-90,.45)+star(258,92,12,W,7,-90,.45)+star(240,120,6,W),
+ nz:()=>rc(0,0,300,200,'#012169')+`<svg x="0" y="0" width="150" height="100" viewBox="0 0 300 200">${uj()}</svg>`+['223,52,13','253,100,13','193,98,12','223,168,15'].map(s=>{const a=s.split(',');return star(+a[0],+a[1],+a[2],'#cc142b',5,-90,.382,'stroke="#fff" stroke-width="2.5"')}).join('')
+};
+const NR={np:1,ch:1,va:1};
+const cache={};
+function svg(k){return cache[k]||(cache[k]=`<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" role="img">${DR[k]()}${NR[k]?'':'<rect x="1.5" y="1.5" width="297" height="197" fill="none" stroke="rgba(0,0,0,.28)" stroke-width="3"/>'}</svg>`)}
+const flagH=(k,cls)=>`<div class="fl ${NR[k]?'':'rc '}${cls||''}">${svg(k)}</div>`;
+
+/* ================= data ================= */
+const L=(vi,en)=>({vi,en});
+const CN={as:L('Châu Á','Asia'),eu:L('Châu Âu','Europe'),am:L('Châu Mỹ','the Americas'),af:L('Châu Phi','Africa'),oc:L('Châu Đại Dương','Oceania')};
+const CE={as:'🌏',eu:'🌍',am:'🌎',af:'🌍',oc:'🌏'};
+const FL=[],BYK={};
+function F(k,c,d,g,vi,en,cv,ce,sv,se){const o={k,c,d,g,name:L(vi,en),clue:L(cv,ce),story:L(sv,se)};FL.push(o);BYK[k]=o}
+
+/* ---- Asia ---- */
+F('vn','as',1,'star','Việt Nam','Vietnam','Hình chữ S, có Vịnh Hạ Long và món phở.','S-shaped country with Ha Long Bay and the noodle soup pho.',
+ 'Nền đỏ tượng trưng cho máu đào và cách mạng. Năm cánh của ngôi sao vàng là sự đoàn kết của năm tầng lớp: sĩ, nông, công, thương, binh. Lá cờ lần đầu tung bay trong cuộc khởi nghĩa Nam Kỳ năm 1940 và trở thành Quốc kỳ khi nước ta tuyên bố độc lập ngày 2 tháng 9 năm 1945.',
+ 'The red field stands for the blood shed for the nation. The five points of the gold star are scholars, farmers, workers, traders and soldiers, united. It first flew in the 1940 Southern uprising and became the national flag when Vietnam declared independence on 2 September 1945.');
+F('jp','as',1,'disc','Nhật Bản','Japan','Xứ sở hoa anh đào và tàu cao tốc Shinkansen.','Land of cherry blossoms and bullet trains.',
+ 'Hình tròn đỏ là mặt trời, vì "Nhật Bản" có nghĩa là "cội nguồn của mặt trời". Lá cờ tên là Hinomaru ("vòng tròn mặt trời"). Nó được dùng trên tàu thuyền từ năm 1870, nhưng mãi đến năm 1999 mới chính thức được ghi vào luật quốc kỳ.',
+ 'The red circle is the sun, because "Japan" means "origin of the sun". The flag is called Hinomaru ("sun circle"). It flew on ships from 1870, but only became official by law in 1999.');
+F('cn','as',1,'star','Trung Quốc','China','Có Vạn Lý Trường Thành và loài gấu trúc.','A giant country with the Great Wall and giant pandas.',
+ 'Lá cờ do ông Tăng Liên Tùng, một người làm việc ở Thượng Hải, thiết kế và được chọn trong hơn 3.000 bài dự thi. Ngôi sao lớn là Đảng, bốn ngôi sao nhỏ là các tầng lớp nhân dân. Lá cờ được kéo lên lần đầu ngày 1 tháng 10 năm 1949.',
+ 'It was designed by Zeng Liansong, who worked in Shanghai, and picked from over 3,000 entries. The big star is the Communist Party and the four small stars are the classes of the people. It was first raised on 1 October 1949.');
+F('kr','as',2,'disc','Hàn Quốc','South Korea','Quê hương của K-pop và món kim chi.','Home of K-pop and kimchi.',
+ 'Nền trắng là hòa bình. Vòng tròn đỏ - xanh là âm và dương, luôn cân bằng nhau. Bốn quẻ ở các góc là trời, đất, lửa và nước. Vua Cao Tông đã chọn thiết kế này làm quốc kỳ vào năm 1883.',
+ 'White means peace. The red-and-blue circle is yin and yang, always in balance, and the four bars in the corners stand for heaven, earth, fire and water. King Gojong chose the design in 1883.');
+F('in','as',1,'tri-h','Ấn Độ','India','Có đền Taj Mahal và là nơi sinh ra môn cờ vua.','Home of the Taj Mahal and the birthplace of chess.',
+ 'Màu cam là lòng dũng cảm, trắng là hòa bình, xanh lá là niềm tin. Bánh xe 24 nan ở giữa lấy từ cột đá của vua Ashoka, hơn 2.000 năm tuổi. Lá cờ được may bằng vải khadi dệt tay và được thông qua ngày 22 tháng 7 năm 1947, vài tuần trước ngày độc lập.',
+ 'Saffron is courage, white is peace, green is faith. The 24-spoke wheel comes from emperor Ashoka\'s stone pillar, over 2,000 years old. The flag is made of hand-spun khadi cloth and was adopted on 22 July 1947, weeks before independence.');
+F('th','as',2,'stripes','Thái Lan','Thailand','Xứ sở chùa vàng và voi, thủ đô Bangkok.','Land of golden temples and elephants; capital Bangkok.',
+ 'Tên lá cờ là "Trairong", nghĩa là ba màu: đỏ là đất nước, trắng là tôn giáo, xanh dương là hoàng gia. Năm 1917 vua Vajiravudh đổi từ lá cờ voi trắng sang lá cờ này. Chuyện kể rằng ông thấy cờ voi bị treo ngược trong một trận lụt nên quyết định thay.',
+ '"Trairong" means "tricolour": red is the nation, white is religion, blue is the monarchy. In 1917 King Vajiravudh replaced the old white-elephant flag with it. The story goes that he saw the elephant flag hung upside-down during a flood.');
+F('kh','as',3,'tri-h','Campuchia','Cambodia','Có đền Angkor Wat nổi tiếng, thủ đô Phnom Penh.','Has the famous Angkor Wat; capital Phnom Penh.',
+ 'Đây là lá cờ quốc gia duy nhất trên thế giới có hình một công trình kiến trúc: đền Angkor Wat, xây từ thế kỷ 12. Hình ngôi đền xuất hiện trên cờ từ giữa thế kỷ 19, và mẫu cờ hiện nay được khôi phục năm 1993.',
+ 'It is the only national flag in the world that shows a building: Angkor Wat, built in the 12th century. The temple has appeared on Cambodian flags since the mid-1800s, and the present design was restored in 1993.');
+F('ph','as',2,'tri-ang','Philippines','Philippines','Quốc đảo có hơn 7.000 hòn đảo, thủ đô Manila.','An island nation of over 7,000 islands; capital Manila.',
+ 'Mặt trời tám tia là tám tỉnh đầu tiên nổi dậy chống thực dân Tây Ban Nha; ba ngôi sao là Luzon, Visayas và Mindanao. Lá cờ được may ở Hồng Kông năm 1898. Khi có chiến tranh, người ta treo cờ ngược, dải đỏ nằm trên. Rất ít nước làm như vậy!',
+ 'The eight-ray sun is the first eight provinces that rose against Spain; the three stars are Luzon, Visayas and Mindanao. The flag was sewn in Hong Kong in 1898. In wartime it is flown upside-down with red on top, which almost no other country does!');
+F('my','as',2,'stripes','Malaysia','Malaysia','Có tòa tháp đôi Petronas ở Kuala Lumpur.','Has the Petronas Twin Towers in Kuala Lumpur.',
+ 'Tên "Jalur Gemilang" nghĩa là "những sọc vinh quang". 14 sọc đỏ - trắng và ngôi sao 14 cánh tượng trưng cho 13 bang và lãnh thổ liên bang. Trăng lưỡi liềm là biểu tượng của đạo Hồi. Lá cờ có hình dạng như bây giờ từ năm 1963.',
+ '"Jalur Gemilang" means "Stripes of Glory". The 14 stripes and the 14-point star stand for the 13 states and the federal territories. The crescent is a symbol of Islam. The flag has looked like this since 1963.');
+F('sg','as',2,'cres','Singapore','Singapore','Quốc đảo nhỏ với tượng sư tử biển Merlion.','A tiny island city-state with the Merlion statue.',
+ 'Nửa trên màu đỏ là tình anh em, nửa dưới màu trắng là sự trong sáng. Trăng lưỡi liềm là một đất nước trẻ đang lớn lên, còn năm ngôi sao là năm lý tưởng: dân chủ, hòa bình, tiến bộ, công bằng và bình đẳng. Cờ được chọn năm 1959 khi Singapore tự trị.',
+ 'Red is brotherhood and white is purity. The crescent is a young nation rising, and the five stars are democracy, peace, progress, justice and equality. It was chosen in 1959 when Singapore became self-governing.');
+F('id','as',2,'bi-h','Indonesia','Indonesia','Có đảo Bali và loài rồng Komodo.','Land of Bali and the Komodo dragons.',
+ 'Cờ "Merah Putih" (Đỏ - Trắng): đỏ là lòng dũng cảm, trắng là sự trong sạch; hai màu này có từ thời vương quốc Majapahit cách đây hàng trăm năm. Lá cờ được kéo lên ngày độc lập 17 tháng 8 năm 1945. Nó gần giống cờ Monaco, còn cờ Ba Lan chính là bản lật ngược của nó.',
+ '"Merah Putih" (Red-White): red is courage and white is purity, colours that go back to the medieval Majapahit kingdom. It was raised on Independence Day, 17 August 1945. It is almost the same as Monaco\'s flag, and Poland\'s flag is its upside-down twin.');
+F('np','as',3,'odd','Nepal','Nepal','Nằm dưới chân đỉnh Everest.','Home of Mount Everest.',
+ 'Đây là lá cờ quốc gia duy nhất không phải hình chữ nhật: hai tam giác chồng lên nhau như hai đỉnh Himalaya. Mặt trăng và mặt trời nghĩa là đất nước sẽ tồn tại lâu như chúng. Hiến pháp Nepal còn hướng dẫn từng bước cách vẽ lá cờ bằng thước và compa!',
+ 'It is the only national flag that is not a rectangle: two stacked triangles like two Himalayan peaks. The moon and sun mean Nepal will last as long as they do. Nepal\'s constitution even gives step-by-step instructions to draw it with a ruler and compass!');
+F('bd','as',3,'disc','Bangladesh','Bangladesh','Rừng ngập mặn Sundarbans có hổ Bengal.','The Sundarbans mangrove forest, home of Bengal tigers.',
+ 'Hình tròn đỏ là mặt trời mọc và máu của những người đã hy sinh trong cuộc chiến giành độc lập năm 1971. Hình tròn được đặt lệch về phía cán cờ một chút, để khi lá cờ bay trong gió, nhìn như đang ở chính giữa. Cờ hiện nay dùng từ năm 1972.',
+ 'The red disc is the rising sun and the blood of those who fought in the 1971 war of independence. It sits a little towards the flagpole so that it looks centred when the flag flutters. The current flag dates from 1972.');
+F('tr','as',2,'cres','Thổ Nhĩ Kỳ','Turkey','Thành phố Istanbul nằm trên hai châu lục.','Its city Istanbul sits on two continents.',
+ 'Trăng lưỡi liềm và ngôi sao trắng trên nền đỏ. Truyền thuyết kể rằng sau một trận đánh đẫm máu, ánh trăng và một vì sao phản chiếu trong vũng máu, và người ta đưa hình ảnh ấy lên cờ. Luật quốc kỳ hiện nay có từ năm 1936.',
+ 'A white crescent and star on red. A legend says that after a bloody battle the moon and a star were reflected in a pool of blood, and the picture went onto the flag. The present flag law dates from 1936.');
+
+/* ---- Europe ---- */
+F('gb','eu',1,'union','Vương quốc Anh','United Kingdom','Có tháp đồng hồ Big Ben ở London.','Home of Big Ben in London.',
+ 'Cờ "Union Jack" ghép chữ thập thánh George (nước Anh), thánh Andrew (Scotland, từ năm 1606) và thánh Patrick (Ireland, từ năm 1801). Xứ Wales không có trên cờ vì đã thuộc về nước Anh từ trước. Lá cờ có chiều đúng; treo ngược bị coi là tín hiệu cầu cứu!',
+ 'The "Union Jack" combines the crosses of St George (England), St Andrew (Scotland, from 1606) and St Patrick (Ireland, from 1801). Wales is not on it because it was already joined to England. The flag has a right way up; flying it upside-down is a distress signal!');
+F('fr','eu',1,'tri-v','Pháp','France','Có tháp Eiffel và bánh sừng bò.','The Eiffel Tower and croissants.',
+ 'Xanh và đỏ là màu của thành phố Paris, còn trắng là màu của nhà vua. Lá cờ ba sắc ra đời trong Cách mạng Pháp và được chọn làm quốc kỳ ngày 15 tháng 2 năm 1794. Nhiều nước, như Ý và Ireland, đã lấy cảm hứng từ nó.',
+ 'Blue and red are the colours of Paris, and white was the king\'s colour. The tricolour was born in the French Revolution and became the national flag on 15 February 1794. Many countries, such as Italy and Ireland, took inspiration from it.');
+F('de','eu',1,'tri-h','Đức','Germany','Bức tường Berlin từng chia cắt thủ đô của nước này.','The Berlin Wall once split its capital in two.',
+ 'Đen - đỏ - vàng bắt nguồn từ bộ quân phục của đội quân tình nguyện Lützow chống Napoleon năm 1813: áo đen, viền đỏ, cúc vàng. Cờ được dùng chính thức năm 1848, rồi năm 1919. Sau chiến tranh cả hai miền Đức đều dùng, Đông Đức thêm huy hiệu búa và compa. Từ năm 1990 nước Đức thống nhất vẫn giữ lá cờ trơn.',
+ 'Black-red-gold comes from the uniforms of the Lützow volunteers fighting Napoleon in 1813: black coats, red trim, gold buttons. It was official in 1848, and again in 1919. After the war both Germanys used it, East Germany adding a hammer and compass. Since 1990 united Germany has kept the plain version.');
+F('it','eu',1,'tri-v','Ý','Italy','Hình chiếc ủng, nơi sinh ra món pizza.','Shaped like a boot, the birthplace of pizza.',
+ 'Lá cờ xanh - trắng - đỏ ra đời ngày 7 tháng 1 năm 1797 ở thành phố Reggio Emilia, mô phỏng cờ ba sắc của Pháp. Ngày 7 tháng 1 hằng năm là "Ngày Quốc kỳ" của nước Ý. Màu xanh lá được gọi là màu của hy vọng.',
+ 'The green-white-red flag was born on 7 January 1797 in the city of Reggio Emilia, modelled on the French tricolour. Every 7 January is Italy\'s "Tricolour Day". Green is said to be the colour of hope.');
+F('es','eu',1,'tri-h','Tây Ban Nha','Spain','Điệu nhảy flamenco, thủ đô Madrid.','Flamenco dancing; capital Madrid.',
+ 'Vua Charles III chọn đỏ - vàng - đỏ cho tàu chiến năm 1785, vì khi đó nhiều nước châu Âu dùng cờ trắng rất dễ nhầm trên biển. Huy hiệu bên trái có hai cột Hercules với khẩu hiệu "Plus Ultra", nghĩa là "còn xa hơn nữa".',
+ 'King Charles III chose red-yellow-red for his warships in 1785, because many European navies flew white flags that were easy to confuse at sea. The crest has the two Pillars of Hercules with the motto "Plus Ultra", meaning "further beyond".');
+F('nl','eu',2,'tri-h','Hà Lan','Netherlands','Xứ sở hoa tulip, cối xay gió và xe đạp.','Tulips, windmills and bicycles.',
+ 'Ban đầu cờ Hà Lan là cam - trắng - xanh (cờ của Hoàng thân Oranje), sau đó màu cam đổi thành đỏ. Khi Sa hoàng Peter Đại đế thăm Hà Lan năm 1697, ông rất thích và lấy ý tưởng cho lá cờ trắng - xanh - đỏ của nước Nga. Năm 1937 cờ đỏ - trắng - xanh mới được chính thức hóa.',
+ 'The Dutch flag was first orange-white-blue (the Prince of Orange\'s colours); later the orange became red. When Tsar Peter the Great visited Holland in 1697 he loved it and used it as the model for Russia\'s white-blue-red flag. The red-white-blue version only became official in 1937.');
+F('be','eu',2,'tri-v','Bỉ','Belgium','Nổi tiếng với sô-cô-la và khoai tây chiên.','Famous for chocolate and fries.',
+ 'Đen - vàng - đỏ lấy từ huy hiệu của công quốc Brabant: sư tử vàng trên nền đen có móng đỏ. Lá cờ ra đời trong cuộc cách mạng năm 1830, khi nước Bỉ tách khỏi Hà Lan và trở thành một quốc gia độc lập.',
+ 'Black-yellow-red comes from the arms of the Duchy of Brabant: a golden lion with red claws on black. The flag was born in the 1830 revolution, when Belgium broke away from the Netherlands and became an independent country.');
+F('ch','eu',2,'sq','Thụy Sĩ','Switzerland','Dãy núi Alps, đồng hồ và sô-cô-la.','The Alps, watches and chocolate.',
+ 'Đây là lá cờ hiếm hoi hình vuông: chỉ Thụy Sĩ và Vatican có cờ vuông. Chữ thập trắng trên nền đỏ. Biểu tượng Chữ thập đỏ quốc tế là bản đổi màu của lá cờ này, để vinh danh ông Henri Dunant, người Thụy Sĩ sáng lập Chữ thập đỏ.',
+ 'This is a rare square flag: only Switzerland and the Vatican have one. A white cross on red. The Red Cross emblem is this flag with its colours swapped, in honour of the Swiss Henri Dunant, who founded the Red Cross.');
+F('at','eu',2,'tri-h','Áo','Austria','Quê hương nhà soạn nhạc Mozart, thủ đô Vienna.','Mozart\'s homeland; capital Vienna.',
+ 'Truyền thuyết kể rằng năm 1191, trong cuộc vây thành Acre, công tước Leopold V cởi thắt lưng ra và thấy chiếc áo trắng của mình nhuốm máu, chỉ còn một dải trắng nơi thắt lưng. Từ đó có lá cờ đỏ - trắng - đỏ, một trong những lá cờ có lịch sử lâu đời nhất.',
+ 'Legend says that in 1191, during the siege of Acre, Duke Leopold V took off his belt and found his white coat soaked in blood, except for one white stripe where the belt had been. That is how the red-white-red flag began, one of the oldest flags in the world.');
+F('dk','eu',2,'nordic','Đan Mạch','Denmark','Hãng đồ chơi LEGO và tượng Nàng tiên cá.','Home of LEGO and the Little Mermaid statue.',
+ 'Dannebrog ("Lá cờ của người Đan Mạch") là lá cờ quốc gia cổ nhất còn được dùng liên tục. Truyền thuyết kể rằng ngày 15 tháng 6 năm 1219, trong một trận đánh ở Estonia, quân Đan Mạch sắp thua thì một lá cờ đỏ chữ thập trắng rơi từ trời xuống, và họ thắng trận! Các nước Bắc Âu khác sau này đều dùng kiểu chữ thập ấy.',
+ 'The Dannebrog ("Danish cloth") is the oldest national flag still in continuous use. Legend says that on 15 June 1219, in a battle in Estonia, the Danes were losing when a red flag with a white cross fell from the sky, and they won! The other Nordic countries later copied the cross.');
+F('se','eu',2,'nordic','Thụy Điển','Sweden','Hãng đồ nội thất IKEA và giải Nobel.','Home of IKEA and the Nobel Prize.',
+ 'Màu xanh và vàng lấy từ huy hiệu hoàng gia Thụy Điển: ba chiếc vương miện vàng trên nền xanh. Chữ thập lệch về phía cán cờ là kiểu chữ thập Bắc Âu, học theo cờ Đan Mạch. Ngày 6 tháng 6 là Quốc khánh, cũng là Ngày Quốc kỳ.',
+ 'Blue and yellow come from Sweden\'s royal arms: three gold crowns on blue. The off-centre cross is the Nordic cross, copied from Denmark. 6 June is both National Day and Flag Day.');
+F('no','eu',2,'nordic','Na Uy','Norway','Vịnh hẹp fjord và ánh cực quang.','Fjords and the northern lights.',
+ 'Na Uy lấy cờ Đan Mạch, nước từng cai trị mình, rồi thêm chữ thập xanh nằm trong chữ thập trắng để có đủ ba màu đỏ - trắng - xanh, những màu của tự do giống cờ Pháp. Quốc hội chọn lá cờ này năm 1821 theo đề xuất của ông Fredrik Meltzer.',
+ 'Norway took the flag of Denmark, which had ruled it, and added a blue cross inside the white one, giving red, white and blue, the colours of liberty like on the French flag. Parliament chose it in 1821 on Fredrik Meltzer\'s proposal.');
+F('fi','eu',2,'nordic','Phần Lan','Finland','Quê hương ông già Noel và nhà xông hơi sauna.','Land of Santa\'s Lapland and saunas.',
+ 'Màu xanh dương là hàng nghìn hồ nước, màu trắng là tuyết mùa đông của xứ sở này. Phần Lan tuyên bố độc lập khỏi Nga ngày 6 tháng 12 năm 1917, và lá cờ chữ thập xanh trên nền trắng được chọn chính thức năm 1918.',
+ 'Blue is for the thousands of lakes and white is for the winter snow. Finland declared independence from Russia on 6 December 1917, and the blue-cross-on-white flag was officially adopted in 1918.');
+F('is','eu',3,'nordic','Iceland','Iceland','Hòn đảo của băng và núi lửa, có suối nước nóng.','An island of ice and volcanoes, with hot springs.',
+ 'Xanh là Bắc Đại Tây Dương, trắng là băng tuyết, đỏ là lửa của các ngọn núi lửa: ba thứ làm nên hòn đảo này. Lá cờ trở thành quốc kỳ khi Iceland tuyên bố thành nước cộng hòa ngày 17 tháng 6 năm 1944.',
+ 'Blue is the North Atlantic, white is ice and snow, red is the fire of the volcanoes: the three things that make the island. It became the national flag when Iceland became a republic on 17 June 1944.');
+F('ie','eu',2,'tri-v','Ireland','Ireland','Hòn đảo ngọc lục bảo, lễ hội thánh Patrick.','The Emerald Isle and St Patrick\'s Day.',
+ 'Xanh lá của người Công giáo, cam của người Tin lành, và dải trắng ở giữa là mong ước hòa bình giữa họ. Năm 1848, nhà cách mạng Thomas Francis Meagher nhận lá cờ này từ những phụ nữ Pháp. Cờ Ireland là bản đảo ngược của cờ Bờ Biển Ngà!',
+ 'Green for Catholics, orange for Protestants, and the white between them is a wish for peace. In 1848 the revolutionary Thomas Francis Meagher was given this flag by French women. Ireland\'s flag is the mirror image of the flag of Ivory Coast!');
+F('gr','eu',2,'stripes','Hy Lạp','Greece','Cái nôi của Thế vận hội cổ đại, thủ đô Athens.','Birthplace of the ancient Olympics; capital Athens.',
+ 'Chín sọc ngang là chín âm tiết của khẩu hiệu "Ελευθερία ή Θάνατος" ("Tự do hay là chết") trong cuộc chiến giành độc lập. Chữ thập trắng là đạo Chính thống, màu xanh là biển và bầu trời Hy Lạp. Lá cờ được thông qua lần đầu năm 1822.',
+ 'The nine stripes are the nine syllables of the motto "Ελευθερία ή Θάνατος" ("Freedom or Death") from the war of independence. The white cross is the Orthodox faith, and blue is the Greek sea and sky. It was first adopted in 1822.');
+F('pl','eu',2,'bi-h','Ba Lan','Poland','Thủ đô Warsaw, món bánh bao pierogi.','Capital Warsaw; pierogi dumplings.',
+ 'Trắng - đỏ lấy từ huy hiệu: đại bàng trắng trên nền đỏ. Truyền thuyết kể ba anh em Lech, Czech và Rus đi tìm nơi định cư; Lech thấy tổ đại bàng trắng trong ánh hoàng hôn đỏ rực và lập nên thành phố đầu tiên của Ba Lan. Cờ chính thức từ năm 1919.',
+ 'White and red come from the coat of arms: a white eagle on red. Legend says three brothers, Lech, Czech and Rus, went looking for a home; Lech saw a white eagle\'s nest against the red sunset and founded Poland\'s first city. The flag became official in 1919.');
+F('ua','eu',2,'bi-h','Ukraine','Ukraine','Thủ đô Kyiv, "vựa lúa mì của châu Âu".','Capital Kyiv, "the breadbasket of Europe".',
+ 'Màu xanh là bầu trời, màu vàng là cánh đồng lúa mì chín. Hai màu này đã xuất hiện từ năm 1848 ở thành phố Lviv, được chọn làm quốc kỳ năm 1918 và được khôi phục năm 1992.',
+ 'Blue is the sky and yellow is a field of ripe wheat. These colours appeared in 1848 in the city of Lviv, were chosen as the national flag in 1918 and were restored in 1992.');
+F('ru','eu',1,'tri-h','Nga','Russia','Nước rộng nhất thế giới, có Quảng trường Đỏ.','The biggest country in the world, with Red Square.',
+ 'Cờ trắng - xanh - đỏ được Sa hoàng Peter Đại đế chọn vào cuối thế kỷ 17, học theo cờ Hà Lan. Sau Cách mạng 1917 nước Nga dùng cờ đỏ Liên Xô, và lá cờ ba sắc được khôi phục vào tháng 8 năm 1991.',
+ 'The white-blue-red flag was chosen by Tsar Peter the Great in the late 1600s, modelled on the Dutch flag. After the 1917 revolution Russia used the red Soviet flag, and the tricolour was restored in August 1991.');
+F('cz','eu',3,'tri-ang','Cộng hòa Séc','Czech Republic','Thủ đô Prague, thành phố của hàng trăm tháp chuông.','Capital Prague, the city of a hundred spires.',
+ 'Trắng - đỏ là màu của xứ Bohemia từ hàng trăm năm trước. Năm 1920, nước Tiệp Khắc thêm tam giác xanh để lá cờ không bị nhầm với cờ Ba Lan. Khi hai nước Séc và Slovakia tách ra năm 1993, người Séc vẫn giữ nguyên lá cờ này.',
+ 'White and red were the colours of Bohemia for centuries. In 1920 Czechoslovakia added the blue triangle so the flag would not be mistaken for Poland\'s. When the Czech Republic and Slovakia split in 1993, the Czechs kept this flag.');
+F('ro','eu',3,'tri-v','Romania','Romania','Truyền thuyết về bá tước Dracula.','The legend of Count Dracula.',
+ 'Xanh - vàng - đỏ có từ cuộc cách mạng năm 1848. Cờ Romania gần như song sinh với cờ Chad (Chad dùng màu xanh đậm hơn một chút)! Năm 1989, người dân Romania cắt bỏ huy hiệu cộng sản ở giữa lá cờ, tạo ra lá cờ không huy hiệu như ngày nay.',
+ 'Blue-yellow-red dates from the 1848 revolution. Romania\'s flag is almost a twin of Chad\'s (Chad uses a slightly darker blue)! In 1989 Romanians cut the communist emblem out of the middle of their flags, which gave the plain flag of today.');
+F('va','eu',3,'sq','Vatican','Vatican City','Quốc gia nhỏ nhất thế giới, nằm giữa thành Rome.','The smallest country in the world, inside Rome.',
+ 'Vatican là nước nhỏ nhất thế giới và là một trong hai nước có cờ hình vuông. Vàng và trắng là màu của Giáo hoàng; hai chiếc chìa khóa chéo là chìa khóa của thánh Phêrô, mở cửa thiên đường. Lá cờ ra đời năm 1929 sau Hiệp ước Lateran.',
+ 'Vatican City is the smallest country in the world and one of only two with a square flag. Gold and white are the Pope\'s colours; the crossed keys are St Peter\'s keys to heaven. The flag was created in 1929 after the Lateran Treaty.');
+
+/* ---- Americas ---- */
+F('us','am',1,'stripes','Hoa Kỳ','United States','Có tượng Nữ thần Tự do và công viên Disneyland.','The Statue of Liberty and Disneyland.',
+ '13 sọc là 13 thuộc địa đầu tiên, 50 ngôi sao là 50 bang. Cờ đã đổi 27 lần. Bản 50 sao dùng từ ngày 4 tháng 7 năm 1960, do cậu học sinh 17 tuổi Robert Heft thiết kế cho bài tập ở trường năm 1958. Thầy giáo chỉ cho điểm B-, nhưng khi lá cờ được chọn thì thầy đổi thành điểm A! Năm 1969, phi hành gia Apollo 11 cắm lá cờ này lên Mặt Trăng.',
+ 'The 13 stripes are the first 13 colonies and the 50 stars are the 50 states. The flag has changed 27 times. The 50-star version has flown since 4 July 1960 and was designed by Robert Heft, a 17-year-old, for a school project in 1958. His teacher gave it a B-, but when the flag was chosen he changed the mark to an A! In 1969 the Apollo 11 astronauts planted this flag on the Moon.');
+F('ca','am',1,'tri-v','Canada','Canada','Có siro lá phong và môn khúc côn cầu trên băng.','Maple syrup and ice hockey.',
+ 'Lá cờ lá phong ra đời ngày 15 tháng 2 năm 1965, sau nhiều tháng tranh luận gọi là "Great Flag Debate", thay cho lá cờ cũ có hình Union Jack. Chiếc lá phong có 11 đỉnh. Đỏ và trắng là màu chính thức của Canada từ năm 1921.',
+ 'The maple-leaf flag was born on 15 February 1965 after months of argument called the "Great Flag Debate", replacing the old flag that had the Union Jack in it. The leaf has 11 points. Red and white have been Canada\'s official colours since 1921.');
+F('mx','am',1,'tri-v','Mexico','Mexico','Món bánh taco và kim tự tháp của người Maya.','Tacos and Maya pyramids.',
+ 'Xanh lá là hy vọng, trắng là sự thống nhất, đỏ là máu các anh hùng. Hình đại bàng đậu trên cây xương rồng, ăn thịt rắn, kể lại truyền thuyết của người Aztec: thần linh bảo họ hãy xây thành phố ở nơi thấy cảnh tượng này. Đó là Tenochtitlan năm 1325, nay là Mexico City.',
+ 'Green is hope, white is unity, red is the blood of heroes. The eagle perched on a cactus eating a snake tells an Aztec legend: the gods told them to build their city where they saw this sight. That was Tenochtitlan in 1325, today\'s Mexico City.');
+F('br','am',1,'rhomb','Brazil','Brazil','Điệu samba, bóng đá và rừng Amazon.','Samba, football and the Amazon rainforest.',
+ 'Quả cầu xanh có 27 ngôi sao là bầu trời đêm ở Rio de Janeiro lúc 8 giờ 30 sáng ngày 15 tháng 11 năm 1889, ngày Brazil trở thành nước cộng hòa. 27 sao là 26 bang và một quận liên bang. Dải băng ghi "Ordem e Progresso": Trật tự và Tiến bộ.',
+ 'The blue globe with 27 stars is the night sky over Rio de Janeiro at 8:30 in the morning of 15 November 1889, the day Brazil became a republic. The 27 stars are 26 states and one federal district. The band reads "Ordem e Progresso": Order and Progress.');
+F('ar','am',2,'tri-h','Argentina','Argentina','Quê hương của Messi và điệu nhảy tango.','Home of Messi and the tango.',
+ 'Xanh nhạt và trắng gợi bầu trời và mây. Tướng Manuel Belgrano tạo ra lá cờ này năm 1812 bên bờ sông Paraná. "Mặt trời tháng Năm" có khuôn mặt ở giữa nhắc đến cuộc cách mạng tháng 5 năm 1810.',
+ 'Pale blue and white recall the sky and clouds. General Manuel Belgrano created the flag in 1812 on the banks of the Paraná river. The face on the "Sun of May" recalls the May Revolution of 1810.');
+F('cl','am',3,'star','Chile','Chile','Dải đất dài và hẹp nằm dọc dãy Andes.','A long thin land along the Andes.',
+ 'Ngôi sao đơn độc tượng trưng cho quyền lực nhà nước. Xanh là bầu trời, trắng là tuyết trên dãy Andes, đỏ là máu các anh hùng. Cờ được chọn năm 1817. Nhiều người hay nhầm nó với cờ bang Texas của Mỹ!',
+ 'The lone star stands for the power of the state. Blue is the sky, white is the snow of the Andes and red is the blood of heroes. It was chosen in 1817. Many people mix it up with the flag of Texas!');
+F('co','am',2,'tri-h','Colombia','Colombia','Cà phê nổi tiếng và đá quý ngọc lục bảo.','Famous coffee and emeralds.',
+ 'Vàng là vàng của đất nước, xanh là biển, đỏ là máu các chiến sĩ. Ba màu này do ông Francisco de Miranda chọn. Colombia, Venezuela và Ecuador từng là một nước tên Đại Colombia, nên cả ba lá cờ đều có chung ba màu, như anh em ruột!',
+ 'Yellow is the country\'s gold, blue is the sea and red is the blood of fighters. Francisco de Miranda chose these colours. Colombia, Venezuela and Ecuador were once one country called Gran Colombia, so all three flags share the three colours like siblings!');
+F('pe','am',3,'tri-v','Peru','Peru','Thành cổ Machu Picchu trên núi cao.','Machu Picchu, an Inca city in the mountains.',
+ 'Truyền thuyết kể rằng năm 1820, tướng San Martín thấy một đàn chim hồng hạc bay trên trời, cánh đỏ và ngực trắng, nên ông chọn hai màu đỏ - trắng cho lá cờ. Peru tuyên bố độc lập năm 1821.',
+ 'A legend says that in 1820 General San Martín saw a flock of flamingos with red wings and white chests flying overhead, and chose red and white for the flag. Peru declared independence in 1821.');
+F('cu','am',2,'tri-ang','Cuba','Cuba','Hòn đảo của điệu salsa, xì gà và những chiếc xe cổ.','An island of salsa, cigars and old-fashioned cars.',
+ 'Ba sọc xanh là ba vùng của hòn đảo thời đó, hai sọc trắng là sự trong sạch, tam giác đỏ là máu và ngôi sao đơn độc là tự do. Lá cờ do ông Narciso López thiết kế và được kéo lên lần đầu năm 1850. Cờ Puerto Rico chính là bản đổi màu của lá cờ này.',
+ 'The three blue stripes were the island\'s three regions at the time, the two white stripes are purity, the red triangle is blood and the lone star is freedom. Narciso López designed it and it was first raised in 1850. Puerto Rico\'s flag is this one with the colours swapped.');
+F('jm','am',2,'cross','Jamaica','Jamaica','Nhạc reggae và vận động viên chạy nhanh Usain Bolt.','Reggae music and sprinter Usain Bolt.',
+ 'Jamaica là nước duy nhất có cờ không chứa màu đỏ, trắng hay xanh dương! Đen là khó khăn đã vượt qua, vàng là ánh nắng và tài nguyên, xanh lá là hy vọng và đất đai. Lá cờ được kéo lên khi nước này độc lập ngày 6 tháng 8 năm 1962.',
+ 'Jamaica is the only country whose flag has no red, white or blue! Black is hardships overcome, gold is sunshine and wealth, and green is hope and the land. It was raised when Jamaica became independent on 6 August 1962.');
+F('ht','am',3,'bi-h','Haiti','Haiti','Nước cộng hòa của người da đen đầu tiên trên thế giới.','The world\'s first free Black republic.',
+ 'Năm 1803, nhà lãnh đạo Jean-Jacques Dessalines xé bỏ dải trắng khỏi cờ Pháp, chỉ giữ lại xanh và đỏ, nghĩa là không còn người Pháp cai trị. Chuyện kể bà Catherine Flon đã may lá cờ đầu tiên. Năm 1804 Haiti trở thành nước cộng hòa của người da đen đầu tiên trên thế giới.',
+ 'In 1803 the leader Jean-Jacques Dessalines tore the white stripe out of the French flag, keeping only blue and red: no more French rule. Catherine Flon is said to have sewn the first one. In 1804 Haiti became the world\'s first free Black republic.');
+
+/* ---- Africa ---- */
+F('za','af',2,'tri-ang','Nam Phi','South Africa','Có Nelson Mandela và núi Bàn (Table Mountain).','Home of Nelson Mandela and Table Mountain.',
+ 'Hình chữ Y nằm ngang nghĩa là nhiều con đường khác nhau gặp nhau thành một dân tộc. Lá cờ do ông Frederick Brownell thiết kế gấp rút và được kéo lên lần đầu ngày 27 tháng 4 năm 1994, ngày diễn ra cuộc bầu cử dân chủ đầu tiên. Nó có tới sáu màu!',
+ 'The sideways Y means different roads joining into one nation. Frederick Brownell designed it in a hurry and it was first raised on 27 April 1994, the day of the first democratic elections. It has six colours!');
+F('ng','af',2,'tri-v','Nigeria','Nigeria','Quốc gia đông dân nhất châu Phi.','The most populous country in Africa.',
+ 'Năm 1959 có một cuộc thi thiết kế cờ, và người thắng cuộc là Michael Taiwo Akinkunmi, một sinh viên 23 tuổi đang học ở Anh. Xanh lá là đồng ruộng, trắng là hòa bình. Cờ được kéo lên ngày độc lập 1 tháng 10 năm 1960.',
+ 'In 1959 a flag-design contest was held and the winner was Michael Taiwo Akinkunmi, a 23-year-old student in England. Green is farmland and white is peace. It was raised on Independence Day, 1 October 1960.');
+F('gh','af',3,'tri-h','Ghana','Ghana','Nước đầu tiên ở châu Phi hạ Sahara giành độc lập.','The first sub-Saharan African country to win independence.',
+ 'Ghana giành độc lập ngày 6 tháng 3 năm 1957. Đỏ - vàng - xanh lấy từ cờ Ethiopia và trở thành các màu của nhiều nước châu Phi. Ngôi sao đen là "ngôi sao dẫn đường" của tự do châu Phi. Lá cờ do bà Theodosia Okoh thiết kế.',
+ 'Ghana won independence on 6 March 1957. Red-gold-green was borrowed from Ethiopia and became the colours of many African nations. The black star is the "lodestar" of African freedom. The flag was designed by Theodosia Okoh.');
+F('et','af',3,'tri-h','Ethiopia','Ethiopia','Cái nôi của cà phê và các vận động viên chạy đường dài.','Birthplace of coffee and long-distance runners.',
+ 'Ethiopia là một trong những nước độc lập lâu đời nhất châu Phi, chưa từng bị thực dân hóa lâu dài. Xanh - vàng - đỏ của họ đã truyền cảm hứng cho cờ của Ghana, Senegal, Mali... và được gọi là các màu "Liên Phi". Ngôi sao trong vòng tròn xanh là biểu tượng của hòa bình và sự đa dạng.',
+ 'Ethiopia is one of Africa\'s oldest independent nations and was never colonised for long. Its green-yellow-red inspired the flags of Ghana, Senegal, Mali and more, and these are called the "Pan-African" colours. The star in the blue disc stands for peace and diversity.');
+F('eg','af',2,'tri-h','Ai Cập','Egypt','Kim tự tháp Giza và dòng sông Nile.','The pyramids of Giza and the River Nile.',
+ 'Đỏ - trắng - đen là các màu "Liên Ả Rập". Con chim đại bàng vàng ở giữa gọi là Đại bàng Saladin, theo tên vị anh hùng thế kỷ 12. Lá cờ hiện nay được dùng từ năm 1984.',
+ 'Red-white-black are the "Pan-Arab" colours. The golden bird in the middle is the Eagle of Saladin, named after the 12th-century hero. The present flag has been used since 1984.');
+F('ly','af',3,'cres','Libya','Libya','Phần lớn là sa mạc Sahara, thủ đô Tripoli.','Mostly Sahara desert; capital Tripoli.',
+ 'Từ năm 1977 đến 2011, cờ Libya chỉ là một màu xanh lá trơn, không có hình gì: lá cờ duy nhất như vậy trên thế giới! Sau cuộc cách mạng năm 2011, nước này quay lại lá cờ đỏ - đen - xanh có trăng lưỡi liềm và ngôi sao.',
+ 'From 1977 to 2011 Libya\'s flag was a plain green rectangle with no design at all: the only one like it in the world! After the 2011 revolution the country went back to the red-black-green flag with the crescent and star.');
+F('ke','af',2,'tri-h','Kenya','Kenya','Xứ sở của sa-van, sư tử và cuộc di cư của linh dương.','Safaris, lions and the great wildebeest migration.',
+ 'Chiếc khiên và hai ngọn giáo của người Maasai tượng trưng cho việc bảo vệ tự do. Đen là người dân, đỏ là máu đã đổ, xanh lá là đất đai và trắng là hòa bình. Kenya giành độc lập ngày 12 tháng 12 năm 1963.',
+ 'The Maasai shield and two spears stand for defending freedom. Black is the people, red is the blood shed, green is the land and white is peace. Kenya became independent on 12 December 1963.');
+F('mz','af',3,'tri-ang','Mozambique','Mozambique','Nằm bên bờ Ấn Độ Dương, thủ đô Maputo.','On the Indian Ocean coast; capital Maputo.',
+ 'Mozambique là nước duy nhất có hình một khẩu súng hiện đại trên quốc kỳ: khẩu AK-47, cùng với cuốn sách (học hành) và chiếc cuốc (làm nông). Ngôi sao vàng là tinh thần đoàn kết. Lá cờ này được dùng từ năm 1983.',
+ 'Mozambique is the only country with a modern rifle on its flag: an AK-47, together with a book (education) and a hoe (farming). The yellow star stands for solidarity. This flag has been used since 1983.');
+F('ss','af',3,'tri-ang','Nam Sudan','South Sudan','Quốc gia trẻ nhất thế giới.','The youngest country in the world.',
+ 'Nam Sudan độc lập ngày 9 tháng 7 năm 2011 và là quốc gia mới nhất thế giới. Lá cờ đã được dùng từ năm 2005. Đen là người dân, đỏ là máu, xanh lá là đất đai, trắng là hòa bình, tam giác xanh dương là sông Nile và sao vàng là sự thống nhất.',
+ 'South Sudan became independent on 9 July 2011 and is the newest country in the world. The flag had been in use since 2005. Black is the people, red is blood, green is land, white is peace, the blue triangle is the Nile and the gold star is unity.');
+F('ma','af',3,'star','Ma-rốc','Morocco','Thành phố Marrakech và món trà bạc hà.','Marrakech and mint tea.',
+ 'Màu đỏ đã là màu của vương quốc này từ nhiều thế kỷ. Năm 1915 người ta thêm ngôi sao năm cánh màu xanh lá, gọi là "Ấn Solomon", biểu tượng của sự bảo vệ và thịnh vượng. Năm cánh sao tượng trưng cho năm trụ cột của đạo Hồi.',
+ 'Red has been this kingdom\'s colour for centuries. In 1915 the green five-pointed star was added, known as the "Seal of Solomon", a symbol of protection and prosperity. Its five points stand for the five pillars of Islam.');
+
+/* ---- Oceania ---- */
+F('au','oc',1,'union','Úc','Australia','Chuột túi kangaroo và Nhà hát Con Sò.','Kangaroos and the Sydney Opera House.',
+ 'Union Jack nhớ về quá khứ thuộc Anh. Chòm sao Nam Thập Tự chỉ nhìn thấy ở Nam bán cầu. Ngôi sao Liên bang bảy cánh là các bang và vùng lãnh thổ. Năm 1901 có hơn 32.000 bài dự thi thiết kế cờ, và năm người cùng được chia giải thưởng!',
+ 'The Union Jack recalls the British past. The Southern Cross is a constellation seen only in the southern sky. The seven-point Commonwealth Star is the states and territories. In 1901 over 32,000 designs were entered, and five people shared the prize!');
+F('nz','oc',2,'union','New Zealand','New Zealand','Chim kiwi, đàn cừu và cảnh đẹp của phim "Chúa tể những chiếc nhẫn".','Kiwi birds, sheep and the scenery of "The Lord of the Rings".',
+ 'Bốn ngôi sao đỏ viền trắng là chòm sao Nam Thập Tự. Năm 2015 và 2016, người New Zealand bỏ phiếu hai lần xem có đổi cờ không (mẫu mới có lá dương xỉ bạc), nhưng 56,6% muốn giữ nguyên lá cờ cũ.',
+ 'The four red stars with white edges are the Southern Cross. In 2015 and 2016 New Zealanders voted twice on changing the flag (the new design had a silver fern), but 56.6% chose to keep the old one.');
+
+/* ---- records ---- */
+const REC=[
+ {k:'dk',ic:'🥇',t:L('Lá cờ cổ nhất','Oldest flag'),x:L('Dannebrog của Đan Mạch được dùng liên tục từ hơn 600 năm. Truyền thuyết kể nó rơi từ trời năm 1219.','Denmark\'s Dannebrog has been used continuously for over 600 years. Legend says it fell from the sky in 1219.')},
+ {k:'ss',ic:'🆕',t:L('Lá cờ của nước mới nhất','Newest country\'s flag'),x:L('Nam Sudan độc lập ngày 9/7/2011, là quốc gia trẻ nhất thế giới.','South Sudan became independent on 9 July 2011, the youngest country in the world.')},
+ {k:'np',ic:'🔺',t:L('Lá cờ không phải hình chữ nhật','Not a rectangle'),x:L('Nepal là nước duy nhất có quốc kỳ hình hai tam giác chồng nhau.','Nepal is the only country with a flag of two stacked triangles.')},
+ {k:'ch',ic:'🟥',t:L('Lá cờ hình vuông','Square flags'),x:L('Chỉ có Thụy Sĩ và Vatican có quốc kỳ hình vuông.','Only Switzerland and the Vatican have square national flags.')},
+ {k:'kh',ic:'🛕',t:L('Lá cờ có công trình kiến trúc','A building on the flag'),x:L('Campuchia là nước duy nhất có hình đền Angkor Wat trên cờ.','Cambodia is the only country with a building on its flag: Angkor Wat.')},
+ {k:'jm',ic:'⚫',t:L('Không đỏ, trắng, xanh dương','No red, white or blue'),x:L('Jamaica là nước duy nhất có cờ không dùng ba màu quen thuộc này.','Jamaica is the only country whose flag uses none of these three common colours.')},
+ {k:'ly',ic:'🟩',t:L('Lá cờ chỉ có một màu','A one-colour flag'),x:L('Từ 1977 đến 2011 cờ Libya chỉ là màu xanh lá trơn.','From 1977 to 2011 Libya\'s flag was plain green.')},
+ {k:'mz',ic:'⚠️',t:L('Lá cờ có súng','A rifle on the flag'),x:L('Mozambique có khẩu AK-47 trên quốc kỳ.','Mozambique has an AK-47 on its national flag.')},
+ {k:'ph',ic:'🔄',t:L('Cờ treo ngược lúc chiến tranh','Flown upside-down in war'),x:L('Cờ Philippines được treo với dải đỏ lên trên khi đất nước có chiến tranh.','The Philippine flag is flown with red on top when the country is at war.')},
+ {k:'us',ic:'🌙',t:L('Lá cờ đã lên Mặt Trăng','Flag on the Moon'),x:L('Apollo 11 cắm cờ Mỹ trên Mặt Trăng năm 1969. Cờ có 50 sao, nhiều sao nhất thế giới.','Apollo 11 planted the US flag on the Moon in 1969. It has 50 stars, the most of any flag.')},
+ {k:'my',ic:'🦓',t:L('14 sọc','14 stripes'),x:L('Cờ Malaysia có 14 sọc, một trong những lá cờ nhiều sọc nhất thế giới.','Malaysia\'s flag has 14 stripes, among the most of any flag.')},
+ {k:'ro',ic:'👯',t:L('Cờ sinh đôi','Twin flags'),x:L('Cờ Romania gần giống hệt cờ Chad. Chỉ khác sắc xanh một chút!','Romania\'s flag is almost identical to Chad\'s. Only the shade of blue differs!')},
+ {k:'id',ic:'🔁',t:L('Cờ lật ngược','Upside-down twins'),x:L('Indonesia và Monaco gần như giống nhau; cờ Ba Lan là bản lật ngược của chúng.','Indonesia and Monaco are almost the same; Poland\'s flag is their upside-down version.')},
+ {k:'ie',ic:'🪞',t:L('Cờ soi gương','Mirror flags'),x:L('Cờ Ireland là hình soi gương của cờ Bờ Biển Ngà.','Ireland\'s flag is the mirror image of the Ivory Coast\'s.')},
+ {k:'ht',ic:'✂️',t:L('Lá cờ xé ra từ cờ Pháp','Torn from another flag'),x:L('Năm 1803, người Haiti xé dải trắng khỏi cờ Pháp để làm cờ của mình.','In 1803 Haitians tore the white stripe out of the French flag to make their own.')},
+ {k:'nz',ic:'🗳️',t:L('Người dân bỏ phiếu giữ cờ cũ','Voters kept the old flag'),x:L('Năm 2016, 56,6% người New Zealand chọn giữ nguyên lá cờ cũ.','In 2016, 56.6% of New Zealanders voted to keep their flag.')},
+ {k:'za',ic:'🌈',t:L('Lá cờ nhiều màu','A rainbow flag'),x:L('Cờ Nam Phi có sáu màu, ra đời trong ngày bầu cử dân chủ đầu tiên năm 1994.','South Africa\'s flag has six colours and debuted at the first democratic election in 1994.')}
+];
+window.FLAGDATA={FL,BYK,CN,CE,REC,DR,NR,svg,flagH};
+})();
+</script>
+<script>
+(function(){
+'use strict';
+const {FL,BYK,CN,CE,REC,flagH}=window.FLAGDATA;
+const $=id=>document.getElementById(id);
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+let lang=store.get('flag-lang')==='en'?'en':'vi';
+let lvl=+store.get('flag-lvl')||0;if(!(lvl>=0&&lvl<=2))lvl=0;
+let sndOn=store.get('flag-snd')!=='0';
+let got=new Set();try{got=new Set(JSON.parse(store.get('flag-got')||'[]').filter(k=>BYK[k]))}catch(e){}
+const L=(vi,en)=>({vi,en});const t=o=>o==null?'':typeof o==='string'?o:(o[lang]||o.vi);
+const rnd=Math.random,pick=a=>a[Math.floor(rnd()*a.length)];
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const nm=k=>t(BYK[k].name);
+
+/* ---------- audio ---------- */
+let AC=null,master=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();master=AC.createGain();master.gain.value=sndOn?.6:0;master.connect(AC.destination)}catch(e){AC=null}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function tone(f,d,type,v,delay,f2){const a=ac();if(!a)return;const t0=a.currentTime+(delay||0),o=a.createOscillator(),g=a.createGain();o.type=type||'triangle';o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+d);g.gain.setValueAtTime(v||.15,t0);g.gain.exponentialRampToValueAtTime(.001,t0+d);o.connect(g);g.connect(master);o.start(t0);o.stop(t0+d+.02)}
+const SFX={click(){tone(660,.06,'square',.06)},ok(){[523,659,784,1046].forEach((f,i)=>tone(f,.2,'triangle',.14,i*.08))},bad(){tone(220,.22,'square',.07,0,150)},hint(){tone(880,.12,'sine',.12);tone(1175,.18,'sine',.1,.1)},win(){[523,659,784,659,784,1046,1318].forEach((f,i)=>tone(f,.22,'triangle',.13,i*.12))},page(){tone(440,.08,'sine',.08);tone(587,.1,'sine',.08,.06)}};
+const sfx=n=>{if(sndOn)try{SFX[n]()}catch(e){}};
+function setSnd(on){sndOn=on;store.set('flag-snd',on?'1':'0');if(master)master.gain.value=on?.6:0;['bSnd','bSnd2'].forEach(id=>{$(id).textContent=on?'🔊':'🔇'})}
+
+/* ---------- screens ---------- */
+const SCR=['cover','menu','play','museum','result'];
+function show(id){SCR.forEach(s=>$(s).classList.toggle('hide',s!==id));cur=id;window.scrollTo(0,0)}
+let cur='cover';
+function applyLang(){
+  document.documentElement.lang=lang;
+  document.querySelectorAll('[data-vi]').forEach(e=>{e.innerHTML=e.getAttribute('data-'+lang)});
+  document.querySelectorAll('.lg .vi').forEach(e=>e.classList.toggle('on',lang==='vi'));
+  document.querySelectorAll('.lg .en').forEach(e=>e.classList.toggle('on',lang==='en'));
+  document.title=lang==='vi'?'Thám tử cờ · Flag Detective':'Flag Detective · Thám tử cờ';
+  buildMenu();if(cur==='museum')buildMuseum();
+}
+function buildMenu(){
+  $('mProg').textContent='🏳️ '+t(L('Đã sưu tầm','Collected'))+' '+got.size+'/'+FL.length;
+  const names=[L('🌱 Tân binh','🌱 Rookie'),L('🕵️ Cao thủ','🕵️ Pro'),L('🏆 Nhà vô địch','🏆 Champion')];
+  $('lvBox').innerHTML=names.map((n,i)=>`<button data-l="${i}" class="${i===lvl?'on':''}">${t(n)}</button>`).join('');
+  $('lvBox').querySelectorAll('button').forEach(b=>b.onclick=()=>{lvl=+b.dataset.l;store.set('flag-lvl',lvl);sfx('click');buildMenu()});
+}
+
+/* ---------- question engine ---------- */
+let R=null,Q=null,idleT=null;
+const MAXH=m=>m==='n2f'?3:4;
+function pickKeys(n){
+  const b=[1,2,3].map(d=>shuffle(FL.filter(f=>f.d===d).map(f=>f.k)).map(k=>[k,(got.has(k)?.6:0)+rnd()]).sort((a,b)=>a[1]-b[1]).map(x=>x[0]));
+  const mix=lvl===0?[6,4,0]:lvl===1?[3,4,3]:[2,4,4];
+  let out=[];b.forEach((arr,i)=>{out=out.concat(arr.slice(0,mix[i]))});
+  const rest=shuffle(FL.map(f=>f.k).filter(k=>!out.includes(k)));
+  while(out.length<n)out.push(rest.pop());
+  return shuffle(out).slice(0,n);
+}
+function decoys(k,n){
+  const me=BYK[k],o=FL.filter(f=>f.k!==k);
+  const tiers=lvl===0?[o.filter(f=>f.c!==me.c),o]:lvl===1?[o.filter(f=>f.g===me.g||f.c===me.c),o]:[o.filter(f=>f.g===me.g),o.filter(f=>f.c===me.c),o];
+  const out=[];tiers.forEach(tr=>shuffle(tr.slice()).forEach(f=>{if(out.length<n&&!out.includes(f.k))out.push(f.k)}));
+  return out;
+}
+function startRound(mode){
+  R={mode,i:0,n:10,score:0,streak:0,right:0,fresh:[],keys:pickKeys(10)};
+  show('play');nextQ();
+}
+function nextQ(){
+  if(R.i>=R.n)return endRound();
+  const k=R.keys[R.i++],nch=lvl===2?6:4;
+  Q={k,mode:R.mode,ch:shuffle([k].concat(decoys(k,nch-1))),hu:0,wrong:0,done:false,idle:0,out:new Set(),open:new Set(),extra:0};
+  renderQ();
+}
+function renderQ(){
+  const m=Q.mode,k=Q.k;
+  $('pProg').textContent=t(L('Câu','Q'))+' '+R.i+'/'+R.n;updScore();
+  $('qprompt').innerHTML=m==='n2f'?t(L('Lá cờ nào là của <b>'+nm(k)+'</b>?','Which flag belongs to <b>'+nm(k)+'</b>?')):m==='rev'?t(L('Mở các mảnh ghép, rồi đoán nhé!','Open the tiles, then guess!')):t(L('Đây là cờ của nước nào?','Whose flag is this?'));
+  const fb=$('flagBox');
+  if(m==='n2f'){fb.classList.add('hide');$('bigname').classList.remove('hide');$('bigname').innerHTML=nm(k)+'<small>'+CE[BYK[k].c]+' '+t(CN[BYK[k].c])+'</small>';$('bigname').querySelector('small').classList.add('hide')}
+  else{
+    $('bigname').classList.add('hide');fb.classList.remove('hide');
+    fb.innerHTML=flagH(k,m==='rev'?'':'wave')+(m==='rev'?'<div id="tiles">'+Array.from({length:12},(_,i)=>`<i data-i="${i}">?</i>`).join('')+'</div>':'');
+    if(m==='rev'){
+      shuffle([...Array(12).keys()]).slice(0,2).forEach(i=>Q.open.add(i));
+      fb.querySelectorAll('#tiles i').forEach(e=>{const i=+e.dataset.i;if(Q.open.has(i))e.classList.add('open');e.onclick=()=>{if(Q.done||Q.open.has(i))return;openTile(i,true)}});
+    }
+  }
+  $('bOpen').classList.toggle('hide',m!=='rev');
+  const c=$('choices');c.className='choices'+(Q.ch.length>4?' six':'');
+  c.innerHTML=Q.ch.map((x,i)=>m==='n2f'?`<button class="ch fch" data-k="${x}" aria-label="${nm(x)}">${flagH(x)}</button>`:`<button class="ch" data-k="${x}">${nm(x)}</button>`).join('');
+  c.querySelectorAll('.ch').forEach(b=>b.onclick=()=>choose(b.dataset.k));
+  $('hintList').innerHTML='';updHintBtn();
+  owl(m==='rev'?L('Mỗi mảnh mở thêm sẽ bị trừ điểm. Bí thì bấm <b>💡</b> nhé!','Each extra tile costs points. Stuck? Press <b>💡</b>!'):R.i===1?L('Quan sát thật kỹ màu sắc và hình dạng. Bí thì bấm <b>💡 Gợi ý</b> nhé!','Look closely at the colours and shapes. Stuck? Press <b>💡 Hint</b>!'):pick([L('Cố lên nào!','You can do it!'),L('Nhìn kỹ nhé!','Look carefully!'),L('Thám tử giỏi lắm!','Nice detective work!')]));
+  clearInterval(idleT);idleT=setInterval(tick,1000);
+}
+function owl(o){$('owlT').innerHTML=t(o)}
+function updScore(){$('pScore').textContent='⭐ '+R.score;$('pStreak').textContent=R.streak>=2?'🔥 x'+R.streak:'🔥 0';}
+function updHintBtn(){const b=$('bHint'),mx=MAXH(Q.mode);b.textContent='💡 '+t(L('Gợi ý','Hint'))+' '+Q.hu+'/'+mx;b.disabled=Q.done||Q.hu>=mx;b.classList.remove('nudge')}
+function openTile(i,paid){
+  if(Q.open.has(i))return;Q.open.add(i);if(paid)Q.extra++;sfx('click');
+  const e=document.querySelector('#tiles i[data-i="'+i+'"]');if(e)e.classList.add('open');Q.idle=0;
+}
+function openAny(){
+  if(Q.done||Q.mode!=='rev')return;const left=[...Array(12).keys()].filter(i=>!Q.open.has(i));
+  if(left.length)openTile(pick(left),true);else owl(L('Mở hết rồi! Đoán thôi!','All open! Time to guess!'));
+}
+function tick(){
+  if(cur!=='play'||!Q||Q.done||!$('story').classList.contains('hide'))return;
+  Q.idle++;
+  if(Q.idle===14&&Q.hu<MAXH(Q.mode)){$('bHint').classList.add('nudge');owl(L('Bí rồi à? Bấm <b>💡 Gợi ý</b> nhé, mình sẽ giúp!','Stuck? Press <b>💡 Hint</b> and I will help!'))}
+  if(Q.idle===30&&Q.hu===0){owl(L('Để mình gợi ý nhé!','Let me give you a hint!'));useHint(true)}
+  if(Q.idle===14&&Q.mode==='rev')openAny();
+}
+function useHint(auto){
+  if(Q.done||Q.hu>=MAXH(Q.mode))return;Q.idle=0;
+  const h=['cont','clue','half','letter'][Q.hu++],b=BYK[Q.k];let txt='';
+  if(h==='cont')txt=`${CE[b.c]} ${t(L('Nước này ở','This country is in'))} <b>${t(CN[b.c])}</b>`;
+  else if(h==='clue')txt=`🔎 ${t(b.clue)}`;
+  else if(h==='half'){
+    const wr=Q.ch.filter(x=>x!==Q.k&&!Q.out.has(x)),n=Math.min(wr.length-1,Math.ceil(wr.length*.6));
+    shuffle(wr.slice()).slice(0,Math.max(0,n)).forEach(x=>{Q.out.add(x);const e=document.querySelector('.ch[data-k="'+x+'"]');if(e)e.classList.add('out')});
+    txt=`✂️ ${t(L('Mình đã loại bớt các đáp án sai rồi!','I crossed out some wrong answers!'))}`;
+  }else{
+    const s=nm(Q.k).normalize('NFC'),first=[...s][0],len=[...s.replace(/[\s\-'.]/g,'')].length;
+    txt=`🔤 ${t(L('Tên bắt đầu bằng chữ','The name starts with'))} <b>${first.toUpperCase()}</b> · ${len} ${t(L('chữ cái','letters'))}`;
+  }
+  const s=document.createElement('span');s.className='hc';s.innerHTML=txt;$('hintList').appendChild(s);
+  sfx('hint');owl(auto?L('Mình giúp bạn một gợi ý nè! 💡','Here is a hint for you! 💡'):L('Đây là gợi ý! Lá cờ nhìn quen chưa?','Here is a hint! Does the flag look familiar?'));updHintBtn();
+}
+function choose(k){
+  if(!Q||Q.done||Q.out.has(k))return;Q.idle=0;
+  const btn=document.querySelector('.ch[data-k="'+k+'"]');
+  if(k===Q.k){
+    Q.done=true;clearInterval(idleT);
+    const pts=Math.max(20,100-20*Q.hu-25*Q.wrong-8*Q.extra);
+    R.score+=pts;R.right++;R.streak=Q.wrong===0?R.streak+1:0;
+    const fresh=!got.has(Q.k);if(fresh){got.add(Q.k);store.set('flag-got',JSON.stringify([...got]));R.fresh.push(Q.k)}
+    btn.classList.add('ok');document.querySelectorAll('#tiles i').forEach(e=>e.classList.add('open'));
+    updScore();updHintBtn();sfx('ok');confetti();
+    owl(pick([L(`Chính xác! Đó là <b>${nm(Q.k)}</b>! +${pts}`,`Correct! It is <b>${nm(Q.k)}</b>! +${pts}`),L(`Giỏi quá! <b>${nm(Q.k)}</b>! +${pts}`,`Great! <b>${nm(Q.k)}</b>! +${pts}`)]));
+    setTimeout(()=>openStory(Q.k,{next:true,fresh}),1200);
+  }else{
+    Q.wrong++;Q.out.add(k);R.streak=0;updScore();btn.classList.add('bad','out');sfx('bad');
+    if(Q.mode==='rev'){openAny();openAny()}
+    if(Q.wrong>=2&&Q.hu<MAXH(Q.mode))useHint(true);else owl(L('Chưa đúng, thử lại nhé! Bạn làm được mà.','Not quite, try again! You can do it.'));
+  }
+}
+function confetti(){
+  const em=['🎉','⭐','✨','🎊','🏳️'];
+  for(let i=0;i<26;i++){const s=document.createElement('span');s.className='conf';s.textContent=pick(em);s.style.left=(rnd()*100)+'vw';s.style.animationDelay=(rnd()*.5)+'s';s.style.fontSize=(20+rnd()*20)+'px';document.body.appendChild(s);setTimeout(()=>s.remove(),2400)}
+}
+
+/* ---------- story ---------- */
+let storyOpts=null,stKey=null;
+function openStory(k,o){
+  storyOpts=o||{};stKey=k;const b=BYK[k];
+  $('stFlag').innerHTML=flagH(k,'wave');$('stName').textContent=nm(k);
+  $('stCont').textContent=CE[b.c]+' '+t(CN[b.c]);
+  const nw=$('stNew');nw.classList.toggle('hide',!o.fresh);nw.textContent=o.fresh?'✨ '+t(L('Mới sưu tầm!','New in your album!')):'';
+  const rec=REC.filter(r=>r.k===k);
+  $('stRec').innerHTML=rec.map(r=>`<span class="rec">${r.ic} ${t(r.t)}</span>`).join('');
+  $('stTx').textContent=t(b.story);
+  $('stNext').innerHTML=o.next?t(L('Tiếp','Next'))+' ▶':t(L('Đóng','Close'));
+  $('story').classList.remove('hide');$('story').scrollTop=0;sfx('page');
+}
+function closeStory(){
+  stopVoice();$('story').classList.add('hide');
+  if(storyOpts&&storyOpts.next)nextQ();storyOpts=null;
+}
+let speaking=false;
+function stopVoice(){try{speechSynthesis.cancel()}catch(e){}speaking=false;const b=$('stVoice');if(b)b.firstChild.nodeValue='🔊 '}
+function toggleVoice(){
+  if(speaking){stopVoice();return}
+  try{
+    const k=stKey,u=new SpeechSynthesisUtterance(nm(k)+'. '+t(BYK[k].story));
+    u.lang=lang==='vi'?'vi-VN':'en-US';u.rate=.95;u.onend=()=>stopVoice();speaking=true;$('stVoice').firstChild.nodeValue='⏹ ';speechSynthesis.cancel();speechSynthesis.speak(u);
+  }catch(e){speaking=false}
+}
+
+/* ---------- result ---------- */
+function endRound(){
+  clearInterval(idleT);
+  const pct=R.score/1000,st=pct>=.75?3:pct>=.5?2:1;
+  const key='flag-best-'+R.mode+lvl,prev=+store.get(key)||0,best=Math.max(prev,R.score);if(R.score>prev)store.set(key,R.score);
+  $('rTitle').textContent=t(st===3?L('🏆 Thám tử xuất sắc!','🏆 Super detective!'):st===2?L('👏 Làm tốt lắm!','👏 Well done!'):L('💪 Cố gắng thêm nhé!','💪 Keep going!'));
+  $('rStars').textContent='⭐'.repeat(st)+'☆'.repeat(3-st);
+  $('rScore').innerHTML=t(L(`Điểm: <b>${R.score}</b>/1000 · Đúng ${R.right}/${R.n} · Điểm cao nhất: <b>${best}</b>`,`Score: <b>${R.score}</b>/1000 · Correct ${R.right}/${R.n} · Best: <b>${best}</b>`));
+  $('rNew').innerHTML=R.fresh.length?t(L(`📚 Bạn vừa sưu tầm <b>${R.fresh.length}</b> lá cờ mới! Tổng: ${got.size}/${FL.length}`,`📚 You collected <b>${R.fresh.length}</b> new flags! Total: ${got.size}/${FL.length}`)):t(L(`📚 Đã sưu tầm ${got.size}/${FL.length} lá cờ`,`📚 Collected ${got.size}/${FL.length} flags`));
+  $('rMini').innerHTML=R.fresh.map(k=>flagH(k)).join('');
+  sfx('win');if(st>=2)confetti();show('result');
+}
+
+/* ---------- museum ---------- */
+let muTab='f',muCont='all';
+function buildMuseum(){
+  $('muProg').textContent='🏳️ '+got.size+'/'+FL.length;
+  $('tabF').textContent='🏳️ '+t(L('Các lá cờ','Flags'));$('tabR').textContent='🏅 '+t(L('Kỷ lục','Records'));
+  $('tabF').style.background=muTab==='f'?'#ffc233':'#fff';$('tabR').style.background=muTab==='r'?'#ffc233':'#fff';
+  $('muChips').classList.toggle('hide',muTab!=='f');$('gal').classList.toggle('hide',muTab!=='f');$('recs').classList.toggle('hide',muTab!=='r');
+  const cs=['all','as','eu','am','af','oc'];
+  $('muChips').innerHTML=cs.map(c=>`<button data-c="${c}" class="${c===muCont?'on':''}">${c==='all'?t(L('🌐 Tất cả','🌐 All')):CE[c]+' '+t(CN[c])}</button>`).join('');
+  $('muChips').querySelectorAll('button').forEach(b=>b.onclick=()=>{muCont=b.dataset.c;sfx('click');buildMuseum()});
+  const list=FL.filter(f=>muCont==='all'||f.c===muCont);
+  $('gal').innerHTML=list.map(f=>`<button class="gc" data-k="${f.k}">${got.has(f.k)?'<span class="ck">✓</span>':''}${flagH(f.k)}<div class="nm">${t(f.name)}</div></button>`).join('');
+  $('gal').querySelectorAll('.gc').forEach(b=>b.onclick=()=>openStory(b.dataset.k,{}));
+  $('recs').innerHTML=REC.map(r=>`<button class="rcard" data-k="${r.k}" style="border:4px solid #14213d;font:inherit;color:inherit;cursor:pointer">${flagH(r.k)}<div><b>${r.ic} ${t(r.t)}</b><span>${t(r.x)}</span></div></button>`).join('');
+  $('recs').querySelectorAll('.rcard').forEach(b=>b.onclick=()=>openStory(b.dataset.k,{}));
+}
+
+/* ---------- wiring ---------- */
+$('bPlay').onclick=()=>{ac();sfx('click');buildMenu();show('menu')};
+$('mBack').onclick=()=>{show('cover')};
+['bLang','bLang2'].forEach(id=>$(id).onclick=()=>{lang=lang==='vi'?'en':'vi';store.set('flag-lang',lang);applyLang()});
+['bSnd','bSnd2'].forEach(id=>$(id).onclick=()=>{ac();setSnd(!sndOn)});
+document.querySelectorAll('.mode').forEach(b=>b.onclick=()=>{ac();sfx('click');const m=b.dataset.m;if(m==='museum'){muTab='f';buildMuseum();show('museum')}else startRound(m)});
+$('pBack').onclick=()=>{clearInterval(idleT);Q=null;buildMenu();show('menu')};
+$('bHint').onclick=()=>{ac();useHint(false)};
+$('bOpen').onclick=()=>{ac();openAny()};
+$('stNext').onclick=closeStory;$('stVoice').onclick=toggleVoice;
+$('muBack').onclick=()=>{buildMenu();show('menu')};
+$('tabF').onclick=()=>{muTab='f';buildMuseum()};$('tabR').onclick=()=>{muTab='r';buildMuseum()};
+$('rMenu').onclick=()=>{buildMenu();show('menu')};
+$('rMuseum').onclick=()=>{muTab='f';buildMuseum();show('museum')};
+$('rAgain').onclick=()=>startRound(R.mode);
+addEventListener('keydown',e=>{
+  const k=e.key.toLowerCase();
+  if(!$('story').classList.contains('hide')){if(k==='enter'||k==='escape'||k===' '){e.preventDefault();closeStory()}return}
+  if(cur!=='play'||!Q||Q.done)return;
+  if(k>='1'&&k<='6'){const x=Q.ch[+k-1];if(x)choose(x)}
+  else if(k==='h')useHint(false);else if(k==='o')openAny();
+});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopVoice()});
+
+/* ---------- boot ---------- */
+$('coverFlags').innerHTML=['vn','jp','br','fr','za','au'].map(k=>flagH(k,'wave')).join('');
+setSnd(sndOn);applyLang();
+window.__f={get Q(){return Q},get R(){return R},FL,got,startRound,choose,useHint,openStory,closeStory,openAny,buildMuseum,show,setLvl:v=>{lvl=v},setTab:v=>{muTab=v}};
+})();
+</script>
+</body>
+</html>
