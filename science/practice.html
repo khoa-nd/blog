@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sprout's Science Lab · Grade 2 Practice</title>
+<meta name="description" content="Grade 2 Science practice game: plants, living things, states of matter, mixtures and dissolving.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e4f5ea;--bg2:#cdeefb;--ink:#12372a;--ink2:#3d5f52;--card:#fff;--g:#3dbb6c;--gd:#25904f;--y:#ffd43b;--yd:#e0a800;--o:#ff8a3d;--b:#4dabf7;--bd:#2b86d4;--p:#9775fa;--r:#ff6b6b;--rd:#d94b4b;--pk:#f783ac;--sh:0 5px 0 rgba(18,55,42,.2)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:#e4f5ea}
+html,body{margin:0;min-height:100%}
+body{font-family:"Fredoka","Baloo 2",ui-rounded,"SF Pro Rounded",system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:linear-gradient(180deg,var(--bg2) 0,var(--bg) 340px,var(--bg) 100%) fixed;font-size:18px;line-height:1.35;-webkit-user-select:none;user-select:none;overflow-x:hidden}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+.hide{display:none!important}
+#app{max-width:1000px;margin:0 auto;padding:10px 14px 24px;position:relative}
+h1,h2,h3{margin:0;font-weight:700}
+h2{font-size:22px;margin:22px 4px 10px;display:flex;align-items:center;gap:8px}
+small,.sm{font-size:14px}
+.vi{color:var(--ink2);font-size:.82em;display:block;margin-top:2px;font-weight:500}
+body.novi .vi{display:none}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border-radius:999px;border:3px solid var(--ink);background:var(--y);font-weight:700;font-size:20px;box-shadow:0 5px 0 var(--ink);transition:transform .08s,box-shadow .08s;position:relative;top:0}
+.btn:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed;filter:grayscale(.5)}
+.btn.g{background:var(--g);color:#fff}.btn.b{background:var(--b);color:#fff}.btn.w{background:#fff}.btn.r{background:var(--r);color:#fff}
+.btn.sm{font-size:16px;padding:8px 16px;box-shadow:0 3px 0 var(--ink)}
+.ib{width:44px;height:44px;border-radius:14px;border:3px solid var(--ink);background:#fff;font-size:22px;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 3px 0 var(--ink)}
+.ib:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;border:3px solid var(--ink);background:#fff;font-weight:600;font-size:15px}
+
+/* top bar */
+#top{display:flex;align-items:center;gap:10px;padding:6px 0 10px}
+#top .logo{font-weight:700;font-size:19px;display:flex;align-items:center;gap:6px;cursor:pointer}
+#top .sp{flex:1}
+#xpWrap{display:flex;align-items:center;gap:8px;min-width:0;flex:1;max-width:340px}
+#xpWrap .bar{flex:1;height:18px;border:3px solid var(--ink);border-radius:99px;background:#fff;overflow:hidden;position:relative}
+#xpWrap .bar i{display:block;height:100%;background:linear-gradient(90deg,#4dd88a,#b7e34a);width:0;transition:width .6s}
+#hudSprout{width:40px;flex:none;margin-bottom:-6px}
+.stagename{font-size:13px;font-weight:600;white-space:nowrap}
+
+/* cover */
+#cover{text-align:center;padding:20px 8px}
+#cover .title{font-size:clamp(34px,7vw,60px);line-height:1;margin:6px 0 4px;text-shadow:0 4px 0 #fff}
+#cover .title span{color:var(--gd)}
+#cover .csub{font-size:19px;color:var(--ink2);margin-bottom:12px}
+#covSprout{width:min(300px,70vw);margin:0 auto;display:block;animation:bob 2.6s ease-in-out infinite}
+.nameBox{display:inline-flex;flex-direction:column;gap:6px;background:#fff;border:3px solid var(--ink);border-radius:22px;padding:14px 18px;box-shadow:var(--sh);margin:8px 0 16px}
+.nameBox input{font:inherit;font-size:22px;text-align:center;border:3px solid var(--ink);border-radius:14px;padding:8px 12px;width:min(300px,70vw);background:#f6fffa;color:var(--ink);-webkit-user-select:text;user-select:text}
+.covFoot{margin-top:18px;font-size:14px;color:var(--ink2)}
+@keyframes bob{50%{transform:translateY(-10px) rotate(1.5deg)}}
+
+/* home */
+.hero{display:flex;gap:14px;align-items:center;background:#fff;border:3px solid var(--ink);border-radius:26px;padding:12px 16px;box-shadow:var(--sh);margin-top:8px}
+.hero #heroSprout{width:110px;flex:none}
+.hero .hi{font-size:26px;font-weight:700}
+.hero .bar{height:22px;border:3px solid var(--ink);border-radius:99px;background:#f2fbf5;overflow:hidden;margin:6px 0 4px}
+.hero .bar i{display:block;height:100%;background:linear-gradient(90deg,#4dd88a,#b7e34a);transition:width .6s}
+.hero .stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.lands{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.land{background:#fff;border:3px solid var(--ink);border-radius:24px;padding:12px;text-align:center;box-shadow:var(--sh);position:relative;transition:transform .12s;overflow:hidden;min-height:170px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.land:hover{transform:translateY(-4px) rotate(-.6deg)}.land:active{transform:translateY(2px)}
+.land .band{position:absolute;inset:0 0 auto 0;height:70px;background:var(--c);opacity:.28;border-radius:0 0 50% 50%/0 0 30px 30px}
+.land .num{position:absolute;top:8px;left:10px;width:30px;height:30px;border-radius:50%;background:var(--c);border:3px solid var(--ink);font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;z-index:1}
+.land .em{font-size:50px;line-height:1;margin-top:6px;position:relative;filter:drop-shadow(0 4px 0 rgba(0,0,0,.12))}
+.land b{font-size:19px;position:relative}
+.land .tt{font-size:13px;color:var(--ink2);position:relative}
+.land .st{font-size:22px;letter-spacing:2px;position:relative;margin-top:auto}
+.land .st .off{filter:grayscale(1);opacity:.35}
+.land .bossb{position:absolute;top:8px;right:10px;font-size:22px;z-index:1}
+.land.next::after{content:"👆 Next!";position:absolute;bottom:40px;right:8px;font-size:13px;background:var(--y);border:2px solid var(--ink);border-radius:99px;padding:0 8px;animation:bounce 1s infinite;z-index:2}
+@keyframes bounce{50%{transform:translateY(-5px)}}
+.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.act{background:#fff;border:3px solid var(--ink);border-radius:22px;padding:10px 8px;text-align:center;box-shadow:var(--sh);font-weight:600;display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .12s}
+.act:hover{transform:translateY(-3px)}.act:active{transform:translateY(2px)}
+.act .em{font-size:34px}.act small{font-weight:500;color:var(--ink2);line-height:1.15}
+.act.hot{background:#fff4c2}
+.foot{text-align:center;color:var(--ink2);font-size:13px;margin-top:26px}
+
+/* learn */
+.sheet{background:#fff;border:3px solid var(--ink);border-radius:26px;padding:16px;box-shadow:var(--sh)}
+.sheetHead{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.sheetHead .em{font-size:46px}
+.facts{display:grid;gap:10px;margin:12px 0}
+.fact{display:flex;gap:12px;align-items:flex-start;background:#f3fbf6;border:3px solid var(--ink);border-radius:18px;padding:10px 12px}
+.fact .e{font-size:32px;flex:none;width:44px;text-align:center}
+.fact div b{color:var(--gd)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* play */
+.ptop{display:flex;align-items:center;gap:10px;margin:4px 0 10px}
+#pDots{flex:1;display:flex;gap:5px;flex-wrap:nowrap}
+#pDots i{flex:1;height:14px;border-radius:99px;border:3px solid var(--ink);background:#fff;min-width:8px;transition:background .3s}
+#pDots i.ok{background:var(--g)}#pDots i.no{background:var(--r)}#pDots i.cur{background:var(--y);animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scaleY(1.4)}}
+#pHearts{font-size:22px;white-space:nowrap}
+#boss{display:flex;align-items:center;gap:12px;background:linear-gradient(90deg,#ffe3e3,#fff);border:3px solid var(--ink);border-radius:22px;padding:8px 14px;margin-bottom:12px;box-shadow:var(--sh)}
+#bossFace{font-size:54px;line-height:1;transition:transform .2s}
+#bossFace.hit{animation:shake .5s}
+#boss .hp{height:20px;border:3px solid var(--ink);border-radius:99px;background:#fff;overflow:hidden;margin-top:4px}
+#boss .hp i{display:block;height:100%;background:linear-gradient(90deg,#ff6b6b,#ffa94d);transition:width .5s}
+@keyframes shake{20%{transform:translateX(-10px) rotate(-6deg)}50%{transform:translateX(10px) rotate(6deg)}80%{transform:translateX(-6px)}}
+#qcard{background:#fff;border:3px solid var(--ink);border-radius:26px;padding:16px 18px 18px;box-shadow:var(--sh);position:relative;min-height:200px}
+#qTag{font-size:14px;font-weight:600;color:var(--ink2);display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+#qTag .t{background:var(--c,var(--g));color:#fff;border-radius:99px;padding:1px 10px;border:2px solid var(--ink)}
+#qStem{font-size:23px;font-weight:600;line-height:1.28;display:flex;gap:10px;align-items:flex-start}
+#qStem .sq{flex:1}
+#qStem .spk{flex:none;font-size:20px;width:38px;height:38px;border-radius:12px;border:3px solid var(--ink);background:#e9f7ff;display:flex;align-items:center;justify-content:center}
+#qStem b{color:var(--bd)}
+#qFig{margin:10px 0 4px;text-align:center}
+#qFig svg{max-width:100%;height:auto;max-height:300px}
+#qBody{margin-top:10px}
+#coach{display:flex;gap:10px;align-items:flex-end;margin:14px 0 0;min-height:76px;scroll-margin-bottom:100px}
+#coachFace{width:70px;flex:none}
+#coachBubble{position:relative;background:#fff;border:3px solid var(--ink);border-radius:20px;padding:10px 14px;font-size:17px;flex:1;box-shadow:0 4px 0 rgba(18,55,42,.15)}
+#coachBubble::before{content:"";position:absolute;left:-12px;bottom:16px;width:18px;height:18px;background:inherit;border-left:3px solid var(--ink);border-bottom:3px solid var(--ink);transform:rotate(45deg)}
+#coachBubble.ok{background:#e1f8e9}#coachBubble.no{background:#ffe8e8}#coachBubble.hint{background:#fff6cf}
+#coachBubble .vi{margin-top:4px}
+.pbar{position:sticky;bottom:0;margin:12px -14px 0;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:linear-gradient(0deg,#e4f5ea 75%,rgba(228,245,234,0));display:flex;gap:10px;align-items:center;justify-content:center;z-index:5}
+.pbar .in{max-width:1000px;width:100%;display:flex;gap:10px;align-items:center}
+.pbar .grow{flex:1}
+#bHint small{opacity:.8}
+.cardf{margin-left:4px}
+
+/* answer widgets */
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.opts.c3{grid-template-columns:repeat(3,1fr)}.opts.c1{grid-template-columns:1fr}
+.opt{background:#fff;border:3px solid var(--ink);border-radius:18px;padding:12px 14px;font-size:19px;font-weight:600;text-align:left;display:flex;align-items:center;gap:10px;box-shadow:0 4px 0 rgba(18,55,42,.25);transition:transform .08s,background .15s;min-height:56px}
+.opt .k{flex:none;width:30px;height:30px;border-radius:50%;border:3px solid var(--ink);background:#eef7ff;font-size:15px;display:flex;align-items:center;justify-content:center}
+.opt .oe{font-size:30px;flex:none}
+.opt:hover{background:#f4fff8}.opt:active{transform:translateY(3px)}
+.opt.sel{background:#fff6cf;border-color:var(--ink);box-shadow:0 4px 0 var(--yd);transform:translateY(-2px)}
+.opt.sel .k{background:var(--y)}
+.opt.ok{background:#c9f5d9;animation:pop .4s}.opt.no{background:#ffd5d5;animation:shake .4s}
+.opt.gone{opacity:.28;text-decoration:line-through;pointer-events:none}
+.opt.show{outline:4px dashed var(--g);outline-offset:2px}
+.opt.tf{justify-content:center;font-size:24px;padding:16px}
+@keyframes pop{40%{transform:scale(1.07)}}
+.tray{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;min-height:62px;padding:10px;background:#f3fbf6;border:3px dashed var(--ink2);border-radius:18px;margin-bottom:12px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:3px solid var(--ink);border-radius:16px;padding:8px 14px;font-size:18px;font-weight:600;box-shadow:0 3px 0 rgba(18,55,42,.25);touch-action:none;cursor:grab;position:relative}
+.chip .ce{font-size:26px}
+.chip.sel{background:#fff6cf;box-shadow:0 3px 0 var(--yd);transform:translateY(-3px)}
+.chip.ok{background:#c9f5d9}.chip.no{background:#ffd5d5}
+.chip.ghost{position:fixed;z-index:100;pointer-events:none;opacity:.92;transform:scale(1.1) rotate(-3deg);box-shadow:0 10px 18px rgba(0,0,0,.3)}
+.chip.used{opacity:.3;pointer-events:none}
+.bins{display:grid;gap:12px}
+.bins.n2{grid-template-columns:repeat(2,1fr)}.bins.n3{grid-template-columns:repeat(3,1fr)}
+.bin{border:3px solid var(--ink);border-radius:20px;background:var(--bc,#e8f5ff);padding:8px;min-height:120px;display:flex;flex-direction:column;gap:6px;cursor:pointer;transition:transform .1s,box-shadow .1s}
+.bin.over,.bin.ready{box-shadow:0 0 0 5px var(--y);transform:scale(1.02)}
+.bin h4{margin:0;text-align:center;font-size:18px;display:flex;align-items:center;justify-content:center;gap:6px}
+.bin .in{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-content:flex-start;flex:1}
+.bin .chip{font-size:15px;padding:4px 9px;box-shadow:0 2px 0 rgba(18,55,42,.25)}.bin .chip .ce{font-size:20px}
+.pairs{display:grid;grid-template-columns:1fr 1fr;gap:10px 26px;position:relative}
+.pairs .col{display:grid;gap:10px;align-content:start}
+.pr{border:3px solid var(--ink);border-radius:16px;background:#fff;padding:10px 12px;font-weight:600;font-size:18px;box-shadow:0 3px 0 rgba(18,55,42,.25);display:flex;align-items:center;gap:8px;min-height:52px;position:relative}
+.pr.sel{background:#fff6cf;transform:scale(1.03)}
+.pr.p0{background:#ffe0e0}.pr.p1{background:#dff0ff}.pr.p2{background:#e5ffe0}.pr.p3{background:#f3e5ff}.pr.p4{background:#fff0d0}
+.pr .dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--ink);background:#fff;margin-left:auto;flex:none}
+.pr.ok{outline:4px solid var(--g)}.pr.no{outline:4px solid var(--r)}
+.sent{font-size:23px;line-height:2.1;font-weight:500}
+.gap{display:inline-block;min-width:96px;height:42px;line-height:36px;border:3px dashed var(--ink2);border-radius:12px;background:#f3fbf6;text-align:center;vertical-align:middle;padding:0 8px;margin:0 4px;font-weight:700;color:var(--bd);cursor:pointer}
+.gap.fill{border-style:solid;border-color:var(--ink);background:#fff6cf}
+.gap.ok{background:#c9f5d9}.gap.no{background:#ffd5d5}.gap.ready{box-shadow:0 0 0 4px var(--y)}
+.tfs{display:grid;gap:10px}
+.tfrow{display:flex;gap:10px;align-items:center;background:#f6fffa;border:3px solid var(--ink);border-radius:16px;padding:8px 10px}
+.tfrow .tx{flex:1;font-size:18px;font-weight:600}
+.tfrow .tb{display:flex;gap:6px}
+.tfrow button{border:3px solid var(--ink);border-radius:12px;padding:6px 12px;font-weight:700;background:#fff;box-shadow:0 3px 0 rgba(18,55,42,.25)}
+.tfrow button.sel{background:var(--y)}
+.tfrow.ok{background:#d4f7e0}.tfrow.no{background:#ffdede}
+.tfrow .mk{font-size:22px;width:26px;text-align:center}
+.ordr{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.ordr .chip{flex-direction:column;padding:10px 14px;min-width:120px;text-align:center}
+.ordr .chip .ce{font-size:42px}
+.ordr .chip .no_{position:absolute;top:-10px;left:-10px;width:30px;height:30px;border-radius:50%;background:var(--y);border:3px solid var(--ink);font-size:16px;display:flex;align-items:center;justify-content:center}
+.stagebox{position:relative;border:3px solid var(--ink);border-radius:20px;background:#fff;overflow:hidden}
+.stagebox svg{display:block;width:100%;height:auto}
+.hs{position:absolute;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;border:3px dashed var(--ink);background:rgba(255,255,255,.55);cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;text-align:center;line-height:1;transition:transform .1s}
+.hs.ready{box-shadow:0 0 0 5px var(--y);transform:scale(1.1)}
+.hs.fill{border-style:solid;background:#fff6cf;width:auto;min-width:70px;height:34px;border-radius:12px;padding:0 8px;margin:-17px 0 0 -35px}
+.hs.ok{background:#c9f5d9}.hs.no{background:#ffd5d5}
+.hz{position:absolute;transform:translate(-50%,-50%);font-size:clamp(30px,6.5vw,52px);cursor:pointer;line-height:1;filter:drop-shadow(0 3px 0 rgba(0,0,0,.2));transition:transform .15s}
+.hz:hover{transform:translate(-50%,-50%) scale(1.12)}
+.hz.found::after{content:"⚠️";position:absolute;right:-12px;top:-14px;font-size:22px}
+.hz.found{filter:drop-shadow(0 0 0 #000) drop-shadow(0 0 8px #ff4d4d)}
+.hz.safe{animation:shake .4s}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.tool{background:#fff;border:3px solid var(--ink);border-radius:18px;padding:8px 14px;font-weight:700;font-size:18px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 0 rgba(18,55,42,.25)}
+.tool .te{font-size:30px}
+.tool:active{transform:translateY(3px)}.tool.sel{background:#fff6cf}
+.tool:disabled{opacity:.5}
+.sim{position:relative;border:3px solid var(--ink);border-radius:20px;background:linear-gradient(#f4fbff,#e3f3ff);overflow:hidden;height:210px}
+.bit{position:absolute;font-size:30px;transition:all .8s ease;line-height:1}
+.simtxt{text-align:center;font-weight:600;min-height:30px;margin-top:8px}
+.glassWrap{display:flex;gap:16px;align-items:center;justify-content:center;flex-wrap:wrap}
+.glassWrap svg{width:200px;height:auto;flex:none}
+.shelf{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.sub{background:#fff;border:3px solid var(--ink);border-radius:16px;padding:6px 12px;font-weight:600;display:flex;align-items:center;gap:6px;box-shadow:0 3px 0 rgba(18,55,42,.25);font-size:17px}
+.sub .se{font-size:26px}
+.sub.done{background:#eaf7ff}
+.sub .rs{font-size:13px;font-weight:700;padding:0 6px;border-radius:8px;background:var(--y)}
+.sub .rs.s{background:#b8f0cb}.sub .rs.i{background:#ffd0b0}
+.cht{display:flex;gap:14px;justify-content:center;align-items:flex-end;margin-top:4px}
+.chcol{display:flex;flex-direction:column;align-items:center;gap:6px}
+.chcol .stp{display:flex;gap:4px}
+.chcol .stp button{width:36px;height:34px;border-radius:10px;border:3px solid var(--ink);background:#fff;font-weight:700;box-shadow:0 3px 0 rgba(18,55,42,.25)}
+.chcol.ok b{color:var(--gd)}.chcol.no b{color:var(--rd)}
+
+/* cards */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.fc{border:3px solid var(--ink);border-radius:20px;background:#fff;padding:10px;text-align:center;box-shadow:var(--sh);position:relative;overflow:hidden;min-height:150px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.fc .band{position:absolute;inset:0 0 auto 0;height:58px;background:var(--c);opacity:.35}
+.fc .em{font-size:44px;position:relative;margin-top:4px}
+.fc b{font-size:15px;position:relative;line-height:1.1}
+.fc.lock{background:#e7efe9}.fc.lock .em{filter:grayscale(1) brightness(.5);opacity:.5}
+.fc.lock b{color:var(--ink2)}
+.bigcard{max-width:380px;margin:0 auto;text-align:center;padding:20px 18px}
+.bigcard .em{font-size:90px;line-height:1}
+.bigcard h3{font-size:30px;margin:6px 0}
+.bigcard .df{font-size:19px;font-weight:600}
+.bigcard .exm{background:#f3fbf6;border:3px solid var(--ink);border-radius:16px;padding:8px 12px;margin-top:10px;font-size:16px}
+.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.bdg{border:3px solid var(--ink);border-radius:18px;padding:10px;text-align:center;background:#fff;box-shadow:var(--sh);font-size:14px}
+.bdg .em{font-size:40px}.bdg b{display:block;font-size:15px}
+.bdg.lock{background:#e7efe9;opacity:.7}.bdg.lock .em{filter:grayscale(1)}
+.rep{display:grid;gap:8px;margin-top:8px}
+.rep .rw{display:flex;align-items:center;gap:10px;background:#f6fffa;border:3px solid var(--ink);border-radius:14px;padding:6px 10px}
+.rep .rw .nm{flex:1;font-weight:600;font-size:16px}
+.rep .rw .mt{width:110px;height:14px;border:3px solid var(--ink);border-radius:99px;overflow:hidden;background:#fff}
+.rep .rw .mt i{display:block;height:100%;background:var(--g)}
+.rep .rw .pc{width:44px;text-align:right;font-weight:700;font-size:15px}
+
+/* bench */
+.toys{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.toyc{background:#fff;border:3px solid var(--ink);border-radius:22px;padding:12px;box-shadow:var(--sh);text-align:center;font-weight:600}
+.toyc .em{font-size:44px;display:block}
+.toyc small{display:block;font-weight:500;color:var(--ink2)}
+.toyc:active{transform:translateY(2px)}
+
+/* result */
+#result{text-align:center;padding-top:10px}
+.stars{font-size:64px;letter-spacing:6px;margin:6px 0}
+.stars .off{filter:grayscale(1);opacity:.3}
+.stars span{display:inline-block;animation:starpop .6s both}
+.stars span:nth-child(2){animation-delay:.25s}.stars span:nth-child(3){animation-delay:.5s}
+@keyframes starpop{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.3)}100%{transform:scale(1)}}
+.rbox{background:#fff;border:3px solid var(--ink);border-radius:26px;padding:16px;box-shadow:var(--sh);max-width:560px;margin:10px auto}
+.rline{display:flex;justify-content:space-between;padding:4px 6px;font-weight:600}
+.rline:nth-child(odd){background:#f3fbf6;border-radius:10px}
+.mist{text-align:left;margin-top:10px;font-size:15px}
+.mist .mi{border:3px solid var(--ink);border-radius:14px;padding:8px 10px;margin:6px 0;background:#fff8f8}
+.mist .mi b{color:var(--rd)}
+
+/* modal */
+#modal{position:fixed;inset:0;background:rgba(18,55,42,.55);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto}
+#modal .box{background:#fff;border:4px solid var(--ink);border-radius:28px;padding:18px;max-width:520px;width:100%;box-shadow:0 8px 0 rgba(0,0,0,.25);animation:mpop .35s;max-height:92vh;overflow:auto;text-align:center}
+@keyframes mpop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+.box .tg{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 4px;border-bottom:2px dashed #cfe0d6;text-align:left;font-weight:600}
+.sw{width:64px;height:34px;border-radius:99px;border:3px solid var(--ink);background:#d7e2dc;position:relative;flex:none}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid var(--ink);transition:left .15s}
+.sw.on{background:var(--g)}.sw.on::after{left:32px}
+.conf{position:fixed;top:-30px;z-index:90;pointer-events:none;animation:fall 2.4s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+.float{position:fixed;z-index:80;pointer-events:none;font-weight:700;font-size:28px;color:var(--gd);text-shadow:0 2px 0 #fff,0 -2px 0 #fff,2px 0 0 #fff,-2px 0 0 #fff;animation:flt 1.2s ease-out forwards}
+@keyframes flt{to{transform:translateY(-70px);opacity:0}}
+.sway{animation:sway 3s ease-in-out infinite;transform-origin:50% 100%}
+@keyframes sway{50%{transform:rotate(2deg)}}
+@media (max-width:700px){
+ body{font-size:17px}
+ .lands{grid-template-columns:repeat(2,1fr);gap:10px}
+ .acts{grid-template-columns:repeat(2,1fr)}
+ .opts{gap:8px}.opts.c3{grid-template-columns:repeat(2,1fr)}
+ .opt{font-size:17px;padding:10px;min-height:50px}
+ #qStem{font-size:20px}
+ .hero #heroSprout{width:84px}.hero .hi{font-size:21px}
+ .bins.n3{grid-template-columns:repeat(3,1fr);gap:6px}.bin h4{font-size:14px}.bin{padding:5px;min-height:110px}
+ .pairs{gap:8px 12px}.pr{font-size:15px;padding:8px}
+ .sent{font-size:20px}.gap{min-width:76px}
+ .tfrow{flex-wrap:wrap}
+ #coachFace{width:54px}
+ .stagename{display:none}
+ #top .logo span:last-child{display:none}
+ #xpWrap{max-width:none}
+ .btn{font-size:18px;padding:10px 18px}
+ .toys{grid-template-columns:1fr 1fr}
+}
+
+.toasts{position:fixed;top:74px;left:0;right:0;z-index:95;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
+.toast{background:#fff;border:3px solid var(--ink);border-radius:99px;padding:8px 18px;font-weight:600;box-shadow:0 6px 0 rgba(0,0,0,.2);animation:toast 3.2s both;font-size:17px;max-width:94vw}
+@keyframes toast{0%{transform:translateY(-30px);opacity:0}10%,85%{transform:none;opacity:1}100%{transform:translateY(-20px);opacity:0}}
+.hz.pulse{animation:pulse2 .7s infinite}
+@keyframes pulse2{50%{transform:translate(-50%,-50%) scale(1.35)}}
+.tool.no{background:#ffd5d5}
+#bHint.wig{animation:wig .6s infinite;background:var(--y)}
+@keyframes wig{20%{transform:rotate(-6deg)}60%{transform:rotate(6deg)}}
+#pDots i.dn{background:var(--b)}
+.pbar .btn{white-space:nowrap}
+@media (max-width:700px){#qBody .chip{font-size:16px;padding:6px 10px}.ordr .chip{min-width:96px}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important;transition-duration:.01s!important}}
+</style>
+</head>
+<body>
+<div id="app">
+ <header id="top" class="hide">
+  <div class="logo" id="bHome"><span id="hudSprout"></span><span>Sprout's Lab</span></div>
+  <div class="sp"></div>
+  <div id="xpWrap"><span class="stagename" id="hudStage"></span><div class="bar"><i id="hudBar"></i></div><b id="hudXp" style="font-size:15px;white-space:nowrap"></b></div>
+  <span class="pill" id="hudStreak">🔥 1</span>
+  <button class="ib" id="bSet" aria-label="Settings">⚙️</button>
+ </header>
+
+ <section id="cover">
+  <div id="covSprout"></div>
+  <h1 class="title">Sprout's <span>Science</span> Lab</h1>
+  <div class="csub">Grade 2 · Plants, Materials &amp; Mixtures<span class="vi">Luyện thi Khoa học lớp 2 cùng bạn Mầm Xanh!</span></div>
+  <div class="nameBox">
+   <label for="nameIn" style="font-weight:600">What's your name, scientist?<span class="vi">Tên của nhà khoa học là gì?</span></label>
+   <input id="nameIn" maxlength="14" placeholder="Scientist" autocomplete="off">
+  </div><br>
+  <button class="btn g" id="bStart" style="font-size:26px;padding:14px 40px">▶ Let's go!</button>
+  <div class="covFoot">Made from the teacher's Unit 1 &amp; 2 review pack · 🌱 grow Sprout by learning!</div>
+ </section>
+
+ <section id="home" class="hide">
+  <div class="hero">
+   <div id="heroSprout"></div>
+   <div style="flex:1;min-width:0">
+    <div class="hi" id="heroHi"></div>
+    <div class="sm" id="heroStage"></div>
+    <div class="bar"><i id="heroBar"></i></div>
+    <div class="sm" id="heroNext" style="color:var(--ink2)"></div>
+    <div class="stats" id="heroStats"></div>
+   </div>
+  </div>
+  <h2>🗺️ Choose your quest <span class="vi" style="margin:0">Chọn nhiệm vụ</span></h2>
+  <div class="lands" id="lands"></div>
+  <h2>⭐ More fun <span class="vi" style="margin:0">Chơi thêm</span></h2>
+  <div class="acts" id="acts"></div>
+  <div class="foot">Made for Grade 2 End-of-Semester 1 practice · Units 1 &amp; 2</div>
+ </section>
+
+ <section id="learn" class="hide"></section>
+
+ <section id="play" class="hide">
+  <div class="ptop"><button class="ib" id="pBack" aria-label="Quit">✖</button><div id="pDots"></div><div id="pHearts"></div></div>
+  <div id="boss" class="hide"><div id="bossFace"></div><div style="flex:1"><b id="bossName"></b><div class="hp"><i id="bossHp" style="width:100%"></i></div></div></div>
+  <div id="qcard">
+   <div id="qTag"></div>
+   <div id="qStem"></div>
+   <div id="qFig"></div>
+   <div id="qBody"></div>
+  </div>
+  <div id="coach"><div id="coachFace"></div><div id="coachBubble"></div></div>
+  <div class="pbar"><div class="in">
+   <button class="btn w" id="bHint">💡 Hint <small id="hintLeft"></small></button>
+   <span class="grow"></span>
+   <button class="btn g" id="bCheck">Check ✔</button>
+  </div></div>
+ </section>
+
+ <section id="cards" class="hide"></section>
+ <section id="bench" class="hide"></section>
+ <section id="badges" class="hide"></section>
+ <section id="result" class="hide"></section>
+</div>
+<div class="toasts" id="toasts"></div>
+<div id="modal" class="hide"><div class="box" id="modalBox"></div></div>
+<script>
+'use strict';
+/* =====================  DATA: facts, cards, lands, item banks  ===================== */
+const rnd=Math.random,pick=a=>a[Math.floor(rnd()*a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const sample=(a,n)=>shuffle(a).slice(0,n);
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* facts = the teacher's "REMEMBER" boxes + flashcards, in English with a Vietnamese helper line */
+const FACTS={
+ alive:{i:'🦋',e:'Living things grow, need food and reproduce (make young).',v:'Sinh vật sống thì lớn lên, cần thức ăn và sinh sản (sinh ra con non).'},
+ once:{i:'🪑',e:'ONCE ALIVE means it came from a living thing — like wood, paper, wool, cotton and leather.',v:'"Từng sống" nghĩa là nó đến từ sinh vật sống — như gỗ, giấy, len, vải cotton, da.'},
+ never:{i:'🪨',e:'NEVER ALIVE (also called NOT ALIVE) means it was never alive — like rock, plastic, metal and glass.',v:'"Chưa bao giờ sống" (còn gọi là "không sống") — như đá, nhựa, kim loại, thủy tinh.'},
+ procs:{i:'🧬',e:'The 7 life processes: Movement, Respiration, Sensitivity, Growth, Reproduction, Excretion, Nutrition. Trick: MRS GREN!',v:'7 quá trình sống: Di chuyển, Hô hấp, Cảm nhận, Lớn lên, Sinh sản, Bài tiết, Dinh dưỡng. Mẹo nhớ: MRS GREN!'},
+ move:{i:'🏃',e:'Movement: living things can move their bodies or body parts.',v:'Di chuyển: sinh vật sống có thể cử động cơ thể.'},
+ resp:{i:'🫁',e:'Respiration: living things use oxygen to get energy from their food.',v:'Hô hấp: sinh vật dùng ô-xi để lấy năng lượng từ thức ăn.'},
+ sens:{i:'👂',e:'Sensitivity: living things sense and react to the world — light, sound, touch.',v:'Cảm nhận: sinh vật cảm nhận và phản ứng với thế giới — ánh sáng, âm thanh, chạm.'},
+ growp:{i:'📏',e:'Growth: living things get bigger.',v:'Lớn lên: sinh vật sống ngày càng lớn hơn.'},
+ repro:{i:'🥚',e:'Reproduction: living things make young — babies, eggs or seeds.',v:'Sinh sản: sinh vật tạo ra con non — em bé, trứng hoặc hạt.'},
+ excr:{i:'🚽',e:'Excretion: living things get rid of waste.',v:'Bài tiết: sinh vật loại bỏ chất thải.'},
+ nutr:{i:'🍎',e:'Nutrition: living things need food (and water) to live and grow.',v:'Dinh dưỡng: sinh vật cần thức ăn (và nước) để sống và lớn lên.'},
+ leaf:{i:'🍂',e:'A fallen leaf was alive on the tree. Now it is dead and not growing, so it is "once alive".',v:'Chiếc lá rơi từng sống trên cây. Giờ nó đã chết và không lớn nữa, nên là "từng sống".'},
+ bike:{i:'🚲',e:'A bike moves, but it does not grow, need food or reproduce — so it is not living.',v:'Xe đạp có di chuyển, nhưng nó không lớn, không cần ăn, không sinh sản — nên không sống.'},
+ root:{i:'🥕',e:'Roots take in (absorb) water from the soil and hold the plant in the ground.',v:'Rễ hút nước từ đất và giữ cây đứng vững.'},
+ stem:{i:'🎋',e:'The stem holds the plant up and carries water up to the leaves.',v:'Thân cây giữ cây đứng thẳng và dẫn nước lên lá.'},
+ leafjob:{i:'🍃',e:'Leaves make food for the plant.',v:'Lá làm ra thức ăn cho cây.'},
+ flowerjob:{i:'🌸',e:'Flowers help make seeds.',v:'Hoa giúp tạo ra hạt.'},
+ needs:{i:'☀️',e:'Healthy plants need light, water and the right temperature.',v:'Cây khỏe cần ánh sáng, nước và nhiệt độ phù hợp.'},
+ germ:{i:'🌱',e:'Germination is when a seed starts to grow. Many seeds can germinate without light.',v:'Nảy mầm là khi hạt bắt đầu mọc. Nhiều hạt có thể nảy mầm mà không cần ánh sáng.'},
+ wilt:{i:'🥀',e:'If roots are damaged they cannot absorb enough water, so the plant wilts (droops).',v:'Nếu rễ bị hỏng thì không hút đủ nước, nên cây bị héo.'},
+ evid:{i:'🔎',e:'Tall does not always mean healthy! A short, green, strong plant can be healthier than a tall, pale, weak one.',v:'Cao chưa chắc đã khỏe! Cây thấp, xanh, cứng cáp có thể khỏe hơn cây cao, nhợt nhạt, yếu.'},
+ drysoil:{i:'🏜️',e:'Dry soil means the plant has no water — it needs water. A dark cupboard means no light — it needs light.',v:'Đất khô là cây thiếu nước — cần tưới nước. Tủ tối là thiếu ánh sáng — cần ánh sáng.'},
+ ruler:{i:'📏',e:'Use a RULER to measure length or height. Thermometer = temperature, stopwatch = time, balance = mass.',v:'Dùng THƯỚC để đo chiều dài/chiều cao. Nhiệt kế đo nhiệt độ, đồng hồ bấm giờ đo thời gian, cân đo khối lượng.'},
+ pred:{i:'🔮',e:'A PREDICTION is a guess about what will happen ("I think…").',v:'DỰ ĐOÁN là đoán điều sẽ xảy ra ("Mình nghĩ rằng…").'},
+ obs:{i:'👀',e:'An OBSERVATION is something you see or notice — like "The plant is 5 cm tall".',v:'QUAN SÁT là điều bạn nhìn thấy — ví dụ "Cây cao 5 cm".'},
+ bar:{i:'📊',e:'A BAR CHART uses bars to show results. A taller bar means a bigger number.',v:'BIỂU ĐỒ CỘT dùng các cột để hiện kết quả. Cột càng cao thì số càng lớn.'},
+ fair:{i:'⚖️',e:'A FAIR TEST changes only ONE thing and keeps everything else the same.',v:'THỬ NGHIỆM CÔNG BẰNG chỉ thay đổi MỘT thứ, giữ mọi thứ khác như nhau.'},
+ cm:{i:'🖐️',e:'Centimetres are the same for everyone. Fingers are different sizes, so finger lengths are not fair.',v:'Xăng-ti-mét giống nhau với mọi người. Ngón tay mỗi người một cỡ nên đo bằng ngón tay là không công bằng.'},
+ patt:{i:'🔁',e:'Look for a pattern in the numbers — what happens each time?',v:'Tìm quy luật trong các số — mỗi lần thay đổi thế nào?'},
+ evidence:{i:'📋',e:'Results are evidence. Use them to check if a prediction was right.',v:'Kết quả là bằng chứng. Dùng nó để kiểm tra dự đoán đúng hay sai.'},
+ research:{i:'📚',e:'RESEARCHING means using books and websites to find out facts.',v:'TÌM HIỂU là dùng sách và trang web để tìm thông tin.'},
+ grew:{i:'➖',e:'To find how much it grew: take the first number away from the last number.',v:'Muốn biết cây lớn thêm bao nhiêu: lấy số cuối trừ số đầu.'},
+ solid:{i:'🧊',e:'A SOLID keeps its own shape. It stays the same shape unless bent or twisted.',v:'CHẤT RẮN giữ nguyên hình dạng. Chỉ đổi hình khi bị bẻ hoặc xoắn.'},
+ liquid:{i:'💧',e:'A LIQUID flows and takes the shape of its container.',v:'CHẤT LỎNG chảy được và có hình dạng của vật chứa.'},
+ gas:{i:'🎈',e:'A GAS spreads out to fill its container — it spreads out everywhere.',v:'CHẤT KHÍ lan ra lấp đầy vật chứa — lan ra khắp nơi.'},
+ compress:{i:'🪀',e:'Solids and liquids do not squash (compress) easily. Gases compress more easily.',v:'Chất rắn và chất lỏng khó bị nén. Chất khí dễ bị nén hơn.'},
+ states:{i:'🧪',e:'Solids: ice, rock, wood. Liquids: water, juice, honey, milk, vinegar, shampoo. Gases: air, oxygen, steam, carbon dioxide.',v:'Rắn: đá lạnh, đá, gỗ. Lỏng: nước, nước ép, mật ong, sữa, giấm, dầu gội. Khí: không khí, ô-xi, hơi nước, khí CO₂.'},
+ mix:{i:'🥗',e:'A MIXTURE has two or more materials mixed together — like salt water, soil and salad. Air is a mixture of gases.',v:'HỖN HỢP có hai hay nhiều chất trộn lẫn — như nước muối, đất, salad. Không khí là hỗn hợp các khí.'},
+ notmix:{i:'🥇',e:'Pure gold, oxygen and nitrogen are just ONE material, so they are NOT mixtures.',v:'Vàng nguyên chất, ô-xi, ni-tơ chỉ là MỘT chất nên KHÔNG phải hỗn hợp.'},
+ magnet:{i:'🧲',e:'A MAGNET attracts magnetic materials like iron nails and paper clips — but not rice, plastic or sand.',v:'NAM CHÂM hút vật liệu có từ tính như đinh sắt, kẹp giấy — không hút gạo, nhựa, cát.'},
+ magmetals:{i:'🔩',e:'Not all metals are magnetic! Iron is attracted to a magnet. Aluminium is not.',v:'Không phải kim loại nào cũng bị nam châm hút! Sắt bị hút, nhôm thì không.'},
+ sieve:{i:'🥣',e:'A SIEVE separates by size: small bits fall through the holes, big bits stay in the sieve.',v:'RÂY tách theo kích cỡ: mảnh nhỏ rơi qua lỗ, mảnh to ở lại.'},
+ filter:{i:'🫗',e:'FILTERING separates a solid from a liquid using filter paper and a funnel. The liquid goes through; the solid stays.',v:'LỌC tách chất rắn khỏi chất lỏng bằng giấy lọc và phễu. Chất lỏng đi qua, chất rắn ở lại.'},
+ insolfilter:{i:'🧂',e:'Only insoluble solids can be filtered out. A dissolved solid goes right through the filter paper.',v:'Chỉ chất rắn không tan mới lọc ra được. Chất đã tan sẽ đi qua giấy lọc.'},
+ iron:{i:'🔨',e:'Iron is a metal that is used to make tools.',v:'Sắt là kim loại dùng để làm dụng cụ.'},
+ dissolve:{i:'🍬',e:'DISSOLVE: a solid mixes completely with a liquid and seems to disappear. It is still there!',v:'HÒA TAN: chất rắn trộn hoàn toàn vào chất lỏng và như biến mất. Nhưng nó vẫn còn đó!'},
+ soluble:{i:'🧂',e:'SOLUBLE means it can dissolve in water — like salt, sugar and coffee powder.',v:'TAN ĐƯỢC nghĩa là hòa tan trong nước — như muối, đường, bột cà phê.'},
+ insoluble:{i:'🏖️',e:'INSOLUBLE means it does not dissolve in water — like sand, rocks, wood and metal. You can still see it.',v:'KHÔNG TAN nghĩa là không hòa tan trong nước — như cát, đá, gỗ, kim loại. Vẫn nhìn thấy nó.'},
+ solution:{i:'☕',e:'A SOLUTION is a mixture where a solid has dissolved in a liquid, like sugar water.',v:'DUNG DỊCH là hỗn hợp có chất rắn đã tan trong chất lỏng, như nước đường.'},
+ stillthere:{i:'🫥',e:'When a solid dissolves it is NOT gone forever. It is still there, mixed in the water.',v:'Khi chất rắn tan, nó KHÔNG mất đi. Nó vẫn còn, trộn lẫn trong nước.'},
+ safe:{i:'🥽',e:'Be safe: wear goggles if the teacher says, walk (never run) with equipment, and never taste or eat in the lab.',v:'An toàn: đeo kính nếu cô giáo bảo, đi bộ (không chạy) khi cầm dụng cụ, không nếm hay ăn trong phòng thí nghiệm.'},
+ notaste:{i:'☠️',e:'We never taste science mixtures — they might be harmful (poisonous).',v:'Không bao giờ nếm hỗn hợp thí nghiệm — chúng có thể có hại (độc).'},
+ fairdis:{i:'⚖️',e:'Fair test: change only the amount of water. Keep the amount of salt, the water temperature and the stirring the same.',v:'Thử nghiệm công bằng: chỉ đổi lượng nước. Giữ nguyên lượng muối, nhiệt độ nước và cách khuấy.'}
+};
+
+/* collectible vocabulary cards (the teacher's flashcards + booklet words) */
+const CARDS=[
+ {id:'alive',l:1,i:'🦋',t:'ALIVE',d:'Something that is living and can grow, move and reproduce.',x:'A butterfly, a tree, a fish',v:'Đang sống: biết lớn lên, di chuyển và sinh sản.'},
+ {id:'once',l:1,i:'🪑',t:'ONCE ALIVE',d:'Something that was living before but is not alive now.',x:'Leather, wood, paper',v:'Từng sống: trước đây đã sống nhưng bây giờ không còn.'},
+ {id:'never',l:1,i:'🪨',t:'NEVER ALIVE',d:'Something that has never been alive.',x:'Rock, plastic, metal',v:'Chưa bao giờ sống.'},
+ {id:'procs',l:1,i:'🧬',t:'7 LIFE PROCESSES',d:'Movement, Respiration, Sensitivity, Growth, Reproduction, Excretion, Nutrition.',x:'Remember: MRS GREN',v:'7 quá trình sống: Di chuyển, Hô hấp, Cảm nhận, Lớn lên, Sinh sản, Bài tiết, Dinh dưỡng.'},
+ {id:'root',l:2,i:'🥕',t:'ROOT',d:'The part of the plant that grows underground.',x:'Takes in water from the soil',v:'Rễ: phần cây mọc dưới đất, hút nước.'},
+ {id:'stem',l:2,i:'🎋',t:'STEM',d:'The part of the plant that holds it up.',x:'Carries water up the plant',v:'Thân: giữ cây đứng và dẫn nước lên.'},
+ {id:'leaf',l:2,i:'🍃',t:'LEAF',d:'The green flat part of the plant.',x:'Makes food for the plant',v:'Lá: phần xanh, dẹt, làm ra thức ăn cho cây.'},
+ {id:'flower',l:2,i:'🌸',t:'FLOWER',d:'The colourful part of the plant.',x:'Makes seeds',v:'Hoa: phần nhiều màu sắc, giúp tạo hạt.'},
+ {id:'germ',l:2,i:'🌱',t:'GERMINATION',d:'When a seed starts to grow.',x:'Many seeds can germinate without light',v:'Nảy mầm: khi hạt bắt đầu mọc.'},
+ {id:'pred',l:3,i:'🔮',t:'PREDICTION',d:'A guess about what you think will happen.',x:'"I think the plant will grow taller in sunlight."',v:'Dự đoán: đoán điều sẽ xảy ra.'},
+ {id:'obs',l:3,i:'👀',t:'OBSERVATION',d:'Something you see or notice.',x:'"The plant is 5 cm tall."',v:'Quan sát: điều bạn nhìn thấy.'},
+ {id:'bar',l:3,i:'📊',t:'BAR CHART',d:'A graph that uses bars to show information.',x:'Used to display results from investigations',v:'Biểu đồ cột: dùng các cột để hiện thông tin.'},
+ {id:'fair',l:3,i:'⚖️',t:'FAIR TEST',d:'A test where you change only one thing and keep everything else the same.',x:'Same plant, same water — only the light changes',v:'Thử nghiệm công bằng: chỉ đổi một thứ.'},
+ {id:'research',l:3,i:'📚',t:'RESEARCH',d:'Finding out facts using books and websites.',x:'Looking up what iron is used for',v:'Tìm hiểu: tìm thông tin bằng sách và trang web.'},
+ {id:'solid',l:4,i:'🧊',t:'SOLID',d:'A state of matter that keeps its shape.',x:'Ice, rock, wood',v:'Chất rắn: giữ nguyên hình dạng.'},
+ {id:'liquid',l:4,i:'💧',t:'LIQUID',d:'A state of matter that flows and takes the shape of its container.',x:'Water, juice, oil',v:'Chất lỏng: chảy và có hình của vật chứa.'},
+ {id:'gas',l:4,i:'🎈',t:'GAS',d:'A state of matter that spreads out to fill space.',x:'Air, oxygen, steam',v:'Chất khí: lan ra lấp đầy không gian.'},
+ {id:'mixture',l:5,i:'🥗',t:'MIXTURE',d:'Two or more materials mixed together.',x:'Salt water, soil, salad',v:'Hỗn hợp: hai hay nhiều chất trộn lẫn.'},
+ {id:'magnet',l:5,i:'🧲',t:'MAGNET',d:'It attracts magnetic materials such as iron.',x:'Separates paper clips from beans',v:'Nam châm: hút vật liệu có từ tính như sắt.'},
+ {id:'sieving',l:5,i:'🥣',t:'SIEVING',d:'A way to separate solids of different sizes using a sieve.',x:'Separating rice and flour',v:'Rây: tách các chất rắn khác cỡ.'},
+ {id:'filtering',l:5,i:'🫗',t:'FILTERING',d:'A way to separate a solid from a liquid using filter paper.',x:'Separating sand and water',v:'Lọc: tách chất rắn khỏi chất lỏng bằng giấy lọc.'},
+ {id:'dissolve',l:6,i:'🍬',t:'DISSOLVE',d:'When a solid mixes completely with a liquid and seems to disappear.',x:'Sugar dissolving in tea',v:'Hòa tan: chất rắn trộn hoàn toàn vào chất lỏng.'},
+ {id:'soluble',l:6,i:'🧂',t:'SOLUBLE',d:'Something that can dissolve in a liquid.',x:'Salt is soluble in water',v:'Tan được trong nước.'},
+ {id:'insoluble',l:6,i:'🏖️',t:'INSOLUBLE',d:'Something that cannot dissolve in a liquid.',x:'Sand is insoluble in water',v:'Không tan trong nước.'},
+ {id:'solution',l:6,i:'☕',t:'SOLUTION',d:'A mixture where a solid has dissolved in a liquid.',x:'Sugar water',v:'Dung dịch: hỗn hợp có chất rắn đã tan trong chất lỏng.'},
+ {id:'safety',l:6,i:'🥽',t:'LAB SAFETY',d:'Rules that keep us safe when we do experiments.',x:'Wear goggles, walk carefully, never taste',v:'An toàn thí nghiệm: các quy tắc giữ chúng ta an toàn.'}
+];
+const CBY={};CARDS.forEach(c=>CBY[c.id]=c);
+
+const LANDS=[
+ {id:1,i:'🦋',c:'#ff8a3d',n:'Living Things',v:'Sinh vật sống',u:'Unit 1',boss:{n:'Rocky the Never-Alive Golem',i:'🗿'},
+  learn:['alive','once','never','procs','leaf','bike']},
+ {id:2,i:'🌱',c:'#3dbb6c',n:'Plant Garden',v:'Khu vườn cây',u:'Unit 1',boss:{n:'Wilt Wizard',i:'🧙'},
+  learn:['root','stem','leafjob','flowerjob','needs','germ','wilt']},
+ {id:3,i:'🔍',c:'#4dabf7',n:'Detective Lab',v:'Phòng điều tra',u:'Unit 1',boss:{n:'Captain Unfair',i:'🦹'},
+  learn:['ruler','pred','obs','bar','fair','cm','patt','research']},
+ {id:4,i:'🧊',c:'#22b8cf',n:'Matter Mountain',v:'Núi Vật chất',u:'Unit 2',boss:{n:'Steamy the Cloud Dragon',i:'🐉'},
+  learn:['solid','liquid','gas','compress','states']},
+ {id:5,i:'🧲',c:'#9775fa',n:'Mix Valley',v:'Thung lũng Hỗn hợp',u:'Unit 2',boss:{n:'Mix-Up Monster',i:'👾'},
+  learn:['mix','notmix','magnet','magmetals','sieve','filter','iron']},
+ {id:6,i:'🧂',c:'#f783ac',n:'Dissolve Lake',v:'Hồ Hòa tan',u:'Unit 2',boss:{n:'Soggy Sand Slime',i:'🫠'},
+  learn:['dissolve','soluble','insoluble','solution','stillthere','safe']}
+];
+const LBY={};LANDS.forEach(l=>LBY[l.id]=l);
+
+/* item banks (emoji + name + short reason) */
+const IT=(e,n,w)=>({e,n,w});
+const ALIVE=[IT('🦋','butterfly','A butterfly grows, moves and makes eggs.'),IT('🐟','fish','A fish grows, needs food and can move.'),IT('🐱','cat','A cat is a living animal.'),IT('🌳','growing tree','A growing tree is living — it grows and makes seeds.'),IT('🌻','sunflower','A sunflower is a living plant.'),IT('🐝','bee','A bee is a living animal.'),IT('🐸','frog','A frog is alive — it grows and moves.'),IT('🐶','dog','A dog is a living animal.'),IT('🐦','bird','A bird is alive — it grows and lays eggs.'),IT('🌱','little plant','A little plant is alive and growing.')];
+const ONCE=[IT('🪑','wooden chair','Wood comes from a tree, so it was once alive.'),IT('📄','paper','Paper is made from trees, so it was once alive.'),IT('🧶','wool jumper','Wool comes from sheep, so it was once alive.'),IT('👕','cotton t-shirt','Cotton comes from the cotton plant, so it was once alive.'),IT('👞','leather shoe','Leather comes from an animal, so it was once alive.'),IT('🍂','fallen leaf','The leaf was alive on the tree; now it is not growing.'),IT('✏️','wooden pencil','The wood came from a tree — once alive.'),IT('📦','cardboard box','Cardboard is made from trees — once alive.'),IT('👒','straw hat','Straw comes from plants — once alive.')];
+const NEVER=[IT('🪨','rock','A rock was never alive.'),IT('🧴','plastic bottle','Plastic is made by people, not from a living thing.'),IT('🥄','metal spoon','Metal comes from rocks — it was never alive.'),IT('🫙','glass jar','Glass is made from sand — never alive.'),IT('🚲','bicycle','A bicycle was never alive, even though it moves.'),IT('💻','laptop','A laptop is made of metal and plastic — never alive.'),IT('🍳','saucepan','A saucepan is metal — never alive.'),IT('🚗','toy car','A toy car is plastic and metal — never alive.'),IT('✂️','scissors','Scissors are metal — never alive.'),IT('🧱','brick','A brick is made of clay — never alive.')];
+const LIVEP=[
+ {k:'Movement',e:'🏃',d:'moving the body',ex:'A cat jumps over a wall.',f:'move'},
+ {k:'Respiration',e:'🫁',d:'using oxygen to get energy from food',ex:'A fish takes in oxygen from the water.',f:'resp'},
+ {k:'Sensitivity',e:'👂',d:'sensing and reacting to the world',ex:'A plant bends towards the light.',f:'sens'},
+ {k:'Growth',e:'📏',d:'getting bigger',ex:'A puppy gets bigger every month.',f:'growp'},
+ {k:'Reproduction',e:'🥚',d:'making young, like babies or seeds',ex:'A frog lays eggs.',f:'repro'},
+ {k:'Excretion',e:'🚽',d:'getting rid of waste',ex:'An animal gets rid of waste from its body.',f:'excr'},
+ {k:'Nutrition',e:'🍎',d:'taking in food to live and grow',ex:'A cow eats grass.',f:'nutr'}
+];
+const SOLIDS=[IT('🧊','ice'),IT('🪨','rock'),IT('🪵','wood'),IT('✏️','pencil'),IT('🪑','chair'),IT('📏','ruler'),IT('🧱','brick'),IT('🔑','key'),IT('📘','book')];
+const LIQUIDS=[IT('💧','water'),IT('🧃','juice'),IT('🍯','honey'),IT('🥛','milk'),IT('🧴','shampoo'),IT('🍶','vinegar'),IT('🫒','oil')];
+const GASES=[IT('♨️','steam'),IT('🎈','helium'),IT('🌬️','air'),IT('🫧','oxygen'),IT('☁️','carbon dioxide'),IT('🫧','nitrogen')];
+const SEPS=[ /* mixtures and the tool that separates them */
+ {a:{e:'🔩',n:'iron nails'},b:{e:'🍚',n:'rice'},t:'magnet',w:'The magnet attracts the iron nails, but not the rice.'},
+ {a:{e:'📎',n:'paper clips'},b:{e:'🔵',n:'plastic beads'},t:'magnet',w:'Paper clips are iron/steel, so the magnet pulls them out. Plastic beads are not magnetic.'},
+ {a:{e:'🪨',n:'large stones'},b:{e:'🟡',n:'sand'},t:'sieve',w:'The sand is small and passes through the holes. The big stones stay in the sieve.'},
+ {a:{e:'🟡',n:'sand'},b:{e:'🪨',n:'gravel'},t:'sieve',w:'Sand is smaller than gravel, so only the sand passes through the sieve.'},
+ {a:{e:'🍚',n:'rice'},b:{e:'🤍',n:'flour'},t:'sieve',w:'The flour is tiny and falls through the holes. The rice grains stay in the sieve.'},
+ {a:{e:'🟡',n:'sand'},b:{e:'💧',n:'water'},t:'filter',w:'Filter paper lets the water through and keeps the sand.'},
+ {a:{e:'🪨',n:'pebbles'},b:{e:'💧',n:'water'},t:'filter',w:'The pebbles are insoluble. They stay on the filter paper; the water goes through.'},
+ {a:{e:'📎',n:'paper clips'},b:{e:'🫘',n:'beans'},t:'magnet',w:'Use a magnet — it is the quickest way to pull out the paper clips.'},
+ {a:{e:'🔩',n:'iron nails'},b:{e:'🟡',n:'sand'},t:'magnet',w:'The magnet attracts the iron nails, but not the sand.'}
+];
+const SUBS=[ /* dissolving lab substances */
+ {k:'salt',e:'🧂',n:'salt',s:1,c:'#ffffff'},{k:'sugar',e:'🍬',n:'sugar',s:1,c:'#ffffff'},{k:'coffee',e:'☕',n:'coffee powder',s:1,c:'#8a5a33'},
+ {k:'sand',e:'⏳',n:'sand',s:0,c:'#d9b26f'},{k:'pebbles',e:'🪨',n:'pebbles',s:0,c:'#8d8d8d'},{k:'clip',e:'📎',n:'paper clips',s:0,c:'#7a8794'},
+ {k:'rice',e:'🍚',n:'rice',s:0,c:'#f5f1e3'},{k:'beads',e:'🔵',n:'beads',s:0,c:'#4c6ef5'}
+];
+const SBY={};SUBS.forEach(s=>SBY[s.k]=s);
+/* =====================  DRAWING (inline SVG, works offline)  ===================== */
+const INK='#12372a';
+const leafP=(x,y,ang,s,col)=>`<path d="M0 0Q14 -15 32 0Q14 15 0 0Z" transform="translate(${x} ${y}) rotate(${ang}) scale(${s})" fill="${col||'#4cc46f'}" stroke="${INK}" stroke-width="${3/s}" stroke-linejoin="round"/>`;
+const flowerP=(x,y,s,col)=>{let p='';for(let i=0;i<6;i++)p+=`<ellipse cx="0" cy="-15" rx="8" ry="12" transform="rotate(${i*60})" fill="${col||'#ff8fb8'}" stroke="${INK}" stroke-width="2.5"/>`;return `<g transform="translate(${x} ${y}) scale(${s})">${p}<circle r="8.5" fill="#ffd43b" stroke="${INK}" stroke-width="2.5"/></g>`};
+
+/* Sprout the mascot: a pot with a face + lab goggles; the plant on top grows with stage 0..6 */
+function sproutSVG(stage,mood,opt){
+  stage=Math.max(0,Math.min(6,stage|0));mood=mood||'happy';opt=opt||{};
+  const stemTop=[92,72,56,40,32,26,20][stage];
+  let plant='';
+  if(stage===0)plant=`<ellipse cx="70" cy="88" rx="11" ry="14" fill="#a8672f" stroke="${INK}" stroke-width="3"/><path d="M65 82q3 -5 7 -4" stroke="#e1a56a" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  else{
+    plant=`<path d="M70 96V${stemTop}" stroke="${INK}" stroke-width="11" stroke-linecap="round"/><path d="M70 96V${stemTop}" stroke="#4cc46f" stroke-width="5" stroke-linecap="round"/>`;
+    const ls=[[0,0],[1,0.8],[2,1],[3,1.15],[4,1.15],[5,1.2],[6,1.3]][stage];
+    const s=ls[1];
+    if(stage>=1)plant+=leafP(70,Math.max(stemTop+8,70),-30,s*0.8)+leafP(70,Math.max(stemTop+8,70),-150,s*0.8);
+    if(stage>=3)plant+=leafP(70,stemTop+28,-20,s*.8,'#3aa95f')+leafP(70,stemTop+28,-160,s*.8,'#3aa95f');
+    if(stage===4)plant+=`<circle cx="70" cy="${stemTop-4}" r="9" fill="#ff8fb8" stroke="${INK}" stroke-width="3"/><path d="M62 ${stemTop-2}q8 -14 16 0" fill="#ff6fa3" stroke="${INK}" stroke-width="3"/>`;
+    if(stage>=5)plant+=flowerP(70,stemTop-6,stage===6?1.45:1.15,stage===6?'#ffb347':'#ff8fb8');
+    if(stage===6)plant+=`<text x="22" y="30" font-size="20">✨</text><text x="102" y="52" font-size="18">✨</text>`;
+  }
+  const eyes=mood==='sad'?`<circle cx="55" cy="128" r="7" fill="#fff" stroke="${INK}" stroke-width="3"/><circle cx="85" cy="128" r="7" fill="#fff" stroke="${INK}" stroke-width="3"/><circle cx="56" cy="130" r="3.5" fill="${INK}"/><circle cx="86" cy="130" r="3.5" fill="${INK}"/>`
+    :`<circle cx="55" cy="127" r="8" fill="#fff" stroke="${INK}" stroke-width="3"/><circle cx="85" cy="127" r="8" fill="#fff" stroke="${INK}" stroke-width="3"/><circle cx="${mood==='think'?58:56}" cy="${mood==='think'?124:127}" r="4" fill="${INK}"/><circle cx="${mood==='think'?88:86}" cy="${mood==='think'?124:127}" r="4" fill="${INK}"/>`;
+  const mouth={happy:`<path d="M58 140Q70 156 82 140Z" fill="#ff7a7a" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>`,
+    cheer:`<path d="M54 138Q70 164 86 138Z" fill="#ff7a7a" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>`,
+    sad:`<path d="M60 150Q70 140 80 150" fill="none" stroke="${INK}" stroke-width="3.5" stroke-linecap="round"/>`,
+    think:`<ellipse cx="74" cy="146" rx="5" ry="4" fill="#ff7a7a" stroke="${INK}" stroke-width="3"/>`}[mood]||'';
+  const goggles=opt.nog?'':`<path d="M28 126H42M98 126H112" stroke="#1b6fb8" stroke-width="5" stroke-linecap="round"/><circle cx="55" cy="127" r="14" fill="rgba(150,210,255,.35)" stroke="#2b86d4" stroke-width="5"/><circle cx="85" cy="127" r="14" fill="rgba(150,210,255,.35)" stroke="#2b86d4" stroke-width="5"/><path d="M68 127h4" stroke="#2b86d4" stroke-width="5"/>`;
+  return `<svg viewBox="0 0 140 172" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto;overflow:visible">
+  <ellipse cx="70" cy="168" rx="46" ry="5" fill="rgba(0,0,0,.14)"/>
+  ${plant}
+  <path d="M28 104L112 104L103 160Q102 167 95 167L45 167Q38 167 37 160Z" fill="#e08a45" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
+  <rect x="22" y="92" width="96" height="18" rx="9" fill="#f2a05c" stroke="${INK}" stroke-width="4"/>
+  <ellipse cx="70" cy="95" rx="38" ry="3.5" fill="#6b3f1d" opacity=".55"/>
+  ${eyes}${goggles}
+  <circle cx="42" cy="146" r="6" fill="#ff9db0" opacity=".7"/><circle cx="98" cy="146" r="6" fill="#ff9db0" opacity=".7"/>
+  ${mouth}</svg>`;
+}
+const STAGES=[{x:0,n:'Seed',v:'Hạt giống'},{x:60,n:'Sprout',v:'Mầm non'},{x:160,n:'Seedling',v:'Cây con'},{x:320,n:'Little Plant',v:'Cây nhỏ'},{x:560,n:'Budding',v:'Nụ hoa'},{x:900,n:'Flower Star',v:'Ngôi sao hoa'},{x:1400,n:'Super Scientist',v:'Nhà khoa học siêu cấp'}];
+
+/* plant labelling diagram */
+function plantSVG(){return `<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+ <rect width="300" height="300" fill="#d9f1ff"/><circle cx="262" cy="38" r="22" fill="#ffe066" stroke="${INK}" stroke-width="3"/>
+ <rect y="190" width="300" height="110" fill="#a8723a"/><path d="M0 190q40 -10 80 0t80 0t80 0t60 0V204H0Z" fill="#7bc653" stroke="${INK}" stroke-width="3"/>
+ <g stroke="${INK}" stroke-width="5" stroke-linecap="round" fill="none"><path d="M150 200V105"/><path d="M150 205Q120 235 100 270M150 205Q150 245 148 288M150 205Q182 235 204 268M126 235Q108 238 96 232M176 236Q192 240 204 236" stroke="#f3e2c3"/></g>
+ <path d="M150 200V105" stroke="#3aa95f" stroke-width="9" stroke-linecap="round"/>
+ ${leafP(150,150,-25,1.7)}${leafP(150,170,-155,1.5,'#3aa95f')}
+ ${flowerP(150,72,1.35)}
+ </svg>`}
+/* three pots (what wilts?) */
+function potsSVG(){const pot=(x,sun,wat,l)=>`<g transform="translate(${x} 0)"><path d="M18 120h84l-9 62q-1 6-7 6h-52q-6 0-7-6Z" fill="#e08a45" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/><rect x="12" y="110" width="96" height="16" rx="8" fill="#f2a05c" stroke="${INK}" stroke-width="4"/>
+ <path d="M60 110V80" stroke="${INK}" stroke-width="9" stroke-linecap="round"/><path d="M60 110V80" stroke="#4cc46f" stroke-width="4" stroke-linecap="round"/>${leafP(60,92,-35,.9)}${leafP(60,92,-145,.9)}
+ <text x="22" y="40" font-size="30" ${sun?'':'opacity=".22"'}>☀️</text><text x="62" y="40" font-size="30" ${wat?'':'opacity=".22"'}>💧</text>${sun?'':`<text x="22" y="40" font-size="30">🚫</text>`}${wat?'':`<text x="62" y="40" font-size="30">🚫</text>`}
+ <text x="60" y="212" text-anchor="middle" font-size="17" font-weight="700" fill="${INK}">${l}</text></g>`;
+ return `<svg viewBox="0 0 390 225" xmlns="http://www.w3.org/2000/svg" style="max-height:230px">${pot(5,1,1,'a. Water + sun')}${pot(135,0,1,'b. Water, no sun')}${pot(265,1,0,'c. Sun, no water')}</svg>`}
+/* sick plants for the "help the plants" Qs */
+function sickSVG(kind){const dry=kind==='dry';return `<svg viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" style="max-height:200px">
+ ${dry?`<rect width="220" height="200" fill="#fff6e0"/><rect y="150" width="220" height="50" fill="#c79a5b"/><path d="M10 168l30 6M60 180l26 -8M120 165l30 8M170 182l30 -6" stroke="#8d6a38" stroke-width="3" stroke-linecap="round"/>`:`<rect width="220" height="200" fill="#2a2f45"/><rect x="40" y="20" width="140" height="170" rx="10" fill="#1a1d2c" stroke="${INK}" stroke-width="4"/><text x="110" y="60" text-anchor="middle" font-size="22" fill="#9aa3c7">dark cupboard</text>`}
+ <path d="M${dry?110:110} ${dry?152:178}V${dry?100:118}Q${dry?112:112} ${dry?80:104} ${dry?90:128} ${dry?78:112}" stroke="${INK}" stroke-width="10" fill="none" stroke-linecap="round"/><path d="M110 ${dry?152:178}V${dry?100:118}Q112 ${dry?80:104} ${dry?90:128} ${dry?78:112}" stroke="${dry?'#b8b04a':'#d7e07a'}" stroke-width="5" fill="none" stroke-linecap="round"/>
+ ${dry?`${leafP(98,96,150,.9,'#b8a640')}${leafP(110,128,25,.9,'#b8a640')}`:`<path d="M110 178h0" /><path d="M72 178h76l-8 28h-60Z" fill="#e08a45" stroke="${INK}" stroke-width="4"/>`}
+ <text x="${dry?170:30}" y="${dry?40:40}" font-size="26">${dry?'🥵':'😢'}</text></svg>`}
+/* ruler + plant */
+function rulerSVG(h){const base=222,px=14,top=base-15*px;let t='';for(let i=0;i<=15;i++){const y=base-i*px;t+=`<path d="M246 ${y}h${i%5===0?22:14}" stroke="${INK}" stroke-width="2.5"/><text x="274" y="${y+5}" font-size="13" font-weight="700" fill="${INK}">${i}</text>`}
+ const ty=base-h*px;
+ return `<svg viewBox="0 0 330 250" xmlns="http://www.w3.org/2000/svg" style="max-height:260px">
+ <rect width="330" height="250" fill="#e9f7ff"/><rect y="${base}" width="330" height="28" fill="#a8723a"/><path d="M0 ${base}h330" stroke="${INK}" stroke-width="3"/>
+ <rect x="238" y="${top-8}" width="62" height="${15*px+16}" rx="5" fill="#ffe27a" stroke="${INK}" stroke-width="3"/>${t}<text x="262" y="${top-14}" font-size="12" font-weight="700" fill="${INK}">cm</text>
+ <path d="M120 ${base}V${ty}" stroke="${INK}" stroke-width="10" stroke-linecap="round"/><path d="M120 ${base}V${ty}" stroke="#4cc46f" stroke-width="4" stroke-linecap="round"/>
+ ${leafP(120,ty+Math.min(h*px*.5,40),-20,.75)}${leafP(120,ty+Math.min(h*px*.5,40),-160,.75)}${h>=6?leafP(120,ty+1,-90,.65,'#3aa95f'):''}
+ <path d="M126 ${ty}H236" stroke="#e8590c" stroke-width="2.5" stroke-dasharray="5 5"/></svg>`}
+/* bar chart */
+function chartSVG(data,opt){opt=opt||{};const W=360,H=240,L=44,B=34,T=14,mx=opt.max||Math.max(12,Math.ceil(Math.max(...data.map(d=>d.v))/2)*2),sc=(H-B-T)/mx,bw=Math.min(48,(W-L-10)/data.length-14);
+ let s=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="max-height:250px"><rect width="${W}" height="${H}" fill="#fff"/>`;
+ for(let v=0;v<=mx;v+=2){const y=H-B-v*sc;s+=`<path d="M${L} ${y}H${W-6}" stroke="#d3e3da" stroke-width="1.5"/><text x="${L-8}" y="${y+5}" text-anchor="end" font-size="13" font-weight="600" fill="${INK}">${v}</text>`}
+ const cols=['#ff8a3d','#4dabf7','#3dbb6c','#9775fa','#f783ac','#ffd43b'];
+ data.forEach((d,i)=>{const x=L+14+i*((W-L-10)/data.length),h=d.v*sc;s+=`<rect x="${x}" y="${H-B-h}" width="${bw}" height="${h}" rx="5" fill="${cols[i%6]}" stroke="${INK}" stroke-width="3"/>${opt.showv?`<text x="${x+bw/2}" y="${H-B-h-5}" text-anchor="middle" font-size="14" font-weight="700" fill="${INK}">${d.v}</text>`:''}<text x="${x+bw/2}" y="${H-12}" text-anchor="middle" font-size="13" font-weight="700" fill="${INK}">${d.l}</text>`});
+ return s+`<path d="M${L} ${T}V${H-B}H${W-6}" stroke="${INK}" stroke-width="3" fill="none"/><text x="8" y="${T+4}" font-size="12" font-weight="700" fill="${INK}">cm</text></svg>`}
+/* bottle: A cap, B water, C air */
+function bottleSVG(){return `<svg viewBox="0 0 260 270" xmlns="http://www.w3.org/2000/svg" style="max-height:270px">
+ <path d="M96 40h48v22q38 14 38 52v128q0 14 -14 14h-96q-14 0 -14 -14V114q0 -38 38 -52Z" fill="#eaf6ff" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
+ <path d="M54 170H186V242q0 14 -14 14H68q-14 0 -14 -14Z" fill="#6cc3ff" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/><path d="M54 170q22 -8 44 0t44 0t44 0" fill="none" stroke="#fff" stroke-width="3" opacity=".8"/>
+ <rect x="90" y="22" width="60" height="26" rx="8" fill="#ffd43b" stroke="${INK}" stroke-width="4"/>
+ ${[['A',152,30],['B',190,210],['C',190,120]].map(([l,x,y])=>`<circle cx="${x+30}" cy="${y}" r="15" fill="#fff" stroke="${INK}" stroke-width="3"/><text x="${x+30}" y="${y+6}" text-anchor="middle" font-size="18" font-weight="700" fill="${INK}">${l}</text><path d="M${x+15} ${y}H${l==='A'?x-2:x-8}" stroke="${INK}" stroke-width="3"/>`).join('')}</svg>`}
+/* funnel and beaker: A funnel, B filter paper, C beaker */
+function funnelSVG(){return `<svg viewBox="0 0 280 290" xmlns="http://www.w3.org/2000/svg" style="max-height:290px">
+ <rect x="30" y="268" width="150" height="12" rx="4" fill="#8a96a3" stroke="${INK}" stroke-width="3"/><path d="M55 268V40" stroke="#8a96a3" stroke-width="9"/><path d="M55 90H100" stroke="#8a96a3" stroke-width="8"/>
+ <path d="M70 62H190L148 126V160H112V126Z" fill="#e6f6ff" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
+ <path d="M82 68H178L142 122Z" fill="#fff9e6" stroke="#caa84a" stroke-width="3"/><g fill="#d9b26f">${[[110,86],[128,92],[146,86],[120,102],[138,104],[130,82],[100,76],[158,78]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="5"/>`).join('')}</g>
+ <circle cx="130" cy="178" r="3.5" fill="#6cc3ff"/><circle cx="130" cy="196" r="3.5" fill="#6cc3ff"/>
+ <path d="M84 206h92l-8 58q-1 8 -9 8h-58q-8 0 -9 -8Z" fill="#f2fbff" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/><path d="M90 242H170l-3 22q-1 8 -9 8h-58q-8 0 -9 -8Z" fill="#6cc3ff" stroke="${INK}" stroke-width="3"/>
+ ${[['A',230,50,184,72],['B',230,110,160,96],['C',230,236,176,236]].map(([l,x,y,tx,ty])=>`<circle cx="${x}" cy="${y}" r="16" fill="#fff" stroke="${INK}" stroke-width="3"/><text x="${x}" y="${y+6}" text-anchor="middle" font-size="19" font-weight="700" fill="${INK}">${l}</text><path d="M${x-16} ${y}L${tx} ${ty}" stroke="${INK}" stroke-width="3"/>`).join('')}
+ <text x="22" y="150" font-size="15" font-weight="700" fill="${INK}" transform="rotate(-90 22 150)">stand</text></svg>`}
+/* lab scene backdrop */
+function labBG(){return `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%">
+ <rect width="400" height="300" fill="#fbeec8"/><rect y="150" width="400" height="150" fill="#cfd9e6"/><path d="M0 150H400" stroke="${INK}" stroke-width="3"/>
+ <rect x="150" y="14" width="100" height="40" rx="8" fill="#fff" stroke="${INK}" stroke-width="3"/><text x="200" y="40" text-anchor="middle" font-size="16" font-weight="700" fill="#d9480f">SAFETY 1st</text>
+ <rect x="10" y="95" width="165" height="44" rx="6" fill="#b88650" stroke="${INK}" stroke-width="3"/><rect x="10" y="85" width="165" height="14" rx="5" fill="#d8a86b" stroke="${INK}" stroke-width="3"/>
+ <rect x="268" y="110" width="124" height="40" rx="6" fill="#b88650" stroke="${INK}" stroke-width="3"/><rect x="264" y="100" width="132" height="14" rx="5" fill="#d8a86b" stroke="${INK}" stroke-width="3"/>
+ <rect x="20" y="212" width="130" height="30" rx="6" fill="#b88650" stroke="${INK}" stroke-width="3"/><rect x="14" y="200" width="142" height="14" rx="5" fill="#d8a86b" stroke="${INK}" stroke-width="3"/>
+ <rect x="236" y="215" width="150" height="30" rx="6" fill="#b88650" stroke="${INK}" stroke-width="3"/><rect x="230" y="203" width="162" height="14" rx="5" fill="#d8a86b" stroke="${INK}" stroke-width="3"/></svg>`}
+/* hazard hotspots: x,y in %, h = unsafe? */
+const HAZ=[
+ {x:12,y:21,e:'😋🍔',h:1,t:'Eating food in the lab',v:'Ăn trong phòng thí nghiệm'},
+ {x:34,y:20,e:'😛🥤',h:1,t:'Drinking in the lab',v:'Uống nước trong phòng thí nghiệm'},
+ {x:72,y:27,e:'👃☠️',h:1,t:'Smelling a substance directly',v:'Ngửi trực tiếp hóa chất'},
+ {x:14,y:63,e:'👧🔥',h:1,t:'Long hair close to a flame',v:'Tóc dài gần ngọn lửa'},
+ {x:50,y:50,e:'💦🔌',h:1,t:'A spill near electrical equipment',v:'Nước đổ gần đồ điện'},
+ {x:86,y:62,e:'🏃',h:1,t:'Running / playing around',v:'Chạy nhảy nghịch ngợm'},
+ {x:42,y:84,e:'🐍',h:1,t:'An animal (snake!) on the floor',v:'Con rắn trên sàn'},
+ {x:76,y:83,e:'🧪💥',h:1,t:'Broken glass on the floor',v:'Thủy tinh vỡ trên sàn'},
+ {x:92,y:35,e:'🥽🧒',h:0,t:'Goggles on — that is safe!',v:'Đeo kính bảo hộ — an toàn!'},
+ {x:56,y:19,e:'🧯',h:0,t:'A fire extinguisher is safe — it helps in an emergency!',v:'Bình chữa cháy giúp khi khẩn cấp — an toàn!'},
+ {x:27,y:37,e:'🩹',h:0,t:'The first-aid kit is safe — it helps if someone is hurt.',v:'Hộp sơ cứu dùng khi có người bị thương.'}
+];
+/* =====================  QUESTION BUILDERS & FACTORIES  ===================== */
+const O=(t,e)=>({t,e});
+const optT=o=>typeof o==='string'?o:o.t;
+/* MC: right answer + wrong answers (shuffled unless fixed) */
+function MC(q,right,wrongs,o){o=o||{};let opts=o.fixed?[right,...wrongs]:shuffle([right,...sample(wrongs,Math.min(wrongs.length,(o.n||4)-1))]);
+  if(o.fixed&&o.order)opts=o.order;else if(o.fixed)opts.sort((x,y)=>optT(x)<optT(y)?-1:1);
+  return Object.assign({type:'mc',q,opts,a:opts.findIndex(x=>optT(x)===optT(right))},o)}
+const TF=(q,truth,o)=>Object.assign({type:'mc',tf:1,q,opts:[O('True','✅'),O('False','❌')],a:truth?0:1,fixed:1},o||{});
+const TFS=(q,list,o)=>({type:'tfset',q,items:list.map(([t,b])=>({t,b:!!b})),marks:list.length,...o});
+const SORT=(q,bins,items,o)=>({type:'sort',q,bins,items:shuffle(items),marks:items.length,...o});
+const MATCH=(q,pairs,o)=>({type:'match',q,pairs,marks:pairs.length,...o});
+const BLANK=(q,text,ans,bank,o)=>({type:'blank',q,text,ans,bank:shuffle(bank),marks:ans.length,...o});
+const PICK=(q,opts,right,n,o)=>({type:'pick',q,opts:shuffle(opts),right,n:n||null,marks:n||right.length,...o});
+const ORDER=(q,steps,o)=>({type:'order',q,steps,marks:steps.length>3?2:1,...o});
+const BINS3=[{id:'A',t:'Alive',c:'#c9f5d9'},{id:'O',t:'Once alive',c:'#ffe3c2'},{id:'N',t:'Never alive',c:'#e3e8ee'}];
+const BINS3N=[{id:'A',t:'Alive',c:'#c9f5d9'},{id:'O',t:'Once alive',c:'#ffe3c2'},{id:'N',t:'Not alive',c:'#e3e8ee'}];
+const BINSM=[{id:'S',t:'Solid',c:'#d9ebff'},{id:'L',t:'Liquid',c:'#d6f5f2'},{id:'G',t:'Gas',c:'#f3e5ff'}];
+const catName={A:'Alive',O:'Once alive',N:'Never alive'};
+const catCard={A:'alive',O:'once',N:'never'};
+const catBank={A:ALIVE,O:ONCE,N:NEVER};
+const bigE=e=>`<div style="font-size:84px;line-height:1.1">${e}</div>`;
+const sortItem=(it,b)=>({t:it.n,e:it.e,b});
+const tbl=(head,rows)=>`<table style="margin:auto;border-collapse:collapse;font-weight:600;font-size:18px"><tr>${head.map(h=>`<th style="border:3px solid ${INK};padding:4px 14px;background:#dff3ff">${h}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(c=>`<td style="border:3px solid ${INK};padding:4px 14px;background:#fff">${c}</td>`).join('')}</tr>`).join('')}</table>`;
+
+const QF={1:[],2:[],3:[],4:[],5:[],6:[]};
+
+/* ---------- LAND 1 · Living things ---------- */
+QF[1]=[
+ ()=>{const its=[...sample(ALIVE,2).map(i=>sortItem(i,'A')),...sample(ONCE,2).map(i=>sortItem(i,'O')),...sample(NEVER,2).map(i=>sortItem(i,'N'))];return SORT('Sort each thing: <b>Alive</b>, <b>Once alive</b> or <b>Never alive</b>?',BINS3,its,{rem:'once',card:'once'})},
+ ()=>{const c=pick(['A','O','N']),it=pick(catBank[c]);return MC(`Is the <b>${it.n}</b> alive, once alive or never alive?`,O(catName[c]),['A','O','N'].filter(x=>x!==c).map(x=>O(catName[x])),{fixed:1,order:['A','O','N'].map(x=>O(catName[x])),fig:bigE(it.e),ex:it.w,rem:c==='A'?'alive':c==='O'?'once':'never',card:catCard[c]})},
+ ()=>{const c=pick(['O','N','A']),it=pick(catBank[c]);return MC(`Is the <b>${it.n}</b> alive, once alive or never alive?`,O(catName[c]),['A','O','N'].filter(x=>x!==c).map(x=>O(catName[x])),{fixed:1,order:['A','O','N'].map(x=>O(catName[x])),fig:bigE(it.e),ex:it.w,rem:c==='A'?'alive':c==='O'?'once':'never',card:catCard[c]})},
+ ()=>PICK('Tap <b>THREE</b> of the seven processes of life.',[...LIVEP.map(p=>O(p.k)),O('Melting'),O('Rusting'),O('Floating')],LIVEP.map(p=>p.k),3,{rem:'procs',card:'procs'}),
+ ()=>{const p=pick(LIVEP);return MC(`Which life process means <b>${p.d}</b>?`,O(p.k),LIVEP.filter(x=>x!==p).map(x=>O(x.k)),{rem:p.f,card:'procs'})},
+ ()=>{const p=pick(LIVEP);return MC(`${p.ex} Which life process is this?`,O(p.k),LIVEP.filter(x=>x!==p).map(x=>O(x.k)),{fig:bigE(p.e),rem:p.f,card:'procs'})},
+ ()=>{const ps=sample(LIVEP,4);return MATCH('Match each life process to its meaning.',ps.map(p=>[p.k,p.d]),{rem:'procs',card:'procs'})},
+ ()=>MC('Why is a leaf on the ground <b>"once alive"</b> and not "alive"?',O('It was alive on the tree, but now it is dead and not growing'),[O('It is made of plastic'),O('It is still growing on the tree'),O('It has never been alive')],{rem:'leaf',fig:bigE('🍂'),card:'once'}),
+ ()=>MC('A bicycle moves, so it is living. <b>Is this correct?</b>',O('No — it does not grow, need food or reproduce'),[O('Yes — because it moves'),O('Yes — because it has wheels'),O('Yes — because people ride it')],{rem:'bike',fig:bigE('🚲'),card:'alive'}),
+ ()=>TFS('Circle <b>True</b> or <b>False</b> for each sentence.',sample([['A butterfly is alive.',1],['A rock is once alive.',0],['Paper is once alive.',1],['A plastic bottle can reproduce.',0],['A fish needs food.',1],['A wooden table is never alive.',0],['A fallen leaf is alive.',0],['Wool comes from a living animal.',1],['A metal spoon is never alive.',1],['A tree grows.',1]],5),{rem:'alive',card:'alive'}),
+ ()=>{const bad=pick(['Melting','Rusting','Floating']);return MC('Which one is <b>NOT</b> a process of life?',O(bad),sample(LIVEP,3).map(p=>O(p.k)),{rem:'procs',card:'procs'})},
+ ()=>BLANK('Complete the sentence.','Living things grow, need {0} and {1}.',['food','reproduce'],['food','reproduce','plastic','rocks'],{rem:'alive',card:'alive'}),
+ ()=>{const c=pick(['O','N','A']),it=pick(catBank[c]),others=['A','O','N'].filter(x=>x!==c);const w=[pick(catBank[others[0]]),pick(catBank[others[1]]),pick(catBank[others[0]])].filter((x,i,a)=>a.indexOf(x)===i);
+   return MC(`Which of these is <b>${catName[c].toLowerCase()}</b>?`,O(it.n,it.e),w.map(x=>O(x.n,x.e)),{ex:it.w,rem:c==='A'?'alive':c==='O'?'once':'never',card:catCard[c]})},
+ ()=>{const c=pick(['O','N']),it=pick(catBank[c]),others=['A','O','N'].filter(x=>x!==c);const w=[pick(catBank[others[0]]),pick(catBank[others[1]]),pick(catBank[others[1]])].filter((x,i,a)=>a.indexOf(x)===i);
+   return MC(`Which of these is <b>${catName[c].toLowerCase()}</b>?`,O(it.n,it.e),w.map(x=>O(x.n,x.e)),{ex:it.w,rem:c==='A'?'alive':c==='O'?'once':'never',card:catCard[c]})}
+];
+
+/* ---------- LAND 2 · Plants ---------- */
+const JOBS=[{p:'roots',k:'root',j:'takes in water from the soil',f:'root'},{p:'stem',k:'stem',j:'carries water up the plant',f:'stem'},{p:'leaves',k:'leaf',j:'makes food for the plant',f:'leafjob'},{p:'flower',k:'flower',j:'makes seeds',f:'flowerjob'}];
+QF[2]=[
+ ()=>({type:'parts',q:'Drag each name to the right part of the plant.',svg:plantSVG(),labels:['root','stem','leaf','flower'],spots:{root:[50,81],stem:[50,56],leaf:[72,48],flower:[50,23]},rem:'root',card:'stem',marks:4}),
+ ()=>MATCH('Match each <b>plant part</b> to its <b>job</b>.',JOBS.map(j=>[j.p[0].toUpperCase()+j.p.slice(1),j.j[0].toUpperCase()+j.j.slice(1)]),{rem:'stem',card:'leaf'}),
+ ()=>{const j=pick(JOBS);return MC(`Which part of the plant <b>${j.j}</b>?`,O(j.p),JOBS.filter(x=>x!==j).map(x=>O(x.p)),{rem:j.f,card:j.k})},
+ ()=>{const j=pick(JOBS);return MC(`What is the job of the plant's <b>${j.p}</b>?`,O(j.j[0].toUpperCase()+j.j.slice(1)),JOBS.filter(x=>x!==j).map(x=>O(x.j[0].toUpperCase()+x.j.slice(1))),{rem:j.f,card:j.k})},
+ ()=>BLANK('Fill in the blanks using the word bank.','Plants are {0}. Plants need {1} to make food. Plants need {2} to grow.',['alive','light','water'],['alive','water','light'],{rem:'needs',card:'leaf'}),
+ ()=>MC('Plants need the right temperature to grow. <b>What else</b> do plants need to be healthy?',O('Water and light'),[O('Plastic and metal'),O('Sand and rocks'),O('Salt and sugar')],{rem:'needs'}),
+ ()=>MC('Look at the three plants. <b>Which plant will grow best?</b><div style="margin-top:8px;font-size:16px;line-height:1.6"><b>Plant A:</b> 💧 water, ☀️ light, 🌡️ right temperature<br><b>Plant B:</b> 💧 water, ☀️ light, but 🥶 too cold<br><b>Plant C:</b> 🌡️ right temperature, but 🚫 no water</div>',O('Plant A'),[O('Plant B'),O('Plant C')],{fixed:1,rem:'needs',n:3}),
+ ()=>({...MC('Using the pictures, which plant will be the most <b>wilted</b>?',O('c. Sun but no water'),[O('a. Water and sun'),O('b. Water but no sun')],{fixed:1,n:3,rem:'wilt',ex:'Plants need water. With no water the plant droops and wilts.'}),fig:potsSVG()}),
+ ()=>{const dry=rnd()<.5;return MC(`What does this plant <b>need</b>?`,O(dry?'Water':'Light'),[O(dry?'Light':'Water'),O('Right temperature')],{fixed:1,order:[O('Light'),O('Water'),O('Right temperature')],fig:sickSVG(dry?'dry':'dark'),rem:'drysoil',card:'leaf'})},
+ ()=>MC('What is <b>germination</b>?',O('When a seed starts to grow'),[O('When a flower makes seeds'),O('When a leaf falls off'),O('When roots drink water'),O('When a plant has no light')],{rem:'germ',card:'germ',fig:bigE('🌰➜🌱')}),
+ ()=>TF('Many seeds can <b>germinate</b> (start to grow) without light.',true,{rem:'germ',card:'germ'}),
+ ()=>ORDER('Put the life of a plant in order. Tap <b>first to last</b>.',[O('A seed','🌰'),O('The seed germinates','🌱'),O('A young plant with leaves','🪴'),O('A plant with flowers','🌻')],{rem:'germ',card:'germ'}),
+ ()=>BLANK("A plant's roots are damaged. Complete the sentence.",'The roots cannot absorb enough {0}. This means the plant will {1}.',['water','wilt'],['water','wilt','light','grow'],{rem:'wilt',card:'root',fig:bigE('🥀')}),
+ ()=>MC('<b>Is the tallest plant always the healthiest?</b> Which plant is healthier?<div style="margin-top:8px;font-size:17px">🥀 <b>A:</b> tall, pale, weak &nbsp;&nbsp; 🪴 <b>B:</b> shorter, green, strong</div>',O('Plant B — it is green and strong'),[O('Plant A — it is taller'),O('Both are the same'),O('Neither needs water')],{rem:'evid',n:3}),
+ ()=>PICK('Tap <b>THREE</b> things that healthy plants need.',[O('Water','💧'),O('Light','☀️'),O('Right temperature','🌡️'),O('Plastic','🧴'),O('Rocks','🪨'),O('Metal','🔩')],['Water','Light','Right temperature'],3,{rem:'needs',card:'germ'}),
+ ()=>TFS('Circle <b>True</b> or <b>False</b>.',sample([['Roots take in water from the soil.',1],['Leaves make seeds.',0],['Flowers help make seeds.',1],['The stem carries water up the plant.',1],['Roots grow above the ground.',0],['Leaves make food for the plant.',1],['Plants need plastic to grow.',0],['A plant with no water will wilt.',1]],5),{rem:'root',card:'root'})
+];
+
+/* ---------- LAND 3 · Detective lab ---------- */
+const EQ=[{t:'ruler',e:'📏',d:'measure the <b>height</b> of her plant',f:'ruler'},{t:'thermometer',e:'🌡️',d:'measure how <b>hot or cold</b> the water is',f:'ruler'},{t:'stopwatch',e:'⏱️',d:'measure how much <b>time</b> has passed',f:'ruler'},{t:'balance',e:'⚖️',d:'measure how <b>heavy</b> (the mass of) the plant is',f:'ruler'}];
+const PO=[['I think plants in sunlight will grow taller than plants in the dark.','p'],['The plant is 5 cm tall.','o'],['I think the plant with more water will grow bigger.','p'],['The leaves are green.','o'],['I guess it will rain tomorrow.','p'],['The soil feels wet.','o'],['I predict the sunflower will be the tallest.','p'],['The sunflower is 12 cm tall today.','o']];
+function growData(){let v=1+Math.floor(rnd()*4);const d=[];for(let i=1;i<=4;i++){d.push({l:'Day '+i,v});v+=1+Math.floor(rnd()*3)}return d}
+function chartQ(){const d=growData(),k=pick(['tall','day','grew']);let q,ans,wr,rem,ex;
+  if(k==='tall'){q='Look at the bar chart. On which day was the plant <b>tallest</b>?';ans='Day 4';wr=['Day 1','Day 2','Day 3'];rem='bar'}
+  else if(k==='day'){const i=1+Math.floor(rnd()*3);q=`Look at the bar chart. How tall was the plant on <b>Day ${i+1}</b>?`;ans=d[i].v+' cm';wr=[d[i].v+1,d[i].v-1,d[i].v+2].filter(x=>x>0&&x!==d[i].v).map(x=>x+' cm');rem='bar'}
+  else{q='Look at the bar chart. <b>How much did the plant grow</b> between Day 1 and Day 4?';const g=d[3].v-d[0].v;ans=g+' cm';wr=[g+1,g+2,Math.max(1,g-1),d[3].v].filter(x=>x!==g).map(x=>x+' cm');rem='grew';ex=`Day 4 is ${d[3].v} cm and Day 1 is ${d[0].v} cm. ${d[3].v} − ${d[0].v} = ${g} cm.`}
+  return MC(q,O(ans),[...new Set(wr)].map(x=>O(x)),{fig:chartSVG(d,{showv:k==='grew'}),rem,ex,card:'bar'})}
+function rulerQ(){const h=3+Math.floor(rnd()*10);return MC('Read the ruler. <b>How tall</b> is the plant?',O(h+' cm'),[h+1,h-1,h+2,h-2].filter(x=>x>0).map(x=>O(x+' cm')),{fig:rulerSVG(h),rem:'ruler',ex:`The top of the plant lines up with ${h} on the ruler, so it is ${h} cm tall.`,card:'obs'})}
+const LEAVES=tbl(['Number of leaves','Distance water travelled (cm)'],[[2,2],[4,3],[6,4]]);
+QF[3]=[
+ ()=>{const e=pick(EQ);return MC(`Maria wants to ${e.d}. Which equipment should she use?`,O(e.t[0].toUpperCase()+e.t.slice(1),e.e),EQ.filter(x=>x!==e).map(x=>O(x.t[0].toUpperCase()+x.t.slice(1),x.e)),{rem:'ruler',card:'obs'})},
+ ()=>{const [s,k]=pick(PO);return MC(`<i>"${s}"</i><br>Is this an <b>observation</b> or a <b>prediction</b>?`,O(k==='p'?'Prediction':'Observation'),[O(k==='p'?'Observation':'Prediction')],{fixed:1,order:[O('Prediction','🔮'),O('Observation','👀')],rem:k==='p'?'pred':'obs',card:k==='p'?'pred':'obs'})},
+ ()=>{const [s,k]=pick(PO.filter(x=>x[1]==='o'));return MC(`<i>"${s}"</i><br>Is this an <b>observation</b> or a <b>prediction</b>?`,O('Observation'),[O('Prediction')],{fixed:1,order:[O('Prediction','🔮'),O('Observation','👀')],rem:'obs',card:'obs'})},
+ ()=>MC('Maria says: <i>"I think plants in sunlight will grow taller than plants in the dark."</i> <b>Why</b> do you think she made this prediction?',O('Plants need light to grow well'),[O('Plants do not need anything'),O('Sunlight makes plants smaller'),O('Plants can grow without any light')],{rem:'pred',card:'pred'}),
+ chartQ,chartQ,
+ ()=>{const d=growData();return {type:'chart',q:'Build the bar chart. Tap ▲ ▼ to set each bar to the <b>height in the table</b>.',data:d,fig:tbl(['Day','Plant height (cm)'],d.map(x=>[x.l.replace('Day ',''),x.v+' cm'])),rem:'bar',card:'bar',marks:3}},
+ ()=>MC('Look at Maria\'s results.'+tbl(['Day','Height (cm)'],[[1,'3 cm'],[2,'5 cm'],[3,'8 cm'],[4,'10 cm']])+'<div style="margin-top:8px">What <b>pattern</b> do you see from Day 1 to Day 4? The plant is…</div>',O('growing taller'),[O('growing shorter'),O('staying the same')],{fixed:1,n:3,rem:'patt',order:[O('growing taller'),O('growing shorter'),O('staying the same')]}),
+ ()=>MC('Maria predicted <i>"plants in sunlight will grow taller"</i>. Her plant grew from 3 cm to 10 cm. <b>Was her prediction correct?</b>',O('Yes'),[O('No')],{fixed:1,order:[O('Yes'),O('No')],rem:'evidence',ex:'The plant grew taller each day, so the results support her prediction.',card:'pred'}),
+ ()=>TFS('Circle <b>True</b> or <b>False</b>.',sample([['Plants need water to survive.',1],['Plants can grow without any light.',0],['A prediction is a guess about what will happen.',1],['An observation is something you see or notice.',1],['In a fair test you change lots of things at once.',0],['A bar chart uses bars to show results.',1],['A thermometer measures length.',0]],5),{rem:'needs',card:'obs'}),
+ ()=>MC('The plant height was measured in <b>centimetres</b>. Why is that better than using <b>finger lengths</b>?',O('Fingers can be different sizes'),[O('It can be dangerous to use fingers'),O('Finger lengths are not countable')],{rem:'cm',n:3,fig:bigE('📏 vs 🖐️')}),
+ ()=>MC('Mai tests how <b>light</b> affects plant health.<br>Which ONE thing should she <b>change</b>?',O('Amount of light'),[O('Amount of water'),O('Plant type')],{rem:'fair',card:'fair',n:3,fig:bigE('🌱☀️🆚🌑')}),
+ ()=>PICK('Mai tests how <b>light</b> affects plant health. Tick <b>TWO</b> things she must keep the <b>same</b>.',[O('Amount of water','💧'),O('Plant type','🌱'),O('Amount of light','☀️')],['Amount of water','Plant type'],2,{rem:'fair',card:'fair'}),
+ ()=>MC('A girl tests whether the <b>volume of water</b> in a glass changes how much <b>salt</b> will dissolve. Which ONE thing keeps the test <b>fair</b>?',O('Use the same amount of salt each time'),[O('Use a different amount of salt each time'),O('Change the water temperature each time'),O('Stir for a different time each time')],{rem:'fairdis',card:'fair'}),
+ ()=>MC('These results show water moving up a plant stem.'+LEAVES+'<div style="margin-top:8px">With <b>4 leaves</b>, how far did the water travel?</div>',O('3 cm'),[O('2 cm'),O('4 cm'),O('6 cm')],{rem:'patt',card:'bar'}),
+ ()=>MC('Look at the pattern.'+LEAVES+'<div style="margin-top:8px"><b>Predict:</b> with <b>8 leaves</b> the water will travel…</div>',O('5 cm'),[O('4 cm'),O('3 cm'),O('8 cm')],{rem:'patt',ex:'2 leaves → 2 cm, 4 leaves → 3 cm, 6 leaves → 4 cm. Each 2 more leaves adds 1 cm, so 8 leaves → 5 cm.',card:'pred'}),
+ rulerQ,rulerQ,
+ ()=>MC('Jeff puts one plant <b>next to a window</b> with lots of light and one in a <b>cupboard</b> with no light. <b>Which plant will grow more, and why?</b>',O('The plant by the window, because it gets light'),[O('The plant in the cupboard, because it is dark'),O('Both will grow the same'),O('The plant by the window, because it is warm and has no water')],{rem:'needs',card:'pred',fig:bigE('🪟🪴🆚🗄️🪴')}),
+ ()=>MC('After one week Jeff\'s plants are <b>both dying</b>. What <b>mistake</b> could Jeff have made?',O('He forgot to give the plants water'),[O('He gave them too many centimetres'),O('He used a ruler'),O('He put a plant next to a window')],{rem:'needs',n:4}),
+ ()=>MC('Jeff\'s plants are both dying. <b>Has Jeff collected results that support a prediction?</b>',O('No'),[O('Yes')],{fixed:1,order:[O('Yes'),O('No')],rem:'evidence',ex:'No. Both plants are dying, so the test does not show that the plant by the window grows more.'}),
+ ()=>MC('Which enquiry uses <b>books and websites</b>?',O('Researching'),[O('Fair testing'),O('Observing over time')],{fixed:1,order:[O('Fair testing'),O('Researching'),O('Observing over time')],rem:'research',card:'research',fig:bigE('📚💻')}),
+ ()=>MC('From the fact card: <i>"Many metals are obtained from rocks. Iron is used to make some tools."</i> Name one <b>use of iron</b>.',O('To make tools'),[O('To make paper'),O('To grow plants'),O('To make juice')],{rem:'iron',card:'research',fig:bigE('🔨')})
+];
+
+/* ---------- LAND 4 · Matter ---------- */
+const ST={S:SOLIDS,L:LIQUIDS,G:GASES},stN={S:'a solid',L:'a liquid',G:'a gas'},stF={S:'solid',L:'liquid',G:'gas'},stCard={S:'solid',L:'liquid',G:'gas'};
+const sortSt=()=>{const its=[...sample(SOLIDS,2).map(i=>sortItem(i,'S')),...sample(LIQUIDS,2).map(i=>sortItem(i,'L')),...sample(GASES,2).map(i=>sortItem(i,'G'))];return SORT('Sort each material into <b>solid</b>, <b>liquid</b> or <b>gas</b>.',BINSM,its,{rem:'states',card:'solid'})};
+const isSt=()=>{const c=pick(['S','L','G']),it=pick(ST[c]);return MC(`Is the <b>${it.n}</b> a solid, a liquid or a gas?`,O(c==='S'?'Solid':c==='L'?'Liquid':'Gas'),[],{fixed:1,order:[O('Solid','🧊'),O('Liquid','💧'),O('Gas','🎈')],fig:bigE(it.e),rem:stF[c],card:stCard[c]})};
+QF[4]=[
+ ()=>PICK('Circle <b>all</b> the materials that are <b>liquids</b> at room temperature.',[O('water','💧'),O('wood','🪵'),O('juice','🧃'),O('air','🌬️'),O('honey','🍯'),O('paper','📄'),O('milk','🥛'),O('rock','🪨')],['water','juice','honey','milk'],null,{rem:'liquid',card:'liquid'}),
+ sortSt,sortSt,isSt,isSt,
+ ()=>MATCH('Match each <b>state of matter</b> to its property.',[['Solids','stay the same shape unless bent or twisted'],['Liquids','take the shape of their container'],['Gases','spread out to fill the space around them']],{rem:'states',card:'gas'}),
+ ()=>TFS('Circle <b>True</b> or <b>False</b>.',sample([['Water is a liquid at room temperature.',1],['Air is made of gases.',1],['Ice is a liquid.',0],['Steam is a gas.',1],['A rock changes shape to fit its container.',0],['Honey can flow.',1],['Oxygen is a solid.',0],['A gas spreads out everywhere.',1]],4),{rem:'states',card:'liquid'}),
+ ()=>({...MATCH('Name the <b>state</b> of each part of the bottle.',[['A. Plastic cap','solid'],['B. Water','liquid'],['C. Air inside','gas']],{rem:'states',card:'solid'}),fig:bottleSVG()}),
+ ()=>PICK('Tick <b>TWO</b> properties of a liquid.',[O('flows','🌊'),O('has a fixed shape','🧱'),O("takes the container's shape",'🥛'),O('is always hard','🪨')],['flows',"takes the container's shape"],2,{rem:'liquid',card:'liquid'}),
+ ()=>MC('Which is <b>easiest to squash</b> (compress)?',O('A gas, like air in a syringe'),[O('A solid, like a wooden block'),O('A liquid, like water in a syringe')],{rem:'compress',card:'gas',fig:bigE('💉'),n:3}),
+ ()=>MC('Water is poured from a <b>tall glass</b> into a <b>wide bowl</b>. What happens to its shape?',O('It takes the shape of the bowl'),[O('It keeps the shape of the glass'),O('It turns into a solid'),O('It turns into a gas')],{rem:'liquid',card:'liquid',fig:bigE('🥛➜🥣')}),
+ ()=>BLANK('Complete the sentences.','A solid keeps its {0}. A liquid takes the shape of its {1}. A gas spreads out to {2} the space.',['shape','container','fill'],['shape','container','fill','colour'],{rem:'states',card:'gas'}),
+ ()=>{const c=pick(['S','L','G']),it=pick(ST[c]),oth=['S','L','G'].filter(x=>x!==c);
+   const cr={S:['desk','chair','pencil','book'],L:['water in a bottle','juice','shampoo'],G:['air','oxygen','steam']};const r=pick(cr[c]),w=[pick(cr[oth[0]]),pick(cr[oth[1]]),pick(cr[oth[0]])].filter((x,i,a)=>a.indexOf(x)===i);
+   return MC(`Which of these is ${stN[c]} you can find in your classroom?`,O(r),w.map(x=>O(x)),{rem:stF[c],card:stCard[c]})},
+ ()=>{const k=pick([['keeps its own shape','Solid','S'],['flows and takes the shape of its container','Liquid','L'],['spreads out to fill all the space','Gas','G']]);return MC(`Which state of matter <b>${k[0]}</b>?`,O(k[1]),[],{fixed:1,order:[O('Solid','🧊'),O('Liquid','💧'),O('Gas','🎈')],rem:stF[k[2]],card:stCard[k[2]]})},
+ ()=>BLANK('Ice, water and steam are all water! Complete the sentence.','Ice is a {0}. Water is a {1}. Steam is a {2}.',['solid','liquid','gas'],['solid','liquid','gas'],{rem:'states',card:'gas',fig:bigE('🧊💧♨️')})
+];
+
+/* ---------- LAND 5 · Mixtures ---------- */
+const MIXY=['salt water','soil','salad','muddy water','air','sandy water'],NOMIX=['pure gold','oxygen','nitrogen'];
+QF[5]=[
+ ()=>MC('Which of these is a <b>mixture</b>?',O(pick(MIXY)),NOMIX.map(x=>O(x)),{rem:'mix',card:'mixture'}),
+ ()=>MC('Which of these is <b>NOT</b> a mixture?',O(pick(NOMIX)),sample(MIXY,3).map(x=>O(x)),{rem:'notmix',card:'mixture'}),
+ ()=>BLANK('Complete the sentence.','A mixture has two or more {0} mixed {1}.',['materials','together'],['materials','together','alone','gases'],{rem:'mix',card:'mixture'}),
+ ()=>({type:'sepa',q:'Separate the mixture! Tap the <b>right tool</b>.',mix:pick(SEPS),marks:1,rem:'magnet'}),
+ ()=>({type:'sepa',q:'Separate the mixture! Tap the <b>right tool</b>.',mix:pick(SEPS),marks:1,rem:'sieve'}),
+ ()=>({type:'sepa',q:'Separate the mixture! Tap the <b>right tool</b>.',mix:pick(SEPS),marks:1,rem:'filter'}),
+ ()=>{const s=[SEPS.filter(x=>x.t==='filter'),SEPS.filter(x=>x.t==='magnet'),SEPS.filter(x=>x.t==='sieve')].map(pick);const nm={filter:'Filtering',magnet:'Magnet',sieve:'Sieving'};return MATCH('Match each <b>mixture</b> to the best way to separate it.',s.map(x=>[x.a.n+' and '+x.b.n,nm[x.t]]),{rem:'sieve',card:'sieving'})},
+ ()=>{const s=pick(SEPS),nm={filter:'Filter paper and funnel',magnet:'Magnet',sieve:'Sieve'};return MC(`To separate <b>${s.a.n} and ${s.b.n}</b>, what do you need?`,O(nm[s.t]),Object.keys(nm).filter(k=>k!==s.t).map(k=>O(nm[k])),{fixed:1,order:[O('Filter paper and funnel','🫗'),O('Sieve','🥣'),O('Magnet','🧲')],ex:s.w,rem:s.t==='filter'?'filter':s.t,card:s.t==='filter'?'filtering':s.t==='sieve'?'sieving':'magnet'})},
+ ()=>MC('Sand and gravel are poured into a <b>sieve</b>. Why does only the <b>sand</b> pass through?',O('Sand is smaller than gravel'),[O('Sand is bigger than gravel'),O('Sand is lighter than gravel'),O('Sand dissolves')],{rem:'sieve',card:'sieving',fig:bigE('🥣⚪🪨')}),
+ ()=>BLANK('You pour <b>pebbles and water</b> through filter paper. Complete the sentences.','The {0} goes through the filter paper. The {1} stay on the filter paper. Pebbles are {2} in water.',['water','pebbles','not soluble'],['water','pebbles','soluble','not soluble'],{rem:'filter',card:'filtering'}),
+ ()=>{const r=pick(['iron nail','paper clip','steel screw']);return MC('Which of these will a <b>magnet attract</b>?',O(r,r==='iron nail'?'🔩':r==='paper clip'?'📎':'🔧'),[O('rice','🍚'),O('plastic bead','🔵'),O('sand','⚪'),O('wooden block','🪵')],{rem:'magnet',card:'magnet'})},
+ ()=>MC('A student says: <i>"All metals are magnetic."</i> Is the student correct?'+tbl(['Metal','Attracted to a magnet?'],[['iron','yes'],['aluminium','no']]),O('No — aluminium is a metal but a magnet does not attract it'),[O('Yes — all metals stick to magnets'),O('Yes — aluminium is stronger than iron')],{rem:'magmetals',card:'magnet',n:3}),
+ ()=>TFS('Circle <b>True</b> or <b>False</b>.',sample([['A sieve separates things by size.',1],['A magnet attracts all materials.',0],['Filtering removes dissolved salt from water.',0],['Air is a mixture of gases.',1],['Salad is a mixture.',1],['Oxygen is a mixture.',0],['Filter paper keeps the solid and lets the liquid go through.',1]],5),{rem:'mix',card:'mixture'}),
+ ()=>{const sa=rnd()<.5;return sa?MC('There is a mixture of <b>salt, beans and paper clips</b>. How could we separate the <b>salt</b> without adding to the mixture?',O('Sieving'),[O('Filtering'),O('Magnets')],{fixed:1,order:[O('Filtering'),O('Sieving'),O('Magnets')],rem:'sieve',card:'sieving',ex:'The tiny salt grains fall through the sieve holes. The beans and clips stay.'}):MC('A mixture of <b>beans and paper clips</b> is still together. How could we separate the paper clips <b>quickly</b>?',O('Magnets'),[O('Filtering'),O('Sieving')],{fixed:1,order:[O('Filtering'),O('Sieving'),O('Magnets')],rem:'magnet',card:'magnet'})},
+ ()=>rnd()<.5?BLANK('Iron nails are mixed with rice. Complete the sentences.','Use a {0}. It attracts the {1} but not the rice.',['magnet','iron nails'],['magnet','sieve','iron nails','rice'],{rem:'magnet',card:'magnet'}):BLANK('Large stones are mixed with sand. Complete the sentences.','Use a {0}. The {1} passes through the holes.',['sieve','sand'],['sieve','magnet','sand','stones'],{rem:'sieve',card:'sieving'})
+];
+
+/* ---------- LAND 6 · Dissolving ---------- */
+const sol=()=>SUBS.filter(s=>s.s),ins=()=>SUBS.filter(s=>!s.s);
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+const DTF=[['When a solid dissolves, it disappears forever.',0],['Sugar dissolves in water.',1],['Sand dissolves in water.',0],['When something dissolves, it is still there.',1],['All solids dissolve in water.',0],['Dissolving a solid in a liquid is an example of mixing.',1],['Mixing two different liquids together always makes a new substance.',0],['Dissolving sugar in water is an example of a solid dissolving in a liquid.',1],['A dissolved solid is still present, even when we cannot see it.',1]];
+QF[6]=[
+ ()=>{const a=sample(sol(),2),b=pick(ins());return MC('Test each one in the water! Which will <b>NOT</b> dissolve?',O(cap(b.n),b.e),shuffle(a).map(x=>O(cap(x.n),x.e)),{lab:'dissolve',subs:[...a,b].map(x=>x.k),rem:'insoluble',card:'insoluble',n:3})},
+ ()=>{const a=sample(sol(),2),b=sample(ins(),2),its=[...a.map(x=>({t:cap(x.n),e:x.e,b:'S'})),...b.map(x=>({t:cap(x.n),e:x.e,b:'I'}))];return {...SORT('Test the materials in water. Sort them: <b>soluble</b> or <b>insoluble</b>?',[{id:'S',t:'Soluble',c:'#c9f5d9'},{id:'I',t:'Insoluble',c:'#ffe3c2'}],its,{rem:'soluble',card:'soluble'}),lab:'dissolve',subs:[...a,...b].map(x=>x.k)}},
+ ()=>{const a=sample(sol(),2),b=sample(ins(),2);return {...PICK('Test them! Tick the <b>TWO</b> materials that <b>dissolve</b> in water.',[...a,...b].map(x=>O(cap(x.n),x.e)),a.map(x=>cap(x.n)),2,{rem:'soluble',card:'soluble'}),lab:'dissolve',subs:[...a,...b].map(x=>x.k)}},
+ ()=>SORT('Read what happens after stirring in water. Is each material <b>soluble</b> or <b>insoluble</b>?',[{id:'S',t:'Soluble',c:'#c9f5d9'},{id:'I',t:'Insoluble',c:'#ffe3c2'}],[{t:'Sugar: no grains can be seen',e:'🍬',b:'S'},{t:'Sand: grains remain at the bottom',e:'⏳',b:'I'},{t:'Salt: no crystals can be seen',e:'🧂',b:'S'}],{rem:'soluble',card:'insoluble'}),
+ ()=>BLANK('The salt cannot be seen in the water. Complete the sentence.','The salt cannot be seen because it has {0}.',['dissolved'],['dissolved','melted','vanished'],{rem:'stillthere',card:'dissolve'}),
+ ()=>TFS('Circle <b>True</b> or <b>False</b>.',sample(DTF,5),{rem:'dissolve',card:'dissolve'}),
+ ()=>PICK('Circle the materials that are <b>soluble</b> in water.',[O('Salt','🧂'),O('Wood','🪵'),O('Sugar','🍬'),O('Rocks','🪨'),O('Metal spoon','🥄'),O('Coffee powder','☕')],['Salt','Sugar','Coffee powder'],null,{rem:'soluble',card:'soluble'}),
+ ()=>BLANK('Complete the sentences using the word bank.','Salt and water make a {0}. Salt is {1} in water. Things that do not dissolve are called {2}.',['mixture','soluble','insoluble'],['dissolve','mixture','soluble','insoluble'],{rem:'solution',card:'solution'}),
+ ()=>MC('A girl is dissolving salt in water. <b>What safety rule</b> should she follow?',O('Wear goggles if told to by the teacher'),[O('Taste the mixture'),O('Touch the salt with bare hands')],{rem:'safe',card:'safety',fig:bigE('🥽🧂💧'),n:3}),
+ ()=>MC('Why must we <b>not taste</b> science mixtures?',O('They might be harmful'),[O('They are too cold'),O('They are always sweet'),O('They are too small')],{rem:'notaste',card:'safety',fig:bigE('🚫👅')}),
+ ()=>MC('Tick the <b>safe</b> action.',O('Walk carefully with equipment','🚶'),[O('Taste the mixture','👅'),O('Run with a beaker','🏃')],{rem:'safe',card:'safety',n:3}),
+ ()=>({type:'hot',q:'Safety check! <b>Tap THREE things</b> that are <b>unsafe</b> in this experiment picture.',need:3,rem:'safe',card:'safety',marks:3}),
+ ()=>MC('A student says: <i>"Filtering will remove <b>dissolved salt</b> from water."</i> Do you agree?',O('No — dissolved salt goes through the filter paper with the water'),[O('Yes — filter paper catches everything'),O('Yes — salt is a very big solid')],{rem:'insolfilter',card:'filtering',n:3}),
+ ()=>MC('A girl stirs salt into water. How can she tell the salt has <b>dissolved</b>?',O('The salt disappears and the water looks clear'),[O('Salt grains sink to the bottom'),O('The salt turns into a rock'),O('The water turns into ice')],{rem:'dissolve',card:'dissolve'}),
+ ()=>MC('A girl is dissolving salt in water. If she added <b>sand</b> instead of salt, what would happen?',O('The sand would not dissolve — you would still see it'),[O('The sand would disappear'),O('The water would turn into sand'),O('The sand would dissolve faster')],{rem:'insoluble',card:'insoluble',fig:bigE('⏳➜🥛')}),
+ ()=>MC('What is a <b>solution</b>?',O('A mixture where a solid has dissolved in a liquid'),[O('A solid that never changes'),O('A mixture of two solids'),O('A gas in the air')],{rem:'solution',card:'solution'}),
+ ()=>MC('Sugar is stirred into water and it seems to <b>disappear</b>. Where is the sugar?',O('Still there, dissolved in the water'),[O('Gone forever'),O('Turned into a gas'),O('Stuck on the spoon')],{rem:'stillthere',card:'dissolve',fig:bigE('🍬➜☕')}),
+ ()=>({type:'parts',q:'Label the filtering equipment. Drag each name to the right letter.',svg:funnelSVG(),labels:['funnel','filter paper','beaker'],spots:{'funnel':[82.1,17.2],'filter paper':[82.1,38],'beaker':[82.1,81.4]},rem:'filter',card:'filtering',marks:3})
+];
+
+/* ---------- Teacher's real revision test (36 marks) ---------- */
+const EXAM=[
+ ()=>SORT('<b>1a.</b> Alive, once alive or not alive?',BINS3N,[{t:'Flower',e:'🌸',b:'A'},{t:'Laptop',e:'💻',b:'N'},{t:'Fallen leaf',e:'🍂',b:'O'},{t:'Saucepan',e:'🍳',b:'N'}],{rem:'alive',card:'never',sec:'Living things'}),
+ ()=>PICK('<b>1b.</b> Tap <b>THREE</b> of the seven processes of life.',[...LIVEP.map(p=>O(p.k)),O('Melting'),O('Rusting'),O('Floating')],LIVEP.map(p=>p.k),3,{rem:'procs',card:'procs',sec:'Living things'}),
+ ()=>MATCH('<b>2a.</b> Match the plant parts to their meanings.',[['Root','absorbs water and nutrients from the soil'],['Stem','transports water and nutrients from the root to other parts of the plant']],{extra:['makes food for the plant'],rem:'root',card:'root',sec:'Plants'}),
+ ()=>({...MC('<b>2b.</b> Using the information, which plant will be the most <b>WILTED</b>?',O('c. Sun but no water'),[O('a. Water and sun'),O('b. Water but no sun')],{fixed:1,n:3,rem:'wilt',ex:'Plants need water. With no water the plant droops and wilts.',sec:'Plants'}),fig:potsSVG()}),
+ ()=>MC('<b>3a.</b> Jeff puts one plant next to a <b>WINDOW</b> with lots of light and one in a <b>CUPBOARD</b> with no light. Which plant will grow more and why?',O('The plant by the window, because it gets light'),[O('The plant in the cupboard, because it is dark'),O('Both will grow the same'),O('The plant by the window, because it gets no water')],{marks:2,rem:'needs',sec:'Investigations'}),
+ ()=>MC('<b>3b.</b> After one week Jeff\'s plants are both dying. What <b>mistake</b> could Jeff have made?',O('He forgot to give the plants water'),[O('He used a ruler'),O('He put a plant next to a window'),O('He measured in centimetres')],{rem:'needs',sec:'Investigations'}),
+ ()=>MC('<b>3c.</b> Do you think Jeff has collected any results that support a prediction?',O('No'),[O('Yes')],{fixed:1,order:[O('Yes'),O('No')],rem:'evidence',sec:'Investigations'}),
+ ()=>MC('<b>4.</b> The plant height was measured in centimetres. Why would centimetres be better than <b>finger lengths</b>?',O('Fingers can be different sizes'),[O('It can be dangerous to use fingers'),O('Finger lengths are not countable')],{rem:'cm',n:3,sec:'Investigations'}),
+ ()=>SORT('<b>5a.</b> Sort the materials into solid, liquid and gas.',BINSM,[{t:'Ice',e:'🧊',b:'S'},{t:'Water',e:'💧',b:'L'},{t:'Steam',e:'♨️',b:'G'},{t:'Carbon dioxide',e:'☁️',b:'G'},{t:'Shampoo',e:'🧴',b:'L'},{t:'Oxygen',e:'🫧',b:'G'}],{marks:3,rem:'states',sec:'Matter'}),
+ ()=>MC('<b>5b.</b> A girl tests whether the <b>volume of water</b> in a glass affects how much <b>salt</b> will dissolve. Name ONE way to make it a <b>FAIR TEST</b>.',O('Keep the amount of salt the same each time'),[O('Change the amount of salt each time'),O('Use a different glass each day'),O('Stir for a different time each time')],{rem:'fairdis',sec:'Investigations'}),
+ ()=>BLANK('<b>6a.</b> What is a mixture?','A mixture is {0} or more different {1} mixed together.',['two','materials'],['two','one','materials','rocks'],{marks:1,rem:'mix',sec:'Mixtures'}),
+ ()=>MC('<b>6b.</b> There is a mixture of <b>salt, beans and paper clips</b>. How could we separate the salt without adding to the mixture?',O('Sieving'),[O('Filtering'),O('Magnets')],{fixed:1,order:[O('Filtering'),O('Sieving'),O('Magnets')],rem:'sieve',sec:'Mixtures'}),
+ ()=>MC('<b>6c.</b> A mixture of <b>beans and paper clips</b> is still together. How could we separate the paper clips <b>quickly</b>?',O('Magnets'),[O('Filtering'),O('Sieving')],{fixed:1,order:[O('Filtering'),O('Sieving'),O('Magnets')],rem:'magnet',sec:'Mixtures'}),
+ ()=>TFS('<b>7a.</b> Circle True or False for each sentence.',[['When a solid dissolves in a liquid it is still there.',1],['Dissolving a solid in a liquid is an example of mixing.',1],['When a solid dissolves, it is gone forever.',0],['Mixing two different liquids together always makes a new substance.',0],['Dissolving sugar in water is an example of a solid dissolving in a liquid.',1]],{rem:'dissolve',sec:'Dissolving'}),
+ ()=>MC('<b>7b.</b> Of SALT, SUGAR and SAND, two will dissolve. Which will <b>NOT</b> dissolve?',O('Sand','⏳'),[O('Salt','🧂'),O('Sugar','🍬')],{rem:'insoluble',n:3,sec:'Dissolving'}),
+ ()=>MC('<b>7c.</b> Jerry believes metal <b>paper clips</b> are insoluble. What could he do to test this?',O('Put a paper clip in water and see if it dissolves'),[O('Put a paper clip next to a window'),O('Weigh the paper clip on a ruler'),O('Draw a bar chart of paper clips')],{rem:'insoluble',ex:'Put the paper clip in water, stir, and look. It does not dissolve, so it is insoluble.',sec:'Dissolving'}),
+ ()=>MC('<b>8a.</b> Yuri has sand and water in a cup. She separated the mixture with filter paper and a funnel. What is this method called?',O('Filtering'),[O('Sieving')],{fixed:1,order:[O('Filtering'),O('Sieving')],rem:'filter',sec:'Mixtures',fig:funnelSVG()}),
+ ()=>BLANK('<b>8b.</b> Pour the mixture of rocks and water into the filter.','The {0} goes through the filter paper. The {1} is left on the filter paper. Rock is not {2} — that is why it can\'t go through.',['Water','Rock','Soluble'],['Soluble','Rock','Water'],{rem:'filter',sec:'Dissolving'}),
+ ()=>({type:'hot',q:'<b>8c.</b> Tap <b>THREE</b> things you can see that are <b>unsafe</b> when doing an experiment.',need:3,rem:'safe',marks:3,sec:'Safety'})
+];
+const EXAM_MARKS=36;
+/* =====================  ENGINE PART 1: state, audio, helpers, answer widgets  ===================== */
+['a','a','b','a','b','b','b','a','a'].forEach((p,i)=>SEPS[i].p=p);
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let S=Object.assign({name:'',xp:0,lands:{},cards:{},badges:{},seen:{},day:'',streak:0,set:{vi:1,voice:0,snd:1},exBest:0,exSec:{},mockBest:0,played:0,bestCombo:0},store.get('sci-save',{}));
+S.set=Object.assign({vi:1,voice:0,snd:1},S.set||{});
+const save=()=>store.set('sci-save',S);
+const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+(function streak(){const t=new Date(),td=ymd(t);if(S.day!==td){const y=new Date(t.getTime()-864e5);S.streak=S.day===ymd(y)?(S.streak||0)+1:1;S.day=td;save()}})();
+const stageOf=xp=>{let s=0;STAGES.forEach((g,i)=>{if(xp>=g.x)s=i});return s};
+const stripH=h=>String(h).replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/\s+/g,' ').trim();
+const cap1=s=>s?s[0].toUpperCase()+s.slice(1):s;
+
+/* ---------- audio & voice ---------- */
+let AC=null,master=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();master=AC.createGain();master.gain.value=S.set.snd?.6:0;master.connect(AC.destination)}catch(e){AC=null}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function tone(f,d,type,v,delay,f2){const a=ac();if(!a)return;const t0=a.currentTime+(delay||0),o=a.createOscillator(),g=a.createGain();o.type=type||'triangle';o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+d);g.gain.setValueAtTime(v||.15,t0);g.gain.exponentialRampToValueAtTime(.001,t0+d);o.connect(g);g.connect(master);o.start(t0);o.stop(t0+d+.02)}
+const SFX={click(){tone(620,.05,'square',.05)},pop(){tone(400,.08,'sine',.12,0,800)},ok(){[523,659,784,1046].forEach((f,i)=>tone(f,.2,'triangle',.14,i*.08))},bad(){tone(240,.25,'square',.07,0,140)},hint(){tone(880,.12,'sine',.12);tone(1175,.18,'sine',.1,.1)},win(){[523,659,784,659,784,1046,1318].forEach((f,i)=>tone(f,.22,'triangle',.13,i*.12))},hit(){tone(180,.18,'sawtooth',.1,0,60);tone(700,.1,'square',.07,.05)},coin(){tone(988,.08,'square',.07);tone(1319,.2,'square',.07,.08)},grow(){[392,523,659,784,1046].forEach((f,i)=>tone(f,.25,'sine',.13,i*.09))}};
+const sfx=n=>{if(S.set.snd)try{SFX[n]()}catch(e){}};
+let speaking=false;
+function stopVoice(){try{speechSynthesis.cancel()}catch(e){}speaking=false}
+function speak(text,lang){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(stripH(text));u.lang=lang||'en-US';u.rate=.9;u.pitch=1.05;speechSynthesis.speak(u)}catch(e){}}
+function confetti(n){const em=['🎉','⭐','✨','🌱','🧪','🌸','🔬'];for(let i=0;i<(n||28);i++){const s=document.createElement('span');s.className='conf';s.textContent=pick(em);s.style.left=(rnd()*100)+'vw';s.style.animationDelay=(rnd()*.6)+'s';s.style.fontSize=(20+rnd()*22)+'px';document.body.appendChild(s);setTimeout(()=>s.remove(),3200)}}
+function floatTxt(txt,el){const r=el?el.getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2,width:0};const s=document.createElement('div');s.className='float';s.textContent=txt;s.style.left=(r.left+r.width/2-30)+'px';s.style.top=(r.top-10)+'px';document.body.appendChild(s);setTimeout(()=>s.remove(),1300)}
+
+/* ---------- generic pointer drag (with tap fallback) ---------- */
+let DT=0;const recentDrag=()=>performance.now()-DT<120;
+function dragify(el,onTap,onDrop,isLocked){
+  el.addEventListener('pointerdown',e=>{
+    if(isLocked&&isLocked())return;const sx=e.clientX,sy=e.clientY;let ghost=null,moved=false,over=null;
+    const tgt=(x,y)=>{const els=document.elementsFromPoint(x,y);for(const t of els){const d=t.closest&&t.closest('[data-drop]');if(d)return d}return null};
+    const mv=ev=>{if(!moved&&Math.hypot(ev.clientX-sx,ev.clientY-sy)>9){moved=true;ghost=el.cloneNode(true);ghost.classList.add('ghost');ghost.style.opacity='';document.body.appendChild(ghost);el.style.opacity='.3'}
+      if(moved){ghost.style.left=(ev.clientX-ghost.offsetWidth/2)+'px';ghost.style.top=(ev.clientY-ghost.offsetHeight/2)+'px';const t=tgt(ev.clientX,ev.clientY);if(over&&over!==t)over.classList.remove('over');over=t;if(t)t.classList.add('over')}};
+    const up=ev=>{window.removeEventListener('pointermove',mv);window.removeEventListener('pointercancel',up);if(over)over.classList.remove('over');DT=performance.now();
+      if(moved){ghost.remove();el.style.opacity='';const t=tgt(ev.clientX,ev.clientY);if(t){const dv=t.getAttribute('data-drop');setTimeout(()=>onDrop(dv),0)}}else setTimeout(onTap,0)};
+    window.addEventListener('pointermove',mv);window.addEventListener('pointerup',up,{once:true});window.addEventListener('pointercancel',up,{once:true});
+  });
+}
+const chipH=(e,t)=>`${e?`<span class="ce">${e}</span>`:''}<span>${esc(t)}</span>`;
+
+/* ---------- answer widgets: R[type](q,box,chg,api) -> controller ---------- */
+const R={};
+let LOCK=false;
+R.mc=(q,box,chg)=>{
+  const n=q.opts.length,short=q.opts.every(o=>optT(o).length<15);
+  const cls=q.tf?'opts':n===3?(short?'opts c3':'opts c1'):'opts';
+  box.innerHTML=`<div class="${cls}">`+q.opts.map((o,i)=>`<button class="opt${q.tf?' tf':''}" data-i="${i}">${q.tf?'':`<span class="k">${'ABCD'[i]}</span>`}${o.e?`<span class="oe">${o.e}</span>`:''}<span>${esc(optT(o))}</span></button>`).join('')+'</div>';
+  let sel=-1;const gone=new Set(),bs=[...box.querySelectorAll('.opt')];
+  bs.forEach((b,i)=>b.onclick=()=>{if(LOCK||gone.has(i))return;sel=i;bs.forEach((x,j)=>x.classList.toggle('sel',j===i));sfx('click');chg()});
+  return{ready:()=>sel>=0,eval:()=>({frac:sel===q.a?1:0}),
+    reveal(){bs.forEach((b,i)=>{b.classList.remove('sel');if(i===q.a)b.classList.add('ok');else if(i===sel)b.classList.add('no')})},
+    hint2(){const c=bs.map((b,i)=>i).filter(i=>i!==q.a&&!gone.has(i)&&i!==sel);if(c.length){const i=pick(c);gone.add(i);bs[i].classList.add('gone')}},
+    solve(){bs[q.a].click()},key(k){if(bs[k])bs[k].click()}};
+};
+R.pick=(q,box,chg)=>{
+  box.innerHTML=`<div class="tray" style="background:#fff;border-style:solid">`+q.opts.map((o,i)=>`<button class="chip" data-i="${i}" style="touch-action:manipulation;cursor:pointer">${chipH(o.e,optT(o))}</button>`).join('')+`</div><div class="simtxt" id="pkTxt">${q.n?'Pick exactly '+q.n:'Pick all that fit'}</div>`;
+  const sel=new Set(),cs=[...box.querySelectorAll('.chip')],gone=new Set(),R_=new Set(q.right);
+  const txt=()=>{$('pkTxt').textContent=q.n?`Picked ${sel.size} of ${q.n}`:`Picked ${sel.size}`};
+  cs.forEach((c,i)=>c.onclick=()=>{if(LOCK||gone.has(i))return;if(sel.has(i)){sel.delete(i)}else{if(q.n&&sel.size>=q.n){c.animate([{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'none'}],{duration:200});return}sel.add(i)}c.classList.toggle('sel',sel.has(i));sfx('click');txt();chg()});
+  const hit=()=>[...sel].filter(i=>R_.has(optT(q.opts[i]))).length;
+  return{ready:()=>q.n?sel.size===q.n:sel.size>0,
+    eval(){const h=hit(),m=sel.size-h;return{frac:q.n?h/q.n:Math.max(0,(h-m)/q.right.length)}},
+    reveal(){cs.forEach((c,i)=>{c.classList.remove('sel');const r=R_.has(optT(q.opts[i]));if(sel.has(i))c.classList.add(r?'ok':'no');else if(r)c.style.outline='4px dashed #3dbb6c'})},
+    hint2(){const c=cs.map((x,i)=>i).filter(i=>!R_.has(optT(q.opts[i]))&&!sel.has(i)&&!gone.has(i));if(c.length){const i=pick(c);gone.add(i);cs[i].classList.add('used')}},
+    solve(){q.opts.forEach((o,i)=>{if(R_.has(optT(o))&&!sel.has(i)&&(!q.n||sel.size<q.n))cs[i].click()})}};
+};
+R.sort=(q,box,chg)=>{
+  const n=q.items.length,asg=Array(n).fill(null);let selI=-1;
+  box.innerHTML=`<div class="tray" data-drop="tray" id="stray"></div><div class="bins n${q.bins.length}" id="sbins">${q.bins.map(b=>`<div class="bin" data-drop="${b.id}" style="--bc:${b.c}"><h4>${b.t}</h4><div class="in"></div></div>`).join('')}</div>`;
+  const tray=box.querySelector('#stray'),bins=[...box.querySelectorAll('.bin')];
+  let done=false;
+  function chip(i){const it=q.items[i];return `<span class="chip${selI===i?' sel':''}" data-i="${i}">${chipH(it.e,it.t)}</span>`}
+  function render(){
+    tray.innerHTML=q.items.map((it,i)=>asg[i]==null?chip(i):'').join('')||'<span style="color:var(--ink2);font-weight:600">✔ All sorted! Press Check.</span>';
+    bins.forEach(b=>b.querySelector('.in').innerHTML=q.items.map((it,i)=>asg[i]===b.dataset.drop?chip(i):'').join(''));
+    box.querySelectorAll('.chip').forEach(c=>{const i=+c.dataset.i;dragify(c,()=>{if(LOCK)return;selI=selI===i?-1:i;sfx('click');render()},t=>place(i,t),()=>LOCK)});
+    bins.forEach(b=>b.classList.toggle('ready',selI>=0));chg();
+  }
+  function place(i,t){if(LOCK)return;asg[i]=t==='tray'?null:t;selI=-1;sfx('pop');render()}
+  bins.forEach(b=>b.onclick=e=>{if(LOCK||recentDrag()||selI<0||e.target.closest('.chip'))return;place(selI,b.dataset.drop)});
+  tray.onclick=e=>{if(LOCK||recentDrag()||selI<0||e.target.closest('.chip'))return;place(selI,'tray')};
+  render();
+  return{ready:()=>asg.every(x=>x!=null),eval(){let c=0;q.items.forEach((it,i)=>{if(asg[i]===it.b)c++});return{frac:c/n}},
+    reveal(){const nm={};q.bins.forEach(b=>nm[b.id]=b.t);bins.forEach(b=>b.querySelectorAll('.chip').forEach(c=>{const i=+c.dataset.i,ok=q.items[i].b===asg[i];c.classList.remove('sel');c.classList.add(ok?'ok':'no');if(!ok)c.insertAdjacentHTML('beforeend',`<small style="color:#a33">→ ${nm[q.items[i].b]}</small>`)}))},
+    hint2(){const j=q.items.findIndex((it,i)=>asg[i]!==it.b);if(j>=0){asg[j]=q.items[j].b;selI=-1;render()}},
+    solve(){q.items.forEach((it,i)=>asg[i]=it.b);selI=-1;render()}};
+};
+R.match=(q,box,chg)=>{
+  const n=q.pairs.length,rt=shuffle([...q.pairs.map((p,i)=>({t:p[1],o:i})),...(q.extra||[]).map(t=>({t,o:-1}))]);
+  const lk=Array(n).fill(null);let selL=-1,selR=-1;
+  box.innerHTML=`<div class="pairs"><div class="col" id="mL"></div><div class="col" id="mR"></div></div>`;
+  const L=box.querySelector('#mL'),Rr=box.querySelector('#mR');
+  const rOwner=j=>lk.findIndex(x=>x===j);
+  function render(){
+    L.innerHTML=q.pairs.map((p,i)=>`<div class="pr${lk[i]!=null?' p'+(i%5):''}${selL===i?' sel':''}" data-i="${i}"><span>${p[0]}</span>${lk[i]!=null?'<span class="dot" style="background:var(--y)"></span>':''}</div>`).join('');
+    Rr.innerHTML=rt.map((r,j)=>{const o=rOwner(j);return `<div class="pr${o>=0?' p'+(o%5):''}${selR===j?' sel':''}" data-j="${j}"><span>${r.t}</span></div>`}).join('');
+    L.querySelectorAll('.pr').forEach(e=>e.onclick=()=>{if(LOCK)return;const i=+e.dataset.i;sfx('click');if(lk[i]!=null){lk[i]=null;selL=-1}else if(selR>=0){lk[i]=selR;selR=-1;selL=-1}else selL=selL===i?-1:i;render()});
+    Rr.querySelectorAll('.pr').forEach(e=>e.onclick=()=>{if(LOCK)return;const j=+e.dataset.j;sfx('click');const o=rOwner(j);if(o>=0){lk[o]=null;selR=-1}else if(selL>=0){lk[selL]=j;selL=-1;selR=-1}else selR=selR===j?-1:j;render()});
+    chg();
+  }
+  render();
+  return{ready:()=>lk.every(x=>x!=null),eval(){let c=0;lk.forEach((j,i)=>{if(j!=null&&rt[j].o===i)c++});return{frac:c/n}},
+    reveal(){[...L.children].forEach((e,i)=>{const ok=lk[i]!=null&&rt[lk[i]].o===i;e.classList.add(ok?'ok':'no');if(!ok)e.insertAdjacentHTML('beforeend',`<small style="color:#a33;display:block">→ ${q.pairs[i][1]}</small>`)});[...Rr.children].forEach((e,j)=>{const o=rOwner(j);if(o>=0)e.classList.add(rt[j].o===o?'ok':'no')})},
+    hint2(){const i=lk.findIndex((x,k)=>x==null||rt[x].o!==k);if(i>=0){const old=lk.findIndex(x=>x!=null&&rt[x].o===i);const j=rt.findIndex(r=>r.o===i);const ow=rOwner(j);if(ow>=0)lk[ow]=null;lk[i]=j;selL=-1;selR=-1;render()}},
+    solve(){q.pairs.forEach((p,i)=>lk[i]=rt.findIndex(r=>r.o===i));render()}};
+};
+R.blank=(q,box,chg)=>{
+  const parts=q.text.split(/\{(\d)\}/),fill=Array(q.ans.length).fill(null);let selG=-1;
+  box.innerHTML=`<div class="sent" id="bSent"></div><div class="tray" id="bBank" style="margin-top:14px"></div>`;
+  const sent=box.querySelector('#bSent'),bank=box.querySelector('#bBank');
+  function render(){
+    sent.innerHTML=parts.map((p,i)=>i%2===0?esc(p):`<span class="gap${fill[+p]!=null?' fill':''}${selG===+p?' ready':''}" data-g="${p}" data-drop="${p}">${fill[+p]!=null?esc(fill[+p]):'&nbsp;'}</span>`).join('');
+    bank.innerHTML=q.bank.map((w,i)=>`<span class="chip${fill.includes(w)?' used':''}" data-w="${i}">${esc(w)}</span>`).join('');
+    sent.querySelectorAll('.gap').forEach(g=>g.onclick=()=>{if(LOCK||recentDrag())return;const k=+g.dataset.g;sfx('click');if(fill[k]!=null){fill[k]=null;selG=k}else selG=selG===k?-1:k;render()});
+    bank.querySelectorAll('.chip').forEach(c=>{const w=q.bank[+c.dataset.w];dragify(c,()=>{if(LOCK||fill.includes(w))return;let k=selG>=0&&fill[selG]==null?selG:fill.findIndex(x=>x==null);if(k<0)return;fill[k]=w;selG=-1;sfx('pop');render()},t=>{if(LOCK||fill.includes(w))return;const k=+t;if(isNaN(k))return;fill[k]=w;selG=-1;sfx('pop');render()},()=>LOCK||fill.includes(w))});
+    chg();
+  }
+  render();
+  const lc=s=>String(s).toLowerCase();
+  return{ready:()=>fill.every(x=>x!=null),eval(){let c=0;q.ans.forEach((a,i)=>{if(fill[i]!=null&&lc(fill[i])===lc(a))c++});return{frac:c/q.ans.length}},
+    reveal(){sent.querySelectorAll('.gap').forEach(g=>{const k=+g.dataset.g,ok=lc(fill[k])===lc(q.ans[k]);g.classList.remove('ready');g.classList.add(ok?'ok':'no');if(!ok)g.innerHTML=`<s style="opacity:.6">${esc(fill[k])}</s> ✓ ${esc(q.ans[k])}`})},
+    hint2(){const k=fill.findIndex((x,i)=>x==null||lc(x)!==lc(q.ans[i]));if(k>=0){fill[k]=q.bank.find(w=>lc(w)===lc(q.ans[k]));fill.forEach((x,i)=>{if(i!==k&&x===fill[k])fill[i]=null});selG=-1;render()}},
+    solve(){q.ans.forEach((a,i)=>fill[i]=q.bank.find(w=>lc(w)===lc(a)));render()}};
+};
+R.tfset=(q,box,chg)=>{
+  const v=Array(q.items.length).fill(null);
+  box.innerHTML=`<div class="tfs">`+q.items.map((it,i)=>`<div class="tfrow" data-i="${i}"><span class="mk"></span><span class="tx">${esc(it.t)}</span><span class="tb"><button data-v="1">True</button><button data-v="0">False</button></span></div>`).join('')+'</div>';
+  const rows=[...box.querySelectorAll('.tfrow')];
+  rows.forEach((r,i)=>r.querySelectorAll('button').forEach(b=>b.onclick=()=>{if(LOCK)return;v[i]=+b.dataset.v;r.querySelectorAll('button').forEach(x=>x.classList.toggle('sel',x===b));sfx('click');chg()}));
+  return{ready:()=>v.every(x=>x!=null),eval(){let c=0;q.items.forEach((it,i)=>{if(v[i]!=null&&!!v[i]===it.b)c++});return{frac:c/q.items.length}},
+    reveal(){rows.forEach((r,i)=>{const ok=v[i]!=null&&!!v[i]===q.items[i].b;r.classList.add(ok?'ok':'no');r.querySelector('.mk').textContent=ok?'✅':'❌';if(!ok)r.querySelector('.tx').insertAdjacentHTML('beforeend',` <b style="color:#a33">(${q.items[i].b?'True':'False'})</b>`)})},
+    hint2(){const i=q.items.findIndex((it,k)=>v[k]==null||!!v[k]!==it.b);if(i>=0){v[i]=q.items[i].b?1:0;rows[i].querySelectorAll('button').forEach(x=>x.classList.toggle('sel',+x.dataset.v===v[i]));chg()}},
+    solve(){q.items.forEach((it,i)=>{v[i]=it.b?1:0;rows[i].querySelectorAll('button').forEach(x=>x.classList.toggle('sel',+x.dataset.v===v[i]))});chg()}};
+};
+R.order=(q,box,chg)=>{
+  const n=q.steps.length,idx=shuffle(q.steps.map((s,i)=>i));let seq=[];
+  box.innerHTML=`<div class="ordr" id="oBox"></div>`;const ob=box.querySelector('#oBox');
+  function render(){ob.innerHTML=idx.map(i=>{const s=q.steps[i],p=seq.indexOf(i);return `<button class="chip${p>=0?' sel':''}" data-i="${i}" style="touch-action:manipulation;cursor:pointer">${p>=0?`<span class="no_">${p+1}</span>`:''}<span class="ce">${s.e}</span><span>${esc(s.t)}</span></button>`}).join('');
+    ob.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{if(LOCK)return;const i=+c.dataset.i,p=seq.indexOf(i);if(p>=0)seq.splice(p,1);else seq.push(i);sfx('click');render()});chg()}
+  render();
+  return{ready:()=>seq.length===n,eval(){let c=0;seq.forEach((s,p)=>{if(s===p)c++});return{frac:c/n}},
+    reveal(){ob.querySelectorAll('.chip').forEach(c=>{const i=+c.dataset.i,ok=seq.indexOf(i)===i;c.classList.add(ok?'ok':'no');c.querySelector('.no_')&&(c.querySelector('.no_').textContent=seq.indexOf(i)+1+(ok?'':' → '+(i+1)))})},
+    hint2(){const p=seq.findIndex((s,k)=>s!==k);const k=p<0?seq.length:p;if(k<n){seq=seq.slice(0,k);seq.push(k);render()}},
+    solve(){seq=q.steps.map((s,i)=>i);render()}};
+};
+R.parts=(q,box,chg)=>{
+  const labs=q.labels,place={};let selL=null;
+  box.innerHTML=`<div class="tray" id="pTray" data-drop="tray"></div><div class="stagebox" style="position:relative;max-width:420px;margin:auto">${q.svg}${labs.map(l=>`<div class="hs" data-s="${l}" data-drop="${l}" style="left:${q.spots[l][0]}%;top:${q.spots[l][1]}%">?</div>`).join('')}</div>`;
+  const tray=box.querySelector('#pTray'),hs=[...box.querySelectorAll('.hs')];
+  const order=shuffle(labs);
+  function render(){
+    const placed=Object.values(place);
+    tray.innerHTML=order.filter(l=>!placed.includes(l)).map(l=>`<span class="chip${selL===l?' sel':''}" data-l="${l}">${esc(cap1(l))}</span>`).join('')||'<span style="color:var(--ink2);font-weight:600">✔ All placed! Press Check.</span>';
+    hs.forEach(h=>{const s=h.dataset.s,l=place[s];h.className='hs'+(l?' fill':'')+(selL&&!l?' ready':'');h.textContent=l?cap1(l):'?'});
+    tray.querySelectorAll('.chip').forEach(c=>{const l=c.dataset.l;dragify(c,()=>{if(LOCK)return;selL=selL===l?null:l;sfx('click');render()},t=>{if(LOCK||t==='tray')return;putL(l,t)},()=>LOCK)});
+    chg();
+  }
+  function putL(l,s){Object.keys(place).forEach(k=>{if(place[k]===l)delete place[k]});place[s]=l;selL=null;sfx('pop');render()}
+  hs.forEach(h=>h.onclick=()=>{if(LOCK||recentDrag())return;const s=h.dataset.s;if(place[s]){const l=place[s];delete place[s];selL=l;sfx('click');render()}else if(selL)putL(selL,s)});
+  tray.onclick=e=>{};
+  render();
+  return{ready:()=>labs.every(l=>place[l]!=null),eval(){let c=0;labs.forEach(l=>{if(place[l]===l)c++});return{frac:c/labs.length}},
+    reveal(){hs.forEach(h=>{const s=h.dataset.s,ok=place[s]===s;h.classList.add(ok?'ok':'no');if(!ok)h.textContent=cap1(place[s]||'?')+' → '+cap1(s)})},
+    hint2(){const s=labs.find(l=>place[l]!==l);if(s)putL(s,s)},
+    solve(){labs.forEach(l=>place[l]=l);selL=null;render()}};
+};
+R.hot=(q,box,chg,api)=>{
+  box.innerHTML=`<div class="stagebox" style="position:relative;aspect-ratio:4/3;width:100%;max-width:640px;margin:0 auto;overflow:hidden">${labBG()}${HAZ.map((h,i)=>`<div class="hz" data-i="${i}" style="left:${h.x}%;top:${h.y}%">${h.e}</div>`).join('')}</div><div class="simtxt" id="hzTxt">Tap the unsafe things! (found 0 / ${q.need})</div>`;
+  const found=new Set(),hz=[...box.querySelectorAll('.hz')],tx=box.querySelector('#hzTxt');
+  const nUnsafe=HAZ.filter(h=>h.h).length;
+  hz.forEach((e,i)=>e.onclick=()=>{if(LOCK)return;const h=HAZ[i];e.classList.remove('pulse');
+    if(h.h){if(!found.has(i)){found.add(i);e.classList.add('found');sfx('ok')}tx.innerHTML=`⚠️ <b>Unsafe:</b> ${h.t}${S.set.vi?`<span class="vi">${h.v}</span>`:''}<br><small>Found ${found.size} (need ${q.need}${found.size>=q.need?' ✔':''}) — you can keep looking for more!</small>`;if(found.size===nUnsafe)api.flag('safety')}
+    else{e.classList.add('safe');setTimeout(()=>e.classList.remove('safe'),500);sfx('bad');tx.innerHTML=`✅ ${h.t}${S.set.vi?`<span class="vi">${h.v}</span>`:''}`}chg()});
+  return{ready:()=>found.size>=q.need,eval:()=>({frac:Math.min(found.size,q.need)/q.need}),
+    reveal(){hz.forEach((e,i)=>{if(HAZ[i].h)e.classList.add('found')});tx.innerHTML='<b>All 8 unsafe things:</b> '+HAZ.filter(h=>h.h).map(h=>h.t).join(' · ')},
+    hint2(){const i=HAZ.findIndex((h,k)=>h.h&&!found.has(k));if(i>=0)hz[i].classList.add('pulse')},
+    solve(){HAZ.forEach((h,i)=>{if(h.h&&found.size<q.need)hz[i].click()})}};
+};
+R.chart=(q,box,chg)=>{
+  const n=q.data.length,vals=Array(n).fill(0),cols=['#ff8a3d','#4dabf7','#3dbb6c','#9775fa'];
+  box.innerHTML=`<div class="cht">`+q.data.map((d,i)=>`<div class="chcol" data-i="${i}"><div style="height:180px;width:56px;display:flex;align-items:flex-end;border-bottom:4px solid ${INK};border-left:4px solid ${INK};background:repeating-linear-gradient(#fff 0 11px,#e5f1ea 11px 12px)"><div class="bx" style="height:0;width:100%;background:${cols[i%4]};border:3px solid ${INK};border-bottom:0;border-radius:6px 6px 0 0;transition:height .25s"></div></div><b>0</b><div class="stp"><button data-d="1">▲</button><button data-d="-1">▼</button></div><small style="font-weight:700">${d.l}</small></div>`).join('')+'</div><div class="simtxt">Each step ▲ = 1 cm</div>';
+  const cs=[...box.querySelectorAll('.chcol')];let touched=false;
+  const upd=i=>{cs[i].querySelector('.bx').style.height=(vals[i]*12)+'px';cs[i].querySelector('b').textContent=vals[i]};
+  cs.forEach((c,i)=>c.querySelectorAll('button').forEach(b=>b.onclick=()=>{if(LOCK)return;vals[i]=Math.max(0,Math.min(14,vals[i]+ +b.dataset.d));touched=true;sfx('click');upd(i);chg()}));
+  return{ready:()=>touched,eval(){let c=0;q.data.forEach((d,i)=>{if(vals[i]===d.v)c++});return{frac:c/n}},
+    reveal(){cs.forEach((c,i)=>{const ok=vals[i]===q.data[i].v;c.classList.add(ok?'ok':'no');if(!ok)c.querySelector('b').textContent=vals[i]+' → '+q.data[i].v})},
+    hint2(){const i=q.data.findIndex((d,k)=>vals[k]!==d.v);if(i>=0){vals[i]=q.data[i].v;touched=true;upd(i);chg()}},
+    solve(){q.data.forEach((d,i)=>{vals[i]=d.v;upd(i)});touched=true;chg()}};
+};
+/* separation simulator: bits in a tray, three tools */
+R.sepa=(q,box,chg,api)=>{
+  const m=q.mix,N=5,bits=[];let tries=0,done=false,wrong=0;
+  const tools=[{k:'magnet',e:'🧲',t:'Magnet'},{k:'sieve',e:'🥣',t:'Sieve'},{k:'filter',e:'🫗',t:'Filter paper + funnel'}];
+  box.innerHTML=`<div class="sim" id="spSim"><div id="spBand" class="hide" style="position:absolute;left:4%;right:4%;top:106px;height:10px;border-radius:6px;background:repeating-linear-gradient(90deg,#6b7a86 0 8px,transparent 8px 16px);border:2px solid ${INK}"></div><div id="spMag" class="bit hide" style="font-size:46px;left:44%;top:-6px">🧲</div></div><div class="toolbar">${tools.map(t=>`<button class="tool" data-k="${t.k}"><span class="te">${t.e}</span>${t.t}</button>`).join('')}</div><div class="simtxt" id="spTxt"><b>${cap1(m.a.n)}</b> ${m.a.e} + <b>${m.b.n}</b> ${m.b.e} are mixed together.</div>`;
+  const sim=box.querySelector('#spSim'),txt=box.querySelector('#spTxt');
+  ['a','b'].forEach(w=>{for(let i=0;i<N;i++){const el=document.createElement('div');el.className='bit';el.textContent=m[w].e;const x=6+((i*17+(w==='a'?3:41)+rnd()*8)%84),y=28+((i*19+(w==='b'?17:0))%66);el.style.left=x+'%';el.style.top=y+'px';sim.appendChild(el);bits.push({w,el,x,y})}});
+  const bs=[...box.querySelectorAll('.tool')];
+  function run(k){
+    const pass=bits.filter(b=>b.w===m.p),stay=bits.filter(b=>b.w!==m.p);
+    if(k==='magnet'){const mg=box.querySelector('#spMag');mg.classList.remove('hide');pass.forEach((b,i)=>{b.el.style.left=(36+i*7)+'%';b.el.style.top=(34+(i%2)*10)+'px'})}
+    else{box.querySelector('#spBand').classList.remove('hide');pass.forEach((b,i)=>{b.el.style.top=(132+(i%2)*26)+'px';b.el.style.left=(14+i*16)+'%'});if(k==='filter'&&m.p==='b')pass.forEach(b=>b.el.style.opacity='.9')}
+    stay.forEach(b=>b.el.animate([{transform:'rotate(0)'},{transform:'rotate(8deg)'},{transform:'rotate(0)'}],{duration:500}))
+  }
+  bs.forEach(b=>b.onclick=()=>{if(LOCK||done)return;const k=b.dataset.k;if(k===m.t){done=true;run(k);sfx('ok');txt.innerHTML=`✅ <b>${b.textContent.trim()}</b> works! ${m.w}`;api.commit(wrong===0?1:.5)}
+    else{wrong++;sfx('bad');sim.classList.remove('shakeit');void sim.offsetWidth;sim.animate([{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'none'}],{duration:260});b.classList.add('no');b.disabled=true;
+      txt.innerHTML=`🤔 The ${b.textContent.trim().toLowerCase()} does not separate ${m.a.n} and ${m.b.n}. Try another tool!`;if(wrong>=2){done=true;const right=bs.find(x=>x.dataset.k===m.t);run(m.t);txt.innerHTML=`The right tool is the <b>${right.textContent.trim()}</b>. ${m.w}`;api.commit(0)}}});
+  return{ready:()=>false,eval:()=>({frac:0}),reveal(){},hint2(){const r=bs.find(x=>x.dataset.k===m.t);if(r){r.style.outline='4px solid #ffd43b';r.style.transform='scale(1.08)'}},solve(){bs.find(x=>x.dataset.k===m.t).click()},auto:1};
+};
+/* =====================  ENGINE PART 2: labs & toys  ===================== */
+const SVGNS='http://www.w3.org/2000/svg';
+let STOPS=[];const stopLabs=()=>{STOPS.forEach(f=>{try{f()}catch(e){}});STOPS=[]};
+const mk=(tag,at,par)=>{const e=document.createElementNS(SVGNS,tag);for(const k in at)e.setAttribute(k,at[k]);if(par)par.appendChild(e);return e};
+const vi_=t=>S.set.vi?`<span class="vi">${t}</span>`:'';
+
+/* --- dissolving lab: drop a material in water and stir --- */
+function dissolveLab(host,keys,opt){
+  opt=opt||{};
+  host.innerHTML=`<div class="glassWrap"><svg viewBox="0 0 200 240" xmlns="${SVGNS}" id="dsSvg"><rect x="36" y="46" width="128" height="170" rx="12" fill="#f6fcff" stroke="${INK}" stroke-width="4"/><rect id="dsW" x="40" y="96" width="120" height="116" rx="8" fill="#9fdcff" opacity=".8"/><path d="M40 96q15 -6 30 0t30 0t30 0t30 0" fill="none" stroke="#fff" stroke-width="3" opacity=".8"/><g id="dsG"></g><text id="dsSp" x="100" y="34" font-size="40" text-anchor="middle">🥄</text><text id="dsSk" x="100" y="150" font-size="24" text-anchor="middle" opacity="0">✨</text><text x="100" y="236" font-size="13" text-anchor="middle" font-weight="700" fill="${INK}">glass of water</text></svg><div style="flex:1;min-width:210px"><div class="shelf" id="dsShelf"></div><div class="simtxt" id="dsTxt" style="min-height:70px">Tap a material to drop it in the water and stir! 🥄</div></div></div>`;
+  const G=host.querySelector('#dsG'),W=host.querySelector('#dsW'),SP=host.querySelector('#dsSp'),SK=host.querySelector('#dsSk'),tx=host.querySelector('#dsTxt'),sh=host.querySelector('#dsShelf');
+  const subs=keys.map(k=>SBY[k]);
+  sh.innerHTML=subs.map(s=>`<button class="sub" data-k="${s.k}"><span class="se">${s.e}</span>${cap1(s.n)}<span class="rs hide"></span></button>`).join('');
+  let raf=0,gen=0;const tested=new Set();
+  const stop=()=>{cancelAnimationFrame(raf);gen++};STOPS.push(stop);
+  function test(s){
+    stop();const my=gen;G.innerHTML='';W.setAttribute('fill','#9fdcff');SP.setAttribute('x',100);SP.setAttribute('y',34);SK.setAttribute('opacity',0);
+    const N=s.k==='pebbles'?7:s.k==='clip'?6:s.k==='beads'?8:16,gr=[];
+    for(let i=0;i<N;i++){let el;
+      if(s.k==='clip')el=mk('rect',{width:12,height:3.5,rx:1.5,fill:'#9aa7b3',stroke:'#5b6772','stroke-width':1},G);
+      else if(s.k==='rice')el=mk('ellipse',{rx:4.5,ry:2.4,fill:'#fffdf2',stroke:'#b9b49a','stroke-width':1},G);
+      else if(s.k==='pebbles')el=mk('circle',{r:6+rnd()*3,fill:'#9a9a9a',stroke:'#555','stroke-width':1.5},G);
+      else if(s.k==='beads')el=mk('circle',{r:4.5,fill:'#5c7cfa',stroke:'#2b4acb','stroke-width':1},G);
+      else if(s.k==='sand')el=mk('circle',{r:2.4+rnd()*1.2,fill:'#dfb76f'},G);
+      else if(s.k==='coffee')el=mk('circle',{r:2.4+rnd()*1.2,fill:'#6b4423'},G);
+      else el=mk('rect',{width:5,height:5,rx:1,fill:s.k==='sugar'?'#ffffff':'#f4f4f4',stroke:'#9aa7b3','stroke-width':1},G);
+      const big=s.k==='pebbles'?7:3,fx=64+rnd()*70,fy=198-rnd()*(s.k==='pebbles'?10:14)-(i%3)*(s.k==='pebbles'?4:2);
+      gr.push({el,x0:76+rnd()*48,fx,fy,ph:rnd()*6.28,big,k:s.k});
+    }
+    const t0=performance.now(),dur=3300;
+    tx.innerHTML=`${s.e} Dropping <b>${s.n}</b> into the water…`;
+    function frame(now){if(my!==gen)return;const t=now-t0;
+      const fall=Math.min(1,t/900),stir=Math.max(0,Math.min(1,(t-1000)/1900));
+      const swirl=t>1000&&t<2900;
+      gr.forEach(g=>{
+        let x,y,op=1,sc=1;
+        const e=1-Math.pow(1-fall,2);
+        x=g.x0+(g.fx-g.x0)*e;y=20+(g.fy-20)*e;
+        if(swirl){const a=g.ph+stir*14;const amp=(s.s?26:16)*Math.sin(Math.PI*stir)*1;x=g.fx+Math.cos(a)*amp*.9;y=g.fy-Math.abs(Math.sin(a*.8+g.ph))*(s.s?60:34)*Math.sin(Math.PI*stir)}
+        if(s.s){op=1-Math.max(0,(stir-.25)/.7);sc=Math.max(0,1-stir*.9)}
+        if(t>=2900&&s.s){op=0}
+        const el=g.el,tag=el.tagName;
+        if(tag==='circle'){el.setAttribute('cx',x);el.setAttribute('cy',y)}
+        else if(tag==='ellipse'){el.setAttribute('cx',x);el.setAttribute('cy',y);el.setAttribute('transform',`rotate(${g.ph*30} ${x} ${y})`)}
+        else{el.setAttribute('x',x-3);el.setAttribute('y',y-2);el.setAttribute('transform',`rotate(${g.ph*40} ${x} ${y})`)}
+        el.setAttribute('opacity',op);if(s.s&&tag==='circle')el.setAttribute('r',(2+g.big*.4)*sc+.01)
+      });
+      if(t>1000){const w=(t-1000)/180;const r=t<2900?1:0;SP.setAttribute('x',100+Math.cos(w)*26*r);SP.setAttribute('y',(t<2900?120:34)+Math.sin(w)*8*r);if(t>=2900)SP.setAttribute('y',34+(Math.max(0,3300-t)<400?0:0))}
+      if(s.k==='coffee'&&stir>0){W.setAttribute('fill',`rgb(${Math.round(159-stir*14)},${Math.round(220-stir*125)},${Math.round(255-stir*185)})`)}
+      if(s.s&&stir>.6){SK.setAttribute('opacity',.9*Math.abs(Math.sin(t/160)));SK.setAttribute('x',70+Math.abs(Math.sin(t/230))*60)}
+      if(t<dur)raf=requestAnimationFrame(frame);else finish();
+    }
+    function finish(){SK.setAttribute('opacity',0);tested.add(s.k);
+      const b=sh.querySelector(`[data-k="${s.k}"]`);b.classList.add('done');const r=b.querySelector('.rs');r.classList.remove('hide');r.classList.add(s.s?'s':'i');r.textContent=s.s?'soluble':'insoluble';
+      tx.innerHTML=s.s?`${s.e} <b>${cap1(s.n)} dissolved!</b><br>The grains seem to disappear — but they are still in the water. So it is <b>soluble</b>.${s.k==='coffee'?'<br>See how the water turned brown?':''}${vi_(s.k==='coffee'?'Bột cà phê tan: nước chuyển màu nâu.':'Đã hòa tan: nhìn không thấy nhưng vẫn còn trong nước. → tan được.')}`:`${s.e} <b>${cap1(s.n)} did NOT dissolve.</b><br>You can still see it at the bottom. So it is <b>insoluble</b>.${vi_('Không tan: vẫn nhìn thấy ở đáy cốc. → không tan.')}`;
+      sfx(s.s?'ok':'pop')}
+    raf=requestAnimationFrame(frame);
+  }
+  sh.querySelectorAll('.sub').forEach(b=>b.onclick=()=>{sfx('click');test(SBY[b.dataset.k])});
+  return{tested};
+}
+
+/* --- matter playground (canvas particles) --- */
+function matterToy(host){
+  host.innerHTML=`<div class="toolbar" id="mtS"><button class="tool sel" data-s="S"><span class="te">🧊</span>Solid</button><button class="tool" data-s="L"><span class="te">💧</span>Liquid</button><button class="tool" data-s="G"><span class="te">🎈</span>Gas</button></div><canvas id="mtC" width="380" height="240" style="width:100%;max-width:440px;border:3px solid ${INK};border-radius:18px;background:#f4fbff;display:block;margin:auto"></canvas><div class="toolbar" id="mtK"><button class="tool sel" data-c="wide">▭ Wide box</button><button class="tool" data-c="tall">▯ Tall box</button><button class="tool" data-c="jar">⬜ Jar</button></div><div class="simtxt" id="mtT" style="min-height:64px"></div>`;
+  const cv=host.querySelector('#mtC'),cx=cv.getContext('2d'),tx=host.querySelector('#mtT');
+  const SH={wide:{x:20,y:70,w:340,h:150},tall:{x:140,y:12,w:100,h:210},jar:{x:90,y:50,w:200,h:170}};
+  let st='S',sh='wide',alive=true,last=performance.now(),rehome=0;
+  const N=72,r=4,P=[];for(let i=0;i<N;i++)P.push({x:100+rnd()*180,y:100+rnd()*100,vx:(rnd()-.5)*100,vy:(rnd()-.5)*100,hx:0,hy:0});
+  const TXT={S:['<b>Solid:</b> the particles are packed tightly and only wiggle. A solid <b>keeps its own shape</b>, whatever box it is in.','Chất rắn: các hạt xếp sát nhau, chỉ rung nhẹ. Giữ nguyên hình dạng dù ở trong hộp nào.'],L:['<b>Liquid:</b> the particles slide past each other. A liquid <b>flows</b> and <b>takes the shape of its container</b>.','Chất lỏng: các hạt trượt qua nhau. Chảy được và có hình của vật chứa.'],G:['<b>Gas:</b> the particles zoom about. A gas <b>spreads out to fill the whole container</b>.','Chất khí: các hạt chạy khắp nơi, lan ra lấp đầy cả vật chứa.']};
+  const upT=()=>{tx.innerHTML=TXT[st][0]+vi_(TXT[st][1])};upT();
+  function homes(all){const c=SH[sh],bot=c.y+c.h,lh=Math.min(c.h-8,7600/c.w),top=bot-lh;
+    P.forEach((p,i)=>{if(st==='S'){const cols=12,sp=2*r+1.2,bw=cols*sp;p.hx=c.x+c.w/2-bw/2+(i%cols)*sp+sp/2;p.hy=bot-r-2-Math.floor(i/cols)*sp}
+      else if(st==='L'&&(all||rnd()<.12)){p.hx=c.x+r+rnd()*(c.w-2*r);p.hy=top+r+rnd()*(lh-2*r)}})}
+  host.querySelectorAll('#mtS .tool').forEach(b=>b.onclick=()=>{st=b.dataset.s;host.querySelectorAll('#mtS .tool').forEach(x=>x.classList.toggle('sel',x===b));sfx('pop');upT();homes(true)});
+  host.querySelectorAll('#mtK .tool').forEach(b=>b.onclick=()=>{sh=b.dataset.c;host.querySelectorAll('#mtK .tool').forEach(x=>x.classList.toggle('sel',x===b));sfx('pop');homes(true)});
+  homes(true);
+  function frame(now){if(!alive||!document.body.contains(cv))return;const dt=Math.min(.033,(now-last)/1000);last=now;const c=SH[sh],bot=c.y+c.h;
+    const lh=Math.min(c.h-8,7600/c.w),top=bot-lh;rehome+=dt;if(st==='L'&&rehome>.25){rehome=0;homes(false)}
+    P.forEach(p=>{
+      if(st==='G'){p.x+=p.vx*dt;p.y+=p.vy*dt;const sp=Math.hypot(p.vx,p.vy);if(sp<70){p.vx*=1.4;p.vy*=1.4}if(sp>170){p.vx*=.85;p.vy*=.85}}
+      else{const k=st==='S'?90:9,nz=st==='S'?160:420,dm=st==='S'?.82:.9;p.vx+=((p.hx-p.x)*k+(rnd()-.5)*nz)*dt;p.vy+=((p.hy-p.y)*k+(rnd()-.5)*nz)*dt;p.vx*=dm;p.vy*=dm;p.x+=p.vx*dt*6;p.y+=p.vy*dt*6}
+      if(p.x<c.x+r){p.x=c.x+r;p.vx=Math.abs(p.vx)}if(p.x>c.x+c.w-r){p.x=c.x+c.w-r;p.vx=-Math.abs(p.vx)}
+      if(p.y<c.y+r){p.y=c.y+r;p.vy=Math.abs(p.vy)}if(p.y>bot-r){p.y=bot-r;p.vy=-Math.abs(p.vy)}
+    });
+    cx.clearRect(0,0,380,240);cx.fillStyle='#fff';cx.fillRect(c.x,c.y,c.w,c.h);
+    if(st==='L'){cx.fillStyle='rgba(60,160,255,.2)';cx.fillRect(c.x,top,c.w,lh)}
+    P.forEach(p=>{cx.beginPath();cx.arc(p.x,p.y,r,0,7);cx.fillStyle=st==='S'?'#6ec1ff':st==='L'?'#3b9cff':'#b197fc';cx.fill();cx.lineWidth=1.2;cx.strokeStyle=INK;cx.stroke()});
+    cx.lineWidth=5;cx.strokeStyle=INK;cx.strokeRect(c.x,c.y,c.w,c.h);
+    requestAnimationFrame(frame)}
+  requestAnimationFrame(frame);STOPS.push(()=>{alive=false});
+}
+
+/* --- plant lab: change conditions, see the plant --- */
+function plantLabSVG(w,l,t){
+  const pot=`<path d="M70 168h60l-7 32q-1 5 -6 5h-34q-5 0 -6 -5Z" fill="#e08a45" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/><rect x="64" y="160" width="72" height="14" rx="7" fill="#f2a05c" stroke="${INK}" stroke-width="4"/>`;
+  let plant,msg;
+  if(!w){plant=`<path d="M100 162Q100 120 128 112" stroke="${INK}" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M100 162Q100 120 128 112" stroke="#b8a640" stroke-width="4" fill="none" stroke-linecap="round"/>${leafP(126,114,70,.8,'#a9962f')}${leafP(108,138,150,.7,'#a9962f')}`;msg=['No water → the plant <b>wilts</b> and droops. 🥀','Không có nước → cây héo, rũ xuống.']}
+  else if(!l){plant=`<path d="M100 162V40" stroke="${INK}" stroke-width="8" stroke-linecap="round"/><path d="M100 162V40" stroke="#dfe39a" stroke-width="3" stroke-linecap="round"/>${leafP(100,50,-35,.6,'#e3e8a8')}${leafP(100,50,-145,.6,'#e3e8a8')}`;msg=['No light → the plant grows <b>tall, pale and weak</b>.','Không có ánh sáng → cây cao, nhợt nhạt và yếu.']}
+  else if(!t){plant=`<path d="M100 162V128" stroke="${INK}" stroke-width="9" stroke-linecap="round"/><path d="M100 162V128" stroke="#4cc46f" stroke-width="4" stroke-linecap="round"/>${leafP(100,134,-30,.55)}${leafP(100,134,-150,.55)}<text x="124" y="118" font-size="26">🥶</text>`;msg=['Too cold → the plant stays <b>small</b> and grows slowly.','Quá lạnh → cây nhỏ và lớn chậm.']}
+  else{plant=`<g class="sway"><path d="M100 162V70" stroke="${INK}" stroke-width="11" stroke-linecap="round"/><path d="M100 162V70" stroke="#4cc46f" stroke-width="5" stroke-linecap="round"/>${leafP(100,138,-20,1.1)}${leafP(100,138,-160,1.1)}${leafP(100,104,-30,1,'#3aa95f')}${leafP(100,104,-150,1,'#3aa95f')}${flowerP(100,58,1.2)}</g>`;msg=['Water + light + the right temperature → a <b>healthy</b> plant! 🌻','Đủ nước + ánh sáng + nhiệt độ phù hợp → cây khỏe mạnh!']}
+  return{svg:`<svg viewBox="0 0 200 215" xmlns="${SVGNS}" style="max-height:230px"><rect width="200" height="215" fill="${l?'#d9f1ff':'#3a4260'}"/>${l?'<circle cx="168" cy="32" r="18" fill="#ffe066" stroke="'+INK+'" stroke-width="3"/>':'<text x="150" y="40" font-size="26">🌙</text>'}${plant}${pot}</svg>`,msg};
+}
+function plantLab(host){
+  const st={w:1,l:1,t:1};
+  host.innerHTML=`<div class="glassWrap"><div id="plV" style="width:230px"></div><div style="flex:1;min-width:200px"><div class="toolbar" id="plB"><button class="tool" data-k="l"></button><button class="tool" data-k="w"></button><button class="tool" data-k="t"></button></div><div class="simtxt" id="plT" style="min-height:70px"></div></div></div>`;
+  function up(){const r=plantLabSVG(st.w,st.l,st.t);host.querySelector('#plV').innerHTML=r.svg;host.querySelector('#plT').innerHTML=r.msg[0]+vi_(r.msg[1]);
+    const L={l:[st.l,'☀️','Light','No light'],w:[st.w,'💧','Water','No water'],t:[st.t,'🌡️','Right temperature','Too cold']};
+    host.querySelectorAll('#plB .tool').forEach(b=>{const x=L[b.dataset.k];b.innerHTML=`<span class="te">${x[1]}</span>${x[0]?x[2]+' ✔':x[3]+' ✖'}`;b.classList.toggle('sel',!!x[0])})}
+  host.querySelectorAll('#plB .tool').forEach(b=>b.onclick=()=>{st[b.dataset.k]^=1;sfx('pop');up()});up();
+}
+function sepaToy(host){
+  function go(){const q={type:'sepa',mix:pick(SEPS),q:''};host.innerHTML='';const box=document.createElement('div');host.appendChild(box);
+    R.sepa(q,box,()=>{},{commit(){setTimeout(()=>{const b=document.createElement('button');b.className='btn g sm';b.textContent='Another mixture ▶';b.onclick=go;box.appendChild(b)},500)}})}
+  go();
+}
+/* =====================  ENGINE PART 3: flow, screens, init  ===================== */
+S.flags=S.flags||{};
+const BADGES=[
+ {id:'first',i:'🎒',n:'First Quest',d:'Finish any quest',ok:()=>Object.values(S.lands).some(l=>l.done)},
+ {id:'perfect',i:'💯',n:'Perfect!',d:'Win 3 stars in a quest',ok:()=>Object.values(S.lands).some(l=>(l.stars||0)>=3)},
+ {id:'boss',i:'⚔️',n:'Boss Buster',d:'Beat a boss',ok:()=>Object.values(S.lands).some(l=>l.boss)},
+ {id:'boss6',i:'👑',n:'Boss Master',d:'Beat all 6 bosses',ok:()=>LANDS.every(l=>(S.lands[l.id]||{}).boss)},
+ {id:'cards10',i:'🃏',n:'Card Collector',d:'Collect 10 lab cards',ok:()=>Object.keys(S.cards).length>=10},
+ {id:'cards26',i:'📚',n:'Card Master',d:'Collect every lab card',ok:()=>Object.keys(S.cards).length>=CARDS.length},
+ {id:'combo5',i:'🔥',n:'On Fire',d:'5 right answers in a row',ok:()=>S.bestCombo>=5},
+ {id:'safety',i:'🥽',n:'Safety Star',d:'Find all 8 hazards in the lab',ok:()=>!!S.flags.safety},
+ {id:'exam80',i:'📝',n:'Exam Ace',d:"80% or more in the Teacher's Test",ok:()=>S.exBest>=.8*EXAM_MARKS},
+ {id:'stage3',i:'🌿',n:'Growing Up',d:'Grow Sprout into a Little Plant',ok:()=>stageOf(S.xp)>=3},
+ {id:'stage5',i:'🌻',n:'Flower Star',d:'Grow Sprout into a Flower Star',ok:()=>stageOf(S.xp)>=5},
+ {id:'stars18',i:'🌟',n:'Star Collector',d:'Win all 18 stars',ok:()=>LANDS.every(l=>((S.lands[l.id]||{}).stars||0)>=3)},
+ {id:'days3',i:'📅',n:'Daily Scientist',d:'Play 3 days in a row',ok:()=>S.streak>=3}
+];
+function toast(html){const t=document.createElement('div');t.className='toast';t.innerHTML=html;$('toasts').appendChild(t);setTimeout(()=>t.remove(),3200)}
+function checkBadges(){BADGES.forEach(b=>{if(!S.badges[b.id]&&b.ok()){S.badges[b.id]=1;save();sfx('win');toast(`${b.i} New badge: <b>${b.n}</b>!`)}})}
+
+/* ---------- screens & HUD ---------- */
+const SCR=['cover','home','learn','play','cards','bench','badges','result'];let cur='cover';
+function show(id){SCR.forEach(s=>$(s).classList.toggle('hide',s!==id));$('top').classList.toggle('hide',id==='cover');cur=id;window.scrollTo(0,0);if(id!=='play'){stopVoice();closeModal()}stopLabs();hud()}
+function hud(){const st=stageOf(S.xp),nx=STAGES[st+1],lo=STAGES[st].x;
+  $('hudSprout').innerHTML=sproutSVG(st,'happy',{nog:1});$('hudStage').textContent=STAGES[st].n;
+  $('hudBar').style.width=(nx?Math.round((S.xp-lo)/(nx.x-lo)*100):100)+'%';$('hudXp').textContent=S.xp+' 💧';$('hudStreak').textContent='🔥 '+S.streak}
+function openModal(html){$('modalBox').innerHTML=html;$('modal').classList.remove('hide')}
+function closeModal(){$('modal').classList.add('hide')}
+const starsH=(n,max)=>Array.from({length:max||3},(_,i)=>i<n?'<span>⭐</span>':'<span class="off">⭐</span>').join('');
+const stars1=n=>'⭐'.repeat(n)+'<span class="off">'+'⭐'.repeat(3-n)+'</span>';
+const totalStars=()=>LANDS.reduce((a,l)=>a+((S.lands[l.id]||{}).stars||0),0);
+
+/* ---------- home ---------- */
+function buildHome(){
+  const st=stageOf(S.xp),nx=STAGES[st+1];
+  $('heroSprout').innerHTML=sproutSVG(st,'happy');
+  $('heroHi').textContent='Hi, '+(S.name||'Scientist')+'! 👋';
+  $('heroStage').innerHTML=`Sprout is a <b>${STAGES[st].n}</b>${vi_('Mầm Xanh đang là: '+STAGES[st].v)}`;
+  $('heroBar').style.width=(nx?Math.round((S.xp-STAGES[st].x)/(nx.x-STAGES[st].x)*100):100)+'%';
+  $('heroNext').textContent=nx?`${nx.x-S.xp} more 💧 to grow into: ${nx.n}`:'Super Scientist! Sprout is fully grown 🌟';
+  $('heroStats').innerHTML=`<span class="pill">🃏 ${Object.keys(S.cards).length}/${CARDS.length}</span><span class="pill">⭐ ${totalStars()}/18</span><span class="pill">🏅 ${Object.keys(S.badges).length}/${BADGES.length}</span><span class="pill">🔥 ${S.streak} day${S.streak>1?'s':''}</span>`;
+  const nextL=LANDS.find(l=>((S.lands[l.id]||{}).stars||0)<3);
+  $('lands').innerHTML=LANDS.map(l=>{const s=S.lands[l.id]||{};return `<button class="land${nextL===l?' next':''}" data-id="${l.id}" style="--c:${l.c}"><span class="band"></span><span class="num">${l.id}</span><span class="bossb" title="Boss">${s.boss?'🏅':''}</span><span class="em">${l.i}</span><b>${l.n}</b><span class="tt">${l.u}${S.set.vi?' · '+l.v:''}</span><span class="st">${stars1(s.stars||0)}</span></button>`}).join('');
+  $('lands').querySelectorAll('.land').forEach(b=>b.onclick=()=>{sfx('click');buildLearn(+b.dataset.id);show('learn')});
+  const bad=Object.values(S.seen).filter(s=>s.bad>0).length;
+  $('acts').innerHTML=[
+   ['exam','📝',"Teacher's Test",'The real 36-mark revision test'+(S.exBest?` · best ${S.exBest}/${EXAM_MARKS}`:''),'hot'],
+   ['mock','🎯','Mock Exam','20 mixed questions'+(S.mockBest?` · best ${S.mockBest}%`:''),''],
+   ['fix','🛠️','Fix-it','Practise tricky ones'+(bad?` (${bad})`:''),''],
+   ['cards','🃏','Lab Cards',`${Object.keys(S.cards).length}/${CARDS.length} collected`,''],
+   ['bench','🧪','Lab Bench','Play with experiments',''],
+   ['badges','🏅','Badges & Report','Progress for parents','']
+  ].map(a=>`<button class="act ${a[4]}" data-a="${a[0]}"><span class="em">${a[1]}</span>${a[2]}<small>${a[3]}</small></button>`).join('');
+  $('acts').querySelectorAll('.act').forEach(b=>b.onclick=()=>{sfx('click');({exam:startExam,mock:startMock,fix:startFix,cards:()=>{buildCards();show('cards')},bench:()=>{buildBench();show('bench')},badges:()=>{buildBadges();show('badges')}})[b.dataset.a]()});
+}
+
+/* ---------- learn (mini lesson + toy) ---------- */
+function buildLearn(id){
+  const L=LBY[id],s=S.lands[id]||{};
+  $('learn').innerHTML=`<div class="row" style="margin:6px 0 10px"><button class="btn w sm" id="lBack">← Back</button></div>
+  <div class="sheet" style="border-color:${INK}"><div class="sheetHead"><span class="em">${L.i}</span><div><h1 style="font-size:28px">${L.n}</h1><div class="sm" style="color:var(--ink2)">${L.u}${S.set.vi?' · '+L.v:''} · <span style="letter-spacing:2px">${stars1(s.stars||0)}</span></div></div></div>
+  <div class="row" style="margin:6px 0 4px"><button class="btn g" id="lGo">▶ Start quest</button><span class="sm" style="color:var(--ink2)">7 questions + a boss battle 👾</span></div></div>
+  <h2>📖 Remember <span class="vi" style="margin:0">Ghi nhớ</span></h2>
+  <div class="facts">${L.learn.map(k=>{const f=FACTS[k];return `<div class="fact"><span class="e">${f.i}</span><div>${f.e.replace(/^([A-Z][A-Z ]+[A-Z])/,'<b>$1</b>')}${S.set.vi?`<span class="vi">${f.v}</span>`:''}</div><button class="ib" data-k="${k}" style="margin-left:auto;flex:none;width:38px;height:38px;font-size:18px">🔊</button></div>`}).join('')}</div>
+  <div id="toyBox"></div>`;
+  $('lBack').onclick=()=>{sfx('click');buildHome();show('home')};
+  $('lGo').onclick=()=>{sfx('click');startQuest(id)};
+  $('learn').querySelectorAll('.fact .ib').forEach(b=>b.onclick=()=>{speak(FACTS[b.dataset.k].e,'en-US')});
+  const tb=$('toyBox'),T={2:['🌱 Try it: Plant Lab','Switch water, light and warmth on and off. What happens to the plant?',plantLab],4:['🧊 Try it: Matter Playground','Change the state and the box. How do the particles behave?',matterToy],5:['🧲 Try it: Mix-Up Machine','Pick the right tool to separate each mixture!',sepaToy],6:['🥄 Try it: Dissolving Lab','Drop each material in water and stir. Soluble or insoluble?',h=>dissolveLab(h,['salt','sugar','coffee','sand','pebbles','clip','rice'])]}[id];
+  if(T){tb.innerHTML=`<h2>${T[0]}</h2><div class="sheet"><div class="sm" style="margin-bottom:8px;color:var(--ink2)">${T[1]}</div><div id="toyIn"></div></div>`;T[2](tb.querySelector('#toyIn'))}
+}
+
+/* ---------- lab cards ---------- */
+function buildCards(){
+  $('cards').innerHTML=`<div class="row" style="margin:6px 0"><button class="btn w sm" id="cBack">← Back</button></div><h2>🃏 Lab Cards <span class="pill">${Object.keys(S.cards).length}/${CARDS.length}</span></h2><div class="sm" style="margin:0 4px 12px;color:var(--ink2)">Answer questions correctly to collect each card. They are the teacher's flashcard words!${vi_('Trả lời đúng để sưu tầm thẻ từ vựng.')}</div>
+  <div class="cgrid">${CARDS.map(c=>{const g=S.cards[c.id];return `<button class="fc${g?'':' lock'}" data-id="${c.id}" style="--c:${LBY[c.l].c}"><span class="band"></span><span class="em">${g?c.i:'❓'}</span><b>${g?c.t:'???'}</b><small style="color:var(--ink2);position:relative">${LBY[c.l].n}</small></button>`}).join('')}</div>`;
+  $('cBack').onclick=()=>{buildHome();show('home')};
+  $('cards').querySelectorAll('.fc').forEach(b=>b.onclick=()=>{sfx('click');cardModal(b.dataset.id)});
+}
+function cardModal(id){
+  const c=CBY[id],g=S.cards[id];
+  if(!g){openModal(`<div class="bigcard"><div class="em">❓</div><h3>Locked card</h3><div class="df">Answer a question about <b>${LBY[c.l].n}</b> correctly to unlock it!</div></div><br><button class="btn" onclick="closeModal()">OK</button>`);return}
+  openModal(`<div class="bigcard" style="border-top:10px solid ${LBY[c.l].c};border-radius:18px"><div class="em">${c.i}</div><h3>${c.t}</h3><div class="df">${c.d}${vi_(c.v)}</div><div class="exm"><b>Example:</b> ${c.x}</div></div><br><div class="row" style="justify-content:center"><button class="btn b sm" id="cmSay">🔊 Listen</button><button class="btn sm" onclick="closeModal()">Close</button></div>`);
+  $('cmSay').onclick=()=>speak(`${c.t}. ${c.d} For example: ${c.x}`,'en-US');
+}
+function unlockCard(id){if(!id||S.cards[id])return false;S.cards[id]=1;save();return true}
+
+/* ---------- lab bench ---------- */
+function buildBench(){
+  $('bench').innerHTML=`<div class="row" style="margin:6px 0"><button class="btn w sm" id="bBack">← Back</button></div><h2>🧪 Lab Bench <span class="vi" style="margin:0">Bàn thí nghiệm</span></h2><div class="sm" style="margin:0 4px 12px;color:var(--ink2)">Free play! Try the experiments as many times as you like.</div>
+  <div class="toys">${[['plant','🌱','Plant Lab','Water, light & warmth'],['matter','🧊','Matter Playground','Solid, liquid, gas'],['mix','🧲','Mix-Up Machine','Separate mixtures'],['dis','🥄','Dissolving Lab','Soluble or not?'],['safe','🥽','Safety Hunt','Spot the hazards']].map(t=>`<button class="toyc" data-t="${t[0]}"><span class="em">${t[1]}</span>${t[2]}<small>${t[3]}</small></button>`).join('')}</div>`;
+  $('bBack').onclick=()=>{buildHome();show('home')};
+  $('bench').querySelectorAll('.toyc').forEach(b=>b.onclick=()=>{sfx('click');openToy(b.dataset.t)});
+}
+function openToy(t){
+  stopLabs();
+  const N={plant:'🌱 Plant Lab',matter:'🧊 Matter Playground',mix:'🧲 Mix-Up Machine',dis:'🥄 Dissolving Lab',safe:'🥽 Safety Hunt'}[t];
+  $('bench').innerHTML=`<div class="row" style="margin:6px 0"><button class="btn w sm" id="bBack">← Bench</button></div><h2>${N}</h2><div class="sheet" id="toyIn"></div>`;
+  $('bBack').onclick=()=>{stopLabs();buildBench()};const h=$('toyIn');
+  ({plant:plantLab,matter:matterToy,mix:sepaToy,dis:h=>dissolveLab(h,SUBS.map(s=>s.k)),safe:h=>{LOCK=false;R.hot({need:99},h,()=>{},{flag:f=>{S.flags[f]=1;save();checkBadges()}})}})[t](h);
+}
+
+/* ---------- badges & report ---------- */
+function landAcc(id){let ok=0,bad=0;Object.keys(S.seen).forEach(k=>{if(k.startsWith(id+'-')){ok+=S.seen[k].ok;bad+=S.seen[k].bad}});return ok+bad?Math.round(ok/(ok+bad)*100):null}
+function buildBadges(){
+  $('badges').innerHTML=`<div class="row" style="margin:6px 0"><button class="btn w sm" id="gBack">← Back</button></div><h2>📊 Progress report <span class="vi" style="margin:0">Báo cáo (cho phụ huynh)</span></h2>
+  <div class="sheet"><div class="sm" style="color:var(--ink2)">Hi ${esc(S.name||'Scientist')}! You have answered <b>${Object.values(S.seen).reduce((a,s)=>a+s.ok+s.bad,0)}</b> questions. Teacher's Test best: <b>${S.exBest}/${EXAM_MARKS}</b>.</div>
+  <div class="rep">${LANDS.map(l=>{const a=landAcc(l.id);return `<div class="rw"><span style="font-size:22px">${l.i}</span><span class="nm">${l.n}</span><span class="mt"><i style="width:${a||0}%;background:${a==null?'#ccc':a>=80?'var(--g)':a>=55?'var(--y)':'var(--o)'}"></i></span><span class="pc">${a==null?'–':a+'%'}</span></div>`}).join('')}</div>
+  <div class="sm" style="margin-top:10px;color:var(--ink2)">Tip: land accuracy counts every answer. Use <b>Fix-it</b> to practise the questions that were missed.${vi_('Mẹo: dùng "Fix-it" để luyện lại các câu làm sai.')}</div></div>
+  <h2>🏅 Badges <span class="pill">${Object.keys(S.badges).length}/${BADGES.length}</span></h2>
+  <div class="bgrid">${BADGES.map(b=>`<div class="bdg${S.badges[b.id]?'':' lock'}"><span class="em">${S.badges[b.id]?b.i:'🔒'}</span><b>${b.n}</b>${b.d}</div>`).join('')}</div>`;
+  $('gBack').onclick=()=>{buildHome();show('home')};
+}
+
+/* =====================  QUEST / EXAM FLOW  ===================== */
+let Q=null,lastAct=Date.now();
+const wsample=(w,n)=>{const idx=w.map((_,i)=>i),out=[];while(out.length<n&&idx.length){const tot=idx.reduce((a,i)=>a+w[i],0);let r=rnd()*tot,k=0;for(;k<idx.length-1;k++){r-=w[idx[k]];if(r<=0)break}out.push(idx.splice(k,1)[0])}return out};
+function newQ(mode,o){Q=Object.assign({mode,queue:[],i:0,phase:'norm',slots:[],hearts:3,hp:3,res:[],wrong:[],newCards:[],xp:0,combo:0,bossUsed:[],stage0:stageOf(S.xp),title:''},o);Q.slots=Q.queue.map(()=>'');S.played++;save();show('play');nextQuestion()}
+function startQuest(id){const pool=QF[id],w=pool.map((f,i)=>{const s=S.seen[id+'-'+i];return s?(s.bad>s.ok?3:1):2.2}),idx=wsample(w,7);newQ('quest',{land:id,title:LBY[id].n,queue:idx.map(i=>({fk:id+'-'+i,gen:pool[i]}))})}
+function startExam(){newQ('exam',{title:"Teacher's Test",queue:EXAM.map((g,i)=>({fk:'E-'+i,gen:g}))})}
+function startMock(){const q=[];LANDS.forEach(l=>sample(QF[l.id].map((g,i)=>i),3).forEach(i=>q.push({fk:l.id+'-'+i,gen:QF[l.id][i]})));const extra=[];while(extra.length<2){const l=pick(LANDS),i=Math.floor(rnd()*QF[l.id].length);if(!q.concat(extra).some(e=>e.fk===l.id+'-'+i))extra.push({fk:l.id+'-'+i,gen:QF[l.id][i]})}newQ('mock',{title:'Mock Exam',queue:shuffle([...q,...extra])})}
+function startFix(){let ks=Object.keys(S.seen).filter(k=>S.seen[k].bad>0&&!k.startsWith('E')).sort((a,b)=>(S.seen[b].bad-S.seen[b].ok)-(S.seen[a].bad-S.seen[a].ok)).slice(0,8);
+  if(ks.length<6){const all=[];LANDS.forEach(l=>QF[l.id].forEach((g,i)=>{const k=l.id+'-'+i;if(!ks.includes(k))all.push(k)}));ks=ks.concat(sample(all,6-ks.length))}
+  newQ('fix',{title:'Fix-it',queue:shuffle(ks).map(k=>{const [l,i]=k.split('-');return {fk:k,gen:QF[+l][+i]}})})}
+const isExam=()=>Q&&(Q.mode==='exam'||Q.mode==='mock');
+const bossEntry=()=>{const pool=QF[Q.land];let c=pool.map((_,i)=>i).filter(i=>!Q.bossUsed.includes(i));if(!c.length){Q.bossUsed=[];c=pool.map((_,i)=>i)}const i=pick(c);Q.bossUsed.push(i);return{fk:Q.land+'-'+i,gen:pool[i],boss:1}};
+function nextQuestion(){
+  let entry;
+  if(Q.phase==='norm'){if(Q.i>=Q.queue.length)return endNorm();entry=Q.queue[Q.i]}else entry=bossEntry();
+  Q.cur={entry,q:entry.gen(),hint:0,state:'ans',ctl:null};renderQ();
+}
+function topUI(){
+  const boss=Q.phase==='boss',L=Q.land?LBY[Q.land]:null;
+  $('boss').classList.toggle('hide',!boss);$('pHearts').classList.toggle('hide',!boss);
+  if(boss){$('bossFace').textContent=L.boss.i;$('bossName').textContent=L.boss.n;$('bossHp').style.width=(Q.hp/3*100)+'%';$('pHearts').textContent='❤️'.repeat(Q.hearts)+'🖤'.repeat(3-Q.hearts)}
+  $('pDots').innerHTML=Q.slots.map((s,i)=>`<i class="${s}${(i===Q.i&&Q.phase==='norm'&&s==='')?' cur':''}"></i>`).join('');
+  $('hintLeft').textContent=Q.cur?`(${2-Q.cur.hint})`:'';
+  $('bHint').classList.toggle('hide',isExam());
+  $('qcard').style.setProperty('--c',L?L.c:'#3dbb6c');
+}
+function coach(html,cls,mood){const st=stageOf(S.xp);$('coachFace').innerHTML=sproutSVG(st,mood||'happy');const b=$('coachBubble');b.className=cls||'';b.innerHTML=html}
+function renderQ(){
+  const c=Q.cur,q=c.q;LOCK=false;stopLabs();lastAct=Date.now();
+  const exam=isExam(),n=Q.queue.length;
+  const where=Q.phase==='boss'?`<span class="t" style="background:var(--r)">⚔️ Boss</span>`:`<span class="t">${exam?(q.sec||'Mock'):Q.mode==='fix'?'Fix-it':'Quest '+Q.land}</span>`;
+  $('qTag').innerHTML=`${where}<span>${Q.phase==='boss'?'Beat '+LBY[Q.land].boss.n+'!':`Question ${Math.min(Q.i+1,n)} of ${n}`}</span>${(q.marks||1)>1||exam?`<span>· ${q.marks||1} mark${(q.marks||1)>1?'s':''}</span>`:''}`;
+  $('qStem').innerHTML=`<div class="sq">${q.q}</div><button class="spk" id="spk" aria-label="Read aloud">🔊</button>`;
+  $('spk').onclick=()=>{lastAct=Date.now();speakQ()};
+  $('qFig').innerHTML=q.fig||'';
+  if(q.lab==='dissolve'){const d=document.createElement('div');d.style.marginTop='10px';$('qFig').appendChild(d);dissolveLab(d,q.subs)}
+  const api={commit(frac){setTimeout(()=>{if(Q&&Q.cur===c&&c.state==='ans')submit({frac})},900)},flag(f){S.flags[f]=1;save();checkBadges()}};
+  const chg=()=>{lastAct=Date.now();if(Q.cur===c&&c.state==='ans'&&c.ctl)$('bCheck').disabled=c.ctl.auto?true:!c.ctl.ready()};
+  c.ctl=R[q.type](q,$('qBody'),chg,api);
+  $('bCheck').innerHTML=exam?(Q.i>=n-1?'Finish ✔':'Next ▶'):'Check ✔';$('bCheck').className='btn g';$('bCheck').disabled=true;
+  $('bHint').classList.remove('wig');if(c.ctl.auto)$('bCheck').textContent='Choose a tool';
+  topUI();
+  if(!exam){coach(Q.i===0&&Q.phase==='norm'&&!Q.seenHi?(Q.seenHi=1,`Hi ${esc(S.name||'Scientist')}! Take your time. Stuck? Tap <b>💡 Hint</b>.${vi_('Cứ từ từ nhé! Bí thì bấm Gợi ý.')}`):pick(['Think like a scientist! 🔬','You can do it!','Read carefully…','Look at the picture too!','Take your time 🌱']),'','think')}
+  else coach('Exam mode — no hints and no answers until the end. Do your best! 💪','','happy');
+  if(S.set.voice)speakQ();
+  chg();
+}
+function speakQ(){const q=Q.cur.q;let t=stripH(q.q);if(q.type==='mc'&&!q.tf)t+='. '+q.opts.map((o,i)=>'Option '+'ABCD'[i]+': '+optT(o)).join('. ');speak(t,'en-US')}
+function explain(q){const f=FACTS[q.rem];return `${q.ex?`<div>${q.ex}</div>`:''}${f?`<div class="sm" style="margin-top:3px">💡 ${f.e}</div>`:''}${f?vi_(f.v):''}`}
+function ansText(q){
+  if(q.type==='mc')return esc(optT(q.opts[q.a]));
+  if(q.type==='pick')return esc(q.right.join(', '));
+  if(q.type==='sort')return q.bins.map(b=>`<b>${b.t}</b>: ${q.items.filter(i=>i.b===b.id).map(i=>esc(i.t)).join(', ')}`).join(' · ');
+  if(q.type==='match')return q.pairs.map(p=>`${p[0]} → ${p[1]}`).join('; ');
+  if(q.type==='blank')return q.text.replace(/\{(\d)\}/g,(m,i)=>`<b>${esc(q.ans[+i])}</b>`);
+  if(q.type==='tfset')return q.items.map(i=>`${esc(i.t)} <b>${i.b?'True':'False'}</b>`).join('<br>');
+  if(q.type==='order')return q.steps.map(s=>esc(s.t)).join(' → ');
+  if(q.type==='parts')return q.labels.map(cap1).join(', ');
+  if(q.type==='hot')return 'e.g. '+HAZ.filter(h=>h.h).slice(0,4).map(h=>h.t).join('; ');
+  if(q.type==='sepa')return 'Use a '+q.mix.t;
+  if(q.type==='chart')return q.data.map(d=>d.l+' = '+d.v+' cm').join(', ');
+  return '';
+}
+const PRAISE=['Brilliant!','You got it!','Science star!','Yes! Well done!','Super scientist!','Correct!','Fantastic!','Great thinking!'];
+function submit(commit){
+  const c=Q.cur;if(!c||c.state!=='ans')return;
+  const r=commit||c.ctl.eval(),ok=r.frac>=.999,q=c.q,fk=c.entry.fk;
+  c.frac=r.frac;c.ok=ok;c.state='fb';
+  const marks=q.marks||1;
+  if(isExam()){Q.res.push({q,frac:r.frac,marks,sec:q.sec||'Mixed',fk});Q.slots[Q.i]='dn';
+    if(!ok)Q.wrong.push({stem:q.q,ans:ansText(q),ex:explain(q)});
+    if(ok&&q.card&&unlockCard(q.card))Q.newCards.push(q.card);
+    const s=S.seen[fk]||(S.seen[fk]={ok:0,bad:0});if(ok)s.ok++;else s.bad++;save();return advance()}
+  LOCK=true;c.ctl.reveal();
+  const s=S.seen[fk]||(S.seen[fk]={ok:0,bad:0});if(ok)s.ok++;else s.bad++;
+  let gain=0;
+  if(ok){Q.combo++;S.bestCombo=Math.max(S.bestCombo||0,Q.combo);gain=Math.max(4,10-c.hint*3)+Math.min(Q.combo-1,5)*2;if(c.entry.retry)gain=Math.round(gain/2);if(c.entry.boss)gain+=6;sfx('ok');if(Q.combo>=3)setTimeout(()=>floatTxt('🔥 combo x'+Q.combo,$('qcard')),150)}
+  else{Q.combo=0;gain=Math.round(r.frac*5);sfx('bad')}
+  Q.xp+=gain;S.xp+=gain;
+  if(gain)floatTxt('+'+gain+' 💧',$('bCheck'));
+  const credit=ok?(c.hint>0?.75:1):r.frac*.5;
+  if(Q.phase==='norm'){Q.slots[Q.i]=ok?'ok':'no';if(!c.entry.retry)Q.res.push({fk,credit});
+    if(!ok&&!c.entry.retry&&Q.mode!=='fix'){Q.queue.push({fk,gen:c.entry.gen,retry:1});Q.slots.push('')}}
+  if(!ok)Q.wrong.push({stem:q.q,ans:ansText(q),ex:explain(q)});
+  let newCard=null;if(ok&&q.card&&unlockCard(q.card)){newCard=CBY[q.card];Q.newCards.push(q.card);setTimeout(()=>sfx('coin'),500)}
+  if(Q.phase==='boss'){if(ok){Q.hp--;const bf=$('bossFace');bf.classList.remove('hit');void bf.offsetWidth;bf.classList.add('hit');sfx('hit')}else Q.hearts--}
+  const mood=ok?'cheer':'sad';
+  coach(`${ok?`<b>${pick(PRAISE)}</b>${Q.phase==='boss'?' Direct hit! 💥':''}`:`<b>${r.frac>0?'Almost!':'Not quite.'}</b> ${q.type==='mc'?'The answer is <b>'+esc(optT(q.opts[q.a]))+'</b>.':'See the correct answers above.'}${Q.phase==='norm'&&Q.mode!=='fix'&&!c.entry.retry?' We\'ll try this one again later.':''}`}<div style="margin-top:4px">${explain(q)}</div>${newCard?`<div style="margin-top:4px">🃏 New card unlocked: <b>${newCard.t}</b></div>`:''}`,ok?'ok':'no',mood);
+  hud();topUI();save();checkBadges();
+  const bc=$('bCheck');bc.disabled=false;
+  bc.innerHTML=Q.phase==='boss'?(Q.hp<=0?'Victory! 🏆':Q.hearts<=0?'Oh no… ▶':'Next ▶'):(Q.i>=Q.queue.length-1&&Q.mode!=='fix'?'Boss time! ⚔️':Q.i>=Q.queue.length-1?'Finish ✔':'Next ▶');
+  if(Q.mode==='fix'&&Q.i>=Q.queue.length-1)bc.innerHTML='Finish ✔';
+  setTimeout(()=>{const cb=$('coach');if(cb&&cur==='play')cb.scrollIntoView({block:'nearest',behavior:'smooth'})},120);
+  if(S.set.voice&&!ok)speak('The answer is. '+stripH(ansText(q)),'en-US');
+}
+function advance(){
+  if(isExam()){Q.i++;return Q.i>=Q.queue.length?finishExam():nextQuestion()}
+  if(Q.phase==='boss'){if(Q.hp<=0)return bossWin();if(Q.hearts<=0)return bossLose();return nextQuestion()}
+  Q.i++;nextQuestion();
+}
+function endNorm(){
+  if(Q.mode==='fix')return finishQuest();
+  const L=LBY[Q.land];
+  openModal(`<div style="font-size:92px;line-height:1">${L.boss.i}</div><h2 style="justify-content:center;margin:6px 0">Boss battle!</h2><div style="font-size:20px"><b>${L.boss.n}</b> blocks the way!<br>Answer questions right to hit it. You have <b>3 ❤️</b>.${vi_('Trả lời đúng để đánh bại trùm! Bạn có 3 trái tim.')}</div><br><button class="btn r" id="mFight" style="font-size:24px">⚔️ Fight!</button>`);
+  sfx('hit');$('mFight').onclick=()=>{closeModal();Q.phase='boss';Q.hearts=3;Q.hp=3;nextQuestion()};
+}
+function bossWin(){
+  const id=Q.land,s=S.lands[id]||(S.lands[id]={});const first=!s.boss;s.boss=1;S.xp+=40;Q.xp+=40;Q.bossWon=true;save();confetti(36);sfx('win');
+  openModal(`<div style="font-size:80px;line-height:1">🏆</div><h2 style="justify-content:center">You beat ${LBY[id].boss.n}!</h2><div style="font-size:20px">${first?'First victory! ':''}+40 💧 bonus${vi_('Bạn đã đánh bại trùm! +40 giọt nước.')}</div><br><button class="btn g" id="mOk">Continue ▶</button>`);
+  $('mOk').onclick=()=>{closeModal();finishQuest()};
+}
+function bossLose(){
+  openModal(`<div style="font-size:70px;line-height:1">😵</div><h2 style="justify-content:center">${LBY[Q.land].boss.n} got away!</h2><div style="font-size:19px">Sprout is out of ❤️. Don't worry — every scientist tries again!${vi_('Hết tim rồi. Đừng lo, thử lại nào!')}</div><br><div class="row" style="justify-content:center"><button class="btn g" id="mAgain">↻ Try again</button><button class="btn w" id="mHome">🏠 Home</button></div>`);
+  $('mAgain').onclick=()=>{closeModal();Q.hearts=3;Q.hp=3;nextQuestion()};$('mHome').onclick=()=>{closeModal();finishQuest(true)};
+}
+function finishQuest(bossLost){
+  const n=Q.res.length||1,acc=Q.res.reduce((a,r)=>a+r.credit,0)/n;
+  let st=acc>=.9?3:acc>=.7?2:1;if(Q.mode==='fix')st=0;
+  const bonus=st*10;S.xp+=bonus;Q.xp+=bonus;
+  if(Q.land){const s=S.lands[Q.land]||(S.lands[Q.land]={});s.done=1;s.stars=Math.max(s.stars||0,st);s.best=Math.max(s.best||0,Math.round(acc*100))}
+  save();checkBadges();hud();showResult({kind:'quest',acc,st,bossLost});
+}
+function finishExam(){
+  let sc=0,tot=0;const sec={};Q.res.forEach(r=>{const m=Math.round(r.marks*r.frac*2)/2;sc+=m;tot+=r.marks;const k=r.sec;sec[k]=sec[k]||[0,0];sec[k][0]+=m;sec[k][1]+=r.marks});
+  const pct=Math.round(sc/tot*100);
+  if(Q.mode==='exam'){S.exBest=Math.max(S.exBest,sc);S.exSec=sec}else S.mockBest=Math.max(S.mockBest,pct);
+  const gain=Math.round(sc*2)+10;S.xp+=gain;Q.xp+=gain;save();checkBadges();hud();showResult({kind:'exam',sc,tot,pct,sec});
+}
+function showResult(o){
+  const grew=stageOf(S.xp)>Q.stage0,newC=Q.newCards.map(id=>CBY[id]);
+  let h='';
+  if(o.kind==='quest'){
+    const L=Q.land?LBY[Q.land]:null;
+    h=`<div style="font-size:58px">${L?L.i:'🛠️'}</div><h1>${Q.mode==='fix'?'Fix-it finished!':'Quest complete!'}</h1>${Q.mode!=='fix'?`<div class="stars">${starsH(o.st)}</div>`:''}
+    <div class="rbox"><div class="rline"><span>🎯 Accuracy</span><span>${Math.round(o.acc*100)}%</span></div><div class="rline"><span>💧 Water earned</span><span>+${Q.xp}</span></div>${Q.mode==='quest'?`<div class="rline"><span>⚔️ Boss</span><span>${Q.bossWon?'Defeated 🏅':o.bossLost?'Escaped — try again!':'—'}</span></div>`:''}<div class="rline"><span>🃏 New cards</span><span>${newC.length?newC.map(c=>c.i).join(' '):'—'}</span></div></div>`;
+    if(o.st===3||Q.bossWon)setTimeout(()=>{if(cur==='result'){confetti();sfx('win')}},200);else sfx('ok');
+  }else{
+    const g=o.pct>=90?['🏆','Outstanding!','Xuất sắc!']:o.pct>=75?['🌟','Great job!','Làm tốt lắm!']:o.pct>=55?['👍','Good effort — keep practising!','Cố gắng tốt, luyện thêm nhé!']:['🌱','Keep growing! Practise with the quests.','Tiếp tục luyện tập nhé!'];
+    h=`<div style="font-size:58px">${g[0]}</div><h1>${Q.mode==='exam'?"Teacher's Test":'Mock Exam'}</h1><div class="stars" style="font-size:44px;letter-spacing:0">${o.sc} / ${o.tot} <span style="font-size:26px">marks</span></div><div style="font-size:22px;font-weight:700">${o.pct}% — ${g[1]}${vi_(g[2])}</div>
+    <div class="rbox">${Object.entries(o.sec).map(([k,v])=>`<div class="rline"><span>${k}</span><span>${v[0]} / ${v[1]}</span></div>`).join('')}<div class="rline"><span>🃏 New cards</span><span>${newC.length?newC.map(c=>c.i).join(' '):'—'}</span></div><div class="rline"><span>💧 Water earned</span><span>+${Q.xp}</span></div></div>`;
+    if(o.pct>=75){setTimeout(()=>{confetti();sfx('win')},200)}else sfx('ok');
+  }
+  if(Q.wrong.length)h+=`<h2 style="justify-content:center">🔎 Let's learn from these <span class="vi" style="margin:0">Cùng xem lại</span></h2><div class="rbox mist">${Q.wrong.slice(0,12).map(w=>`<div class="mi"><div>${w.stem}</div><div style="margin-top:4px"><b>Answer:</b> ${w.ans}</div><div class="sm" style="margin-top:3px;color:var(--ink2)">${w.ex}</div></div>`).join('')}</div>`;
+  const nl=Q.land&&Q.land<6?Q.land+1:null;
+  h+=`<div class="row" style="justify-content:center;margin:16px 0"><button class="btn g" id="rAgain">↻ ${Q.mode==='exam'?'Try again':'Play again'}</button>${nl&&Q.mode==='quest'?`<button class="btn b" id="rNext">Next quest ▶</button>`:''}<button class="btn w" id="rHome">🏠 Home</button></div>`;
+  $('result').innerHTML=h;show('result');
+  $('rAgain').onclick=()=>({quest:()=>startQuest(Q.land),exam:startExam,mock:startMock,fix:startFix})[Q.mode]();
+  const rn=$('rNext');if(rn)rn.onclick=()=>{buildLearn(nl);show('learn')};
+  $('rHome').onclick=()=>{buildHome();show('home')};
+  if(grew)setTimeout(()=>{if(cur==='result')levelUp()},1400);
+}
+function levelUp(){const st=stageOf(S.xp);confetti(40);sfx('grow');openModal(`<div style="width:180px;margin:0 auto">${sproutSVG(st,'cheer')}</div><h2 style="justify-content:center">Sprout grew!</h2><div style="font-size:21px">Sprout is now a <b>${STAGES[st].n}</b>! 🌟${vi_('Mầm Xanh đã lớn thành: '+STAGES[st].v)}</div><br><button class="btn g" onclick="closeModal()">Yay! ▶</button>`)}
+
+/* ---------- hints ---------- */
+function useHint(auto){
+  if(!Q||isExam()||cur!=='play')return;const c=Q.cur;if(!c||c.state!=='ans'||c.hint>=2)return;lastAct=Date.now();c.hint++;sfx('hint');
+  const f=FACTS[c.q.rem];
+  if(c.hint===1)coach(`💡 <b>Hint:</b> ${f?f.e:'Read the question again slowly and look at the picture.'}${f&&S.set.vi?`<span class="vi">${f.v}</span>`:''}`,'hint','think');
+  else{c.ctl.hint2();coach(`💡 <b>Bigger hint:</b> I ${c.q.type==='mc'||c.q.type==='pick'?'crossed out a wrong choice':'helped with one answer'} for you!${vi_('Mình đã giúp bạn một chút rồi nhé!')}`,'hint','think')}
+  $('hintLeft').textContent=`(${2-c.hint})`;$('bHint').classList.remove('wig');
+}
+setInterval(()=>{if(cur==='play'&&Q&&Q.cur&&Q.cur.state==='ans'&&!isExam()&&!Q.cur.nudged&&Q.cur.hint<2&&!LOCK&&Date.now()-lastAct>20000){Q.cur.nudged=1;$('bHint').classList.add('wig');coach(`Stuck? Tap <b>💡 Hint</b> — it's OK to ask for help!${vi_('Bí rồi à? Bấm Gợi ý nhé!')}`,'hint','think')}},2000);
+
+/* ---------- settings ---------- */
+function openSettings(){
+  const row=(k,t,v)=>`<div class="tg"><span>${t}</span><button class="sw${S.set[k]?' on':''}" data-k="${k}" aria-label="${t}"></button></div>`;
+  openModal(`<h2 style="justify-content:center">⚙️ Settings</h2>${row('vi','🇻🇳 Vietnamese helper (hints &amp; explanations)')}${row('voice','🗣️ Read questions aloud automatically')}${row('snd','🔊 Sound effects')}
+  <div class="row" style="justify-content:center;margin-top:14px"><button class="btn w sm" id="sName">✏️ Change name</button><button class="btn r sm" id="sReset">🗑️ Reset progress</button></div><br><button class="btn g" onclick="closeModal()">Done</button>`);
+  $('modalBox').querySelectorAll('.sw').forEach(b=>b.onclick=()=>{const k=b.dataset.k;S.set[k]=S.set[k]?0:1;b.classList.toggle('on',!!S.set[k]);if(k==='vi')document.body.classList.toggle('novi',!S.set.vi);if(k==='snd'&&master)master.gain.value=S.set.snd?.6:0;save();sfx('click')});
+  $('sName').onclick=()=>{const n=prompt('Your name?',S.name||'');if(n!=null){S.name=n.trim().slice(0,14);save();$('nameIn').value=S.name;if(cur==='home')buildHome()}};
+  $('sReset').onclick=()=>{if(confirm('Delete ALL progress (stars, cards, badges, water)?')){store.set('sci-save',null);try{localStorage.removeItem('sci-save')}catch(e){}location.reload()}};
+}
+
+/* ---------- init ---------- */
+function init(){
+  document.body.classList.toggle('novi',!S.set.vi);
+  $('covSprout').innerHTML=sproutSVG(stageOf(S.xp),'cheer');$('nameIn').value=S.name||'';
+  const go=()=>{S.name=$('nameIn').value.trim().slice(0,14);save();ac();sfx('pop');buildHome();show('home')};
+  $('bStart').onclick=go;$('nameIn').addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+  if(S.xp>0||S.played>0)$('bStart').textContent='▶ Continue';
+  $('bHome').onclick=()=>{if(cur==='play'&&Q&&!confirm('Leave this quest?'))return;stopLabs();buildHome();show('home')};
+  $('bSet').onclick=openSettings;
+  $('pBack').onclick=()=>{if(confirm('Leave this quest? Your progress in it will be lost.')){buildHome();show('home')}};
+  $('bHint').onclick=()=>useHint();
+  $('bCheck').onclick=()=>{lastAct=Date.now();const c=Q.cur;if(!c)return;if(c.state==='ans')submit();else if(c.state==='fb')advance()};
+  document.addEventListener('pointerdown',()=>{lastAct=Date.now()});
+  document.addEventListener('keydown',e=>{
+    if(!$('modal').classList.contains('hide')){if(e.key==='Escape')closeModal();return}
+    if(cur==='cover'&&e.key==='Enter')return;
+    if(cur!=='play'||!Q||!Q.cur)return;if(e.target.tagName==='INPUT')return;
+    const c=Q.cur;
+    if(e.key==='Enter'||(e.key===' '&&c.state==='fb')){e.preventDefault();const b=$('bCheck');if(!b.disabled)b.click();return}
+    if(c.state==='ans'){if(e.key==='h'||e.key==='H')useHint();const k='1234'.indexOf(e.key);if(k>=0&&c.ctl.key)c.ctl.key(k);const l='abcdABCD'.indexOf(e.key);if(l>=0&&c.ctl.key)c.ctl.key(l%4)}
+  });
+  $('modal').addEventListener('pointerdown',e=>{if(e.target===$('modal')&&$('modalBox').querySelector('.sw'))closeModal()});
+  show('cover');
+}
+init();
+window.__sci={S,get Q(){return Q},QF,EXAM,R,show,buildHome,buildLearn,startQuest,startExam,startMock,startFix,submit,advance,useHint,CARDS,FACTS,
+  solve(){const c=Q.cur;c.ctl.solve();return c.ctl.ready()},answerWrong(){const c=Q.cur,q=c.q;if(q.type==='mc'){c.ctl.key((q.a+1)%q.opts.length)}return c.ctl.ready()},
+  nq:nextQuestion,openToy,buildBench,buildCards,buildBadges,levelUp,showResult,finishQuest,finishExam,bossWin,openSettings};
+</script>
+</body>
+</html>
