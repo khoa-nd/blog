@@ -20,7 +20,6 @@ h1,h2,h3{margin:0;font-weight:700}
 h2{font-size:22px;margin:22px 4px 10px;display:flex;align-items:center;gap:8px}
 small,.sm{font-size:14px}
 .vi{color:var(--ink2);font-size:.82em;display:block;margin-top:2px;font-weight:500}
-body.novi .vi{display:none}
 
 /* buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border-radius:999px;border:3px solid var(--ink);background:var(--y);font-weight:700;font-size:20px;box-shadow:0 5px 0 var(--ink);transition:transform .08s,box-shadow .08s;position:relative;top:0}
@@ -315,9 +314,9 @@ body.novi .vi{display:none}
  <section id="cover">
   <div id="covSprout"></div>
   <h1 class="title">Sprout's <span>Science</span> Lab</h1>
-  <div class="csub">Grade 2 · Plants, Materials &amp; Mixtures<span class="vi">Luyện thi Khoa học lớp 2 cùng bạn Mầm Xanh!</span></div>
+  <div class="csub">Grade 2 · Plants, Materials &amp; Mixtures</div>
   <div class="nameBox">
-   <label for="nameIn" style="font-weight:600">What's your name, scientist?<span class="vi">Tên của nhà khoa học là gì?</span></label>
+   <label for="nameIn" style="font-weight:600">What's your name, scientist?</label>
    <input id="nameIn" maxlength="14" placeholder="Scientist" autocomplete="off">
   </div><br>
   <button class="btn g" id="bStart" style="font-size:26px;padding:14px 40px">▶ Let's go!</button>
@@ -335,9 +334,9 @@ body.novi .vi{display:none}
     <div class="stats" id="heroStats"></div>
    </div>
   </div>
-  <h2>🗺️ Choose your quest <span class="vi" style="margin:0">Chọn nhiệm vụ</span></h2>
+  <h2>🗺️ Choose your quest </h2>
   <div class="lands" id="lands"></div>
-  <h2>⭐ More fun <span class="vi" style="margin:0">Chơi thêm</span></h2>
+  <h2>⭐ More fun </h2>
   <div class="acts" id="acts"></div>
   <div class="foot">Made for Grade 2 End-of-Semester 1 practice · Units 1 &amp; 2</div>
  </section>
@@ -377,106 +376,106 @@ const sample=(a,n)=>shuffle(a).slice(0,n);
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-/* facts = the teacher's "REMEMBER" boxes + flashcards, in English with a Vietnamese helper line */
+/* facts = the teacher's "REMEMBER" boxes + flashcards, in English */
 const FACTS={
- alive:{i:'🦋',e:'Living things grow, need food and reproduce (make young).',v:'Sinh vật sống thì lớn lên, cần thức ăn và sinh sản (sinh ra con non).'},
- once:{i:'🪑',e:'ONCE ALIVE means it came from a living thing — like wood, paper, wool, cotton and leather.',v:'"Từng sống" nghĩa là nó đến từ sinh vật sống — như gỗ, giấy, len, vải cotton, da.'},
- never:{i:'🪨',e:'NEVER ALIVE (also called NOT ALIVE) means it was never alive — like rock, plastic, metal and glass.',v:'"Chưa bao giờ sống" (còn gọi là "không sống") — như đá, nhựa, kim loại, thủy tinh.'},
- procs:{i:'🧬',e:'The 7 life processes: Movement, Respiration, Sensitivity, Growth, Reproduction, Excretion, Nutrition. Trick: MRS GREN!',v:'7 quá trình sống: Di chuyển, Hô hấp, Cảm nhận, Lớn lên, Sinh sản, Bài tiết, Dinh dưỡng. Mẹo nhớ: MRS GREN!'},
- move:{i:'🏃',e:'Movement: living things can move their bodies or body parts.',v:'Di chuyển: sinh vật sống có thể cử động cơ thể.'},
- resp:{i:'🫁',e:'Respiration: living things use oxygen to get energy from their food.',v:'Hô hấp: sinh vật dùng ô-xi để lấy năng lượng từ thức ăn.'},
- sens:{i:'👂',e:'Sensitivity: living things sense and react to the world — light, sound, touch.',v:'Cảm nhận: sinh vật cảm nhận và phản ứng với thế giới — ánh sáng, âm thanh, chạm.'},
- growp:{i:'📏',e:'Growth: living things get bigger.',v:'Lớn lên: sinh vật sống ngày càng lớn hơn.'},
- repro:{i:'🥚',e:'Reproduction: living things make young — babies, eggs or seeds.',v:'Sinh sản: sinh vật tạo ra con non — em bé, trứng hoặc hạt.'},
- excr:{i:'🚽',e:'Excretion: living things get rid of waste.',v:'Bài tiết: sinh vật loại bỏ chất thải.'},
- nutr:{i:'🍎',e:'Nutrition: living things need food (and water) to live and grow.',v:'Dinh dưỡng: sinh vật cần thức ăn (và nước) để sống và lớn lên.'},
- leaf:{i:'🍂',e:'A fallen leaf was alive on the tree. Now it is dead and not growing, so it is "once alive".',v:'Chiếc lá rơi từng sống trên cây. Giờ nó đã chết và không lớn nữa, nên là "từng sống".'},
- bike:{i:'🚲',e:'A bike moves, but it does not grow, need food or reproduce — so it is not living.',v:'Xe đạp có di chuyển, nhưng nó không lớn, không cần ăn, không sinh sản — nên không sống.'},
- root:{i:'🥕',e:'Roots take in (absorb) water from the soil and hold the plant in the ground.',v:'Rễ hút nước từ đất và giữ cây đứng vững.'},
- stem:{i:'🎋',e:'The stem holds the plant up and carries water up to the leaves.',v:'Thân cây giữ cây đứng thẳng và dẫn nước lên lá.'},
- leafjob:{i:'🍃',e:'Leaves make food for the plant.',v:'Lá làm ra thức ăn cho cây.'},
- flowerjob:{i:'🌸',e:'Flowers help make seeds.',v:'Hoa giúp tạo ra hạt.'},
- needs:{i:'☀️',e:'Healthy plants need light, water and the right temperature.',v:'Cây khỏe cần ánh sáng, nước và nhiệt độ phù hợp.'},
- germ:{i:'🌱',e:'Germination is when a seed starts to grow. Many seeds can germinate without light.',v:'Nảy mầm là khi hạt bắt đầu mọc. Nhiều hạt có thể nảy mầm mà không cần ánh sáng.'},
- wilt:{i:'🥀',e:'If roots are damaged they cannot absorb enough water, so the plant wilts (droops).',v:'Nếu rễ bị hỏng thì không hút đủ nước, nên cây bị héo.'},
- evid:{i:'🔎',e:'Tall does not always mean healthy! A short, green, strong plant can be healthier than a tall, pale, weak one.',v:'Cao chưa chắc đã khỏe! Cây thấp, xanh, cứng cáp có thể khỏe hơn cây cao, nhợt nhạt, yếu.'},
- drysoil:{i:'🏜️',e:'Dry soil means the plant has no water — it needs water. A dark cupboard means no light — it needs light.',v:'Đất khô là cây thiếu nước — cần tưới nước. Tủ tối là thiếu ánh sáng — cần ánh sáng.'},
- ruler:{i:'📏',e:'Use a RULER to measure length or height. Thermometer = temperature, stopwatch = time, balance = mass.',v:'Dùng THƯỚC để đo chiều dài/chiều cao. Nhiệt kế đo nhiệt độ, đồng hồ bấm giờ đo thời gian, cân đo khối lượng.'},
- pred:{i:'🔮',e:'A PREDICTION is a guess about what will happen ("I think…").',v:'DỰ ĐOÁN là đoán điều sẽ xảy ra ("Mình nghĩ rằng…").'},
- obs:{i:'👀',e:'An OBSERVATION is something you see or notice — like "The plant is 5 cm tall".',v:'QUAN SÁT là điều bạn nhìn thấy — ví dụ "Cây cao 5 cm".'},
- bar:{i:'📊',e:'A BAR CHART uses bars to show results. A taller bar means a bigger number.',v:'BIỂU ĐỒ CỘT dùng các cột để hiện kết quả. Cột càng cao thì số càng lớn.'},
- fair:{i:'⚖️',e:'A FAIR TEST changes only ONE thing and keeps everything else the same.',v:'THỬ NGHIỆM CÔNG BẰNG chỉ thay đổi MỘT thứ, giữ mọi thứ khác như nhau.'},
- cm:{i:'🖐️',e:'Centimetres are the same for everyone. Fingers are different sizes, so finger lengths are not fair.',v:'Xăng-ti-mét giống nhau với mọi người. Ngón tay mỗi người một cỡ nên đo bằng ngón tay là không công bằng.'},
- patt:{i:'🔁',e:'Look for a pattern in the numbers — what happens each time?',v:'Tìm quy luật trong các số — mỗi lần thay đổi thế nào?'},
- evidence:{i:'📋',e:'Results are evidence. Use them to check if a prediction was right.',v:'Kết quả là bằng chứng. Dùng nó để kiểm tra dự đoán đúng hay sai.'},
- research:{i:'📚',e:'RESEARCHING means using books and websites to find out facts.',v:'TÌM HIỂU là dùng sách và trang web để tìm thông tin.'},
- grew:{i:'➖',e:'To find how much it grew: take the first number away from the last number.',v:'Muốn biết cây lớn thêm bao nhiêu: lấy số cuối trừ số đầu.'},
- solid:{i:'🧊',e:'A SOLID keeps its own shape. It stays the same shape unless bent or twisted.',v:'CHẤT RẮN giữ nguyên hình dạng. Chỉ đổi hình khi bị bẻ hoặc xoắn.'},
- liquid:{i:'💧',e:'A LIQUID flows and takes the shape of its container.',v:'CHẤT LỎNG chảy được và có hình dạng của vật chứa.'},
- gas:{i:'🎈',e:'A GAS spreads out to fill its container — it spreads out everywhere.',v:'CHẤT KHÍ lan ra lấp đầy vật chứa — lan ra khắp nơi.'},
- compress:{i:'🪀',e:'Solids and liquids do not squash (compress) easily. Gases compress more easily.',v:'Chất rắn và chất lỏng khó bị nén. Chất khí dễ bị nén hơn.'},
- states:{i:'🧪',e:'Solids: ice, rock, wood. Liquids: water, juice, honey, milk, vinegar, shampoo. Gases: air, oxygen, steam, carbon dioxide.',v:'Rắn: đá lạnh, đá, gỗ. Lỏng: nước, nước ép, mật ong, sữa, giấm, dầu gội. Khí: không khí, ô-xi, hơi nước, khí CO₂.'},
- mix:{i:'🥗',e:'A MIXTURE has two or more materials mixed together — like salt water, soil and salad. Air is a mixture of gases.',v:'HỖN HỢP có hai hay nhiều chất trộn lẫn — như nước muối, đất, salad. Không khí là hỗn hợp các khí.'},
- notmix:{i:'🥇',e:'Pure gold, oxygen and nitrogen are just ONE material, so they are NOT mixtures.',v:'Vàng nguyên chất, ô-xi, ni-tơ chỉ là MỘT chất nên KHÔNG phải hỗn hợp.'},
- magnet:{i:'🧲',e:'A MAGNET attracts magnetic materials like iron nails and paper clips — but not rice, plastic or sand.',v:'NAM CHÂM hút vật liệu có từ tính như đinh sắt, kẹp giấy — không hút gạo, nhựa, cát.'},
- magmetals:{i:'🔩',e:'Not all metals are magnetic! Iron is attracted to a magnet. Aluminium is not.',v:'Không phải kim loại nào cũng bị nam châm hút! Sắt bị hút, nhôm thì không.'},
- sieve:{i:'🥣',e:'A SIEVE separates by size: small bits fall through the holes, big bits stay in the sieve.',v:'RÂY tách theo kích cỡ: mảnh nhỏ rơi qua lỗ, mảnh to ở lại.'},
- filter:{i:'🫗',e:'FILTERING separates a solid from a liquid using filter paper and a funnel. The liquid goes through; the solid stays.',v:'LỌC tách chất rắn khỏi chất lỏng bằng giấy lọc và phễu. Chất lỏng đi qua, chất rắn ở lại.'},
- insolfilter:{i:'🧂',e:'Only insoluble solids can be filtered out. A dissolved solid goes right through the filter paper.',v:'Chỉ chất rắn không tan mới lọc ra được. Chất đã tan sẽ đi qua giấy lọc.'},
- iron:{i:'🔨',e:'Iron is a metal that is used to make tools.',v:'Sắt là kim loại dùng để làm dụng cụ.'},
- dissolve:{i:'🍬',e:'DISSOLVE: a solid mixes completely with a liquid and seems to disappear. It is still there!',v:'HÒA TAN: chất rắn trộn hoàn toàn vào chất lỏng và như biến mất. Nhưng nó vẫn còn đó!'},
- soluble:{i:'🧂',e:'SOLUBLE means it can dissolve in water — like salt, sugar and coffee powder.',v:'TAN ĐƯỢC nghĩa là hòa tan trong nước — như muối, đường, bột cà phê.'},
- insoluble:{i:'🏖️',e:'INSOLUBLE means it does not dissolve in water — like sand, rocks, wood and metal. You can still see it.',v:'KHÔNG TAN nghĩa là không hòa tan trong nước — như cát, đá, gỗ, kim loại. Vẫn nhìn thấy nó.'},
- solution:{i:'☕',e:'A SOLUTION is a mixture where a solid has dissolved in a liquid, like sugar water.',v:'DUNG DỊCH là hỗn hợp có chất rắn đã tan trong chất lỏng, như nước đường.'},
- stillthere:{i:'🫥',e:'When a solid dissolves it is NOT gone forever. It is still there, mixed in the water.',v:'Khi chất rắn tan, nó KHÔNG mất đi. Nó vẫn còn, trộn lẫn trong nước.'},
- safe:{i:'🥽',e:'Be safe: wear goggles if the teacher says, walk (never run) with equipment, and never taste or eat in the lab.',v:'An toàn: đeo kính nếu cô giáo bảo, đi bộ (không chạy) khi cầm dụng cụ, không nếm hay ăn trong phòng thí nghiệm.'},
- notaste:{i:'☠️',e:'We never taste science mixtures — they might be harmful (poisonous).',v:'Không bao giờ nếm hỗn hợp thí nghiệm — chúng có thể có hại (độc).'},
- fairdis:{i:'⚖️',e:'Fair test: change only the amount of water. Keep the amount of salt, the water temperature and the stirring the same.',v:'Thử nghiệm công bằng: chỉ đổi lượng nước. Giữ nguyên lượng muối, nhiệt độ nước và cách khuấy.'}
+ alive:{i:'🦋',e:'Living things grow, need food and reproduce (make young).'},
+ once:{i:'🪑',e:'ONCE ALIVE means it came from a living thing — like wood, paper, wool, cotton and leather.'},
+ never:{i:'🪨',e:'NEVER ALIVE (also called NOT ALIVE) means it was never alive — like rock, plastic, metal and glass.'},
+ procs:{i:'🧬',e:'The 7 life processes: Movement, Respiration, Sensitivity, Growth, Reproduction, Excretion, Nutrition. Trick: MRS GREN!'},
+ move:{i:'🏃',e:'Movement: living things can move their bodies or body parts.'},
+ resp:{i:'🫁',e:'Respiration: living things use oxygen to get energy from their food.'},
+ sens:{i:'👂',e:'Sensitivity: living things sense and react to the world — light, sound, touch.'},
+ growp:{i:'📏',e:'Growth: living things get bigger.'},
+ repro:{i:'🥚',e:'Reproduction: living things make young — babies, eggs or seeds.'},
+ excr:{i:'🚽',e:'Excretion: living things get rid of waste.'},
+ nutr:{i:'🍎',e:'Nutrition: living things need food (and water) to live and grow.'},
+ leaf:{i:'🍂',e:'A fallen leaf was alive on the tree. Now it is dead and not growing, so it is "once alive".'},
+ bike:{i:'🚲',e:'A bike moves, but it does not grow, need food or reproduce — so it is not living.'},
+ root:{i:'🥕',e:'Roots take in (absorb) water from the soil and hold the plant in the ground.'},
+ stem:{i:'🎋',e:'The stem holds the plant up and carries water up to the leaves.'},
+ leafjob:{i:'🍃',e:'Leaves make food for the plant.'},
+ flowerjob:{i:'🌸',e:'Flowers help make seeds.'},
+ needs:{i:'☀️',e:'Healthy plants need light, water and the right temperature.'},
+ germ:{i:'🌱',e:'Germination is when a seed starts to grow. Many seeds can germinate without light.'},
+ wilt:{i:'🥀',e:'If roots are damaged they cannot absorb enough water, so the plant wilts (droops).'},
+ evid:{i:'🔎',e:'Tall does not always mean healthy! A short, green, strong plant can be healthier than a tall, pale, weak one.'},
+ drysoil:{i:'🏜️',e:'Dry soil means the plant has no water — it needs water. A dark cupboard means no light — it needs light.'},
+ ruler:{i:'📏',e:'Use a RULER to measure length or height. Thermometer = temperature, stopwatch = time, balance = mass.'},
+ pred:{i:'🔮',e:'A PREDICTION is a guess about what will happen ("I think…").'},
+ obs:{i:'👀',e:'An OBSERVATION is something you see or notice — like "The plant is 5 cm tall".'},
+ bar:{i:'📊',e:'A BAR CHART uses bars to show results. A taller bar means a bigger number.'},
+ fair:{i:'⚖️',e:'A FAIR TEST changes only ONE thing and keeps everything else the same.'},
+ cm:{i:'🖐️',e:'Centimetres are the same for everyone. Fingers are different sizes, so finger lengths are not fair.'},
+ patt:{i:'🔁',e:'Look for a pattern in the numbers — what happens each time?'},
+ evidence:{i:'📋',e:'Results are evidence. Use them to check if a prediction was right.'},
+ research:{i:'📚',e:'RESEARCHING means using books and websites to find out facts.'},
+ grew:{i:'➖',e:'To find how much it grew: take the first number away from the last number.'},
+ solid:{i:'🧊',e:'A SOLID keeps its own shape. It stays the same shape unless bent or twisted.'},
+ liquid:{i:'💧',e:'A LIQUID flows and takes the shape of its container.'},
+ gas:{i:'🎈',e:'A GAS spreads out to fill its container — it spreads out everywhere.'},
+ compress:{i:'🪀',e:'Solids and liquids do not squash (compress) easily. Gases compress more easily.'},
+ states:{i:'🧪',e:'Solids: ice, rock, wood. Liquids: water, juice, honey, milk, vinegar, shampoo. Gases: air, oxygen, steam, carbon dioxide.'},
+ mix:{i:'🥗',e:'A MIXTURE has two or more materials mixed together — like salt water, soil and salad. Air is a mixture of gases.'},
+ notmix:{i:'🥇',e:'Pure gold, oxygen and nitrogen are just ONE material, so they are NOT mixtures.'},
+ magnet:{i:'🧲',e:'A MAGNET attracts magnetic materials like iron nails and paper clips — but not rice, plastic or sand.'},
+ magmetals:{i:'🔩',e:'Not all metals are magnetic! Iron is attracted to a magnet. Aluminium is not.'},
+ sieve:{i:'🥣',e:'A SIEVE separates by size: small bits fall through the holes, big bits stay in the sieve.'},
+ filter:{i:'🫗',e:'FILTERING separates a solid from a liquid using filter paper and a funnel. The liquid goes through; the solid stays.'},
+ insolfilter:{i:'🧂',e:'Only insoluble solids can be filtered out. A dissolved solid goes right through the filter paper.'},
+ iron:{i:'🔨',e:'Iron is a metal that is used to make tools.'},
+ dissolve:{i:'🍬',e:'DISSOLVE: a solid mixes completely with a liquid and seems to disappear. It is still there!'},
+ soluble:{i:'🧂',e:'SOLUBLE means it can dissolve in water — like salt, sugar and coffee powder.'},
+ insoluble:{i:'🏖️',e:'INSOLUBLE means it does not dissolve in water — like sand, rocks, wood and metal. You can still see it.'},
+ solution:{i:'☕',e:'A SOLUTION is a mixture where a solid has dissolved in a liquid, like sugar water.'},
+ stillthere:{i:'🫥',e:'When a solid dissolves it is NOT gone forever. It is still there, mixed in the water.'},
+ safe:{i:'🥽',e:'Be safe: wear goggles if the teacher says, walk (never run) with equipment, and never taste or eat in the lab.'},
+ notaste:{i:'☠️',e:'We never taste science mixtures — they might be harmful (poisonous).'},
+ fairdis:{i:'⚖️',e:'Fair test: change only the amount of water. Keep the amount of salt, the water temperature and the stirring the same.'}
 };
 
 /* collectible vocabulary cards (the teacher's flashcards + booklet words) */
 const CARDS=[
- {id:'alive',l:1,i:'🦋',t:'ALIVE',d:'Something that is living and can grow, move and reproduce.',x:'A butterfly, a tree, a fish',v:'Đang sống: biết lớn lên, di chuyển và sinh sản.'},
- {id:'once',l:1,i:'🪑',t:'ONCE ALIVE',d:'Something that was living before but is not alive now.',x:'Leather, wood, paper',v:'Từng sống: trước đây đã sống nhưng bây giờ không còn.'},
- {id:'never',l:1,i:'🪨',t:'NEVER ALIVE',d:'Something that has never been alive.',x:'Rock, plastic, metal',v:'Chưa bao giờ sống.'},
- {id:'procs',l:1,i:'🧬',t:'7 LIFE PROCESSES',d:'Movement, Respiration, Sensitivity, Growth, Reproduction, Excretion, Nutrition.',x:'Remember: MRS GREN',v:'7 quá trình sống: Di chuyển, Hô hấp, Cảm nhận, Lớn lên, Sinh sản, Bài tiết, Dinh dưỡng.'},
- {id:'root',l:2,i:'🥕',t:'ROOT',d:'The part of the plant that grows underground.',x:'Takes in water from the soil',v:'Rễ: phần cây mọc dưới đất, hút nước.'},
- {id:'stem',l:2,i:'🎋',t:'STEM',d:'The part of the plant that holds it up.',x:'Carries water up the plant',v:'Thân: giữ cây đứng và dẫn nước lên.'},
- {id:'leaf',l:2,i:'🍃',t:'LEAF',d:'The green flat part of the plant.',x:'Makes food for the plant',v:'Lá: phần xanh, dẹt, làm ra thức ăn cho cây.'},
- {id:'flower',l:2,i:'🌸',t:'FLOWER',d:'The colourful part of the plant.',x:'Makes seeds',v:'Hoa: phần nhiều màu sắc, giúp tạo hạt.'},
- {id:'germ',l:2,i:'🌱',t:'GERMINATION',d:'When a seed starts to grow.',x:'Many seeds can germinate without light',v:'Nảy mầm: khi hạt bắt đầu mọc.'},
- {id:'pred',l:3,i:'🔮',t:'PREDICTION',d:'A guess about what you think will happen.',x:'"I think the plant will grow taller in sunlight."',v:'Dự đoán: đoán điều sẽ xảy ra.'},
- {id:'obs',l:3,i:'👀',t:'OBSERVATION',d:'Something you see or notice.',x:'"The plant is 5 cm tall."',v:'Quan sát: điều bạn nhìn thấy.'},
- {id:'bar',l:3,i:'📊',t:'BAR CHART',d:'A graph that uses bars to show information.',x:'Used to display results from investigations',v:'Biểu đồ cột: dùng các cột để hiện thông tin.'},
- {id:'fair',l:3,i:'⚖️',t:'FAIR TEST',d:'A test where you change only one thing and keep everything else the same.',x:'Same plant, same water — only the light changes',v:'Thử nghiệm công bằng: chỉ đổi một thứ.'},
- {id:'research',l:3,i:'📚',t:'RESEARCH',d:'Finding out facts using books and websites.',x:'Looking up what iron is used for',v:'Tìm hiểu: tìm thông tin bằng sách và trang web.'},
- {id:'solid',l:4,i:'🧊',t:'SOLID',d:'A state of matter that keeps its shape.',x:'Ice, rock, wood',v:'Chất rắn: giữ nguyên hình dạng.'},
- {id:'liquid',l:4,i:'💧',t:'LIQUID',d:'A state of matter that flows and takes the shape of its container.',x:'Water, juice, oil',v:'Chất lỏng: chảy và có hình của vật chứa.'},
- {id:'gas',l:4,i:'🎈',t:'GAS',d:'A state of matter that spreads out to fill space.',x:'Air, oxygen, steam',v:'Chất khí: lan ra lấp đầy không gian.'},
- {id:'mixture',l:5,i:'🥗',t:'MIXTURE',d:'Two or more materials mixed together.',x:'Salt water, soil, salad',v:'Hỗn hợp: hai hay nhiều chất trộn lẫn.'},
- {id:'magnet',l:5,i:'🧲',t:'MAGNET',d:'It attracts magnetic materials such as iron.',x:'Separates paper clips from beans',v:'Nam châm: hút vật liệu có từ tính như sắt.'},
- {id:'sieving',l:5,i:'🥣',t:'SIEVING',d:'A way to separate solids of different sizes using a sieve.',x:'Separating rice and flour',v:'Rây: tách các chất rắn khác cỡ.'},
- {id:'filtering',l:5,i:'🫗',t:'FILTERING',d:'A way to separate a solid from a liquid using filter paper.',x:'Separating sand and water',v:'Lọc: tách chất rắn khỏi chất lỏng bằng giấy lọc.'},
- {id:'dissolve',l:6,i:'🍬',t:'DISSOLVE',d:'When a solid mixes completely with a liquid and seems to disappear.',x:'Sugar dissolving in tea',v:'Hòa tan: chất rắn trộn hoàn toàn vào chất lỏng.'},
- {id:'soluble',l:6,i:'🧂',t:'SOLUBLE',d:'Something that can dissolve in a liquid.',x:'Salt is soluble in water',v:'Tan được trong nước.'},
- {id:'insoluble',l:6,i:'🏖️',t:'INSOLUBLE',d:'Something that cannot dissolve in a liquid.',x:'Sand is insoluble in water',v:'Không tan trong nước.'},
- {id:'solution',l:6,i:'☕',t:'SOLUTION',d:'A mixture where a solid has dissolved in a liquid.',x:'Sugar water',v:'Dung dịch: hỗn hợp có chất rắn đã tan trong chất lỏng.'},
- {id:'safety',l:6,i:'🥽',t:'LAB SAFETY',d:'Rules that keep us safe when we do experiments.',x:'Wear goggles, walk carefully, never taste',v:'An toàn thí nghiệm: các quy tắc giữ chúng ta an toàn.'}
+ {id:'alive',l:1,i:'🦋',t:'ALIVE',d:'Something that is living and can grow, move and reproduce.',x:'A butterfly, a tree, a fish'},
+ {id:'once',l:1,i:'🪑',t:'ONCE ALIVE',d:'Something that was living before but is not alive now.',x:'Leather, wood, paper'},
+ {id:'never',l:1,i:'🪨',t:'NEVER ALIVE',d:'Something that has never been alive.',x:'Rock, plastic, metal'},
+ {id:'procs',l:1,i:'🧬',t:'7 LIFE PROCESSES',d:'Movement, Respiration, Sensitivity, Growth, Reproduction, Excretion, Nutrition.',x:'Remember: MRS GREN'},
+ {id:'root',l:2,i:'🥕',t:'ROOT',d:'The part of the plant that grows underground.',x:'Takes in water from the soil'},
+ {id:'stem',l:2,i:'🎋',t:'STEM',d:'The part of the plant that holds it up.',x:'Carries water up the plant'},
+ {id:'leaf',l:2,i:'🍃',t:'LEAF',d:'The green flat part of the plant.',x:'Makes food for the plant'},
+ {id:'flower',l:2,i:'🌸',t:'FLOWER',d:'The colourful part of the plant.',x:'Makes seeds'},
+ {id:'germ',l:2,i:'🌱',t:'GERMINATION',d:'When a seed starts to grow.',x:'Many seeds can germinate without light'},
+ {id:'pred',l:3,i:'🔮',t:'PREDICTION',d:'A guess about what you think will happen.',x:'"I think the plant will grow taller in sunlight."'},
+ {id:'obs',l:3,i:'👀',t:'OBSERVATION',d:'Something you see or notice.',x:'"The plant is 5 cm tall."'},
+ {id:'bar',l:3,i:'📊',t:'BAR CHART',d:'A graph that uses bars to show information.',x:'Used to display results from investigations'},
+ {id:'fair',l:3,i:'⚖️',t:'FAIR TEST',d:'A test where you change only one thing and keep everything else the same.',x:'Same plant, same water — only the light changes'},
+ {id:'research',l:3,i:'📚',t:'RESEARCH',d:'Finding out facts using books and websites.',x:'Looking up what iron is used for'},
+ {id:'solid',l:4,i:'🧊',t:'SOLID',d:'A state of matter that keeps its shape.',x:'Ice, rock, wood'},
+ {id:'liquid',l:4,i:'💧',t:'LIQUID',d:'A state of matter that flows and takes the shape of its container.',x:'Water, juice, oil'},
+ {id:'gas',l:4,i:'🎈',t:'GAS',d:'A state of matter that spreads out to fill space.',x:'Air, oxygen, steam'},
+ {id:'mixture',l:5,i:'🥗',t:'MIXTURE',d:'Two or more materials mixed together.',x:'Salt water, soil, salad'},
+ {id:'magnet',l:5,i:'🧲',t:'MAGNET',d:'It attracts magnetic materials such as iron.',x:'Separates paper clips from beans'},
+ {id:'sieving',l:5,i:'🥣',t:'SIEVING',d:'A way to separate solids of different sizes using a sieve.',x:'Separating rice and flour'},
+ {id:'filtering',l:5,i:'🫗',t:'FILTERING',d:'A way to separate a solid from a liquid using filter paper.',x:'Separating sand and water'},
+ {id:'dissolve',l:6,i:'🍬',t:'DISSOLVE',d:'When a solid mixes completely with a liquid and seems to disappear.',x:'Sugar dissolving in tea'},
+ {id:'soluble',l:6,i:'🧂',t:'SOLUBLE',d:'Something that can dissolve in a liquid.',x:'Salt is soluble in water'},
+ {id:'insoluble',l:6,i:'🏖️',t:'INSOLUBLE',d:'Something that cannot dissolve in a liquid.',x:'Sand is insoluble in water'},
+ {id:'solution',l:6,i:'☕',t:'SOLUTION',d:'A mixture where a solid has dissolved in a liquid.',x:'Sugar water'},
+ {id:'safety',l:6,i:'🥽',t:'LAB SAFETY',d:'Rules that keep us safe when we do experiments.',x:'Wear goggles, walk carefully, never taste'}
 ];
 const CBY={};CARDS.forEach(c=>CBY[c.id]=c);
 
 const LANDS=[
- {id:1,i:'🦋',c:'#ff8a3d',n:'Living Things',v:'Sinh vật sống',u:'Unit 1',boss:{n:'Rocky the Never-Alive Golem',i:'🗿'},
+ {id:1,i:'🦋',c:'#ff8a3d',n:'Living Things',u:'Unit 1',boss:{n:'Rocky the Never-Alive Golem',i:'🗿'},
   learn:['alive','once','never','procs','leaf','bike']},
- {id:2,i:'🌱',c:'#3dbb6c',n:'Plant Garden',v:'Khu vườn cây',u:'Unit 1',boss:{n:'Wilt Wizard',i:'🧙'},
+ {id:2,i:'🌱',c:'#3dbb6c',n:'Plant Garden',u:'Unit 1',boss:{n:'Wilt Wizard',i:'🧙'},
   learn:['root','stem','leafjob','flowerjob','needs','germ','wilt']},
- {id:3,i:'🔍',c:'#4dabf7',n:'Detective Lab',v:'Phòng điều tra',u:'Unit 1',boss:{n:'Captain Unfair',i:'🦹'},
+ {id:3,i:'🔍',c:'#4dabf7',n:'Detective Lab',u:'Unit 1',boss:{n:'Captain Unfair',i:'🦹'},
   learn:['ruler','pred','obs','bar','fair','cm','patt','research']},
- {id:4,i:'🧊',c:'#22b8cf',n:'Matter Mountain',v:'Núi Vật chất',u:'Unit 2',boss:{n:'Steamy the Cloud Dragon',i:'🐉'},
+ {id:4,i:'🧊',c:'#22b8cf',n:'Matter Mountain',u:'Unit 2',boss:{n:'Steamy the Cloud Dragon',i:'🐉'},
   learn:['solid','liquid','gas','compress','states']},
- {id:5,i:'🧲',c:'#9775fa',n:'Mix Valley',v:'Thung lũng Hỗn hợp',u:'Unit 2',boss:{n:'Mix-Up Monster',i:'👾'},
+ {id:5,i:'🧲',c:'#9775fa',n:'Mix Valley',u:'Unit 2',boss:{n:'Mix-Up Monster',i:'👾'},
   learn:['mix','notmix','magnet','magmetals','sieve','filter','iron']},
- {id:6,i:'🧂',c:'#f783ac',n:'Dissolve Lake',v:'Hồ Hòa tan',u:'Unit 2',boss:{n:'Soggy Sand Slime',i:'🫠'},
+ {id:6,i:'🧂',c:'#f783ac',n:'Dissolve Lake',u:'Unit 2',boss:{n:'Soggy Sand Slime',i:'🫠'},
   learn:['dissolve','soluble','insoluble','solution','stillthere','safe']}
 ];
 const LBY={};LANDS.forEach(l=>LBY[l.id]=l);
@@ -553,7 +552,7 @@ function sproutSVG(stage,mood,opt){
   <circle cx="42" cy="146" r="6" fill="#ff9db0" opacity=".7"/><circle cx="98" cy="146" r="6" fill="#ff9db0" opacity=".7"/>
   ${mouth}</svg>`;
 }
-const STAGES=[{x:0,n:'Seed',v:'Hạt giống'},{x:60,n:'Sprout',v:'Mầm non'},{x:160,n:'Seedling',v:'Cây con'},{x:320,n:'Little Plant',v:'Cây nhỏ'},{x:560,n:'Budding',v:'Nụ hoa'},{x:900,n:'Flower Star',v:'Ngôi sao hoa'},{x:1400,n:'Super Scientist',v:'Nhà khoa học siêu cấp'}];
+const STAGES=[{x:0,n:'Seed'},{x:60,n:'Sprout'},{x:160,n:'Seedling'},{x:320,n:'Little Plant'},{x:560,n:'Budding'},{x:900,n:'Flower Star'},{x:1400,n:'Super Scientist'}];
 
 /* plant labelling diagram */
 function plantSVG(){return `<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
@@ -617,17 +616,17 @@ function labBG(){return `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/200
  <rect x="236" y="215" width="150" height="30" rx="6" fill="#b88650" stroke="${INK}" stroke-width="3"/><rect x="230" y="203" width="162" height="14" rx="5" fill="#d8a86b" stroke="${INK}" stroke-width="3"/></svg>`}
 /* hazard hotspots: x,y in %, h = unsafe? */
 const HAZ=[
- {x:12,y:21,e:'😋🍔',h:1,t:'Eating food in the lab',v:'Ăn trong phòng thí nghiệm'},
- {x:34,y:20,e:'😛🥤',h:1,t:'Drinking in the lab',v:'Uống nước trong phòng thí nghiệm'},
- {x:72,y:27,e:'👃☠️',h:1,t:'Smelling a substance directly',v:'Ngửi trực tiếp hóa chất'},
- {x:14,y:63,e:'👧🔥',h:1,t:'Long hair close to a flame',v:'Tóc dài gần ngọn lửa'},
- {x:50,y:50,e:'💦🔌',h:1,t:'A spill near electrical equipment',v:'Nước đổ gần đồ điện'},
- {x:86,y:62,e:'🏃',h:1,t:'Running / playing around',v:'Chạy nhảy nghịch ngợm'},
- {x:42,y:84,e:'🐍',h:1,t:'An animal (snake!) on the floor',v:'Con rắn trên sàn'},
- {x:76,y:83,e:'🧪💥',h:1,t:'Broken glass on the floor',v:'Thủy tinh vỡ trên sàn'},
- {x:92,y:35,e:'🥽🧒',h:0,t:'Goggles on — that is safe!',v:'Đeo kính bảo hộ — an toàn!'},
- {x:56,y:19,e:'🧯',h:0,t:'A fire extinguisher is safe — it helps in an emergency!',v:'Bình chữa cháy giúp khi khẩn cấp — an toàn!'},
- {x:27,y:37,e:'🩹',h:0,t:'The first-aid kit is safe — it helps if someone is hurt.',v:'Hộp sơ cứu dùng khi có người bị thương.'}
+ {x:12,y:21,e:'😋🍔',h:1,t:'Eating food in the lab'},
+ {x:34,y:20,e:'😛🥤',h:1,t:'Drinking in the lab'},
+ {x:72,y:27,e:'👃☠️',h:1,t:'Smelling a substance directly'},
+ {x:14,y:63,e:'👧🔥',h:1,t:'Long hair close to a flame'},
+ {x:50,y:50,e:'💦🔌',h:1,t:'A spill near electrical equipment'},
+ {x:86,y:62,e:'🏃',h:1,t:'Running / playing around'},
+ {x:42,y:84,e:'🐍',h:1,t:'An animal (snake!) on the floor'},
+ {x:76,y:83,e:'🧪💥',h:1,t:'Broken glass on the floor'},
+ {x:92,y:35,e:'🥽🧒',h:0,t:'Goggles on — that is safe!'},
+ {x:56,y:19,e:'🧯',h:0,t:'A fire extinguisher is safe — it helps in an emergency!'},
+ {x:27,y:37,e:'🩹',h:0,t:'The first-aid kit is safe — it helps if someone is hurt.'}
 ];
 /* =====================  QUESTION BUILDERS & FACTORIES  ===================== */
 const O=(t,e)=>({t,e});
@@ -823,8 +822,8 @@ const EXAM_MARKS=36;
 /* =====================  ENGINE PART 1: state, audio, helpers, answer widgets  ===================== */
 ['a','a','b','a','b','b','b','a','a'].forEach((p,i)=>SEPS[i].p=p);
 const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-let S=Object.assign({name:'',xp:0,lands:{},cards:{},badges:{},seen:{},day:'',streak:0,set:{vi:1,voice:0,snd:1},exBest:0,exSec:{},mockBest:0,played:0,bestCombo:0},store.get('sci-save',{}));
-S.set=Object.assign({vi:1,voice:0,snd:1},S.set||{});
+let S=Object.assign({name:'',xp:0,lands:{},cards:{},badges:{},seen:{},day:'',streak:0,set:{voice:0,snd:1},exBest:0,exSec:{},mockBest:0,played:0,bestCombo:0},store.get('sci-save',{}));
+S.set=Object.assign({voice:0,snd:1},S.set||{});
 const save=()=>store.set('sci-save',S);
 const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 (function streak(){const t=new Date(),td=ymd(t);if(S.day!==td){const y=new Date(t.getTime()-864e5);S.streak=S.day===ymd(y)?(S.streak||0)+1:1;S.day=td;save()}})();
@@ -990,8 +989,8 @@ R.hot=(q,box,chg,api)=>{
   const found=new Set(),hz=[...box.querySelectorAll('.hz')],tx=box.querySelector('#hzTxt');
   const nUnsafe=HAZ.filter(h=>h.h).length;
   hz.forEach((e,i)=>e.onclick=()=>{if(LOCK)return;const h=HAZ[i];e.classList.remove('pulse');
-    if(h.h){if(!found.has(i)){found.add(i);e.classList.add('found');sfx('ok')}tx.innerHTML=`⚠️ <b>Unsafe:</b> ${h.t}${S.set.vi?`<span class="vi">${h.v}</span>`:''}<br><small>Found ${found.size} (need ${q.need}${found.size>=q.need?' ✔':''}) — you can keep looking for more!</small>`;if(found.size===nUnsafe)api.flag('safety')}
-    else{e.classList.add('safe');setTimeout(()=>e.classList.remove('safe'),500);sfx('bad');tx.innerHTML=`✅ ${h.t}${S.set.vi?`<span class="vi">${h.v}</span>`:''}`}chg()});
+    if(h.h){if(!found.has(i)){found.add(i);e.classList.add('found');sfx('ok')}tx.innerHTML=`⚠️ <b>Unsafe:</b> ${h.t}<br><small>Found ${found.size} (need ${q.need}${found.size>=q.need?' ✔':''}) — you can keep looking for more!</small>`;if(found.size===nUnsafe)api.flag('safety')}
+    else{e.classList.add('safe');setTimeout(()=>e.classList.remove('safe'),500);sfx('bad');tx.innerHTML=`✅ ${h.t}`}chg()});
   return{ready:()=>found.size>=q.need,eval:()=>({frac:Math.min(found.size,q.need)/q.need}),
     reveal(){hz.forEach((e,i)=>{if(HAZ[i].h)e.classList.add('found')});tx.innerHTML='<b>All 8 unsafe things:</b> '+HAZ.filter(h=>h.h).map(h=>h.t).join(' · ')},
     hint2(){const i=HAZ.findIndex((h,k)=>h.h&&!found.has(k));if(i>=0)hz[i].classList.add('pulse')},
@@ -1031,7 +1030,6 @@ R.sepa=(q,box,chg,api)=>{
 const SVGNS='http://www.w3.org/2000/svg';
 let STOPS=[];const stopLabs=()=>{STOPS.forEach(f=>{try{f()}catch(e){}});STOPS=[]};
 const mk=(tag,at,par)=>{const e=document.createElementNS(SVGNS,tag);for(const k in at)e.setAttribute(k,at[k]);if(par)par.appendChild(e);return e};
-const vi_=t=>S.set.vi?`<span class="vi">${t}</span>`:'';
 
 /* --- dissolving lab: drop a material in water and stir --- */
 function dissolveLab(host,keys,opt){
@@ -1081,7 +1079,7 @@ function dissolveLab(host,keys,opt){
     }
     function finish(){SK.setAttribute('opacity',0);tested.add(s.k);
       const b=sh.querySelector(`[data-k="${s.k}"]`);b.classList.add('done');const r=b.querySelector('.rs');r.classList.remove('hide');r.classList.add(s.s?'s':'i');r.textContent=s.s?'soluble':'insoluble';
-      tx.innerHTML=s.s?`${s.e} <b>${cap1(s.n)} dissolved!</b><br>The grains seem to disappear — but they are still in the water. So it is <b>soluble</b>.${s.k==='coffee'?'<br>See how the water turned brown?':''}${vi_(s.k==='coffee'?'Bột cà phê tan: nước chuyển màu nâu.':'Đã hòa tan: nhìn không thấy nhưng vẫn còn trong nước. → tan được.')}`:`${s.e} <b>${cap1(s.n)} did NOT dissolve.</b><br>You can still see it at the bottom. So it is <b>insoluble</b>.${vi_('Không tan: vẫn nhìn thấy ở đáy cốc. → không tan.')}`;
+      tx.innerHTML=s.s?`${s.e} <b>${cap1(s.n)} dissolved!</b><br>The grains seem to disappear — but they are still in the water. So it is <b>soluble</b>.${s.k==='coffee'?'<br>See how the water turned brown?':''}`:`${s.e} <b>${cap1(s.n)} did NOT dissolve.</b><br>You can still see it at the bottom. So it is <b>insoluble</b>.`;
       sfx(s.s?'ok':'pop')}
     raf=requestAnimationFrame(frame);
   }
@@ -1096,8 +1094,8 @@ function matterToy(host){
   const SH={wide:{x:20,y:70,w:340,h:150},tall:{x:140,y:12,w:100,h:210},jar:{x:90,y:50,w:200,h:170}};
   let st='S',sh='wide',alive=true,last=performance.now(),rehome=0;
   const N=72,r=4,P=[];for(let i=0;i<N;i++)P.push({x:100+rnd()*180,y:100+rnd()*100,vx:(rnd()-.5)*100,vy:(rnd()-.5)*100,hx:0,hy:0});
-  const TXT={S:['<b>Solid:</b> the particles are packed tightly and only wiggle. A solid <b>keeps its own shape</b>, whatever box it is in.','Chất rắn: các hạt xếp sát nhau, chỉ rung nhẹ. Giữ nguyên hình dạng dù ở trong hộp nào.'],L:['<b>Liquid:</b> the particles slide past each other. A liquid <b>flows</b> and <b>takes the shape of its container</b>.','Chất lỏng: các hạt trượt qua nhau. Chảy được và có hình của vật chứa.'],G:['<b>Gas:</b> the particles zoom about. A gas <b>spreads out to fill the whole container</b>.','Chất khí: các hạt chạy khắp nơi, lan ra lấp đầy cả vật chứa.']};
-  const upT=()=>{tx.innerHTML=TXT[st][0]+vi_(TXT[st][1])};upT();
+  const TXT={S:['<b>Solid:</b> the particles are packed tightly and only wiggle. A solid <b>keeps its own shape</b>, whatever box it is in.'],L:['<b>Liquid:</b> the particles slide past each other. A liquid <b>flows</b> and <b>takes the shape of its container</b>.'],G:['<b>Gas:</b> the particles zoom about. A gas <b>spreads out to fill the whole container</b>.']};
+  const upT=()=>{tx.innerHTML=TXT[st][0]};upT();
   function homes(all){const c=SH[sh],bot=c.y+c.h,lh=Math.min(c.h-8,7600/c.w),top=bot-lh;
     P.forEach((p,i)=>{if(st==='S'){const cols=12,sp=2*r+1.2,bw=cols*sp;p.hx=c.x+c.w/2-bw/2+(i%cols)*sp+sp/2;p.hy=bot-r-2-Math.floor(i/cols)*sp}
       else if(st==='L'&&(all||rnd()<.12)){p.hx=c.x+r+rnd()*(c.w-2*r);p.hy=top+r+rnd()*(lh-2*r)}})}
@@ -1124,16 +1122,16 @@ function matterToy(host){
 function plantLabSVG(w,l,t){
   const pot=`<path d="M70 168h60l-7 32q-1 5 -6 5h-34q-5 0 -6 -5Z" fill="#e08a45" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/><rect x="64" y="160" width="72" height="14" rx="7" fill="#f2a05c" stroke="${INK}" stroke-width="4"/>`;
   let plant,msg;
-  if(!w){plant=`<path d="M100 162Q100 120 128 112" stroke="${INK}" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M100 162Q100 120 128 112" stroke="#b8a640" stroke-width="4" fill="none" stroke-linecap="round"/>${leafP(126,114,70,.8,'#a9962f')}${leafP(108,138,150,.7,'#a9962f')}`;msg=['No water → the plant <b>wilts</b> and droops. 🥀','Không có nước → cây héo, rũ xuống.']}
-  else if(!l){plant=`<path d="M100 162V40" stroke="${INK}" stroke-width="8" stroke-linecap="round"/><path d="M100 162V40" stroke="#dfe39a" stroke-width="3" stroke-linecap="round"/>${leafP(100,50,-35,.6,'#e3e8a8')}${leafP(100,50,-145,.6,'#e3e8a8')}`;msg=['No light → the plant grows <b>tall, pale and weak</b>.','Không có ánh sáng → cây cao, nhợt nhạt và yếu.']}
-  else if(!t){plant=`<path d="M100 162V128" stroke="${INK}" stroke-width="9" stroke-linecap="round"/><path d="M100 162V128" stroke="#4cc46f" stroke-width="4" stroke-linecap="round"/>${leafP(100,134,-30,.55)}${leafP(100,134,-150,.55)}<text x="124" y="118" font-size="26">🥶</text>`;msg=['Too cold → the plant stays <b>small</b> and grows slowly.','Quá lạnh → cây nhỏ và lớn chậm.']}
-  else{plant=`<g class="sway"><path d="M100 162V70" stroke="${INK}" stroke-width="11" stroke-linecap="round"/><path d="M100 162V70" stroke="#4cc46f" stroke-width="5" stroke-linecap="round"/>${leafP(100,138,-20,1.1)}${leafP(100,138,-160,1.1)}${leafP(100,104,-30,1,'#3aa95f')}${leafP(100,104,-150,1,'#3aa95f')}${flowerP(100,58,1.2)}</g>`;msg=['Water + light + the right temperature → a <b>healthy</b> plant! 🌻','Đủ nước + ánh sáng + nhiệt độ phù hợp → cây khỏe mạnh!']}
+  if(!w){plant=`<path d="M100 162Q100 120 128 112" stroke="${INK}" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M100 162Q100 120 128 112" stroke="#b8a640" stroke-width="4" fill="none" stroke-linecap="round"/>${leafP(126,114,70,.8,'#a9962f')}${leafP(108,138,150,.7,'#a9962f')}`;msg=['No water → the plant <b>wilts</b> and droops. 🥀']}
+  else if(!l){plant=`<path d="M100 162V40" stroke="${INK}" stroke-width="8" stroke-linecap="round"/><path d="M100 162V40" stroke="#dfe39a" stroke-width="3" stroke-linecap="round"/>${leafP(100,50,-35,.6,'#e3e8a8')}${leafP(100,50,-145,.6,'#e3e8a8')}`;msg=['No light → the plant grows <b>tall, pale and weak</b>.']}
+  else if(!t){plant=`<path d="M100 162V128" stroke="${INK}" stroke-width="9" stroke-linecap="round"/><path d="M100 162V128" stroke="#4cc46f" stroke-width="4" stroke-linecap="round"/>${leafP(100,134,-30,.55)}${leafP(100,134,-150,.55)}<text x="124" y="118" font-size="26">🥶</text>`;msg=['Too cold → the plant stays <b>small</b> and grows slowly.']}
+  else{plant=`<g class="sway"><path d="M100 162V70" stroke="${INK}" stroke-width="11" stroke-linecap="round"/><path d="M100 162V70" stroke="#4cc46f" stroke-width="5" stroke-linecap="round"/>${leafP(100,138,-20,1.1)}${leafP(100,138,-160,1.1)}${leafP(100,104,-30,1,'#3aa95f')}${leafP(100,104,-150,1,'#3aa95f')}${flowerP(100,58,1.2)}</g>`;msg=['Water + light + the right temperature → a <b>healthy</b> plant! 🌻']}
   return{svg:`<svg viewBox="0 0 200 215" xmlns="${SVGNS}" style="max-height:230px"><rect width="200" height="215" fill="${l?'#d9f1ff':'#3a4260'}"/>${l?'<circle cx="168" cy="32" r="18" fill="#ffe066" stroke="'+INK+'" stroke-width="3"/>':'<text x="150" y="40" font-size="26">🌙</text>'}${plant}${pot}</svg>`,msg};
 }
 function plantLab(host){
   const st={w:1,l:1,t:1};
   host.innerHTML=`<div class="glassWrap"><div id="plV" style="width:230px"></div><div style="flex:1;min-width:200px"><div class="toolbar" id="plB"><button class="tool" data-k="l"></button><button class="tool" data-k="w"></button><button class="tool" data-k="t"></button></div><div class="simtxt" id="plT" style="min-height:70px"></div></div></div>`;
-  function up(){const r=plantLabSVG(st.w,st.l,st.t);host.querySelector('#plV').innerHTML=r.svg;host.querySelector('#plT').innerHTML=r.msg[0]+vi_(r.msg[1]);
+  function up(){const r=plantLabSVG(st.w,st.l,st.t);host.querySelector('#plV').innerHTML=r.svg;host.querySelector('#plT').innerHTML=r.msg[0];
     const L={l:[st.l,'☀️','Light','No light'],w:[st.w,'💧','Water','No water'],t:[st.t,'🌡️','Right temperature','Too cold']};
     host.querySelectorAll('#plB .tool').forEach(b=>{const x=L[b.dataset.k];b.innerHTML=`<span class="te">${x[1]}</span>${x[0]?x[2]+' ✔':x[3]+' ✖'}`;b.classList.toggle('sel',!!x[0])})}
   host.querySelectorAll('#plB .tool').forEach(b=>b.onclick=()=>{st[b.dataset.k]^=1;sfx('pop');up()});up();
@@ -1180,12 +1178,12 @@ function buildHome(){
   const st=stageOf(S.xp),nx=STAGES[st+1];
   $('heroSprout').innerHTML=sproutSVG(st,'happy');
   $('heroHi').textContent='Hi, '+(S.name||'Scientist')+'! 👋';
-  $('heroStage').innerHTML=`Sprout is a <b>${STAGES[st].n}</b>${vi_('Mầm Xanh đang là: '+STAGES[st].v)}`;
+  $('heroStage').innerHTML=`Sprout is a <b>${STAGES[st].n}</b>`;
   $('heroBar').style.width=(nx?Math.round((S.xp-STAGES[st].x)/(nx.x-STAGES[st].x)*100):100)+'%';
   $('heroNext').textContent=nx?`${nx.x-S.xp} more 💧 to grow into: ${nx.n}`:'Super Scientist! Sprout is fully grown 🌟';
   $('heroStats').innerHTML=`<span class="pill">🃏 ${Object.keys(S.cards).length}/${CARDS.length}</span><span class="pill">⭐ ${totalStars()}/18</span><span class="pill">🏅 ${Object.keys(S.badges).length}/${BADGES.length}</span><span class="pill">🔥 ${S.streak} day${S.streak>1?'s':''}</span>`;
   const nextL=LANDS.find(l=>((S.lands[l.id]||{}).stars||0)<3);
-  $('lands').innerHTML=LANDS.map(l=>{const s=S.lands[l.id]||{};return `<button class="land${nextL===l?' next':''}" data-id="${l.id}" style="--c:${l.c}"><span class="band"></span><span class="num">${l.id}</span><span class="bossb" title="Boss">${s.boss?'🏅':''}</span><span class="em">${l.i}</span><b>${l.n}</b><span class="tt">${l.u}${S.set.vi?' · '+l.v:''}</span><span class="st">${stars1(s.stars||0)}</span></button>`}).join('');
+  $('lands').innerHTML=LANDS.map(l=>{const s=S.lands[l.id]||{};return `<button class="land${nextL===l?' next':''}" data-id="${l.id}" style="--c:${l.c}"><span class="band"></span><span class="num">${l.id}</span><span class="bossb" title="Boss">${s.boss?'🏅':''}</span><span class="em">${l.i}</span><b>${l.n}</b><span class="tt">${l.u}</span><span class="st">${stars1(s.stars||0)}</span></button>`}).join('');
   $('lands').querySelectorAll('.land').forEach(b=>b.onclick=()=>{sfx('click');buildLearn(+b.dataset.id);show('learn')});
   const bad=Object.values(S.seen).filter(s=>s.bad>0).length;
   $('acts').innerHTML=[
@@ -1203,10 +1201,10 @@ function buildHome(){
 function buildLearn(id){
   const L=LBY[id],s=S.lands[id]||{};
   $('learn').innerHTML=`<div class="row" style="margin:6px 0 10px"><button class="btn w sm" id="lBack">← Back</button></div>
-  <div class="sheet" style="border-color:${INK}"><div class="sheetHead"><span class="em">${L.i}</span><div><h1 style="font-size:28px">${L.n}</h1><div class="sm" style="color:var(--ink2)">${L.u}${S.set.vi?' · '+L.v:''} · <span style="letter-spacing:2px">${stars1(s.stars||0)}</span></div></div></div>
+  <div class="sheet" style="border-color:${INK}"><div class="sheetHead"><span class="em">${L.i}</span><div><h1 style="font-size:28px">${L.n}</h1><div class="sm" style="color:var(--ink2)">${L.u} · <span style="letter-spacing:2px">${stars1(s.stars||0)}</span></div></div></div>
   <div class="row" style="margin:6px 0 4px"><button class="btn g" id="lGo">▶ Start quest</button><span class="sm" style="color:var(--ink2)">7 questions + a boss battle 👾</span></div></div>
-  <h2>📖 Remember <span class="vi" style="margin:0">Ghi nhớ</span></h2>
-  <div class="facts">${L.learn.map(k=>{const f=FACTS[k];return `<div class="fact"><span class="e">${f.i}</span><div>${f.e.replace(/^([A-Z][A-Z ]+[A-Z])/,'<b>$1</b>')}${S.set.vi?`<span class="vi">${f.v}</span>`:''}</div><button class="ib" data-k="${k}" style="margin-left:auto;flex:none;width:38px;height:38px;font-size:18px">🔊</button></div>`}).join('')}</div>
+  <h2>📖 Remember </h2>
+  <div class="facts">${L.learn.map(k=>{const f=FACTS[k];return `<div class="fact"><span class="e">${f.i}</span><div>${f.e.replace(/^([A-Z][A-Z ]+[A-Z])/,'<b>$1</b>')}</div><button class="ib" data-k="${k}" style="margin-left:auto;flex:none;width:38px;height:38px;font-size:18px">🔊</button></div>`}).join('')}</div>
   <div id="toyBox"></div>`;
   $('lBack').onclick=()=>{sfx('click');buildHome();show('home')};
   $('lGo').onclick=()=>{sfx('click');startQuest(id)};
@@ -1217,7 +1215,7 @@ function buildLearn(id){
 
 /* ---------- lab cards ---------- */
 function buildCards(){
-  $('cards').innerHTML=`<div class="row" style="margin:6px 0"><button class="btn w sm" id="cBack">← Back</button></div><h2>🃏 Lab Cards <span class="pill">${Object.keys(S.cards).length}/${CARDS.length}</span></h2><div class="sm" style="margin:0 4px 12px;color:var(--ink2)">Answer questions correctly to collect each card. They are the teacher's flashcard words!${vi_('Trả lời đúng để sưu tầm thẻ từ vựng.')}</div>
+  $('cards').innerHTML=`<div class="row" style="margin:6px 0"><button class="btn w sm" id="cBack">← Back</button></div><h2>🃏 Lab Cards <span class="pill">${Object.keys(S.cards).length}/${CARDS.length}</span></h2><div class="sm" style="margin:0 4px 12px;color:var(--ink2)">Answer questions correctly to collect each card. They are the teacher's flashcard words!</div>
   <div class="cgrid">${CARDS.map(c=>{const g=S.cards[c.id];return `<button class="fc${g?'':' lock'}" data-id="${c.id}" style="--c:${LBY[c.l].c}"><span class="band"></span><span class="em">${g?c.i:'❓'}</span><b>${g?c.t:'???'}</b><small style="color:var(--ink2);position:relative">${LBY[c.l].n}</small></button>`}).join('')}</div>`;
   $('cBack').onclick=()=>{buildHome();show('home')};
   $('cards').querySelectorAll('.fc').forEach(b=>b.onclick=()=>{sfx('click');cardModal(b.dataset.id)});
@@ -1225,14 +1223,14 @@ function buildCards(){
 function cardModal(id){
   const c=CBY[id],g=S.cards[id];
   if(!g){openModal(`<div class="bigcard"><div class="em">❓</div><h3>Locked card</h3><div class="df">Answer a question about <b>${LBY[c.l].n}</b> correctly to unlock it!</div></div><br><button class="btn" onclick="closeModal()">OK</button>`);return}
-  openModal(`<div class="bigcard" style="border-top:10px solid ${LBY[c.l].c};border-radius:18px"><div class="em">${c.i}</div><h3>${c.t}</h3><div class="df">${c.d}${vi_(c.v)}</div><div class="exm"><b>Example:</b> ${c.x}</div></div><br><div class="row" style="justify-content:center"><button class="btn b sm" id="cmSay">🔊 Listen</button><button class="btn sm" onclick="closeModal()">Close</button></div>`);
+  openModal(`<div class="bigcard" style="border-top:10px solid ${LBY[c.l].c};border-radius:18px"><div class="em">${c.i}</div><h3>${c.t}</h3><div class="df">${c.d}</div><div class="exm"><b>Example:</b> ${c.x}</div></div><br><div class="row" style="justify-content:center"><button class="btn b sm" id="cmSay">🔊 Listen</button><button class="btn sm" onclick="closeModal()">Close</button></div>`);
   $('cmSay').onclick=()=>speak(`${c.t}. ${c.d} For example: ${c.x}`,'en-US');
 }
 function unlockCard(id){if(!id||S.cards[id])return false;S.cards[id]=1;save();return true}
 
 /* ---------- lab bench ---------- */
 function buildBench(){
-  $('bench').innerHTML=`<div class="row" style="margin:6px 0"><button class="btn w sm" id="bBack">← Back</button></div><h2>🧪 Lab Bench <span class="vi" style="margin:0">Bàn thí nghiệm</span></h2><div class="sm" style="margin:0 4px 12px;color:var(--ink2)">Free play! Try the experiments as many times as you like.</div>
+  $('bench').innerHTML=`<div class="row" style="margin:6px 0"><button class="btn w sm" id="bBack">← Back</button></div><h2>🧪 Lab Bench </h2><div class="sm" style="margin:0 4px 12px;color:var(--ink2)">Free play! Try the experiments as many times as you like.</div>
   <div class="toys">${[['plant','🌱','Plant Lab','Water, light & warmth'],['matter','🧊','Matter Playground','Solid, liquid, gas'],['mix','🧲','Mix-Up Machine','Separate mixtures'],['dis','🥄','Dissolving Lab','Soluble or not?'],['safe','🥽','Safety Hunt','Spot the hazards']].map(t=>`<button class="toyc" data-t="${t[0]}"><span class="em">${t[1]}</span>${t[2]}<small>${t[3]}</small></button>`).join('')}</div>`;
   $('bBack').onclick=()=>{buildHome();show('home')};
   $('bench').querySelectorAll('.toyc').forEach(b=>b.onclick=()=>{sfx('click');openToy(b.dataset.t)});
@@ -1248,10 +1246,10 @@ function openToy(t){
 /* ---------- badges & report ---------- */
 function landAcc(id){let ok=0,bad=0;Object.keys(S.seen).forEach(k=>{if(k.startsWith(id+'-')){ok+=S.seen[k].ok;bad+=S.seen[k].bad}});return ok+bad?Math.round(ok/(ok+bad)*100):null}
 function buildBadges(){
-  $('badges').innerHTML=`<div class="row" style="margin:6px 0"><button class="btn w sm" id="gBack">← Back</button></div><h2>📊 Progress report <span class="vi" style="margin:0">Báo cáo (cho phụ huynh)</span></h2>
+  $('badges').innerHTML=`<div class="row" style="margin:6px 0"><button class="btn w sm" id="gBack">← Back</button></div><h2>📊 Progress report </h2>
   <div class="sheet"><div class="sm" style="color:var(--ink2)">Hi ${esc(S.name||'Scientist')}! You have answered <b>${Object.values(S.seen).reduce((a,s)=>a+s.ok+s.bad,0)}</b> questions. Teacher's Test best: <b>${S.exBest}/${EXAM_MARKS}</b>.</div>
   <div class="rep">${LANDS.map(l=>{const a=landAcc(l.id);return `<div class="rw"><span style="font-size:22px">${l.i}</span><span class="nm">${l.n}</span><span class="mt"><i style="width:${a||0}%;background:${a==null?'#ccc':a>=80?'var(--g)':a>=55?'var(--y)':'var(--o)'}"></i></span><span class="pc">${a==null?'–':a+'%'}</span></div>`}).join('')}</div>
-  <div class="sm" style="margin-top:10px;color:var(--ink2)">Tip: land accuracy counts every answer. Use <b>Fix-it</b> to practise the questions that were missed.${vi_('Mẹo: dùng "Fix-it" để luyện lại các câu làm sai.')}</div></div>
+  <div class="sm" style="margin-top:10px;color:var(--ink2)">Tip: land accuracy counts every answer. Use <b>Fix-it</b> to practise the questions that were missed.</div></div>
   <h2>🏅 Badges <span class="pill">${Object.keys(S.badges).length}/${BADGES.length}</span></h2>
   <div class="bgrid">${BADGES.map(b=>`<div class="bdg${S.badges[b.id]?'':' lock'}"><span class="em">${S.badges[b.id]?b.i:'🔒'}</span><b>${b.n}</b>${b.d}</div>`).join('')}</div>`;
   $('gBack').onclick=()=>{buildHome();show('home')};
@@ -1299,13 +1297,13 @@ function renderQ(){
   $('bCheck').innerHTML=exam?(Q.i>=n-1?'Finish ✔':'Next ▶'):'Check ✔';$('bCheck').className='btn g';$('bCheck').disabled=true;
   $('bHint').classList.remove('wig');if(c.ctl.auto)$('bCheck').textContent='Choose a tool';
   topUI();
-  if(!exam){coach(Q.i===0&&Q.phase==='norm'&&!Q.seenHi?(Q.seenHi=1,`Hi ${esc(S.name||'Scientist')}! Take your time. Stuck? Tap <b>💡 Hint</b>.${vi_('Cứ từ từ nhé! Bí thì bấm Gợi ý.')}`):pick(['Think like a scientist! 🔬','You can do it!','Read carefully…','Look at the picture too!','Take your time 🌱']),'','think')}
+  if(!exam){coach(Q.i===0&&Q.phase==='norm'&&!Q.seenHi?(Q.seenHi=1,`Hi ${esc(S.name||'Scientist')}! Take your time. Stuck? Tap <b>💡 Hint</b>.`):pick(['Think like a scientist! 🔬','You can do it!','Read carefully…','Look at the picture too!','Take your time 🌱']),'','think')}
   else coach('Exam mode — no hints and no answers until the end. Do your best! 💪','','happy');
   if(S.set.voice)speakQ();
   chg();
 }
 function speakQ(){const q=Q.cur.q;let t=stripH(q.q);if(q.type==='mc'&&!q.tf)t+='. '+q.opts.map((o,i)=>'Option '+'ABCD'[i]+': '+optT(o)).join('. ');speak(t,'en-US')}
-function explain(q){const f=FACTS[q.rem];return `${q.ex?`<div>${q.ex}</div>`:''}${f?`<div class="sm" style="margin-top:3px">💡 ${f.e}</div>`:''}${f?vi_(f.v):''}`}
+function explain(q){const f=FACTS[q.rem];return `${q.ex?`<div>${q.ex}</div>`:''}${f?`<div class="sm" style="margin-top:3px">💡 ${f.e}</div>`:''}`}
 function ansText(q){
   if(q.type==='mc')return esc(optT(q.opts[q.a]));
   if(q.type==='pick')return esc(q.right.join(', '));
@@ -1360,16 +1358,16 @@ function advance(){
 function endNorm(){
   if(Q.mode==='fix')return finishQuest();
   const L=LBY[Q.land];
-  openModal(`<div style="font-size:92px;line-height:1">${L.boss.i}</div><h2 style="justify-content:center;margin:6px 0">Boss battle!</h2><div style="font-size:20px"><b>${L.boss.n}</b> blocks the way!<br>Answer questions right to hit it. You have <b>3 ❤️</b>.${vi_('Trả lời đúng để đánh bại trùm! Bạn có 3 trái tim.')}</div><br><button class="btn r" id="mFight" style="font-size:24px">⚔️ Fight!</button>`);
+  openModal(`<div style="font-size:92px;line-height:1">${L.boss.i}</div><h2 style="justify-content:center;margin:6px 0">Boss battle!</h2><div style="font-size:20px"><b>${L.boss.n}</b> blocks the way!<br>Answer questions right to hit it. You have <b>3 ❤️</b>.</div><br><button class="btn r" id="mFight" style="font-size:24px">⚔️ Fight!</button>`);
   sfx('hit');$('mFight').onclick=()=>{closeModal();Q.phase='boss';Q.hearts=3;Q.hp=3;nextQuestion()};
 }
 function bossWin(){
   const id=Q.land,s=S.lands[id]||(S.lands[id]={});const first=!s.boss;s.boss=1;S.xp+=40;Q.xp+=40;Q.bossWon=true;save();confetti(36);sfx('win');
-  openModal(`<div style="font-size:80px;line-height:1">🏆</div><h2 style="justify-content:center">You beat ${LBY[id].boss.n}!</h2><div style="font-size:20px">${first?'First victory! ':''}+40 💧 bonus${vi_('Bạn đã đánh bại trùm! +40 giọt nước.')}</div><br><button class="btn g" id="mOk">Continue ▶</button>`);
+  openModal(`<div style="font-size:80px;line-height:1">🏆</div><h2 style="justify-content:center">You beat ${LBY[id].boss.n}!</h2><div style="font-size:20px">${first?'First victory! ':''}+40 💧 bonus</div><br><button class="btn g" id="mOk">Continue ▶</button>`);
   $('mOk').onclick=()=>{closeModal();finishQuest()};
 }
 function bossLose(){
-  openModal(`<div style="font-size:70px;line-height:1">😵</div><h2 style="justify-content:center">${LBY[Q.land].boss.n} got away!</h2><div style="font-size:19px">Sprout is out of ❤️. Don't worry — every scientist tries again!${vi_('Hết tim rồi. Đừng lo, thử lại nào!')}</div><br><div class="row" style="justify-content:center"><button class="btn g" id="mAgain">↻ Try again</button><button class="btn w" id="mHome">🏠 Home</button></div>`);
+  openModal(`<div style="font-size:70px;line-height:1">😵</div><h2 style="justify-content:center">${LBY[Q.land].boss.n} got away!</h2><div style="font-size:19px">Sprout is out of ❤️. Don't worry — every scientist tries again!</div><br><div class="row" style="justify-content:center"><button class="btn g" id="mAgain">↻ Try again</button><button class="btn w" id="mHome">🏠 Home</button></div>`);
   $('mAgain').onclick=()=>{closeModal();Q.hearts=3;Q.hp=3;nextQuestion()};$('mHome').onclick=()=>{closeModal();finishQuest(true)};
 }
 function finishQuest(bossLost){
@@ -1394,12 +1392,12 @@ function showResult(o){
     <div class="rbox"><div class="rline"><span>🎯 Accuracy</span><span>${Math.round(o.acc*100)}%</span></div><div class="rline"><span>💧 Water earned</span><span>+${Q.xp}</span></div>${Q.mode==='quest'?`<div class="rline"><span>⚔️ Boss</span><span>${Q.bossWon?'Defeated 🏅':o.bossLost?'Escaped — try again!':'—'}</span></div>`:''}<div class="rline"><span>🃏 New cards</span><span>${newC.length?newC.map(c=>c.i).join(' '):'—'}</span></div></div>`;
     if(o.st===3||Q.bossWon)setTimeout(()=>{if(cur==='result'){confetti();sfx('win')}},200);else sfx('ok');
   }else{
-    const g=o.pct>=90?['🏆','Outstanding!','Xuất sắc!']:o.pct>=75?['🌟','Great job!','Làm tốt lắm!']:o.pct>=55?['👍','Good effort — keep practising!','Cố gắng tốt, luyện thêm nhé!']:['🌱','Keep growing! Practise with the quests.','Tiếp tục luyện tập nhé!'];
-    h=`<div style="font-size:58px">${g[0]}</div><h1>${Q.mode==='exam'?"Teacher's Test":'Mock Exam'}</h1><div class="stars" style="font-size:44px;letter-spacing:0">${o.sc} / ${o.tot} <span style="font-size:26px">marks</span></div><div style="font-size:22px;font-weight:700">${o.pct}% — ${g[1]}${vi_(g[2])}</div>
+    const g=o.pct>=90?['🏆','Outstanding!']:o.pct>=75?['🌟','Great job!']:o.pct>=55?['👍','Good effort — keep practising!']:['🌱','Keep growing! Practise with the quests.'];
+    h=`<div style="font-size:58px">${g[0]}</div><h1>${Q.mode==='exam'?"Teacher's Test":'Mock Exam'}</h1><div class="stars" style="font-size:44px;letter-spacing:0">${o.sc} / ${o.tot} <span style="font-size:26px">marks</span></div><div style="font-size:22px;font-weight:700">${o.pct}% — ${g[1]}</div>
     <div class="rbox">${Object.entries(o.sec).map(([k,v])=>`<div class="rline"><span>${k}</span><span>${v[0]} / ${v[1]}</span></div>`).join('')}<div class="rline"><span>🃏 New cards</span><span>${newC.length?newC.map(c=>c.i).join(' '):'—'}</span></div><div class="rline"><span>💧 Water earned</span><span>+${Q.xp}</span></div></div>`;
     if(o.pct>=75){setTimeout(()=>{confetti();sfx('win')},200)}else sfx('ok');
   }
-  if(Q.wrong.length)h+=`<h2 style="justify-content:center">🔎 Let's learn from these <span class="vi" style="margin:0">Cùng xem lại</span></h2><div class="rbox mist">${Q.wrong.slice(0,12).map(w=>`<div class="mi"><div>${w.stem}</div><div style="margin-top:4px"><b>Answer:</b> ${w.ans}</div><div class="sm" style="margin-top:3px;color:var(--ink2)">${w.ex}</div></div>`).join('')}</div>`;
+  if(Q.wrong.length)h+=`<h2 style="justify-content:center">🔎 Let's learn from these </h2><div class="rbox mist">${Q.wrong.slice(0,12).map(w=>`<div class="mi"><div>${w.stem}</div><div style="margin-top:4px"><b>Answer:</b> ${w.ans}</div><div class="sm" style="margin-top:3px;color:var(--ink2)">${w.ex}</div></div>`).join('')}</div>`;
   const nl=Q.land&&Q.land<6?Q.land+1:null;
   h+=`<div class="row" style="justify-content:center;margin:16px 0"><button class="btn g" id="rAgain">↻ ${Q.mode==='exam'?'Try again':'Play again'}</button>${nl&&Q.mode==='quest'?`<button class="btn b" id="rNext">Next quest ▶</button>`:''}<button class="btn w" id="rHome">🏠 Home</button></div>`;
   $('result').innerHTML=h;show('result');
@@ -1408,31 +1406,30 @@ function showResult(o){
   $('rHome').onclick=()=>{buildHome();show('home')};
   if(grew)setTimeout(()=>{if(cur==='result')levelUp()},1400);
 }
-function levelUp(){const st=stageOf(S.xp);confetti(40);sfx('grow');openModal(`<div style="width:180px;margin:0 auto">${sproutSVG(st,'cheer')}</div><h2 style="justify-content:center">Sprout grew!</h2><div style="font-size:21px">Sprout is now a <b>${STAGES[st].n}</b>! 🌟${vi_('Mầm Xanh đã lớn thành: '+STAGES[st].v)}</div><br><button class="btn g" onclick="closeModal()">Yay! ▶</button>`)}
+function levelUp(){const st=stageOf(S.xp);confetti(40);sfx('grow');openModal(`<div style="width:180px;margin:0 auto">${sproutSVG(st,'cheer')}</div><h2 style="justify-content:center">Sprout grew!</h2><div style="font-size:21px">Sprout is now a <b>${STAGES[st].n}</b>! 🌟</div><br><button class="btn g" onclick="closeModal()">Yay! ▶</button>`)}
 
 /* ---------- hints ---------- */
 function useHint(auto){
   if(!Q||isExam()||cur!=='play')return;const c=Q.cur;if(!c||c.state!=='ans'||c.hint>=2)return;lastAct=Date.now();c.hint++;sfx('hint');
   const f=FACTS[c.q.rem];
-  if(c.hint===1)coach(`💡 <b>Hint:</b> ${f?f.e:'Read the question again slowly and look at the picture.'}${f&&S.set.vi?`<span class="vi">${f.v}</span>`:''}`,'hint','think');
-  else{c.ctl.hint2();coach(`💡 <b>Bigger hint:</b> I ${c.q.type==='mc'||c.q.type==='pick'?'crossed out a wrong choice':'helped with one answer'} for you!${vi_('Mình đã giúp bạn một chút rồi nhé!')}`,'hint','think')}
+  if(c.hint===1)coach(`💡 <b>Hint:</b> ${f?f.e:'Read the question again slowly and look at the picture.'}`,'hint','think');
+  else{c.ctl.hint2();coach(`💡 <b>Bigger hint:</b> I ${c.q.type==='mc'||c.q.type==='pick'?'crossed out a wrong choice':'helped with one answer'} for you!`,'hint','think')}
   $('hintLeft').textContent=`(${2-c.hint})`;$('bHint').classList.remove('wig');
 }
-setInterval(()=>{if(cur==='play'&&Q&&Q.cur&&Q.cur.state==='ans'&&!isExam()&&!Q.cur.nudged&&Q.cur.hint<2&&!LOCK&&Date.now()-lastAct>20000){Q.cur.nudged=1;$('bHint').classList.add('wig');coach(`Stuck? Tap <b>💡 Hint</b> — it's OK to ask for help!${vi_('Bí rồi à? Bấm Gợi ý nhé!')}`,'hint','think')}},2000);
+setInterval(()=>{if(cur==='play'&&Q&&Q.cur&&Q.cur.state==='ans'&&!isExam()&&!Q.cur.nudged&&Q.cur.hint<2&&!LOCK&&Date.now()-lastAct>20000){Q.cur.nudged=1;$('bHint').classList.add('wig');coach(`Stuck? Tap <b>💡 Hint</b> — it's OK to ask for help!`,'hint','think')}},2000);
 
 /* ---------- settings ---------- */
 function openSettings(){
   const row=(k,t,v)=>`<div class="tg"><span>${t}</span><button class="sw${S.set[k]?' on':''}" data-k="${k}" aria-label="${t}"></button></div>`;
-  openModal(`<h2 style="justify-content:center">⚙️ Settings</h2>${row('vi','🇻🇳 Vietnamese helper (hints &amp; explanations)')}${row('voice','🗣️ Read questions aloud automatically')}${row('snd','🔊 Sound effects')}
+  openModal(`<h2 style="justify-content:center">⚙️ Settings</h2>${row('voice','🗣️ Read questions aloud automatically')}${row('snd','🔊 Sound effects')}
   <div class="row" style="justify-content:center;margin-top:14px"><button class="btn w sm" id="sName">✏️ Change name</button><button class="btn r sm" id="sReset">🗑️ Reset progress</button></div><br><button class="btn g" onclick="closeModal()">Done</button>`);
-  $('modalBox').querySelectorAll('.sw').forEach(b=>b.onclick=()=>{const k=b.dataset.k;S.set[k]=S.set[k]?0:1;b.classList.toggle('on',!!S.set[k]);if(k==='vi')document.body.classList.toggle('novi',!S.set.vi);if(k==='snd'&&master)master.gain.value=S.set.snd?.6:0;save();sfx('click')});
+  $('modalBox').querySelectorAll('.sw').forEach(b=>b.onclick=()=>{const k=b.dataset.k;S.set[k]=S.set[k]?0:1;b.classList.toggle('on',!!S.set[k]);if(k==='snd'&&master)master.gain.value=S.set.snd?.6:0;save();sfx('click')});
   $('sName').onclick=()=>{const n=prompt('Your name?',S.name||'');if(n!=null){S.name=n.trim().slice(0,14);save();$('nameIn').value=S.name;if(cur==='home')buildHome()}};
   $('sReset').onclick=()=>{if(confirm('Delete ALL progress (stars, cards, badges, water)?')){store.set('sci-save',null);try{localStorage.removeItem('sci-save')}catch(e){}location.reload()}};
 }
 
 /* ---------- init ---------- */
 function init(){
-  document.body.classList.toggle('novi',!S.set.vi);
   $('covSprout').innerHTML=sproutSVG(stageOf(S.xp),'cheer');$('nameIn').value=S.name||'';
   const go=()=>{S.name=$('nameIn').value.trim().slice(0,14);save();ac();sfx('pop');buildHome();show('home')};
   $('bStart').onclick=go;$('nameIn').addEventListener('keydown',e=>{if(e.key==='Enter')go()});
