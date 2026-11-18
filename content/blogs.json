@@ -1,5 +1,15 @@
 [
   {
+    "title": "Breaking Into Frontier AI, Distilled: A Visual Playbook",
+    "kicker": "Reading notes",
+    "date": "2026-11-18",
+    "desc": "Chier Hu's 26-minute playbook for breaking into frontier AI from zero, turned into a signal ladder, a 90-day plan per starting profile, a map of paid on-ramps (contracting, fellowships, prizes), milestones, anti-slop rules and a week-1 checklist.",
+    "file": "breaking-into-frontier-ai-playbook.html",
+    "image": "thumbs/breaking-into-frontier-ai-playbook.jpg",
+    "imageAlt": "Breaking into frontier AI, distilled: the signal ladder and 90-day plan",
+    "cta": "Read the playbook"
+  },
+  {
     "title": "Hands-on Building a Multimodal Document QA System over Real Annual Reports",
     "kicker": "Hands-on tutorial",
     "date": "2026-11-09",

@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Breaking Into Frontier AI, Distilled — Nguyễn Đăng Khoa</title>
+<meta name="description" content="A visual, actionable distillation of Chier Hu's playbook for breaking into frontier AI from zero: the signal ladder, three 90-day branches, paid on-ramps, milestones and the anti-slop rules.">
+<meta name="theme-color" content="#0B1220">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Breaking Into Frontier AI, Distilled">
+<meta property="og:description" content="Proof-of-work beats credentials. The signal ladder, a 90-day plan per starting profile, paid on-ramps, and when to pivot.">
+<meta property="og:image" content="https://nguyendangkhoa.info/blogs/thumbs/breaking-into-frontier-ai-playbook.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>◈</text></svg>">
+<style>
+:root{--ink:#0B1220;--ink2:#121B2C;--panel:#16213A;--line:#24314E;--fg:#E8EDF7;--fg2:#9AA9C4;--fg3:#6F7F9B;
+ --amber:#F2A93B;--rose:#E2725B;--violet:#8B7FD4;--cyan:#3FB8C4;--green:#5FB88A;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--ink);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:16.5px;line-height:1.65}
+.wrap{max-width:1040px;margin:0 auto;padding-inline:16px}
+a{color:var(--amber);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--amber) 40%,transparent)}
+a:hover{border-bottom-color:var(--amber)}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.back{display:inline-block;margin-top:22px;font-size:13px;color:var(--fg2);border:0}
+header{padding-block:28px 22px}
+.kicker{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg3);margin:0 0 12px}.kicker b{color:var(--amber)}
+h1{font-size:clamp(30px,5.5vw,50px);line-height:1.06;margin:0 0 14px;letter-spacing:-.02em}h1 em{font-style:italic;color:var(--amber)}
+.lede{color:var(--fg2);font-size:18.5px;max-width:74ch;margin:0 0 16px}
+.credit{font-size:13.5px;color:var(--fg2);background:var(--ink2);border:1px solid var(--line);border-radius:7px;padding:10px 14px;margin:0 0 22px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:10px}
+.kpi{background:var(--ink2);border:1px solid var(--line);border-radius:7px;padding:12px 14px}
+.kpi b{display:block;font-size:26px;line-height:1.15;font-variant-numeric:tabular-nums;color:var(--c,#fff)}
+.kpi span{font-size:12.5px;color:var(--fg2)}
+nav.toc{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--ink) 93%,transparent);backdrop-filter:blur(6px);border-block:1px solid var(--line);margin-top:24px}
+nav.toc .wrap{display:flex;gap:6px;overflow-x:auto;padding-block:9px}
+nav.toc a{flex:none;font-size:12.5px;border:1px solid var(--line);border-radius:99px;padding:4px 11px;color:var(--fg2);background:var(--ink2)}
+nav.toc a.on{color:var(--ink);background:var(--amber);border-color:var(--amber)}
+section{padding-block:46px 6px;scroll-margin-top:52px}
+h2{font-size:clamp(23px,3.8vw,31px);margin:0 0 6px;letter-spacing:-.01em;line-height:1.2}h2 .n{color:var(--fg3);font-weight:500;margin-right:10px}
+h3{font-size:17.5px;margin:26px 0 10px}
+.sub{color:var(--fg2);margin:0 0 22px;max-width:78ch}
+p{margin:0 0 15px}strong{color:#fff}
+.small{font-size:13px;color:var(--fg3)}
+.card{background:var(--ink2);border:1px solid var(--line);border-radius:8px;padding:18px;margin-bottom:16px}
+.callout{border-left:3px solid var(--amber);background:var(--ink2);padding:13px 17px;border-radius:0 6px 6px 0;margin:0 0 18px;color:var(--fg2)}.callout b{color:var(--fg)}
+.callout.cyan{border-left-color:var(--cyan)}.callout.rose{border-left-color:var(--rose)}.callout.green{border-left-color:var(--green)}
+.summary{display:grid;gap:10px;margin:0;padding:0;list-style:none;counter-reset:s}
+.summary li{counter-increment:s;background:var(--ink2);border:1px solid var(--line);border-radius:7px;padding:13px 16px 13px 52px;position:relative;color:var(--fg2)}
+.summary li b{color:var(--fg)}
+.summary li::before{content:counter(s);position:absolute;left:14px;top:12px;width:26px;height:26px;border-radius:50%;background:var(--amber);color:#1A1206;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px}
+
+/* signal ladder */
+.ladder{display:grid;gap:8px}
+.rung{display:grid;grid-template-columns:30px 1fr;gap:12px;align-items:stretch}
+.rung .rank{font-weight:800;color:var(--fg3);font-size:20px;text-align:right;padding-top:6px;font-variant-numeric:tabular-nums}
+.rung .body{position:relative;background:var(--ink2);border:1px solid var(--line);border-radius:7px;padding:10px 14px;overflow:hidden}
+.rung .bar{position:absolute;inset:0 auto 0 0;background:var(--c);opacity:.13;width:var(--w)}
+.rung .body>*{position:relative}
+.rung h4{margin:0 0 2px;font-size:15.5px}
+.rung p{margin:0;font-size:13.5px;color:var(--fg2)}
+.rung .tag{display:inline-block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--c);border:1px solid color-mix(in srgb,var(--c) 50%,transparent);border-radius:99px;padding:0 8px;margin-left:6px;vertical-align:2px}
+.rule{margin-top:16px;text-align:center;font-size:17px;padding:14px;border:1px dashed var(--line);border-radius:8px;color:var(--fg2)}
+.rule b{color:var(--amber)}
+
+/* lane picker */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.tabs button{font:inherit;font-size:14px;cursor:pointer;background:var(--ink2);color:var(--fg2);border:1px solid var(--line);border-radius:8px;padding:9px 14px;text-align:left;line-height:1.3}
+.tabs button small{display:block;font-size:11.5px;color:var(--fg3)}
+.tabs button[aria-selected=true]{border-color:var(--c);color:var(--fg);box-shadow:inset 0 -3px 0 var(--c)}
+.timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.phase{background:var(--ink2);border:1px solid var(--line);border-top:3px solid var(--c);border-radius:7px;padding:12px 14px}
+.phase .when{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--c);font-weight:700}
+.phase ul{margin:8px 0 0;padding-left:18px;font-size:14px;color:var(--fg2)}.phase li{margin-bottom:5px}
+.lanefoot{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.lanefoot div{background:var(--panel);border-radius:7px;padding:10px 14px;font-size:14px;color:var(--fg2)}.lanefoot b{color:var(--fg);display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
+
+/* day bar */
+.daybar{display:flex;height:46px;border-radius:7px;overflow:hidden;border:1px solid var(--line)}
+.daybar div{display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:600;color:#0B1220;text-align:center;line-height:1.15;padding:0 4px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--fg2);margin-top:8px}
+
+/* milestones */
+.miles{display:grid;grid-template-columns:repeat(5,1fr);gap:0;position:relative;margin-top:8px}
+.miles::before{content:"";position:absolute;left:10%;right:10%;top:15px;height:2px;background:linear-gradient(90deg,var(--cyan),var(--amber),var(--rose))}
+.mile{text-align:center;padding:0 6px;position:relative}
+.mile .dot{width:32px;height:32px;margin:0 auto 8px;border-radius:50%;background:var(--ink);border:2px solid var(--c);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--c)}
+.mile h4{margin:0 0 4px;font-size:14px}
+.mile p{margin:0;font-size:13px;color:var(--fg2)}
+
+/* three platforms */
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.three .card{margin:0;border-top:3px solid var(--c)}
+.three h3{margin:0 0 4px;font-size:17px}
+.three .role{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--c);margin-bottom:8px}
+.three ul{margin:0;padding-left:18px;font-size:14px;color:var(--fg2)}.three li{margin-bottom:5px}
+
+/* tables */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px;margin-bottom:16px}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:620px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg3);background:var(--ink2);font-weight:600}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600;color:var(--fg);white-space:nowrap}
+td{color:var(--fg2)}
+.pill{display:inline-block;font-size:11px;border-radius:99px;padding:1px 8px;border:1px solid var(--line);color:var(--fg2);white-space:nowrap}
+.pill.g{color:var(--green);border-color:color-mix(in srgb,var(--green) 50%,transparent)}
+.pill.a{color:var(--amber);border-color:color-mix(in srgb,var(--amber) 50%,transparent)}
+
+/* venues */
+.venues{display:flex;flex-direction:column;gap:6px}
+.venue{display:grid;grid-template-columns:140px 1fr;gap:12px;align-items:center;background:var(--ink2);border:1px solid var(--line);border-radius:7px;padding:9px 14px}
+.venue .meter{height:8px;border-radius:99px;background:var(--line);overflow:hidden}.venue .meter i{display:block;height:100%;width:var(--w);background:linear-gradient(90deg,var(--green),var(--amber),var(--rose))}
+.venue b{font-size:14.5px}.venue .vd{font-size:13.5px;color:var(--fg2)}.venue .meter{margin-bottom:5px}
+
+/* do/don't */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.two .card{margin:0}
+.two h3{margin:0 0 8px;font-size:16px}
+.two ul{margin:0;padding-left:18px;font-size:14.5px;color:var(--fg2)}.two li{margin-bottom:6px}
+.do{border-top:3px solid var(--green)}.dont{border-top:3px solid var(--rose)}
+
+/* funnel */
+.funnel{display:flex;flex-direction:column;align-items:center;gap:4px;margin:6px 0 18px}
+.funnel div{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:7px 10px;text-align:center;font-size:13.5px;color:var(--fg2)}
+.funnel b{color:var(--fg)}
+
+/* checklist */
+.check{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.check li{background:var(--ink2);border:1px solid var(--line);border-radius:7px}
+.check label{display:flex;gap:12px;align-items:flex-start;padding:11px 14px;cursor:pointer;font-size:15px;color:var(--fg2)}
+.check input{margin-top:4px;width:17px;height:17px;accent-color:var(--green);flex:none}
+.check input:checked+span{color:var(--fg3);text-decoration:line-through}
+.check span b{color:var(--fg)}
+.progress{display:flex;align-items:center;gap:12px;margin:0 0 12px;font-size:13.5px;color:var(--fg2)}
+.progress .track{flex:1;height:8px;background:var(--line);border-radius:99px;overflow:hidden}.progress .track i{display:block;height:100%;width:0;background:var(--green);transition:width .25s}
+
+footer{padding-block:50px 60px;color:var(--fg3);font-size:13px}
+footer .card{font-size:13.5px;color:var(--fg2)}
+
+@media (max-width:820px){
+ .timeline{grid-template-columns:1fr 1fr}
+ .three,.two,.lanefoot{grid-template-columns:1fr}
+ .miles{grid-template-columns:1fr;gap:12px}.miles::before{display:none}
+ .mile{display:grid;grid-template-columns:40px 1fr;text-align:left;gap:10px;align-items:start}.mile .dot{margin:0}
+ .venue{grid-template-columns:1fr}
+}
+@media (max-width:520px){.timeline{grid-template-columns:1fr}.daybar div{font-size:10.5px}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.progress .track i{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="./">← All posts</a>
+<header>
+ <p class="kicker"><b>Reading notes</b> · AI career · 18 Nov 2026</p>
+ <h1>Breaking into frontier AI, <em>distilled</em></h1>
+ <p class="lede">The frontier labs no longer ask where you studied. They ask what you have <strong>shipped in public</strong>. This page turns a 26-minute playbook into a ladder, a plan and a checklist you can start on this week.</p>
+ <p class="credit">Distilled from <a href="https://chierhu.medium.com/breaking-into-frontier-ai-from-zero-a-ruthlessly-specific-playbook-239b3fec2c1a" rel="noopener">“Breaking Into Frontier AI From Zero: A Ruthlessly Specific Playbook”</a> by <strong>Chier Hu</strong> (1 Sep 2026). The structure, visuals and wording here are mine; the research and figures are the author's. Read the original for sources and detail.</p>
+ <div class="kpis">
+  <div class="kpi" style="--c:var(--amber)"><b>6–18 mo</b><span>Realistic full-time campaign, not a quick pivot</span></div>
+  <div class="kpi" style="--c:var(--green)"><b>$85+/hr</b><span>Reported average for Mercor experts: the income bridge</span></div>
+  <div class="kpi" style="--c:var(--cyan)"><b>$3,850/wk</b><span>Anthropic Fellows stipend, plus about $15k/month compute</span></div>
+  <div class="kpi" style="--c:var(--rose)"><b>~150 → 32</b><span>Fellows candidates interviewed vs. places per cohort</span></div>
+ </div>
+</header>
+</div>
+
+<nav class="toc" aria-label="Sections"><div class="wrap">
+ <a href="#tldr">TL;DR</a><a href="#ladder">Signal ladder</a><a href="#lane">Pick a lane</a><a href="#where">Where to build</a><a href="#paid">Paid on-ramps</a><a href="#rhythm">Rhythm &amp; milestones</a><a href="#publish">Publishing</a><a href="#slop">Anti-slop</a><a href="#reality">Reality check</a><a href="#week1">Week 1</a>
+</div></nav>
+
+<main class="wrap">
+
+<section id="tldr">
+ <h2><span class="n">00</span>The whole playbook in five lines</h2>
+ <p class="sub">If you read nothing else.</p>
+ <ol class="summary">
+  <li><b>Proof of work replaces credentials.</b> Labs openly say they care what you can do, not where you learned it. That makes the bar higher, not lower: it moves entirely onto public evidence.</li>
+  <li><b>Go deep in one narrow lane.</b> Kernels and inference, RL environments, evals, or agents. One consequential artifact beats twenty shallow ones.</li>
+  <li><b>Fund the campaign with expert contracting.</b> Mercor, Surge and similar pay specialists $50–150/hr, and their clients are the frontier labs themselves.</li>
+  <li><b>Use the structured on-ramps.</b> Anthropic Fellows, MATS, ARENA and prize competitions pay money and do not require a degree.</li>
+  <li><b>Don't ship AI slop.</b> Maintainers now ban machine-generated drive-by PRs. Contributions you can't fully explain hurt you.</li>
+ </ol>
+</section>
+
+<section id="ladder">
+ <h2><span class="n">01</span>The signal ladder</h2>
+ <p class="sub">Not all public work counts the same. A docs fix and a CUDA kernel both "merge", but they are orders of magnitude apart in hiring signal. Ranked by <strong>signal per hour</strong> for an outsider:</p>
+ <div class="ladder">
+  <div class="rung" style="--c:var(--rose);--w:100%"><div class="rank">1</div><div class="body"><div class="bar"></div><h4>GPU kernel PR or leaderboard placement <span class="tag">Unfakeable</span></h4><p>A kernel in vLLM, SGLang or FlashInfer, or a top rank on GPU MODE's KernelBot or the AMD speedrun. Measured publicly, and it maps to the scarcest lab skill.</p></div></div>
+  <div class="rung" style="--c:var(--amber);--w:86%"><div class="rank">2</div><div class="body"><div class="bar"></div><h4>Published RL environment <span class="tag">New job category</span></h4><p>An environment on Prime Intellect's Environments Hub using the <code>verifiers</code> spec. A self-contained artifact with your name on it, and labs use the hub to find people.</p></div></div>
+  <div class="rung" style="--c:var(--violet);--w:74%"><div class="rank">3</div><div class="body"><div class="bar"></div><h4>Merged <code>inspect_evals</code> benchmark <span class="tag">Newcomer-friendly</span></h4><p>UK AISI's eval collection. It runs paired volunteer cohorts and has a documented process. The people who review it are close to the labs.</p></div></div>
+  <div class="rung" style="--c:var(--cyan);--w:64%"><div class="rank">4</div><div class="body"><div class="bar"></div><h4>A cited reproduction repo</h4><p>An R1-style RL result on a 0.5B–1.5B model, or a modded-nanogpt speedrun gain. It shows you can deliver end to end.</p></div></div>
+  <div class="rung" style="--c:var(--green);--w:54%"><div class="rank">5</div><div class="body"><div class="bar"></div><h4>Substantive systems PR to vLLM / SGLang</h4><p>Quantization (FP8, MXFP4, AWQ), new model support, or scheduler work.</p></div></div>
+  <div class="rung" style="--c:var(--fg3);--w:30%"><div class="rank">6</div><div class="body"><div class="bar"></div><h4>Feature PR to a mid-tier agent framework</h4><p>Useful, but crowded and lower on depth.</p></div></div>
+  <div class="rung" style="--c:var(--fg3);--w:14%"><div class="rank">7</div><div class="body"><div class="bar"></div><h4>Docs PR</h4><p>Proves you can navigate a codebase and communicate. A fine way in, not a hire signal on its own.</p></div></div>
+ </div>
+ <p class="rule"><b>Docs PRs to enter a project. Systems, kernel and eval PRs to get hired.</b></p>
+</section>
+
+<section id="lane">
+ <h2><span class="n">02</span>Pick your lane: a 90-day plan</h2>
+ <p class="sub">The playbook branches on where you start. Choose the profile closest to you.</p>
+ <div class="tabs" role="tablist" id="laneTabs"></div>
+ <div id="lanePanel" role="tabpanel"></div>
+ <div class="callout cyan" style="margin-top:16px"><b>Software engineers and solution architects</b> usually fit Branch A. You already read unfamiliar codebases for a living, and vLLM and SGLang are large Python and C++ codebases with explicit contributor guides. vLLM promises reviewer updates every 2–3 days, and you can ping the reviewer after 7.</div>
+</section>
+
+<section id="where">
+ <h2><span class="n">03</span>Where to build: three platforms, three jobs</h2>
+ <p class="sub">Don't treat them as interchangeable. For most people GitHub and Hugging Face are the core, and Kaggle is optional.</p>
+ <div class="three">
+  <div class="card" style="--c:var(--amber)"><h3>GitHub</h3><div class="role">Proof-of-work ledger</div><ul>
+   <li>A few <strong>merged PRs to consequential repos</strong></li>
+   <li>One or two of your own repos with a clean README that solve a real problem</li>
+   <li>A green wall of trivial commits impresses no one</li>
+   <li>A deployed, documented project beats a Titanic or MNIST notebook</li></ul></div>
+  <div class="card" style="--c:var(--cyan)"><h3>Hugging Face</h3><div class="role">Portfolio as artifacts</div><ul>
+   <li>Fast, good GGUF or quantized uploads of new models</li>
+   <li>A useful, documented community dataset</li>
+   <li>A Spaces demo that people actually use</li>
+   <li>HF hires from its own community and sprints</li></ul></div>
+  <div class="card" style="--c:var(--violet)"><h3>Kaggle</h3><div class="role">Selective credential</div><ul>
+   <li>Skip grinding for Grandmaster tiers</li>
+   <li>Pick a <strong>frontier-relevant prize</strong> competition: ARC Prize, AIMO or Konwinski</li>
+   <li>The first Konwinski round was won with a 7.5% score. The winner later joined NVIDIA.</li></ul></div>
+ </div>
+</section>
+
+<section id="paid">
+ <h2><span class="n">04</span>Paid on-ramps: get paid while you build</h2>
+ <p class="sub">Four kinds of money. Stack the income bridge with one of the others.</p>
+
+ <h3>Income bridge: expert contracting</h3>
+ <div class="tbl"><table>
+  <thead><tr><th>Platform</th><th>Reported pay</th><th>Notes</th></tr></thead>
+  <tbody>
+   <tr><td>Mercor</td><td>$50–150/hr; specialist work $130–180</td><td>Clients include OpenAI, Anthropic, Google DeepMind and Meta. You apply once and are matched to projects by your CV.</td></tr>
+   <tr><td>Surge AI (DataAnnotation)</td><td>Coding/STEM $50–100+/hr</td><td>The qualification test has <strong>no retakes</strong>. Prepare first.</td></tr>
+   <tr><td>micro1</td><td>$15–40 general; $100–200+ expert</td><td>Interviews run by an AI interviewer.</td></tr>
+   <tr><td>Scale AI (Outlier)</td><td>Varies</td><td>Much frontier work moved to Surge and Mercor after Meta took a 49% stake in Scale in 2025.</td></tr>
+  </tbody></table></div>
+ <div class="callout rose"><b>The catch:</b> advertised rates are starting offers, not steady income. Rates slide and contracts end. Generalist annotation is being automated, so aim for <b>specialist coding and STEM queues</b>.</div>
+
+ <h3>Fellowships: paid to skill up, no degree needed</h3>
+ <div class="tbl"><table>
+  <thead><tr><th>Program</th><th>Money</th><th>Format</th><th>Why it matters</th></tr></thead>
+  <tbody>
+   <tr><td>Anthropic Fellows</td><td>$3,850/wk + ~$15k/mo compute</td><td>4 months, remote (US/UK/CA) or Berkeley/London, rolling cohorts</td><td>The job posting says <span class="pill a">25–50% received offers</span> in earlier cohorts</td></tr>
+   <tr><td>MATS</td><td>$1,600/wk + $8k/mo compute, housing</td><td>10–12 weeks, Berkeley or London, 3 cohorts a year</td><td><span class="pill g">~80% extended</span> for 6–12 more months</td></tr>
+   <tr><td>ARENA</td><td>Free; housing, food, travel and visa help covered</td><td>4–5 weeks in London</td><td>The whole curriculum is free online</td></tr>
+   <tr><td>TARA</td><td>Part-time</td><td>ARENA curriculum in APAC cities, twice a year</td><td><span class="pill g">Closest option for Southeast Asia</span></td></tr>
+  </tbody></table></div>
+
+ <h3>Prizes: money and a credential at once</h3>
+ <div class="tbl"><table>
+  <thead><tr><th>Competition</th><th>Pool</th><th>Lane</th></tr></thead>
+  <tbody>
+   <tr><td>AMD × GPU MODE Speedrun</td><td>$1.1M</td><td>Kernels and inference on MI355X</td></tr>
+   <tr><td>ARC Prize 2026</td><td>$2M</td><td>Reasoning; open source required</td></tr>
+   <tr><td>AIMO 3</td><td>~$2.2M</td><td>Math reasoning (Kaggle)</td></tr>
+   <tr><td>Konwinski Prize</td><td>$1M top prize</td><td>Contamination-free SWE-bench</td></tr>
+   <tr><td>Gray Swan Arena</td><td>$40k–100k per arena</td><td>Red-teaming. No coding needed, open worldwide, and it converts winners into paid work.</td></tr>
+  </tbody></table></div>
+
+ <h3>Compute for the GPU-poor</h3>
+ <p><strong>Always free:</strong> Kaggle Notebooks (~30 GPU-hours a week), HF ZeroGPU, Colab, Lightning AI. <strong>Free credits:</strong> Modal ($30 a month, resets), Oracle ($300), Azure ($200). <strong>By application:</strong> Google TPU Research Cloud, AWS Research Credits (up to $20k), NAIRR. <span class="small">Hyperscaler credits are locked to their most expensive pricing, so the same amount of cash often goes further on a cheaper GPU cloud.</span></p>
+</section>
+
+<section id="rhythm">
+ <h2><span class="n">05</span>Daily rhythm and milestones</h2>
+ <p class="sub">The suggested full-time split, with contracting running from week 1:</p>
+ <div class="daybar" role="img" aria-label="8-hour day: 3h skill-building, 3h flagship artifact, 1h contracting, 1h networking and writing">
+  <div style="flex:3;background:var(--cyan)">3h skill-building</div>
+  <div style="flex:3;background:var(--amber)">3h flagship artifact / PRs</div>
+  <div style="flex:1;background:var(--green)">1h paid</div>
+  <div style="flex:1;background:var(--violet)">1h network</div>
+ </div>
+ <div class="legend"><span>Course plus reimplementation</span><span>·</span><span>Your one big public thing</span><span>·</span><span>8–15 hrs/week of contracting</span><span>·</span><span>Writing and outreach</span></div>
+
+ <h3>Checkpoints</h3>
+ <div class="miles">
+  <div class="mile" style="--c:var(--cyan)"><div class="dot">30d</div><div><h4>Day 30</h4><p>Joined 3 Discords. First PR opened.</p></div></div>
+  <div class="mile" style="--c:var(--cyan)"><div class="dot">60d</div><div><h4>Day 60</h4><p>First merged PR. First contracting income.</p></div></div>
+  <div class="mile" style="--c:var(--amber)"><div class="dot">90d</div><div><h4>Day 90</h4><p>One flagship artifact published and written up.</p></div></div>
+  <div class="mile" style="--c:var(--amber)"><div class="dot">6m</div><div><h4>Month 6</h4><p>A leaderboard placement or a workshop submission.</p></div></div>
+  <div class="mile" style="--c:var(--rose)"><div class="dot">12m</div><div><h4>Month 12</h4><p>A paper or prize. Applications sent to fellowships and roles.</p></div></div>
+ </div>
+
+ <h3>Networking that works</h3>
+ <div class="callout green">Email a paper's authors about a <b>specific, correct technical point</b>. Keep it to 3–5 sentences, lead with your artifact, and ask one concrete question. Volunteer at NeurIPS, ICML or ICLR for free entry. Build these relationships <b>6–12 months before</b> you need them.</div>
+</section>
+
+<section id="publish">
+ <h2><span class="n">06</span>Publishing without an institution</h2>
+ <p class="sub">A paper is optional, but it is a strong artifact. Venues from easiest to hardest:</p>
+ <div class="venues">
+  <div class="venue"><b>NeurIPS / ICML / ICLR workshops</b><div class="vd"><div class="meter" style="--w:22%"><i></i></div>The best first target. Fast, and the poster sessions are great for meeting people.</div></div>
+  <div class="venue"><b>ICLR Blogposts, Alignment Forum</b><div class="vd"><div class="meter" style="--w:30%"><i></i></div>A well-argued technical post counts as real output, especially for safety roles.</div></div>
+  <div class="venue"><b>TMLR</b><div class="vd"><div class="meter" style="--w:48%"><i></i></div>Rolling submissions, judged on correctness rather than state of the art. New per-author quotas apply from 2026.</div></div>
+  <div class="venue"><b>COLM, ACL Findings, MLSys</b><div class="vd"><div class="meter" style="--w:72%"><i></i></div>Peer reviewed, with more competition.</div></div>
+ </div>
+ <h3>Papers you can write on under $500 a month</h3>
+ <p>An eval or benchmark (under $100 in API calls), a reproduction or negative result, a scaffold or context-engineering ablation, small-model interpretability with TransformerLens, a documented dataset, or a write-up of a red-teaming campaign. <span class="small">To post on arXiv cs.LG for the first time you need an endorsement. Ask an author of a paper you cite.</span></p>
+</section>
+
+<section id="slop">
+ <h2><span class="n">07</span>The anti-slop rules</h2>
+ <p class="sub">curl ended its bug bounty after AI slop flooded it. Ghostty, tldraw, Zig, NetBSD, GIMP and others now ban or restrict AI-generated PRs. As one maintainer put it, AI has made a contribution almost free to produce, while it costs just as much to review.</p>
+ <div class="two">
+  <div class="card do"><h3>Do</h3><ul>
+   <li>Start from a reproducible bug or a documented gap</li>
+   <li>Keep PRs small and full of evidence: repro steps, benchmarks, tests</li>
+   <li>Disclose AI assistance where the project asks</li>
+   <li>Talk to maintainers like people, and read <code>CONTRIBUTING</code> and <code>AGENTS.md</code></li></ul></div>
+  <div class="card dont"><h3>Don't</h3><ul>
+   <li>Submit generated code you can't fully explain</li>
+   <li>Open drive-by PRs on issues nobody accepted</li>
+   <li>Mass-produce contributions across many repos</li>
+   <li>Assume speed without understanding will get past the reviewer</li></ul></div>
+ </div>
+</section>
+
+<section id="reality">
+ <h2><span class="n">08</span>Reality check and when to pivot</h2>
+ <p class="sub">Success is not the base case. Treat the plan as a way to manage risk, not as a promise.</p>
+ <div class="funnel" aria-label="Anthropic Fellows funnel">
+  <div style="width:100%">Self-selected applicants: <b>thousands</b></div>
+  <div style="width:62%">Complete full interviews: <b>~150</b></div>
+  <div style="width:24%">Places: <b>~32</b></div>
+ </div>
+ <p>The realistic spread of outcomes: a <strong>minority</strong> reach a frontier lab directly. A <strong>larger share</strong> land at application-layer AI companies (the Cursor, Cognition and Perplexity class), in lab contractor pipelines, or at adjacent startups. Many return to standard software roles, and are stronger for it.</p>
+ <div class="two">
+  <div class="card do"><h3>Double down if…</h3><ul>
+   <li>You place on a kernel or ARC leaderboard</li>
+   <li>A workshop or TMLR paper is accepted</li>
+   <li>Then apply broadly to research-engineer roles right away</li></ul></div>
+  <div class="card dont"><h3>Pivot at month 9 if all three are zero</h3><ul>
+   <li>Merged consequential PRs</li>
+   <li>Artifacts that got outside engagement</li>
+   <li>Warm relationships at a target org</li>
+   <li>Then take an application-layer or forward-deployed role as a stepping stone</li></ul></div>
+ </div>
+</section>
+
+<section id="week1">
+ <h2><span class="n">09</span>Your week-1 checklist</h2>
+ <p class="sub">Tick these off. Your progress is saved in this browser only.</p>
+ <div class="progress"><span id="pct">0 / 0</span><div class="track"><i id="bar"></i></div></div>
+ <ul class="check" id="checklist"></ul>
+</section>
+
+</main>
+
+<footer class="wrap">
+ <div class="card"><strong>Caveats.</strong> Stipends, deadlines and prize pools change every cycle. Check each on its primary source (matsprogram.org, alignment.anthropic.com, arena.education, arcprize.org, app.grayswan.ai) before acting. Some figures are secondhand or contested: for example, Anthropic's own posts and its job posting give different Fellows conversion rates. Contractor rates are advertised starting offers. All figures are as reported in the <a href="https://chierhu.medium.com/breaking-into-frontier-ai-from-zero-a-ruthlessly-specific-playbook-239b3fec2c1a" rel="noopener">original article</a> by Chier Hu.</div>
+ <p>Nguyễn Đăng Khoa · <a href="./">More posts</a></p>
+</footer>
+
+<script>
+(function(){
+var LANES=[
+ {id:"A",c:"var(--amber)",t:"Branch A",s:"Strong coder, no ML",
+  p:[["Weeks 1–4",["Stanford CS336 lectures 1–6","Reimplement nanoGPT","Run vLLM locally","Join the GPU MODE, EleutherAI and Prime Intellect Discords"]],
+     ["Weeks 5–8",["First vLLM docs or bug-fix PRs: read the code, spot the gap, ship the fix","Start GPU MODE kernel exercises on KernelBot"]],
+     ["Weeks 9–12",["One systems PR (quantization or model support) to vLLM or SGLang","<b>or</b> one published Prime Intellect environment","Write it up"]],
+     ["Months 4–12",["Enter the AMD/GPU MODE speedrun or ARC Prize","One eval or reproduction paper you can submit","Apply: OpenAI Residency, AI-engineer roles, fellowships"]]],
+  art:"A published RL environment or a reproduction repo",target:"vLLM, SGLang, FlashInfer, Triton, KernelBot"},
+ {id:"B",c:"var(--violet)",t:"Branch B",s:"ML theory, weak engineering",
+  p:[["Weeks 1–4",["Harden engineering with the ARENA materials and Karpathy's Zero to Hero","Reproduce a small interpretability result with TransformerLens"]],
+     ["Weeks 5–8",["Contribute an inspect_evals benchmark","Write an Alignment Forum or LessWrong post"]],
+     ["Weeks 9–12",["A small-model interpretability or eval paper","Compute: free tiers and TPU Research Cloud"]],
+     ["Months 4–12",["Apply to MATS at the right cohort deadline","Apply to Anthropic Fellows","SPAR or Astra as stepping stones"]]],
+  art:"A merged inspect_evals benchmark",target:"inspect_evals, TransformerLens, SAELens, Neuronpedia"},
+ {id:"C",c:"var(--cyan)",t:"Branch C",s:"Neither yet",
+  p:[["Weeks 1–8",["Hugging Face NLP and Agents courses","Karpathy's Zero to Hero","Ship small HF Spaces demos and GGUF uploads"]],
+     ["Weeks 9–12",["Gray Swan Proving Ground for quick wins and possible bounties","One clean, deployed application project with a README"]],
+     ["Months 4–6",["Specialise into whichever of A or B fits you"]],
+     ["Months 6–12",["Target application-layer AI-engineer and forward-deployed roles first","These are the realistic first rung"]]],
+  art:"A Spaces demo people use, plus a deployed project",target:"Hugging Face Hub, Gray Swan, smolagents, MCP servers"}
+];
+var tabs=document.getElementById("laneTabs"),panel=document.getElementById("lanePanel");
+function render(i){
+ var L=LANES[i];
+ [].forEach.call(tabs.children,function(b,j){b.setAttribute("aria-selected",j===i?"true":"false");});
+ panel.style.setProperty("--c",L.c);
+ panel.innerHTML='<div class="timeline">'+L.p.map(function(ph){return '<div class="phase" style="--c:'+L.c+'"><div class="when">'+ph[0]+'</div><ul>'+ph[1].map(function(x){return "<li>"+x+"</li>";}).join("")+"</ul></div>";}).join("")+
+  '</div><div class="lanefoot"><div><b>First artifact to publish</b>'+L.art+'</div><div><b>Where to contribute</b>'+L.target+"</div></div>";
+}
+LANES.forEach(function(L,i){var b=document.createElement("button");b.type="button";b.setAttribute("role","tab");b.style.setProperty("--c",L.c);
+ b.innerHTML=L.t+"<small>"+L.s+"</small>";b.onclick=function(){render(i);};tabs.appendChild(b);});
+render(0);
+
+var ITEMS=[
+ "<b>Apply to Mercor and Surge/DataAnnotation</b> for specialist coding or STEM work",
+ "<b>Choose exactly one lane</b>: kernels and inference, evals and interpretability, or agents",
+ "<b>Join the Discords</b>: GPU MODE, EleutherAI, Prime Intellect, Hugging Face",
+ "<b>Set up the stack for your lane</b> locally: vLLM, inspect_evals or an HF Space",
+ "<b>Read CONTRIBUTING.md</b> of your target repo and pick 3 candidate issues",
+ "<b>Note the fellowship deadlines</b> (Anthropic Fellows, MATS, ARENA, TARA) in your calendar",
+ "<b>Start a public log</b>: a blog post or X thread for every artifact you ship"
+];
+var KEY="bifa-week1",state={};
+try{state=JSON.parse(localStorage.getItem(KEY)||"{}")||{};}catch(e){state={};}
+var ul=document.getElementById("checklist");
+function upd(){var n=ITEMS.filter(function(_,i){return state[i];}).length;
+ document.getElementById("pct").textContent=n+" / "+ITEMS.length+" done";
+ document.getElementById("bar").style.width=(100*n/ITEMS.length)+"%";}
+ITEMS.forEach(function(t,i){var li=document.createElement("li");
+ li.innerHTML='<label><input type="checkbox"'+(state[i]?" checked":"")+"><span>"+t+"</span></label>";
+ li.querySelector("input").onchange=function(e){state[i]=e.target.checked;try{localStorage.setItem(KEY,JSON.stringify(state));}catch(_){}upd();};
+ ul.appendChild(li);});
+upd();
+
+var links=[].slice.call(document.querySelectorAll("nav.toc a"));
+if("IntersectionObserver" in window){
+ var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(a){a.classList.toggle("on",a.getAttribute("href")==="#"+e.target.id);});}});},{rootMargin:"-45% 0px -50% 0px"});
+ document.querySelectorAll("main section").forEach(function(s){io.observe(s);});
+}
+})();
+</script>
+</body>
+</html>
