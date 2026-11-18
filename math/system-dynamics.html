@@ -1,0 +1,1952 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Động lực học hệ thống — Forrester, World2 &amp; World3</title>
+<meta name="description" content="Mô phỏng tương tác các nguyên lý hệ thống của Jay W. Forrester: kho và dòng, vòng phản hồi, trễ, mô hình World2 (1971) và World3 – Giới hạn của sự tăng trưởng (1972).">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Lora:ital,wght@0,600;0,700;1,500&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4efe4;--bg2:#ece5d6;--panel:#fffcf5;--ink:#1c2230;--muted:#5d6676;--faint:#8a8f99;--line:#d8cfbd;--line2:#e7e0d1;
+  --accent:#c2410c;--accent-soft:#fde7d8;--teal:#0f766e;--teal-soft:#d5efe9;
+  --c-pop:#1f2937;--c-res:#2f855a;--c-cap:#d97706;--c-pol:#b8327f;--c-ql:#2563eb;--c-food:#0e8aa8;--c-serv:#7c3aed;--c-le:#64748b;--c-ciaf:#a16207;
+  --pos:#15803d;--neg:#b91c1c;--water:#3b82c4;--water2:#93c5fd;--shadow:0 1px 2px rgba(40,30,10,.06),0 6px 24px rgba(40,30,10,.07);
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;--serif:'Lora',Georgia,serif;--sans:'Be Vietnam Pro',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12151c;--bg2:#181c25;--panel:#1b2029;--ink:#e8e6e1;--muted:#a3a9b6;--faint:#737a88;--line:#2e3542;--line2:#252b36;
+  --accent:#f0884f;--accent-soft:#3a2418;--teal:#3fc1b0;--teal-soft:#15302d;
+  --c-pop:#e8e6e1;--c-res:#5bc489;--c-cap:#f5a524;--c-pol:#f067b4;--c-ql:#6ea8ff;--c-food:#38c6e6;--c-serv:#a78bfa;--c-le:#9aa7b8;--c-ciaf:#d4a72c;
+  --pos:#4ade80;--neg:#f87171;--water:#4f9be0;--water2:#1e4f7d;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 28px rgba(0,0,0,.35);color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#12151c;--bg2:#181c25;--panel:#1b2029;--ink:#e8e6e1;--muted:#a3a9b6;--faint:#737a88;--line:#2e3542;--line2:#252b36;
+  --accent:#f0884f;--accent-soft:#3a2418;--teal:#3fc1b0;--teal-soft:#15302d;
+  --c-pop:#e8e6e1;--c-res:#5bc489;--c-cap:#f5a524;--c-pol:#f067b4;--c-ql:#6ea8ff;--c-food:#38c6e6;--c-serv:#a78bfa;--c-le:#9aa7b8;--c-ciaf:#d4a72c;
+  --pos:#4ade80;--neg:#f87171;--water:#4f9be0;--water2:#1e4f7d;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 28px rgba(0,0,0,.35);color-scheme:dark;}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:var(--accent)}
+h1,h2,h3{font-family:var(--serif);line-height:1.2;margin:0 0 .5em;font-weight:700;letter-spacing:-.01em}
+h2{font-size:clamp(1.6rem,3.4vw,2.3rem)}
+h3{font-size:1.2rem}
+p{margin:0 0 1em}
+code,.mono{font-family:var(--mono);font-size:.88em}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+@media(max-width:560px){.wrap{padding:0 16px}}
+/* nav */
+.nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:14px;height:54px}
+.brand{font-family:var(--serif);font-weight:700;white-space:nowrap;text-decoration:none;color:var(--ink);font-size:1.02rem}
+.brand b{color:var(--accent)}
+.navlinks{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+.navlinks::-webkit-scrollbar{display:none}
+.navlinks a{white-space:nowrap;text-decoration:none;color:var(--muted);font-size:.86rem;padding:6px 10px;border-radius:99px;font-weight:500}
+.navlinks a:hover{color:var(--ink);background:var(--bg2)}
+.navlinks a.on{color:var(--accent);background:var(--accent-soft)}
+.iconbtn{border:1px solid var(--line);background:var(--panel);color:var(--ink);width:36px;height:36px;border-radius:10px;cursor:pointer;display:grid;place-items:center;flex:none}
+.iconbtn svg{width:18px;height:18px}
+.prog{position:absolute;left:0;bottom:-1px;height:2px;background:var(--accent);width:0}
+/* hero */
+.hero{position:relative;padding:56px 0 40px;overflow:hidden}
+.hero .kick{font:600 .78rem/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+.hero h1{font-size:clamp(2.1rem,5.6vw,3.9rem);max-width:15ch;margin-bottom:.35em}
+.hero h1 em{font-style:italic;font-weight:500;color:var(--teal)}
+.hero .lede{font-size:1.12rem;color:var(--muted);max-width:60ch}
+.herogrid{display:grid;grid-template-columns:1.05fr 1fr;gap:36px;align-items:center}
+.heroviz{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:14px 14px 8px}
+.heroviz canvas{width:100%;height:280px;display:block}
+.heroviz .cap{font-size:.78rem;color:var(--muted);padding:4px 6px}
+@media(max-width:860px){.herogrid{grid-template-columns:1fr}.heroviz canvas{height:230px}}
+.toc{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:30px}
+.toc a{display:block;text-decoration:none;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:.88rem;line-height:1.35;transition:transform .15s,border-color .15s}
+.toc a:hover{transform:translateY(-2px);border-color:var(--accent)}
+.toc a span{display:block;font:600 .7rem var(--mono);color:var(--accent);margin-bottom:3px}
+@media(max-width:860px){.toc{grid-template-columns:repeat(2,1fr)}}
+/* sections */
+section.ch{padding:56px 0;border-top:1px solid var(--line)}
+.chhead{display:grid;grid-template-columns:1fr;gap:4px;margin-bottom:22px;max-width:820px}
+.chnum{font:600 .76rem var(--mono);letter-spacing:.12em;color:var(--accent);text-transform:uppercase}
+.prose{max-width:760px}
+.prose p{color:var(--ink)}
+.lead2{font-size:1.06rem;color:var(--muted)}
+.quote{border-left:3px solid var(--accent);padding:6px 0 6px 16px;margin:18px 0;font-family:var(--serif);font-style:italic;font-size:1.08rem;color:var(--ink)}
+.quote small{display:block;font:500 .8rem var(--sans);font-style:normal;color:var(--muted);margin-top:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:860px){.grid2,.grid3{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:16px}
+.card h3{margin-bottom:.35em}
+.lab{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:18px;align-items:stretch;margin:22px 0}
+.lab>*{min-width:0}
+@media(max-width:900px){.lab{grid-template-columns:1fr}}
+.labviz{display:flex;flex-direction:column;gap:10px}
+.labviz svg,.labviz canvas{display:block;width:100%}
+.ctrls{display:grid;gap:10px;margin-top:6px}
+.ctrl{display:grid;grid-template-columns:150px 1fr 64px;align-items:center;gap:10px;font-size:.88rem}
+.ctrl label{color:var(--muted)}
+.ctrl output{font:600 .82rem var(--mono);text-align:right;color:var(--ink)}
+@media(max-width:520px){.ctrl{grid-template-columns:1fr 60px}.ctrl label{grid-column:1/-1;margin-bottom:-6px}}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:22px;background:transparent;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:4px;background:var(--line)}
+input[type=range]::-moz-range-track{height:4px;border-radius:4px;background:var(--line)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);margin-top:-7px;border:3px solid var(--panel);box-shadow:0 0 0 1px var(--accent)}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--accent);border:3px solid var(--panel);box-shadow:0 0 0 1px var(--accent)}
+input[type=range]:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.btn{font:600 .84rem var(--sans);border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:7px 13px;border-radius:99px;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.pri:hover{filter:brightness(1.08);color:#fff}
+.btn.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.btn svg{width:14px;height:14px}
+.eq{font:500 .84rem/1.6 var(--mono);background:var(--bg2);border:1px solid var(--line2);border-radius:10px;padding:10px 12px;overflow-x:auto;white-space:nowrap;color:var(--ink)}
+.eq .k{color:var(--accent);font-weight:600}
+.eq .c{color:var(--faint)}
+.note{font-size:.86rem;color:var(--muted)}
+.try{background:var(--teal-soft);border:1px solid color-mix(in srgb,var(--teal) 30%,transparent);border-radius:12px;padding:10px 14px;font-size:.9rem}
+.try b{color:var(--teal)}
+.try ul{margin:.3em 0 0;padding-left:1.2em}
+.chartbox{position:relative}
+.chartbox canvas{width:100%;height:240px;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.8rem;color:var(--muted);margin-top:4px}
+.legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.legend span.off{opacity:.38}
+.legend i{width:16px;height:3px;border-radius:2px;display:inline-block}
+.legend em{font-style:normal;color:var(--faint);font-size:.74rem}
+.tip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:10px;padding:7px 10px;font-size:.76rem;line-height:1.45;z-index:5;min-width:140px;display:none}
+.tip b{font-family:var(--mono)}
+.tip .row{display:flex;justify-content:space-between;gap:12px}
+.tip .row i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px}
+.kpi{background:var(--bg2);border-radius:10px;padding:8px 10px}
+.kpi .l{font-size:.72rem;color:var(--muted);line-height:1.25}
+.kpi .v{font:600 1.05rem var(--mono)}
+.riddle{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+details.more{margin-top:10px}
+details.more summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:.9rem}
+/* model studio */
+.studio{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;margin-top:20px}
+.studio .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--bg2)}
+.scen{display:flex;gap:6px;flex-wrap:wrap}
+.scen .btn{font-size:.8rem;padding:6px 11px}
+.player{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line)}
+.player .yr{font:700 1.5rem var(--mono);min-width:72px;color:var(--accent)}
+.player input{flex:1}
+.player select{font:500 .8rem var(--sans);background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:5px}
+.playbtn{width:42px;height:42px;border-radius:50%;border:none;background:var(--accent);color:#fff;cursor:pointer;display:grid;place-items:center;flex:none}
+.playbtn svg{width:18px;height:18px}
+.sgrid>div{min-width:0}
+.sgrid .left{border-bottom:1px solid var(--line)}
+.sgrid .right{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);align-items:start}
+.sgrid .right>.pane:first-child{grid-row:span 3;border-right:1px solid var(--line);align-self:stretch}
+@media(max-width:900px){.sgrid .right{grid-template-columns:1fr}.sgrid .right>.pane:first-child{grid-row:auto;border-right:none;border-bottom:1px solid var(--line)}}
+.diag{overflow-x:auto;-webkit-overflow-scrolling:touch;padding:6px 0}
+.diag svg{display:block;width:100%;max-width:1040px;margin:0 auto;min-width:720px;height:auto}
+.diaghint{font-size:.78rem;color:var(--muted);text-align:center;padding:0 14px 8px}
+.swipe{display:none;font-weight:600;color:var(--accent)}
+@media(max-width:760px){.swipe{display:block}}
+.go{display:inline-block;margin-top:10px;font-size:.84rem;font-weight:600;text-decoration:none}
+.go:hover{text-decoration:underline}
+.pane{padding:12px 14px}
+.pane h4{margin:0 0 6px;font:600 .78rem var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.story{font-size:.92rem;background:var(--bg2);border-radius:12px;padding:10px 12px;min-height:72px}
+.story b{color:var(--accent)}
+.scdesc{padding:10px 14px;font-size:.9rem;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--accent-soft) 45%,transparent)}
+.scdesc b{color:var(--accent)}
+.loops{display:flex;flex-wrap:wrap;gap:6px}
+.loopbtn{font:500 .78rem var(--sans);border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:5px 9px;cursor:pointer;text-align:left}
+.loopbtn b{font-family:var(--mono);margin-right:4px}
+.loopbtn.R b{color:var(--neg)}.loopbtn.B b{color:var(--teal)}
+.loopbtn.on{border-color:var(--accent);background:var(--accent-soft)}
+.loopinfo{font-size:.86rem;color:var(--muted);margin-top:8px;min-height:2.6em}
+.mults{display:grid;gap:4px;font-size:.78rem}
+.mrow{display:grid;grid-template-columns:118px 1fr 44px;gap:8px;align-items:center}
+.mbar{position:relative;height:12px;background:var(--bg2);border-radius:3px}
+.mbar::before{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--faint)}
+.mbar i{position:absolute;top:2px;height:8px;border-radius:2px}
+.mrow output{font:600 .74rem var(--mono);text-align:right}
+.insp{position:fixed;right:16px;bottom:16px;width:min(420px,calc(100vw - 32px));max-height:min(80vh,640px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.25);z-index:60;padding:14px 16px;display:none}
+.insp.show{display:block;animation:pop .2s ease}
+@keyframes pop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.insp h3{margin:0 0 4px;padding-right:30px}
+.insp .x{position:absolute;right:10px;top:10px}
+.insp .tf{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.insp .tf canvas{width:100%;height:110px;background:var(--bg2);border-radius:8px}
+.insp .tf div{font-size:.72rem;color:var(--muted)}
+.adv{border-top:1px solid var(--line)}
+.adv summary{padding:12px 14px;cursor:pointer;font-weight:600;font-size:.92rem}
+.adv .ctrls{padding:0 14px 14px}
+.adv .ctrl{grid-template-columns:210px 1fr 64px}
+@media(max-width:620px){.adv .ctrl{grid-template-columns:1fr 60px}}
+.chk{display:flex;gap:8px;align-items:center;font-size:.88rem;color:var(--muted)}
+.chk input{accent-color:var(--accent);width:16px;height:16px}
+.tabs{display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap}
+.tabs .btn{font-size:.76rem;padding:4px 10px}
+/* svg styles */
+.svgt{font-family:var(--sans);fill:var(--ink)}
+.svgm{font-family:var(--mono);fill:var(--muted)}
+.node{cursor:pointer}
+.node:hover .hl{stroke:var(--accent)}
+.link{fill:none;stroke:var(--faint);stroke-width:1.1;opacity:.45;transition:opacity .2s,stroke .2s}
+.link.hot{stroke:var(--accent);opacity:1;stroke-width:2.2}
+.dim .node:not(.hot){opacity:.35}
+.dim .link:not(.hot){opacity:.12}
+.pipe{fill:none;stroke:var(--line);stroke-width:9;stroke-linecap:round}
+.pipe2{fill:none;stroke:var(--bg2);stroke-width:5;stroke-linecap:round}
+.timeline{display:flex;gap:12px;overflow-x:auto;padding:6px 2px 14px;scroll-snap-type:x mandatory}
+.tl{flex:0 0 230px;scroll-snap-align:start;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;position:relative}
+.tl .y{font:700 1.15rem var(--mono);color:var(--accent)}
+.tl p{font-size:.86rem;margin:4px 0 0;color:var(--muted)}
+.tl b{color:var(--ink)}
+.princ{counter-reset:p}
+.princ .card{position:relative;padding-top:38px}
+.princ .card::before{counter-increment:p;content:counter(p,decimal-leading-zero);position:absolute;top:12px;left:16px;font:700 .8rem var(--mono);color:var(--accent)}
+.princ .card p{font-size:.92rem;color:var(--muted);margin:0}
+footer{padding:40px 0 70px;border-top:1px solid var(--line);color:var(--muted);font-size:.86rem}
+.tag{display:inline-block;font:600 .7rem var(--mono);padding:2px 7px;border-radius:6px;background:var(--bg2);color:var(--muted);margin-right:4px}
+.vs{width:100%;border-collapse:collapse;font-size:.88rem}
+.vs th,.vs td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+.vs th{font-size:.76rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.tblwrap{overflow-x:auto}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="wrap">
+  <a class="brand" href="#top">Hệ thống <b>·</b> Forrester</a>
+  <div class="navlinks" id="navlinks">
+    <a href="#lich-su">Lịch sử</a><a href="#kho-dong">1 · Kho &amp; dòng</a><a href="#vong-r">2 · Vòng R</a><a href="#vong-b">3 · Vòng B</a><a href="#tre">4 · Trễ</a><a href="#gioi-han">5 · Giới hạn</a><a href="#world2">6 · World2</a><a href="#world3">7 · World3</a><a href="#nguyen-ly">8 · Nguyên lý</a>
+  </div>
+  <button class="iconbtn" id="themeBtn" aria-label="Đổi giao diện sáng/tối"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+  <div class="prog" id="prog"></div>
+</div></nav>
+
+<header class="hero" id="top"><div class="wrap">
+  <div class="herogrid">
+    <div>
+      <div class="kick">Principles of Systems · World Dynamics · Limits to Growth</div>
+      <h1>Thế giới như một <em>hệ thống</em> có phản hồi</h1>
+      <p class="lede">Tái hiện bằng mô phỏng tương tác các ý tưởng của giáo sư <b>Jay W. Forrester</b> (MIT): từ viên gạch nhỏ nhất là <i>kho</i> và <i>dòng</i>, đến các vòng phản hồi và độ trễ, rồi đến hai mô hình toàn cầu nổi tiếng <b>World2</b> (1971) và <b>World3</b>. World3 là mô hình nằm sau báo cáo <i>Giới hạn của sự tăng trưởng</i> (1972).</p>
+      <p class="note">Mọi biểu đồ trên trang đều được tính trực tiếp trong trình duyệt từ phương trình gốc của mô hình. Bạn kéo thanh trượt nào thì hệ thống chạy lại theo đó.</p>
+    </div>
+    <div class="heroviz"><canvas id="heroCv" aria-label="Mô phỏng World3 kịch bản chuẩn đang được vẽ"></canvas>
+      <div class="cap">World3, kịch bản chuẩn 1900–2100: <span style="color:var(--c-res)">tài nguyên</span>, <span style="color:var(--c-food)">lương thực/người</span>, <span style="color:var(--c-cap)">công nghiệp/người</span>, <span style="color:var(--c-pop)">dân số</span>, <span style="color:var(--c-pol)">ô nhiễm</span></div></div>
+  </div>
+  <div class="toc">
+    <a href="#kho-dong"><span>CHƯƠNG 1</span>Kho &amp; dòng: ngôn ngữ của hệ thống</a>
+    <a href="#vong-r"><span>CHƯƠNG 2</span>Vòng tăng cường: tăng trưởng hàm mũ</a>
+    <a href="#vong-b"><span>CHƯƠNG 3</span>Vòng cân bằng: tìm về mục tiêu</a>
+    <a href="#tre"><span>CHƯƠNG 4</span>Độ trễ sinh ra dao động</a>
+    <a href="#gioi-han"><span>CHƯƠNG 5</span>Tăng trưởng gặp giới hạn</a>
+    <a href="#world2"><span>CHƯƠNG 6</span>World2 của Forrester</a>
+    <a href="#world3"><span>CHƯƠNG 7</span>World3 &amp; Giới hạn tăng trưởng</a>
+    <a href="#nguyen-ly"><span>CHƯƠNG 8</span>Các nguyên lý rút ra</a>
+  </div>
+</div></header>
+
+<section class="ch" id="lich-su"><div class="wrap">
+  <div class="chhead"><div class="chnum">Bối cảnh</div><h2>Từ bộ nhớ máy tính đến số phận hành tinh</h2></div>
+  <div class="prose"><p class="lead2">Forrester là kỹ sư điện. Ông mang tư duy điều khiển học (feedback control) từ phòng thí nghiệm máy tính sang quản trị doanh nghiệp, đô thị và cuối cùng là cả thế giới. Ông cho rằng các hệ thống xã hội cũng có cấu trúc phản hồi như mạch điện, và vì có quá nhiều vòng phản hồi phi tuyến đan vào nhau nên trực giác con người thường đoán sai hành vi của chúng.</p></div>
+  <div class="timeline" id="timeline">
+    <div class="tl"><div class="y">1918</div><p><b>Sinh ra</b> trên một trang trại chăn nuôi ở Nebraska (Mỹ). Thời trẻ ông tự làm máy phát điện gió cho trang trại.</p></div>
+    <div class="tl"><div class="y">1940s–50s</div><p>Tại MIT, ông dẫn dắt dự án máy tính <b>Whirlwind</b> và phát minh <b>bộ nhớ lõi từ</b> (magnetic-core memory), loại bộ nhớ chuẩn của máy tính suốt hai thập kỷ.</p></div>
+    <div class="tl"><div class="y">1956</div><p>Chuyển sang Trường Quản lý <b>Sloan</b> (MIT). Ông bắt đầu mô phỏng doanh nghiệp bằng máy tính, và từ đó ra đời ngành <b>System Dynamics</b>.</p></div>
+    <div class="tl"><div class="y">1961</div><p><b>Industrial Dynamics</b>: giải thích vì sao chuỗi cung ứng tự dao động, tức hiện tượng mà sau này người ta gọi là “hiệu ứng roi da”.</p></div>
+    <div class="tl"><div class="y">1968</div><p><b>Principles of Systems</b>: giáo trình về cấu trúc phản hồi, gồm biến <i>mức</i> (level), biến <i>dòng</i> (rate), vòng âm và vòng dương. Chương 1–5 của trang này đi theo cuốn sách đó.</p></div>
+    <div class="tl"><div class="y">1969</div><p><b>Urban Dynamics</b>: mô hình đô thị. Kết luận gây tranh cãi của ông là nhiều chính sách “nhân đạo” lại làm khu đô thị suy thoái nặng hơn.</p></div>
+    <div class="tl"><div class="y">1970</div><p>Gặp <b>Câu lạc bộ Roma</b> ở Bern (Thụy Sĩ). Trên chuyến bay về, ông phác thảo mô hình <b>World1</b>, rồi hoàn thiện thành <b>World2</b> chỉ trong vài tuần.</p></div>
+    <div class="tl"><div class="y">1971</div><p>Xuất bản <b>World Dynamics</b> với mô hình World2: 5 biến mức, từ 1900 đến 2100.</p></div>
+    <div class="tl"><div class="y">1972</div><p>Nhóm của học trò ông là <b>Dennis Meadows</b> (cùng Donella Meadows, Jørgen Randers, William Behrens III) công bố <b>The Limits to Growth</b>, dựa trên mô hình <b>World3</b>.</p></div>
+    <div class="tl"><div class="y">1974</div><p><b>Dynamics of Growth in a Finite World</b>: tài liệu kỹ thuật đầy đủ của World3. Phương trình World3 trên trang này lấy theo bản đó.</p></div>
+    <div class="tl"><div class="y">1992 · 2004</div><p><b>Beyond the Limits</b> và <b>Limits to Growth: The 30-Year Update</b> (mô hình World3-03).</p></div>
+    <div class="tl"><div class="y">2008 · 2014</div><p>Graham Turner (CSIRO, Úc) so sánh số liệu thực 30–40 năm với các kịch bản. Kết quả: thế giới đang bám khá sát kịch bản “chuẩn”.</p></div>
+    <div class="tl"><div class="y">2016</div><p>Forrester qua đời ở tuổi 98. System Dynamics hiện được dạy và dùng trong quản trị, y tế, năng lượng và khí hậu.</p></div>
+  </div>
+  <div class="quote">“Hệ thống xã hội thuộc loại hệ thống phức tạp, nhiều vòng lặp và phi tuyến… Chúng hành xử ngược với trực giác.”<small>Jay W. Forrester, <i>Counterintuitive Behavior of Social Systems</i> (1971), dịch ý</small></div>
+</div></section>
+
+<section class="ch" id="kho-dong"><div class="wrap">
+  <div class="chhead"><div class="chnum">Chương 1 · Levels &amp; Rates</div><h2>Kho và dòng: hai loại biến duy nhất</h2></div>
+  <div class="prose">
+    <p>Trong <i>Principles of Systems</i>, Forrester nói rằng mọi hệ thống đều có thể mô tả bằng đúng hai loại biến:</p>
+    <p><b>Biến mức / kho</b> (level, stock) là những thứ <i>tích lũy</i>: nước trong bồn, dân số, vốn, tài nguyên, ô nhiễm. Kho là <i>trạng thái</i> và là <i>bộ nhớ</i> của hệ thống. Nếu mọi hoạt động dừng lại, kho vẫn còn đó.<br>
+    <b>Biến dòng</b> (rate, flow) là <i>tốc độ thay đổi</i> của kho: vòi chảy vào, cống chảy ra, số trẻ sinh ra mỗi năm, lượng tài nguyên khai thác mỗi năm.</p>
+    <p>Nguyên lý gốc: <b>chỉ có dòng mới làm kho thay đổi, và kho (cùng hằng số) quyết định dòng</b>. Kho và dòng luôn xen kẽ nhau trên mọi vòng phản hồi.</p>
+  </div>
+  <div class="lab">
+    <div class="card labviz">
+      <svg id="tubSvg" viewBox="0 0 420 300" role="img" aria-label="Bồn nước: vòi vào, cống ra"></svg>
+      <div class="ctrls">
+        <div class="ctrl"><label for="tubIn">Dòng vào (lít/phút)</label><input type="range" id="tubIn" min="0" max="10" step="0.1" value="6"><output id="tubInO"></output></div>
+        <div class="ctrl"><label for="tubOut">Dòng ra (lít/phút)</label><input type="range" id="tubOut" min="0" max="10" step="0.1" value="4"><output id="tubOutO"></output></div>
+      </div>
+      <div class="btns"><button class="btn" id="tubFade">Giảm dần vòi vào</button><button class="btn" id="tubEq">Vào = Ra</button><button class="btn" id="tubReset">Đổ cạn</button></div>
+    </div>
+    <div class="card labviz">
+      <div class="chartbox"><canvas id="tubCv"></canvas></div>
+      <div class="legend" id="tubLeg"></div>
+      <div class="eq" id="tubEqn"></div>
+      <div class="try"><b>Thử nghiệm:</b><ul>
+        <li>Bấm <b>Vào = Ra</b>: nước vẫn chảy nhưng mực nước đứng yên. Đó là <i>cân bằng động</i>.</li>
+        <li>Bấm <b>Giảm dần vòi vào</b>: vòi nhỏ dần nhưng mực nước <i>vẫn tăng</i> cho tới khi dòng vào thấp hơn dòng ra. CO₂ trong khí quyển và nợ công cũng hành xử như vậy.</li></ul></div>
+    </div>
+  </div>
+  <div class="prose">
+    <p>Forrester viết mô hình bằng ngôn ngữ <b>DYNAMO</b>. Thời gian được chia thành các bước nhỏ <code>DT</code>; <code>J</code>, <code>K</code>, <code>L</code> là ba mốc liên tiếp. Phương trình mức <code>L</code> cộng dồn dòng của khoảng trước (<code>JK</code>); phương trình dòng <code>R</code> tính dòng cho khoảng sau (<code>KL</code>) từ các mức ở thời điểm hiện tại <code>K</code>. Đây chính là phép tích phân Euler. Toàn bộ World2 và World3 ở dưới chạy đúng theo cơ chế này: World2 với <code>DT = 0,2</code> năm, World3 với <code>DT = 0,5</code> năm.</p>
+  </div>
+</div></section>
+
+<section class="ch" id="vong-r"><div class="wrap">
+  <div class="chhead"><div class="chnum">Chương 2 · Positive feedback</div><h2>Vòng tăng cường (R): càng nhiều càng nhanh</h2></div>
+  <div class="prose"><p>Khi một kho làm tăng chính dòng chảy vào nó, ta có <b>vòng phản hồi dương</b>, ký hiệu <b>R</b> (reinforcing). Dân số càng đông thì số trẻ sinh ra càng nhiều; tiền gửi càng lớn thì tiền lãi càng nhiều. Kết quả là <b>tăng trưởng hàm mũ</b>: kho tăng gấp đôi sau mỗi khoảng thời gian cố định, xấp xỉ <b>70 ÷ (tốc độ tăng tính bằng %)</b>.</p></div>
+  <div class="lab">
+    <div class="card labviz">
+      <svg id="rSvg" viewBox="0 0 430 215" role="img" aria-label="Sơ đồ vòng phản hồi dân số"></svg>
+      <canvas id="rDots" style="height:150px;border-radius:10px;background:var(--bg2)"></canvas>
+      <div class="ctrls">
+        <div class="ctrl"><label for="rB">Tỉ suất sinh (%/năm)</label><input type="range" id="rB" min="0" max="6" step="0.1" value="3.5"><output id="rBO"></output></div>
+        <div class="ctrl"><label for="rD">Tỉ suất tử (%/năm)</label><input type="range" id="rD" min="0" max="6" step="0.1" value="1.5"><output id="rDO"></output></div>
+      </div>
+      <div class="btns"><button class="btn pri" id="rPlay">Chạy lại</button><label class="chk"><input type="checkbox" id="rLog"> Thang logarit</label></div>
+    </div>
+    <div class="card labviz">
+      <div class="chartbox"><canvas id="rCv"></canvas></div>
+      <div class="legend" id="rLeg"></div>
+      <div class="kpis" id="rK"></div>
+      <div class="try"><b>Để ý:</b> trên thang logarit, đường hàm mũ biến thành đường thẳng. Khi sinh = tử, vòng R và vòng B (số tử) triệt tiêu nhau và dân số đứng yên. Khi tử &gt; sinh, vòng R chạy ngược và dân số co lại theo hàm mũ.</div>
+    </div>
+  </div>
+  <div class="card" style="max-width:820px">
+    <h3>Câu đố hoa súng</h3>
+    <p style="margin-bottom:.6em">Một cây hoa súng mỗi ngày nở gấp đôi diện tích. Nếu cứ để vậy, sau <b>30 ngày</b> nó phủ kín cả ao và làm chết mọi sinh vật khác. Bạn định đợi đến khi nó phủ <b>nửa ao</b> rồi mới ra tay. Đó là ngày thứ mấy?</p>
+    <div class="riddle"><input type="range" id="lilyD" min="0" max="30" step="1" value="20" style="max-width:300px"><output id="lilyO" class="mono"></output><button class="btn" id="lilyAns">Xem đáp án</button></div>
+    <canvas id="lilyCv" style="width:100%;height:120px;display:block;margin-top:8px"></canvas>
+    <p class="note" id="lilyTxt" style="margin:6px 0 0"></p>
+  </div>
+</div></section>
+
+<section class="ch" id="vong-b"><div class="wrap">
+  <div class="chhead"><div class="chnum">Chương 3 · Negative feedback</div><h2>Vòng cân bằng (B): mọi chính sách đều là “tìm về mục tiêu”</h2></div>
+  <div class="prose"><p>Forrester mô tả mọi quyết định (mọi phương trình dòng) bằng bốn thành phần: <b>mục tiêu</b>, <b>tình trạng quan sát được</b>, <b>chênh lệch</b> giữa hai cái đó, và <b>hành động</b> để xóa chênh lệch. Vòng này gọi là <b>vòng phản hồi âm</b>, ký hiệu <b>B</b> (balancing). Dạng đơn giản nhất của nó:</p>
+  <div class="eq">R  ĐẶT_HÀNG.KL = (MỤC_TIÊU − TỒN_KHO.K) / THỜI_GIAN_ĐIỀU_CHỈNH</div>
+  <p style="margin-top:1em">Kho tiến dần về mục tiêu theo đường cong mũ ngược. Sau mỗi <b>hằng số thời gian</b> (thời gian điều chỉnh), khoảng cách còn lại chỉ bằng 37% khoảng cách trước đó.</p></div>
+  <div class="lab">
+    <div class="card labviz">
+      <svg id="bSvg" viewBox="0 0 420 250" role="img" aria-label="Vòng phản hồi âm: mục tiêu, chênh lệch, hành động"></svg>
+      <div class="ctrls">
+        <div class="ctrl"><label for="bGoal">Mục tiêu tồn kho</label><input type="range" id="bGoal" min="0" max="100" step="1" value="80"><output id="bGoalO"></output></div>
+        <div class="ctrl"><label for="bT">Thời gian điều chỉnh (tuần)</label><input type="range" id="bT" min="1" max="20" step="0.5" value="5"><output id="bTO"></output></div>
+      </div>
+      <div class="btns"><button class="btn pri" id="bRun">Chạy lại từ 10</button><button class="btn" id="bShock">Mất trộm 30 đơn vị</button></div>
+    </div>
+    <div class="card labviz">
+      <div class="chartbox"><canvas id="bCv"></canvas></div>
+      <div class="legend" id="bLeg"></div>
+      <div class="try"><b>Để ý:</b> vòng B không bao giờ “vượt” mục tiêu nếu không có độ trễ. Điều chỉnh càng gấp (T nhỏ) thì về đích càng nhanh. Các vạch <b>T, 2T, 3T</b> đánh dấu lúc đã đi được 63%, 86% và 95% quãng đường.</div>
+    </div>
+  </div>
+</div></section>
+
+<section class="ch" id="tre"><div class="wrap">
+  <div class="chhead"><div class="chnum">Chương 4 · Delays &amp; oscillation</div><h2>Độ trễ: thủ phạm của dao động</h2></div>
+  <div class="prose"><p>Thêm một độ trễ vào vòng B (hàng đặt hôm nay nhiều tuần sau mới về) là hệ thống bắt đầu <b>vượt mục tiêu rồi dao động</b>. Người quản lý thấy kho thiếu nên đặt thêm, nhưng hàng chưa về nên lại đặt thêm nữa. Khi tất cả cùng về một lúc thì kho thừa, và họ lại cắt đơn hàng. Đây là phát hiện nổi tiếng trong <i>Industrial Dynamics</i> (1961). Trò chơi “Beer Game” ở MIT được thiết kế để người chơi tự trải nghiệm điều này.</p></div>
+  <div class="lab">
+    <div class="card labviz">
+      <canvas id="dScene" style="height:190px;border-radius:12px;background:var(--bg2)"></canvas>
+      <div class="ctrls">
+        <div class="ctrl"><label for="dDel">Thời gian giao hàng (tuần)</label><input type="range" id="dDel" min="0" max="12" step="0.5" value="6"><output id="dDelO"></output></div>
+        <div class="ctrl"><label for="dT">Thời gian điều chỉnh (tuần)</label><input type="range" id="dT" min="1" max="12" step="0.5" value="3"><output id="dTO"></output></div>
+      </div>
+      <label class="chk"><input type="checkbox" id="dSL"> Tính cả <b>hàng đang trên đường</b> khi đặt hàng (chính sách tốt hơn)</label>
+      <div class="btns"><button class="btn pri" id="dRun">Chạy: nhu cầu tăng 50% ở tuần 5</button></div>
+    </div>
+    <div class="card labviz">
+      <div class="chartbox"><canvas id="dCv"></canvas></div>
+      <div class="legend" id="dLeg"></div>
+      <div class="try"><b>Thử nghiệm:</b><ul><li>Đặt thời gian giao hàng = 0: chỉ còn vòng B thuần, kho tiến về mục tiêu mượt mà.</li><li>Tăng thời gian giao hàng hoặc giảm thời gian điều chỉnh (phản ứng gắt hơn): dao động càng lớn.</li><li>Bật <b>tính cả hàng đang trên đường</b>: dao động gần như biến mất. Ở đây đòn bẩy nằm ở <i>thông tin</i> mà quyết định dựa vào, không nằm ở cố gắng nhiều hơn.</li></ul></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="ch" id="gioi-han"><div class="wrap">
+  <div class="chhead"><div class="chnum">Chương 5 · Growth meets limits</div><h2>Khi vòng R đụng giới hạn: chữ S, dao động, hay sụp đổ?</h2></div>
+  <div class="prose"><p>Không có gì tăng trưởng mãi. Khi vòng R chạm tới một giới hạn (sức chứa của môi trường), một vòng B sẽ dần <b>chiếm ưu thế</b>. Forrester gọi đây là <b>sự chuyển dịch ưu thế giữa các vòng</b> (shifting loop dominance). Cùng một cấu trúc nhưng chỉ cần thêm hai yếu tố là kết cục khác hẳn:</p>
+  <p>① <b>độ trễ</b> trong việc nhận ra giới hạn, và ② giới hạn có <b>bị bào mòn</b> khi bị vượt qua hay không. Đây chính là bộ khung của World2 và World3.</p></div>
+  <div class="lab">
+    <div class="card labviz">
+      <canvas id="sScene" style="height:220px;border-radius:12px"></canvas>
+      <div class="btns" id="sPresets"><button class="btn" data-p="s">① Chữ S</button><button class="btn" data-p="o">② Dao động</button><button class="btn" data-p="c">③ Vượt ngưỡng &amp; sụp đổ</button></div>
+      <div class="ctrls">
+        <div class="ctrl"><label for="sR">Tốc độ sinh sôi (%/năm)</label><input type="range" id="sR" min="5" max="60" step="1" value="30"><output id="sRO"></output></div>
+        <div class="ctrl"><label for="sDel">Trễ nhận biết (năm)</label><input type="range" id="sDel" min="0" max="8" step="0.25" value="0"><output id="sDelO"></output></div>
+        <div class="ctrl"><label for="sEro">Mức bào mòn đồng cỏ</label><input type="range" id="sEro" min="0" max="1" step="0.05" value="0"><output id="sEroO"></output></div>
+      </div>
+    </div>
+    <div class="card labviz">
+      <div class="chartbox"><canvas id="sCv"></canvas></div>
+      <div class="legend" id="sLeg"></div>
+      <div class="story" id="sStory"></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="ch" id="world2"><div class="wrap">
+  <div class="chhead"><div class="chnum">Chương 6 · World Dynamics (1971)</div><h2>World2: cả thế giới trong 5 cái kho</h2></div>
+  <div class="prose">
+    <p>World2 coi cả thế giới là <b>một hệ thống duy nhất</b>, với 5 biến mức: <b style="color:var(--c-pop)">Dân số</b>, <b style="color:var(--c-res)">Tài nguyên thiên nhiên</b> (không tái tạo), <b style="color:var(--c-cap)">Vốn đầu tư</b>, <b style="color:var(--c-ciaf)">Tỉ lệ vốn cho nông nghiệp</b> và <b style="color:var(--c-pol)">Ô nhiễm</b>. Mỗi dòng (sinh, tử, khai thác, đầu tư, thải…) là một giá trị “chuẩn” nhân với các <b>hệ số nhân</b> (multipliers). Mỗi hệ số là một <i>hàm bảng</i> phi tuyến, ví dụ “khi lương thực giảm một nửa thì tử suất tăng gấp đôi”.</p>
+    <p>Bốn biến trung gian gánh phần lớn các vòng phản hồi: <b>mức sống vật chất</b> (MSL), <b>tỉ lệ lương thực</b> (FR), <b>mật độ dân số</b> (CR) và <b>ô nhiễm tương đối</b> (POLR). Ngoài ra Forrester đưa vào thước đo <b style="color:var(--c-ql)">chất lượng sống</b> (QL).</p>
+  </div>
+  <div class="studio" id="w2">
+    <div class="bar"><div class="scen" id="w2Scen"></div></div>
+    <div class="scdesc" id="w2Desc"></div>
+    <div class="player" id="w2Player"></div>
+    <div class="sgrid">
+      <div class="left">
+        <div class="diag"><svg id="w2Svg" viewBox="0 0 1000 620" role="img" aria-label="Sơ đồ kho–dòng của World2"></svg></div><div class="diaghint"><span class="swipe">← vuốt ngang để xem toàn bộ sơ đồ →</span>▭ kho (biến mức) · ⧖ van (biến dòng) · ◯ biến phụ · ☁ nguồn/đích ngoài hệ thống · mũi tên mảnh = luồng thông tin (+ cùng chiều, − ngược chiều). Rê chuột vào một nút để làm nổi các liên kết, bấm vào để xem phương trình.</div>
+        <div class="pane"><h4>Các vòng phản hồi chính (bấm để làm nổi bật)</h4><div class="loops" id="w2Loops"></div><div class="loopinfo" id="w2LoopInfo">Bấm vào một kho, một van (dòng) hoặc một vòng tròn (biến phụ) trên sơ đồ để xem phương trình và hàm bảng của nó.</div></div>
+      </div>
+      <div class="right">
+        <div class="pane"><div class="tabs" id="w2Tabs"></div><div class="chartbox"><canvas id="w2Cv" style="height:300px"></canvas></div><div class="legend" id="w2Leg"></div></div>
+        <div class="pane"><h4>Điều gì đang diễn ra?</h4><div class="story" id="w2Story"></div></div>
+        <div class="pane"><h4>Ai đang đẩy tỉ suất sinh &amp; tử? (hệ số nhân, 1 = trung tính)</h4><div class="mults" id="w2Mult"></div></div>
+      </div>
+    </div>
+    <details class="adv" id="w2Adv"><summary>⚙️ Tự đặt chính sách (từ năm áp dụng trở đi)</summary><div class="ctrls" id="w2Ctrls"></div></details>
+  </div>
+</div></section>
+
+<section class="ch" id="world3"><div class="wrap">
+  <div class="chhead"><div class="chnum">Chương 7 · The Limits to Growth (1972)</div><h2>World3: năm khu vực và câu hỏi về giới hạn</h2></div>
+  <div class="prose">
+    <p>Nhóm Meadows mở rộng World2 thành <b>World3</b>, với hơn một trăm phương trình chia thành 5 khu vực. <b>Dân số</b> được chia 4 nhóm tuổi, tuổi thọ phụ thuộc lương thực, y tế, ô nhiễm và đô thị hóa. <b>Vốn</b> gồm vốn công nghiệp, vốn dịch vụ và việc làm. <b>Nông nghiệp</b> gồm đất canh tác, độ phì và đầu vào nông nghiệp. Hai khu vực còn lại là <b>tài nguyên không tái tạo</b> và <b>ô nhiễm bền vững</b>, loại ô nhiễm có độ trễ rất dài trước khi gây hại.</p>
+    <p>Cơ chế cốt lõi của kịch bản “chuẩn” là: khi tài nguyên cạn, <b>ngày càng nhiều vốn phải dồn vào việc khai thác tài nguyên</b> (biến FCAOR). Phần vốn còn lại để tái đầu tư ít đi, vốn công nghiệp không còn bù được khấu hao, và sản lượng công nghiệp sụp đổ. Dịch vụ, y tế và lương thực vốn dựa vào sản lượng đó nên sụp theo.</p>
+  </div>
+  <div class="studio" id="w3">
+    <div class="bar"><div class="scen" id="w3Scen"></div></div>
+    <div class="scdesc" id="w3Desc"></div>
+    <div class="player" id="w3Player"></div>
+    <div class="sgrid">
+      <div class="left">
+        <div class="diag"><svg id="w3Svg" viewBox="0 0 1000 640" role="img" aria-label="Sơ đồ 5 khu vực của World3"></svg></div><div class="diaghint"><span class="swipe">← vuốt ngang để xem toàn bộ sơ đồ →</span>Mỗi khung là một khu vực; chấm chạy trên mũi tên càng to và nhanh thì dòng càng lớn. Bấm vào một khu vực để xem phương trình chính và các hàm bảng.</div>
+      </div>
+      <div class="right">
+        <div class="pane"><div class="tabs" id="w3Tabs"></div><div class="chartbox"><canvas id="w3Cv" style="height:320px"></canvas></div><div class="legend" id="w3Leg"></div>
+          <label class="chk" style="margin-top:6px"><input type="checkbox" id="w3Real" checked> Chấm dân số thực tế (Liên Hợp Quốc, 1900–2025)</label></div>
+        <div class="pane"><h4>Điều gì đang diễn ra?</h4><div class="story" id="w3Story"></div></div>
+      </div>
+    </div>
+    <details class="adv" id="w3Adv"><summary>⚙️ Tự đặt chính sách và giả định</summary><div class="ctrls" id="w3Ctrls"></div></details>
+  </div>
+  <div class="prose" style="margin-top:26px">
+    <h3>World2 và World3 khác nhau thế nào?</h3>
+  </div>
+  <div class="tblwrap"><table class="vs">
+    <tr><th></th><th>World2 (Forrester, 1971)</th><th>World3 (Meadows và cộng sự, 1972/74)</th></tr>
+    <tr><td><b>Quy mô</b></td><td>5 biến mức, vài chục phương trình</td><td>12 biến mức chính cùng nhiều biến trễ, hơn 100 phương trình</td></tr>
+    <tr><td><b>Dân số</b></td><td>Một kho duy nhất</td><td>4 nhóm tuổi; sinh phụ thuộc quy mô gia đình mong muốn và kế hoạch hóa</td></tr>
+    <tr><td><b>Vốn</b></td><td>Một kho vốn, tách phần cho nông nghiệp</td><td>Vốn công nghiệp, vốn dịch vụ, vốn nông nghiệp; phân bổ sản lượng công nghiệp</td></tr>
+    <tr><td><b>Tài nguyên</b></td><td>Cạn dần thì hiệu quả vốn giảm (NREM)</td><td>Cạn dần thì phần vốn phải dành cho khai thác tăng (FCAOR)</td></tr>
+    <tr><td><b>Ô nhiễm</b></td><td>Thời gian hấp thụ tăng theo mức ô nhiễm</td><td>Thêm độ trễ vận chuyển 20 năm, làm hại tuổi thọ và độ phì đất</td></tr>
+    <tr><td><b>Kết luận chung</b></td><td colspan="2">Tăng trưởng hàm mũ trong một thế giới hữu hạn, cộng với phản hồi trễ, dẫn đến vượt ngưỡng rồi suy giảm. Chỉ dùng công nghệ thì chỉ <i>đổi chỗ</i> giới hạn. Tránh được sụp đổ cần kết hợp ổn định dân số và vật chất <i>sớm</i>, cùng với công nghệ.</td></tr>
+  </table></div>
+</div></section>
+
+<section class="ch" id="nguyen-ly"><div class="wrap">
+  <div class="chhead"><div class="chnum">Chương 8 · Principles</div><h2>Những nguyên lý hệ thống rút ra</h2></div>
+  <div class="grid3 princ">
+    <div class="card"><h3>Cấu trúc sinh ra hành vi</h3><p>Hệ thống dao động, tăng vọt hay sụp đổ là do cấu trúc kho, dòng và vòng phản hồi bên trong nó, không phải chủ yếu do “cú sốc” từ bên ngoài. Muốn đổi hành vi thì phải đổi cấu trúc.</p><a class="go" href="#world2" data-w2="std">Xem các vòng trong World2 →</a></div>
+    <div class="card"><h3>Kho tạo ra quán tính</h3><p>Kho chỉ thay đổi qua dòng, nên luôn có độ trễ giữa hành động và kết quả. Dân số trẻ vẫn tiếp tục tăng hàng chục năm sau khi mức sinh đã giảm; ô nhiễm vẫn tăng sau khi lượng thải đã giảm.</p><a class="go" href="#kho-dong">Thử với bồn nước →</a></div>
+    <div class="card"><h3>Tăng trưởng hàm mũ đánh lừa trực giác</h3><p>Ở câu đố hoa súng, ngày thứ 29 ao vẫn còn trống một nửa, vậy mà chỉ một ngày sau đã kín. Giới hạn hiện ra rất muộn và ập đến rất nhanh.</p><a class="go" href="#vong-r">Câu đố hoa súng →</a></div>
+    <div class="card"><h3>Trễ cộng vòng B thành dao động</h3><p>Phản ứng gắt với thông tin trễ thì vượt mục tiêu. Cách chữa thường là phản ứng <i>chậm và bình tĩnh hơn</i>, hoặc bổ sung thông tin còn thiếu (hàng đang trên đường).</p><a class="go" href="#tre">Thử với chuỗi cung ứng →</a></div>
+    <div class="card"><h3>Vượt ngưỡng rồi sụp đổ</h3><p>Ba điều kiện cùng lúc: tăng trưởng nhanh, giới hạn, và phản hồi trễ dẫn đến vượt ngưỡng. Nếu giới hạn còn bị bào mòn khi bị vượt (đất, rừng, cá, tầng ô-zôn) thì kết quả là sụp đổ.</p><a class="go" href="#gioi-han" data-lim="c">Xem đàn cừu sụp đổ →</a></div>
+    <div class="card"><h3>Hệ thống kháng chính sách</h3><p>Hệ thống không nhạy với hầu hết các thay đổi tham số. Trong World2, tăng lương thực 25% chỉ đổi lấy thêm dân số và mật độ, còn chất lượng sống <i>giảm</i>. Gỡ bỏ một giới hạn thì giới hạn kế tiếp lộ ra.</p><a class="go" href="#world2" data-w2="food">Chạy “Lương thực +25%” →</a></div>
+    <div class="card"><h3>Điểm đòn bẩy thường bị đẩy sai hướng</h3><p>Forrester nhận xét rằng con người thường tìm đúng điểm đòn bẩy nhưng lại đẩy nó sai chiều. Donella Meadows (1999) xếp các điểm đòn bẩy, mạnh nhất là <i>mục tiêu</i> và <i>tư duy</i> của hệ thống.</p><a class="go" href="#world3" data-w3="bc">Xem vì sao “kế hoạch hóa” chưa đủ →</a></div>
+    <div class="card"><h3>Ngắn hạn ngược chiều dài hạn</h3><p>Chính sách tốt cho dài hạn thường làm mọi thứ <i>tệ hơn trước khi tốt lên</i>. Ngược lại, giải pháp dễ chịu trước mắt hay chuyển gánh nặng sang tương lai.</p><a class="go" href="#world2" data-w2="eq">Chạy “Cân bằng toàn cầu” →</a></div>
+    <div class="card"><h3>Hành động sớm rẻ hơn rất nhiều</h3><p>Trong cả World2 lẫn World3, cùng một gói chính sách áp dụng muộn 25–30 năm cho kết quả kém hẳn. Độ trễ của hệ thống khiến việc chờ đợi trở nên đắt đỏ.</p><a class="go" href="#world3" data-w3="late">So sánh 1975 và 2000 →</a></div>
+  </div>
+  <div class="prose" style="margin-top:28px">
+    <h3>Mô hình không phải lời tiên tri</h3>
+    <p>Forrester và nhóm Meadows nhấn mạnh rằng các đường cong không dự báo con số chính xác cho năm nào. Chúng cho thấy <b>xu hướng hành vi</b> mà cấu trúc hệ thống tạo ra. Giới kinh tế học từng phê bình rất mạnh (ví dụ William Nordhaus, 1973) rằng mô hình bỏ qua giá cả, thị trường và khả năng thay thế bằng công nghệ. Bốn mươi năm sau, các so sánh với số liệu thực (Graham Turner 2008, 2014; Gaya Herrington 2021) lại cho thấy thế giới bám khá sát các kịch bản “tiếp tục như cũ”. Dù đồng ý hay không, bài học sâu nhất vẫn là <b>cách tư duy</b>: nhìn ra kho, dòng, vòng phản hồi và độ trễ trong những vấn đề quen thuộc.</p>
+    <h3>Đọc thêm</h3>
+    <p class="note">Jay W. Forrester: <i>Industrial Dynamics</i> (1961), <i>Principles of Systems</i> (1968), <i>Urban Dynamics</i> (1969), <i>World Dynamics</i> (1971), “Counterintuitive Behavior of Social Systems” (1971).<br>
+    D. H. Meadows, D. L. Meadows, J. Randers, W. W. Behrens III: <i>The Limits to Growth</i> (1972); Meadows và cộng sự: <i>Dynamics of Growth in a Finite World</i> (1974); <i>Limits to Growth: The 30-Year Update</i> (2004).<br>
+    Donella Meadows: <i>Thinking in Systems: A Primer</i> (2008), “Leverage Points: Places to Intervene in a System” (1999). John Sterman: <i>Business Dynamics</i> (2000).</p>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <p><b>Về mô phỏng.</b> World2 dùng đúng phương trình và hàm bảng trong <i>World Dynamics</i> (Forrester, 1971). World3 dùng phương trình của bản 1972/1974 (<i>Dynamics of Growth in a Finite World</i>), không phải bản World3-03. Cả hai được viết lại bằng JavaScript dựa trên hai bản mã nguồn mở <i>pyworld2</i> và <i>pyworld3</i> của Charles Vanwynsberghe, và đã được đối chiếu với các biểu đồ chuẩn của những bản đó. Tích phân Euler, DT = 0,2 năm (World2) và 0,5 năm (World3). Các mô phỏng ở chương 1–5 là mô hình minh họa tự xây dựng.</p>
+  <p>Trang tĩnh, chạy hoàn toàn trong trình duyệt, không thu thập dữ liệu.</p>
+</div></footer>
+
+<div class="insp" id="insp" role="dialog" aria-label="Chi tiết biến"><button class="iconbtn x" id="inspX" aria-label="Đóng">✕</button><div id="inspBody"></div></div>
+<script>
+/* ===== World2 & World3 — JS port of Forrester's World2 (World Dynamics, 1971)
+   and Meadows et al. World3 (Dynamics of Growth in a Finite World, 1974).
+   Equations & tables follow the open-source pyworld2 / pyworld3 implementations. */
+function TBL(xs, ys) {
+  const n = xs.length;
+  return function (x) {
+    if (!(x > xs[0])) return ys[0];
+    if (x >= xs[n - 1]) return ys[n - 1];
+    let i = 1; while (xs[i] < x) i++;
+    const t = (x - xs[i - 1]) / (xs[i] - xs[i - 1]);
+    return ys[i - 1] + t * (ys[i] - ys[i - 1]);
+  };
+}
+function TBLR(x0, x1, ys) { // evenly spaced
+  const xs = ys.map((_, i) => x0 + (x1 - x0) * i / (ys.length - 1)); const f = TBL(xs, ys); f.xs = xs; f.ys = ys; return f;
+}
+const clip = (after, before, t, ts) => (t <= ts ? before : after);
+
+/* ------------------------------------------------------------------ World2 */
+const W2T = {
+  BRMM: TBLR(0, 5, [1.2, 1, .85, .75, .7, .7]),
+  NREM: TBLR(0, 1, [0, .15, .5, .85, 1]),
+  DRMM: TBLR(0, 5, [3, 1.8, 1, .8, .7, .6, .53, .5, .5, .5, .5]),
+  DRPM: TBLR(0, 60, [.92, 1.3, 2, 3.2, 4.8, 6.8, 9.2]),
+  DRFM: TBLR(0, 2, [30, 3, 2, 1.4, 1, .7, .6, .5, .5]),
+  DRCM: TBLR(0, 5, [.9, 1, 1.2, 1.5, 1.9, 3]),
+  BRCM: TBLR(0, 5, [1.05, 1, .9, .7, .6, .55]),
+  BRFM: TBLR(0, 4, [0, 1, 1.6, 1.9, 2]),
+  BRPM: TBLR(0, 60, [1.02, .9, .7, .4, .25, .15, .1]),
+  FCM: TBLR(0, 5, [2.4, 1, .6, .4, .3, .2]),
+  FPCI: TBLR(0, 6, [.5, 1, 1.4, 1.7, 1.9, 2.05, 2.2]),
+  CIM: TBLR(0, 5, [.1, 1, 1.8, 2.4, 2.8, 3]),
+  FPM: TBLR(0, 60, [1.02, .9, .65, .35, .2, .1, .05]),
+  POLCM: TBLR(0, 5, [.05, 1, 3, 5.4, 7.4, 8]),
+  POLAT: TBLR(0, 60, [.6, 2.5, 5, 8, 11.5, 15.5, 20]),
+  CFIFR: TBLR(0, 2, [1, .6, .3, .15, .1]),
+  QLM: TBLR(0, 5, [.2, 1, 1.7, 2.3, 2.7, 2.9]),
+  QLC: TBLR(0, 5, [2, 1.3, 1, .75, .55, .45, .38, .3, .25, .22, .2]),
+  QLF: TBLR(0, 4, [0, 1, 1.8, 2.4, 2.7]),
+  QLP: TBLR(0, 60, [1.04, .85, .6, .3, .15, .05, .02]),
+  NRMM: TBLR(0, 10, [0, 1, 1.8, 2.4, 2.9, 3.3, 3.6, 3.8, 3.9, 3.95, 4]),
+  CIQR: TBLR(0, 2, [.7, .8, 1, 1.5, 2]),
+};
+const W2DEF = { BRN: .04, BRN1: .04, NRUN: 1, NRUN1: 1, DRN: .028, DRN1: .028, FC: 1, FC1: 1, CIGN: .05, CIGN1: .05, CIDN: .025, CIDN1: .025, POLN: 1, POLN1: 1, SWT: 1970, NRI: 900e9, CRmul: 1 };
+
+function runWorld2(opt) {
+  const o = Object.assign({}, W2DEF, opt || {});
+  const T = W2T, dt = 0.2, y0 = 1900, y1 = 2100, n = Math.round((y1 - y0) / dt) + 1;
+  const LA = 135e6, PDN = 26.5, CIAFN = .3, CIAFT = 15, POLS = 3.6e9, NRI = o.NRI;
+  const sw = (a, b, t) => (t <= o.SWT ? a : b);
+  const V = {}; const names = ['t', 'P', 'NR', 'CI', 'POL', 'CIAF', 'BR', 'DR', 'NRUR', 'CIG', 'CID', 'POLG', 'POLA', 'MSL', 'FR', 'CR', 'POLR', 'NRFR', 'CIR', 'CIRA', 'ECIR', 'QL',
+    'BRMM', 'BRFM', 'BRCM', 'BRPM', 'DRMM', 'DRFM', 'DRCM', 'DRPM', 'FPCI', 'FCM', 'FPM', 'NREM', 'NRMM', 'CIM', 'POLCM', 'POLAT', 'QLM', 'QLC', 'QLF', 'QLP', 'CFIFR', 'CIQR'];
+  names.forEach(k => V[k] = new Float64Array(n));
+  let P = 1.65e9, NR = NRI, CI = .4e9, POL = .2e9, CIAF = .2;
+  for (let k = 0; k < n; k++) {
+    const t = y0 + k * dt;
+    // auxiliaries from current levels
+    const CR = P / (LA * PDN) * o.CRmul, CIR = CI / P, NRFR = NR / NRI, POLR = POL / POLS;
+    const NREM = T.NREM(NRFR);
+    const ECIR = CIR * (1 - CIAF) * NREM / (1 - CIAFN), MSL = ECIR / 1;
+    const CIRA = CIR * CIAF / CIAFN;
+    const FPCI = T.FPCI(CIRA), FCM = T.FCM(CR), FPM = T.FPM(POLR);
+    const FR = FPCI * FCM * FPM * sw(o.FC, o.FC1, t) / 1;
+    const BRMM = T.BRMM(MSL), BRFM = T.BRFM(FR), BRCM = T.BRCM(CR), BRPM = T.BRPM(POLR);
+    const DRMM = T.DRMM(MSL), DRFM = T.DRFM(FR), DRCM = T.DRCM(CR), DRPM = T.DRPM(POLR);
+    const BR = P * sw(o.BRN, o.BRN1, t) * BRFM * BRMM * BRCM * BRPM;
+    const DR = P * sw(o.DRN, o.DRN1, t) * DRMM * DRPM * DRFM * DRCM;
+    const NRMM = T.NRMM(MSL), NRUR = P * sw(o.NRUN, o.NRUN1, t) * NRMM;
+    const CIM = T.CIM(MSL), CIG = P * CIM * sw(o.CIGN, o.CIGN1, t), CID = CI * sw(o.CIDN, o.CIDN1, t);
+    const POLCM = T.POLCM(CIR), POLG = P * sw(o.POLN, o.POLN1, t) * POLCM;
+    const POLAT = T.POLAT(POLR), POLA = POL / POLAT;
+    const QLM = T.QLM(MSL), QLC = T.QLC(CR), QLF = T.QLF(FR), QLP = T.QLP(POLR), QL = QLM * QLC * QLF * QLP;
+    const CFIFR = T.CFIFR(FR), CIQR = T.CIQR(QLM / QLF);
+    const rec = { t, P, NR, CI, POL, CIAF, BR, DR, NRUR, CIG, CID, POLG, POLA, MSL, FR, CR, POLR, NRFR, CIR, CIRA, ECIR, QL, BRMM, BRFM, BRCM, BRPM, DRMM, DRFM, DRCM, DRPM, FPCI, FCM, FPM, NREM, NRMM, CIM, POLCM, POLAT, QLM, QLC, QLF, QLP, CFIFR, CIQR };
+    for (const kk of names) V[kk][k] = rec[kk];
+    // Euler integration
+    P += dt * (BR - DR);
+    NR = Math.max(0, NR - dt * NRUR);
+    CI += dt * (CIG - CID);
+    POL += dt * (POLG - POLA);
+    CIAF += dt / CIAFT * (CFIFR * CIQR - CIAF);
+  }
+  V.n = n; V.dt = dt; V.y0 = y0;
+  return V;
+}
+
+/* ------------------------------------------------------------------ World3 */
+const W3T = {
+  M1: TBL([20, 30, 40, 50, 60, 70, 80], [.0567, .0366, .0243, .0155, .0082, .0023, .001]),
+  M2: TBL([20, 30, 40, 50, 60, 70, 80], [.0266, .0171, .011, .0065, .004, .0016, .0008]),
+  M3: TBL([20, 30, 40, 50, 60, 70, 80], [.0562, .0373, .0252, .0171, .0118, .0083, .006]),
+  M4: TBL([20, 30, 40, 50, 60, 70, 80], [.13, .11, .09, .07, .06, .05, .04]),
+  LMF: TBLR(0, 5, [0, 1, 1.2, 1.3, 1.35, 1.4]),
+  HSAPC: TBLR(0, 2000, [0, 20, 50, 95, 140, 175, 200, 220, 230]),
+  LMHS1: TBLR(0, 100, [1, 1.1, 1.4, 1.6, 1.7, 1.8]),
+  LMHS2: TBLR(0, 100, [1, 1.4, 1.6, 1.8, 1.95, 2]),
+  FPU: TBLR(0, 16e9, [0, .2, .4, .5, .58, .65, .72, .78, .8]),
+  CMI: TBLR(0, 1600, [.5, .05, -.1, -.08, -.02, .05, .1, .15, .2]),
+  LMP: TBLR(0, 100, [1, .99, .97, .95, .9, .85, .75, .65, .55, .4, .2]),
+  FM: TBLR(0, 80, [0, .2, .4, .6, .8, .9, 1, 1.05, 1.1]),
+  CMPLE: TBLR(0, 80, [3, 2.1, 1.6, 1.4, 1.3, 1.2, 1.1, 1.05, 1]),
+  SFSN: TBLR(0, 800, [1.25, 1, .9, .8, .75]),
+  FRSN: TBLR(-.2, .2, [.5, .6, .7, .85, 1]),
+  FCE: TBLR(0, 3, [.75, .85, .9, .95, .98, .99, 1]),
+  FSAFC: TBLR(0, 10, [0, .005, .015, .025, .03, .035]),
+  FIOACV: TBLR(0, 2, [.3, .32, .34, .36, .38, .43, .73, .77, .81, .82, .83]),
+  ISOPC: TBLR(0, 1600, [40, 300, 640, 1000, 1220, 1450, 1650, 1800, 2000]),
+  FIOAS: TBLR(0, 2, [.3, .2, .1, .05, 0]),
+  JPICU: TBLR(50, 800, [.00037, .00018, .00012, .00009, .00007, .00006]),
+  JPSCU: TBLR(50, 800, [.0011, .0006, .00035, .0002, .00015, .00015]),
+  JPH: TBLR(2, 30, [2, .5, .4, .3, .27, .24, .2, .2]),
+  CUF: TBLR(1, 11, [1, .9, .7, .3, .1, .1]),
+  IFPC: TBLR(0, 1600, [230, 480, 690, 850, 970, 1070, 1150, 1210, 1250]),
+  FIOAA: TBLR(0, 2.5, [.4, .2, .1, .025, 0, 0]),
+  DCPH: TBLR(0, 1, [100000, 7400, 5200, 3500, 2400, 1500, 750, 300, 150, 75, 50]),
+  LYMC: TBLR(0, 1000, [1, 3, 3.8, 4.4, 4.9, 5.4, 5.7, 6, 6.3, 6.6, 6.9, 7.2, 7.4, 7.6, 7.8, 8, 8.2, 8.4, 8.6, 8.8, 9, 9.2, 9.4, 9.6, 9.8, 10]),
+  LYMAP: TBLR(0, 30, [1, 1, .7, .4]),
+  FIALD: TBLR(0, 2, [0, .05, .15, .3, .5, .7, .85, .95, 1]),
+  MLYMC: TBLR(0, 600, [.075, .03, .015, .011, .009, .008, .007, .006, .005, .005, .005, .005, .005, .005, .005, .005]),
+  LLMY: TBLR(0, 9, [1.2, 1, .63, .36, .16, .055, .04, .025, .015, .01]),
+  UILPC: TBLR(0, 1600, [.005, .008, .015, .025, .04, .055, .07, .08, .09]),
+  LFDR: TBLR(0, 30, [0, .1, .3, .5]),
+  LFRT: TBLR(0, .1, [20, 13, 8, 4, 2, 2]),
+  FALM: TBLR(0, 4, [0, .04, .07, .09, .1]),
+  PCRUM: TBLR(0, 1600, [0, .85, 2.6, 4.4, 5.4, 6.2, 6.8, 7, 7]),
+  FCAOR: TBLR(0, 1, [1, .9, .7, .5, .2, .1, .05, .05, .05, .05, .05]),
+  AHLM: TBLR(1, 1001, [1, 11, 21, 31, 41]),
+};
+const W3DEF = {
+  pyear: 1975, iphst: 1940,
+  p1i: 65e7, p2i: 70e7, p3i: 19e7, p4i: 6e7, dcfsn: 4, fcest: 4000, hsid: 20, ieat: 3, len: 28, lpd: 20, mtfn: 12, pet: 4000, rlt: 30, sad: 20, zpgt: 4000,
+  ici: 2.1e11, sci: 1.44e11, iet: 4000, iopcd: 400, lfpf: .75, lufdt: 2, icor1: 3, icor2: 3, scor1: 1, scor2: 1, alic1: 14, alic2: 14, alsc1: 20, alsc2: 20, fioac1: .43, fioac2: .43,
+  ali: 9e8, pali: 2.3e9, lfh: .7, palt: 3.2e9, pl: .1, alai1: 2, alai2: 2, io70: 7.9e11, lyf1: 1, lyf2: 1, sd: .07, uili: 8.2e6, alln: 6000, uildt: 10, lferti: 600, ilf: 600, fspd: 2, sfpc: 230,
+  ppoli: 2.5e7, ppol70: 1.36e8, ahl70: 1.5, amti: 1, imti: 10, imef: .1, fipm: .001, frpm: .02, ppgf1: 1, ppgf2: 1, pptd1: 20, pptd2: 20,
+  nri: 1e12, nruf1: 1, nruf2: 1,
+};
+const W3VARS = ('p1 p2 p3 p4 pop d1 d2 d3 d4 mat1 mat2 mat3 d cdr fpu le lmc lmf lmhs lmp m1 m2 m3 m4 ehspc hsapc b cbr cmi cmple tf dtf dcfs fce fie fm frsn mtf nfc ple sfsn aiopc diopc fcapc fcfpc fsafc ' +
+  'ic icdr icir icor io iopc fioac fioai sc scdr scir scor so sopc isopc fioas alic alsc jpicu pjis jpscu pjss jph pjas j lf luf lufd cuf ' +
+  'al pal ldr ler lrui uil lfert lfr lfd lfc f fpc ifpc tai fioaa dcph cai ai alai aiph lymc ly lyf lymap fiald mpld mpai mlymc all llmy uilpc uilr lfdr lfrt falm fr pfr ' +
+  'ppol ppolx ppgio ppgao ppgf ppgr pptd ppapr ahlm ahl ppasr nr nrfr fcaor nruf pcrum nrur t').split(' ');
+
+function runWorld3(opt) {
+  const c = Object.assign({}, W3DEF, opt || {});
+  const T = W3T, dt = 0.5, y0 = 1900, y1 = 2100, n = Math.round((y1 - y0) / dt) + 1;
+  const v = {}; W3VARS.forEach(k => v[k] = new Float64Array(n).fill(NaN));
+  const time = v.t; for (let k = 0; k < n; k++) time[k] = y0 + k * dt;
+  // delays: smooth (1st order), dlinf3 (3rd order info delay), delay3 (3rd order material delay)
+  const smooth = (src) => { const out = new Float64Array(n); return (k, del) => { out[k] = k === 0 ? src[0] : out[k - 1] + (src[k - 1] - out[k - 1]) * dt / del; return out[k]; }; };
+  const dlinf3 = (src) => { const s = [new Float64Array(n), new Float64Array(n), new Float64Array(n)]; return (k, del) => {
+    if (k === 0) { s[0][0] = s[1][0] = s[2][0] = src[0]; } else { const a = s[0][k - 1], b = s[1][k - 1], cc = s[2][k - 1], r = dt * 3 / del; s[0][k] = a + (src[k - 1] - a) * r; s[1][k] = b + (a - b) * r; s[2][k] = cc + (b - cc) * r; }
+    return s[2][k]; }; };
+  const S = {
+    hsapc: smooth(v.hsapc), iopcA: smooth(v.iopc), luf: smooth(v.luf), cai: smooth(v.cai), fr: smooth(v.fr),
+    le: dlinf3(v.le), iopcD: dlinf3(v.iopc), fcapc: dlinf3(v.fcapc), ppgr: dlinf3(v.ppgr) /* delay3 init at equilibrium == dlinf3 form */,
+  };
+  const U = {
+    // ---- population
+    p1: (k, j) => v.p1[k] = v.p1[j] + dt * (v.b[j] - v.d1[j] - v.mat1[j]),
+    p2: (k, j) => v.p2[k] = v.p2[j] + dt * (v.mat1[j] - v.d2[j] - v.mat2[j]),
+    p3: (k, j) => v.p3[k] = v.p3[j] + dt * (v.mat2[j] - v.d3[j] - v.mat3[j]),
+    p4: (k, j) => v.p4[k] = v.p4[j] + dt * (v.mat3[j] - v.d4[j]),
+    pop: k => v.pop[k] = v.p1[k] + v.p2[k] + v.p3[k] + v.p4[k],
+    fpu: k => v.fpu[k] = T.FPU(v.pop[k]),
+    lmp: k => v.lmp[k] = T.LMP(v.ppolx[k]),
+    lmf: k => v.lmf[k] = T.LMF(v.fpc[k] / c.sfpc),
+    cmi: k => v.cmi[k] = T.CMI(v.iopc[k]),
+    hsapc: k => v.hsapc[k] = T.HSAPC(v.sopc[k]),
+    ehspc: k => v.ehspc[k] = S.hsapc(k, c.hsid),
+    lmhs: k => v.lmhs[k] = clip(T.LMHS2(v.ehspc[k]), T.LMHS1(v.ehspc[k]), time[k], c.iphst),
+    lmc: k => v.lmc[k] = 1 - v.cmi[k] * v.fpu[k],
+    le: k => v.le[k] = c.len * v.lmf[k] * v.lmhs[k] * v.lmp[k] * v.lmc[k],
+    m1: k => v.m1[k] = T.M1(v.le[k]), m2: k => v.m2[k] = T.M2(v.le[k]), m3: k => v.m3[k] = T.M3(v.le[k]), m4: k => v.m4[k] = T.M4(v.le[k]),
+    mat1: k => v.mat1[k] = v.p1[k] * (1 - v.m1[k]) / 15,
+    mat2: k => v.mat2[k] = v.p2[k] * (1 - v.m2[k]) / 30,
+    mat3: k => v.mat3[k] = v.p3[k] * (1 - v.m3[k]) / 20,
+    d1: k => v.d1[k] = v.p1[k] * v.m1[k], d2: k => v.d2[k] = v.p2[k] * v.m2[k], d3: k => v.d3[k] = v.p3[k] * v.m3[k], d4: k => v.d4[k] = v.p4[k] * v.m4[k],
+    d: (k, j) => v.d[k] = v.d1[j] + v.d2[j] + v.d3[j] + v.d4[j],
+    cdr: k => v.cdr[k] = 1000 * v.d[k] / v.pop[k],
+    aiopc: k => v.aiopc[k] = S.iopcA(k, c.ieat),
+    diopc: k => v.diopc[k] = S.iopcD(k, c.sad),
+    fie: k => v.fie[k] = (v.iopc[k] - v.aiopc[k]) / v.aiopc[k],
+    sfsn: k => v.sfsn[k] = T.SFSN(v.diopc[k]),
+    frsn: k => v.frsn[k] = T.FRSN(v.fie[k]),
+    dcfs: k => v.dcfs[k] = clip(2.0, c.dcfsn * v.frsn[k] * v.sfsn[k], time[k], c.zpgt),
+    ple: k => v.ple[k] = S.le(k, c.lpd),
+    cmple: k => v.cmple[k] = T.CMPLE(v.ple[k]),
+    dtf: k => v.dtf[k] = v.dcfs[k] * v.cmple[k],
+    fm: k => v.fm[k] = T.FM(v.le[k]),
+    mtf: k => v.mtf[k] = c.mtfn * v.fm[k],
+    nfc: k => v.nfc[k] = v.mtf[k] / v.dtf[k] - 1,
+    fsafc: k => v.fsafc[k] = T.FSAFC(v.nfc[k]),
+    fcapc: k => v.fcapc[k] = v.fsafc[k] * v.sopc[k],
+    fcfpc: k => v.fcfpc[k] = S.fcapc(k, c.hsid),
+    fce: k => v.fce[k] = clip(1.0, T.FCE(v.fcfpc[k]), time[k], c.fcest),
+    tf: k => v.tf[k] = Math.min(v.mtf[k], v.mtf[k] * (1 - v.fce[k]) + v.dtf[k] * v.fce[k]),
+    cbr: (k, j) => v.cbr[k] = 1000 * v.b[j] / v.pop[k],
+    b: k => v.b[k] = clip(v.d[k], v.tf[k] * v.p2[k] * 0.5 / c.rlt, time[k], c.pet),
+    // ---- capital
+    lufd: k => v.lufd[k] = S.luf(k, c.lufdt),
+    cuf: k => v.cuf[k] = T.CUF(v.lufd[k]),
+    ic: (k, j) => v.ic[k] = v.ic[j] + dt * (v.icir[j] - v.icdr[j]),
+    alic: k => v.alic[k] = clip(c.alic2, c.alic1, time[k], c.pyear),
+    icdr: k => v.icdr[k] = v.ic[k] / v.alic[k],
+    icor: k => v.icor[k] = clip(c.icor2, c.icor1, time[k], c.pyear),
+    io: k => v.io[k] = v.ic[k] * (1 - v.fcaor[k]) * v.cuf[k] / v.icor[k],
+    iopc: k => v.iopc[k] = v.io[k] / v.pop[k],
+    fioac: k => v.fioac[k] = clip(T.FIOACV(v.iopc[k] / c.iopcd), clip(c.fioac2, c.fioac1, time[k], c.pyear), time[k], c.iet),
+    sc: (k, j) => v.sc[k] = v.sc[j] + dt * (v.scir[j] - v.scdr[j]),
+    isopc: k => v.isopc[k] = T.ISOPC(v.iopc[k]),
+    alsc: k => v.alsc[k] = clip(c.alsc2, c.alsc1, time[k], c.pyear),
+    scdr: k => v.scdr[k] = v.sc[k] / v.alsc[k],
+    scor: k => v.scor[k] = clip(c.scor2, c.scor1, time[k], c.pyear),
+    so: k => v.so[k] = v.sc[k] * v.cuf[k] / v.scor[k],
+    sopc: k => v.sopc[k] = v.so[k] / v.pop[k],
+    fioas: k => v.fioas[k] = T.FIOAS(v.sopc[k] / v.isopc[k]),
+    scir: k => v.scir[k] = v.io[k] * v.fioas[k],
+    fioai: k => v.fioai[k] = 1 - v.fioaa[k] - v.fioas[k] - v.fioac[k],
+    icir: k => v.icir[k] = v.io[k] * v.fioai[k],
+    jpicu: k => v.jpicu[k] = T.JPICU(v.iopc[k]),
+    pjis: k => v.pjis[k] = v.ic[k] * v.jpicu[k],
+    jpscu: k => v.jpscu[k] = T.JPSCU(v.sopc[k]),
+    pjss: k => v.pjss[k] = v.sc[k] * v.jpscu[k],
+    jph: k => v.jph[k] = T.JPH(v.aiph[k]),
+    pjas: k => v.pjas[k] = v.jph[k] * v.al[k],
+    j: k => v.j[k] = v.pjis[k] + v.pjas[k] + v.pjss[k],
+    lf: k => v.lf[k] = (v.p2[k] + v.p3[k]) * c.lfpf,
+    luf: k => v.luf[k] = v.j[k] / v.lf[k],
+    // ---- agriculture
+    lfc: k => v.lfc[k] = v.al[k] / c.palt,
+    al: (k, j) => v.al[k] = v.al[j] + dt * (v.ldr[j] - v.ler[j] - v.lrui[j]),
+    pal: (k, j) => v.pal[k] = v.pal[j] - dt * v.ldr[j],
+    f: k => v.f[k] = v.ly[k] * v.al[k] * c.lfh * (1 - c.pl),
+    fpc: k => v.fpc[k] = v.f[k] / v.pop[k],
+    ifpc: k => v.ifpc[k] = T.IFPC(v.iopc[k]),
+    tai: k => v.tai[k] = v.io[k] * v.fioaa[k],
+    fioaa: k => v.fioaa[k] = T.FIOAA(v.fpc[k] / v.ifpc[k]),
+    ldr: k => v.ldr[k] = v.tai[k] * v.fiald[k] / v.dcph[k],
+    dcph: k => v.dcph[k] = T.DCPH(v.pal[k] / c.palt),
+    cai: k => v.cai[k] = v.tai[k] * (1 - v.fiald[k]),
+    ai: k => v.ai[k] = S.cai(k, v.alai[k]),
+    alai: k => v.alai[k] = clip(c.alai2, c.alai1, time[k], c.pyear),
+    aiph: k => v.aiph[k] = v.ai[k] * (1 - v.falm[k]) / v.al[k],
+    lymc: k => v.lymc[k] = T.LYMC(v.aiph[k]),
+    ly: k => v.ly[k] = v.lyf[k] * v.lfert[k] * v.lymc[k] * v.lymap[k],
+    lyf: k => v.lyf[k] = clip(c.lyf2, c.lyf1, time[k], c.pyear),
+    lymap: k => v.lymap[k] = T.LYMAP(v.io[k] / c.io70),
+    fiald: k => v.fiald[k] = T.FIALD(v.mpld[k] / v.mpai[k]),
+    mpld: k => v.mpld[k] = v.ly[k] / (v.dcph[k] * c.sd),
+    mpai: k => v.mpai[k] = v.alai[k] * v.ly[k] * v.mlymc[k] / v.lymc[k],
+    mlymc: k => v.mlymc[k] = T.MLYMC(v.aiph[k]),
+    all: k => v.all[k] = c.alln * v.llmy[k],
+    llmy: k => v.llmy[k] = T.LLMY(v.ly[k] / c.ilf),
+    ler: k => v.ler[k] = v.al[k] / v.all[k],
+    uilpc: k => v.uilpc[k] = T.UILPC(v.iopc[k]),
+    uilr: k => v.uilr[k] = v.uilpc[k] * v.pop[k],
+    lrui: k => v.lrui[k] = Math.max(0, (v.uilr[k] - v.uil[k]) / c.uildt),
+    uil: (k, j) => v.uil[k] = v.uil[j] + dt * v.lrui[j],
+    lfert: (k, j) => v.lfert[k] = v.lfert[j] + dt * (v.lfr[j] - v.lfd[j]),
+    lfdr: k => v.lfdr[k] = T.LFDR(v.ppolx[k]),
+    lfd: k => v.lfd[k] = v.lfert[k] * v.lfdr[k],
+    lfr: k => v.lfr[k] = (c.ilf - v.lfert[k]) / v.lfrt[k],
+    lfrt: k => v.lfrt[k] = T.LFRT(v.falm[k]),
+    falm: k => v.falm[k] = T.FALM(v.pfr[k]),
+    fr: k => v.fr[k] = v.fpc[k] / c.sfpc,
+    pfr: k => v.pfr[k] = S.fr(k, c.fspd),
+    // ---- pollution
+    ppol: (k, j) => v.ppol[k] = v.ppol[j] + dt * (v.ppapr[j] - v.ppasr[j]),
+    ppolx: k => v.ppolx[k] = v.ppol[k] / c.ppol70,
+    ppgio: k => v.ppgio[k] = v.pcrum[k] * v.pop[k] * c.frpm * c.imef * c.imti,
+    ppgao: k => v.ppgao[k] = v.aiph[k] * v.al[k] * c.fipm * c.amti,
+    ppgf: k => v.ppgf[k] = clip(c.ppgf2, c.ppgf1, time[k], c.pyear),
+    ppgr: k => v.ppgr[k] = (v.ppgio[k] + v.ppgao[k]) * v.ppgf[k],
+    pptd: k => v.pptd[k] = clip(c.pptd2, c.pptd1, time[k], c.pyear),
+    ppapr: k => v.ppapr[k] = S.ppgr(k, v.pptd[k]),
+    ahlm: k => v.ahlm[k] = T.AHLM(v.ppolx[k]),
+    ahl: k => v.ahl[k] = v.ahlm[k] * c.ahl70,
+    ppasr: k => v.ppasr[k] = v.ppol[k] / (v.ahl[k] * 1.4),
+    // ---- resources
+    nr: (k, j) => v.nr[k] = v.nr[j] - dt * v.nrur[j],
+    nrfr: k => v.nrfr[k] = v.nr[k] / c.nri,
+    fcaor: k => v.fcaor[k] = T.FCAOR(v.nrfr[k]),
+    nruf: k => v.nruf[k] = clip(c.nruf2, c.nruf1, time[k], c.pyear),
+    pcrum: k => v.pcrum[k] = T.PCRUM(v.iopc[k]),
+    nrur: k => v.nrur[k] = v.pop[k] * v.pcrum[k] * v.nruf[k],
+  };
+  // ---- initialisation (k = 0): fixed-point over the loop0 orderings of pyworld3
+  const L0 = [
+    'fpu lmp lmf cmi hsapc ehspc lmhs lmc le m1 m2 m3 m4 mat1 mat2 mat3 d1 d2 d3 d4 d cdr aiopc diopc fie sfsn frsn dcfs ple cmple dtf fm mtf nfc fsafc fcapc fcfpc fce tf cbr b',
+    'alic icdr icor io iopc fioac isopc alsc scdr scor so sopc fioas scir fioai icir jpicu pjis jpscu pjss jph pjas j lf luf lufd cuf',
+    'lfc f fpc ifpc fioaa tai dcph mlymc mpai mpld fiald ldr cai alai falm fr aiph lymc lyf lymap lfdr lfd ly all llmy ler uilpc uilr lrui lfr lfrt ai pfr',
+    'ppolx ppgio ppgao ppgf ppgr pptd ppapr ahlm ahl ppasr',
+    'nrfr fcaor nruf pcrum nrur'];
+  for (let pass = 0; pass < 12; pass++) {
+    let nan = false;
+    // stocks & fixed initial values (reset every pass, as pyworld3 does)
+    v.p1[0] = c.p1i; v.p2[0] = c.p2i; v.p3[0] = c.p3i; v.p4[0] = c.p4i; v.pop[0] = c.p1i + c.p2i + c.p3i + c.p4i;
+    v.ic[0] = c.ici; v.sc[0] = c.sci; v.cuf[0] = 1.0;
+    v.al[0] = c.ali; v.pal[0] = c.pali; v.uil[0] = c.uili; v.lfert[0] = c.lferti; v.ai[0] = 5e9; v.pfr[0] = 1;
+    v.ppol[0] = c.ppoli; v.nr[0] = c.nri;
+    for (const grp of L0) for (const name of grp.split(' ')) { U[name](0, 0); }
+    for (const k of W3VARS) if (Number.isNaN(v[k][0])) { nan = true; }
+    if (!nan && pass > 3) break;
+  }
+  const ORDER = ('p1 p2 p3 p4 pop fpu ehspc lmhs d cdr aiopc diopc sfsn ple cmple fcfpc fce cbr lufd cuf ic alic icdr icor sc alsc scdr scor so sopc jpscu pjss lf ' +
+    'al pal uil lfert lfc dcph alai ai pfr falm aiph lymc lyf lfrt ppol ppolx ppgao ppgf pptd ppapr ahlm ahl ppasr nr nrfr fcaor nruf lmp hsapc io iopc fioac isopc fioas scir ' +
+    'jpicu pjis jph pjas j luf ifpc mlymc lymap lfdr lfd ly llmy uilpc uilr lrui lfr pcrum nrur cmi lmc fie frsn dcfs dtf f fpc fioaa tai mpai mpld fiald ldr cai fr all ler ' +
+    'ppgio ppgr lmf le m1 m2 m3 m4 mat1 mat2 mat3 d1 d2 d3 d4 fm mtf nfc fsafc fcapc tf b fioai icir').split(' ');
+  for (let k = 1; k < n; k++) { const j = k - 1; for (const name of ORDER) U[name](k, j); }
+  v.n = n; v.dt = dt; v.y0 = y0;
+  return v;
+}
+
+if (typeof module !== 'undefined') module.exports = { runWorld2, runWorld3, W2T, W3T, W2DEF, W3DEF, TBL, TBLR };
+/* ===================== helpers ===================== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const NS = 'http://www.w3.org/2000/svg';
+function svgEl(tag, attrs, parent) { const e = document.createElementNS(NS, tag); if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+function el(tag, attrs, parent, html) { const e = document.createElement(tag); if (attrs) for (const k in attrs) { if (k === 'class') e.className = attrs[k]; else e.setAttribute(k, attrs[k]); } if (html != null) e.innerHTML = html; if (parent) parent.appendChild(e); return e; }
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, t) => a + (b - a) * t;
+let CSSV = {};
+function readVars() { const cs = getComputedStyle(document.documentElement); ['--bg', '--bg2', '--panel', '--ink', '--muted', '--faint', '--line', '--line2', '--accent', '--teal', '--c-pop', '--c-res', '--c-cap', '--c-pol', '--c-ql', '--c-food', '--c-serv', '--c-le', '--c-ciaf', '--pos', '--neg', '--water', '--water2'].forEach(k => CSSV[k] = cs.getPropertyValue(k).trim()); }
+const col = c => (c && c.startsWith('--') ? (CSSV[c] || '#888') : c);
+const NF = (d) => new Intl.NumberFormat('vi-VN', { maximumFractionDigits: d, minimumFractionDigits: d });
+const nf0 = NF(0), nf1 = NF(1), nf2 = NF(2), nf3 = NF(3);
+function fmtN(v, d) { if (!isFinite(v)) return '–'; return NF(d == null ? (Math.abs(v) >= 100 ? 0 : Math.abs(v) >= 10 ? 1 : 2) : d).format(v); }
+function fmtBig(v) {
+  if (!isFinite(v)) return '–'; const a = Math.abs(v);
+  if (a >= 1e12) return nf2.format(v / 1e12) + ' nghìn tỉ';
+  if (a >= 1e9) return (a >= 1e11 ? nf0 : a >= 1e10 ? nf1 : nf2).format(v / 1e9) + ' tỉ';
+  if (a >= 1e6) return (a >= 1e8 ? nf0 : nf1).format(v / 1e6) + ' triệu';
+  return fmtN(v);
+}
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* visibility gating for animations */
+const visSet = new WeakMap();
+const io = new IntersectionObserver(es => es.forEach(e => { const f = visSet.get(e.target); if (f) f(e.isIntersecting); }), { rootMargin: '80px' });
+function onVisible(node, fn) { visSet.set(node, fn); io.observe(node); }
+
+/* ===================== Chart ===================== */
+class Chart {
+  constructor(cv, cfg) {
+    this.cv = cv; this.ctx = cv.getContext('2d');
+    this.cfg = Object.assign({ pad: { l: 44, r: 14, t: 12, b: 26 }, x0: 0, x1: 1, series: [], own: false, cursor: null, ghost: true, log: false, yMax: null, yMin: null, xFmt: v => nf0.format(v).replace(/\./g, ''), yFmt: v => fmtN(v), marks: [], refs: [], hover: true, xUnit: '', axisY: true }, cfg);
+    this.hidden = new Set(); this.hx = null;
+    const box = cv.parentElement; this.tip = box ? el('div', { class: 'tip' }, box) : null;
+    new ResizeObserver(() => this.draw()).observe(cv);
+    if (this.cfg.hover) {
+      cv.addEventListener('pointermove', e => { const r = cv.getBoundingClientRect(); this.hx = e.clientX - r.left; this.draw(); });
+      cv.addEventListener('pointerleave', () => { this.hx = null; this.draw(); });
+    }
+  }
+  legend(node) {
+    this.legEl = node; node.innerHTML = '';
+    this.cfg.series.forEach(s => {
+      if (s.noLegend) return;
+      const cv = s.color.startsWith('--') ? `var(${s.color})` : s.color; const sp = el('span', null, node, `<i style="background:${cv};${s.dash ? 'background:repeating-linear-gradient(90deg,' + cv + ' 0 4px,transparent 4px 7px)' : ''}"></i>${s.label}${s.scaleTxt ? ' <em>' + s.scaleTxt + '</em>' : ''}`);
+      if (this.hidden.has(s.key)) sp.classList.add('off');
+      sp.onclick = () => { this.hidden.has(s.key) ? this.hidden.delete(s.key) : this.hidden.add(s.key); sp.classList.toggle('off'); this.draw(); };
+    });
+  }
+  yRange() {
+    const c = this.cfg; if (c.own) return [0, 1];
+    let lo = c.yMin, hi = c.yMax;
+    if (hi == null || lo == null) {
+      let mn = Infinity, mx = -Infinity;
+      for (const s of c.series) { if (this.hidden.has(s.key)) continue; const n = s.len != null ? s.len : s.ys.length; for (let i = 0; i < n; i++) { const v = s.ys[i]; if (isFinite(v)) { if (v < mn) mn = v; if (v > mx) mx = v; } } }
+      if (!isFinite(mn)) { mn = 0; mx = 1; }
+      if (lo == null) lo = mn < 0 ? -niceCeil(-mn * 1.08) : 0;
+      if (hi == null && c.log) hi = niceCeil(mx * 1.08 || 1);
+      else if (hi == null) { const st = niceStep(((mx * 1.05) - lo) / 4 || 1); hi = lo + Math.max(1, Math.ceil(((mx * 1.05) - lo) / st)) * st; this.ny = Math.round((hi - lo) / st); return [lo, hi]; }
+    }
+    this.ny = 4;
+    if (c.log) { lo = Math.max(lo, c.logMin || 1); }
+    return [lo, hi];
+  }
+  draw() {
+    const cv = this.cv, c = this.cfg, dpr = Math.min(2, window.devicePixelRatio || 1);
+    const W = cv.clientWidth, H = cv.clientHeight; if (!W || !H) return;
+    if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
+    const g = this.ctx; g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
+    const p = Object.assign({}, c.pad); if (!c.axisY || c.own) p.l = Math.min(p.l, 12);
+    const pw = W - p.l - p.r, ph = H - p.t - p.b;
+    const [y0, y1] = this.yRange();
+    const X = x => p.l + (x - c.x0) / (c.x1 - c.x0) * pw;
+    const Yv = (v, s) => {
+      let f;
+      if (c.own) f = (v - (s.min || 0)) / ((s.max || 1) - (s.min || 0));
+      else if (c.log) f = (Math.log(Math.max(v, y0)) - Math.log(y0)) / (Math.log(y1) - Math.log(y0));
+      else f = (v - y0) / (y1 - y0);
+      return p.t + ph - clamp(f, -0.02, 1.04) * ph;
+    };
+    // grid
+    g.font = '11px ' + getComputedStyle(document.body).fontFamily; g.lineWidth = 1;
+    g.strokeStyle = col('--line2'); g.fillStyle = col('--faint');
+    const ny = c.own || c.log ? 4 : (this.ny || 4);
+    for (let i = 0; i <= ny; i++) {
+      const yy = p.t + ph - i / ny * ph; g.beginPath(); g.moveTo(p.l, Math.round(yy) + .5); g.lineTo(p.l + pw, Math.round(yy) + .5); g.stroke();
+      if (!c.own && c.axisY) { let v; if (c.log) v = Math.exp(Math.log(y0) + i / ny * (Math.log(y1) - Math.log(y0))); else v = y0 + i / ny * (y1 - y0); g.textAlign = 'right'; g.textBaseline = 'middle'; g.fillText(c.yFmt(v), p.l - 6, yy); }
+    }
+    // x ticks
+    const xt = niceTicks(c.x0, c.x1, Math.max(3, Math.floor(pw / 80)));
+    g.textAlign = 'center'; g.textBaseline = 'top';
+    for (const x of xt) { const xx = X(x); g.strokeStyle = col('--line2'); g.beginPath(); g.moveTo(Math.round(xx) + .5, p.t); g.lineTo(Math.round(xx) + .5, p.t + ph); g.stroke(); g.fillStyle = col('--faint'); g.fillText(c.xFmt(x) + (c.xUnit || ''), xx, p.t + ph + 6); }
+    g.strokeStyle = col('--line'); g.beginPath(); g.moveTo(p.l, p.t + ph + .5); g.lineTo(p.l + pw, p.t + ph + .5); g.stroke();
+    // marks
+    for (const m of c.marks) {
+      const xx = X(m.x); if (xx < p.l || xx > p.l + pw) continue; g.save(); g.setLineDash([4, 4]); g.strokeStyle = col(m.color || '--accent'); g.globalAlpha = .7; g.beginPath(); g.moveTo(xx, p.t); g.lineTo(xx, p.t + ph); g.stroke(); g.restore();
+      if (m.label) { g.fillStyle = col(m.color || '--accent'); g.textAlign = 'left'; g.textBaseline = 'top'; g.font = '600 10.5px ' + getComputedStyle(document.body).fontFamily; g.fillText(m.label, xx + 4, p.t + 2); g.font = '11px ' + getComputedStyle(document.body).fontFamily; }
+    }
+    // band (e.g. goal)
+    const cur = c.cursor;
+    for (const s of c.series) {
+      if (this.hidden.has(s.key)) continue;
+      const n = s.len != null ? s.len : s.ys.length; if (n < 1) continue;
+      const color = col(s.color);
+      const path = (from, to) => { g.beginPath(); let started = false; for (let i = from; i < to; i++) { const v = s.ys[i]; if (!isFinite(v)) { started = false; continue; } const xx = X(s.xs[i]), yy = Yv(v, s); if (!started) { g.moveTo(xx, yy); started = true; } else g.lineTo(xx, yy); } g.stroke(); };
+      g.lineJoin = 'round'; g.lineCap = 'round'; g.strokeStyle = color; g.lineWidth = s.width || 2.2;
+      if (s.dash) g.setLineDash(s.dash); else g.setLineDash([]);
+      if (cur != null) {
+        let ic = 0; while (ic < n - 1 && s.xs[ic + 1] <= cur) ic++;
+        if (c.ghost) { g.globalAlpha = .16; path(ic, n); }
+        g.globalAlpha = s.alpha || 1; path(0, ic + 1);
+        // interpolated head
+        if (ic < n - 1 && s.xs[ic] < cur) { const t = (cur - s.xs[ic]) / (s.xs[ic + 1] - s.xs[ic]); const v = lerp(s.ys[ic], s.ys[ic + 1], t); g.beginPath(); g.moveTo(X(s.xs[ic]), Yv(s.ys[ic], s)); g.lineTo(X(cur), Yv(v, s)); g.stroke(); if (!s.noDot) { g.setLineDash([]); g.fillStyle = color; g.beginPath(); g.arc(X(cur), Yv(v, s), 3.6, 0, 7); g.fill(); } }
+        else if (!s.noDot) { g.setLineDash([]); g.fillStyle = color; g.beginPath(); g.arc(X(s.xs[ic]), Yv(s.ys[ic], s), 3.6, 0, 7); g.fill(); }
+      } else { g.globalAlpha = s.alpha || 1; path(0, n); }
+      g.globalAlpha = 1; g.setLineDash([]);
+    }
+    // refs (data points)
+    for (const r of c.refs) {
+      const s = c.series.find(q => q.key === r.series); if (!s || this.hidden.has(s.key)) continue;
+      g.lineWidth = 1.5; g.strokeStyle = col(r.color || s.color); g.fillStyle = col('--panel');
+      for (const [x, v] of r.pts) { const xx = X(x), yy = Yv(v, s); g.beginPath(); g.arc(xx, yy, 3.2, 0, 7); g.fill(); g.stroke(); }
+    }
+    if (cur != null && cur > c.x0) { const xx = X(cur); g.strokeStyle = col('--accent'); g.globalAlpha = .5; g.lineWidth = 1; g.beginPath(); g.moveTo(xx + .5, p.t); g.lineTo(xx + .5, p.t + ph); g.stroke(); g.globalAlpha = 1; }
+    // hover
+    if (this.tip) {
+      if (this.hx != null && this.hx >= p.l && this.hx <= p.l + pw) {
+        const xv = c.x0 + (this.hx - p.l) / pw * (c.x1 - c.x0);
+        g.strokeStyle = col('--muted'); g.setLineDash([2, 3]); g.beginPath(); g.moveTo(this.hx + .5, p.t); g.lineTo(this.hx + .5, p.t + ph); g.stroke(); g.setLineDash([]);
+        let html = `<div style="margin-bottom:3px;color:var(--muted)">${c.tipX ? c.tipX(xv) : c.xFmt(Math.round(xv))}</div>`, any = false;
+        for (const s of c.series) {
+          if (this.hidden.has(s.key) || s.noTip) continue; const n = s.len != null ? s.len : s.ys.length; if (!n) continue;
+          if (xv > s.xs[n - 1] + 1e-9 || xv < s.xs[0]) continue;
+          let i = 0; while (i < n - 1 && s.xs[i + 1] <= xv) i++;
+          const v = s.ys[i]; any = true;
+          g.fillStyle = col(s.color); g.beginPath(); g.arc(X(s.xs[i]), Yv(v, s), 3, 0, 7); g.fill();
+          html += `<div class="row"><span><i style="background:${col(s.color)}"></i>${s.short || s.label}</span><b>${s.fmt ? s.fmt(v) : fmtN(v)}</b></div>`;
+        }
+        if (any) { this.tip.innerHTML = html; this.tip.style.display = 'block'; const tw = this.tip.offsetWidth; let lx = this.hx + 14; if (lx + tw > W) lx = this.hx - tw - 14; this.tip.style.left = Math.max(0, lx) + 'px'; this.tip.style.top = (p.t + 4) + 'px'; } else this.tip.style.display = 'none';
+      } else this.tip.style.display = 'none';
+    }
+  }
+}
+function niceStep(v) { const e = Math.pow(10, Math.floor(Math.log10(v))); const f = v / e; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * e; }
+function niceCeil(v) { if (v <= 0) return 1; const e = Math.pow(10, Math.floor(Math.log10(v))); const f = v / e; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * e; }
+function niceTicks(a, b, n) { const span = b - a, raw = span / n, e = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / e; const st = (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * e; const out = []; for (let x = Math.ceil(a / st) * st; x <= b + 1e-9; x += st) out.push(+x.toFixed(6)); return out; }
+
+/* ===================== Player (for model runs) ===================== */
+function makePlayer(host, opt) {
+  const o = Object.assign({ y0: 1900, y1: 2100, speed: 10, onTime() { } }, opt);
+  host.innerHTML = `<button class="playbtn" aria-label="Chạy / dừng"></button><div class="yr">${o.y0}</div><input type="range" min="${o.y0}" max="${o.y1}" step="0.1" value="${o.y0}" aria-label="Năm"><select aria-label="Tốc độ"><option value="5">chậm</option><option value="10" selected>vừa</option><option value="22">nhanh</option></select>`;
+  const btn = $('.playbtn', host), yr = $('.yr', host), rg = $('input', host), sel = $('select', host);
+  const P = { t: o.y0, playing: false, last: 0 };
+  const icon = () => btn.innerHTML = P.playing ? '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>' : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 5l12 7-12 7z"/></svg>';
+  P.set = (t, silent) => { P.t = clamp(t, o.y0, o.y1); rg.value = P.t; yr.textContent = Math.floor(P.t + 1e-6); if (!silent) o.onTime(P.t); };
+  P.play = () => { if (P.t >= o.y1 - 0.01) P.set(o.y0); P.playing = true; icon(); P.last = performance.now(); requestAnimationFrame(P.tick); };
+  P.pause = () => { P.playing = false; icon(); };
+  P.tick = (now) => { if (!P.playing) return; const dt = Math.min(0.1, (now - P.last) / 1000); P.last = now; P.set(P.t + dt * (+sel.value)); if (P.t >= o.y1) { P.pause(); return; } requestAnimationFrame(P.tick); };
+  btn.onclick = () => P.playing ? P.pause() : P.play();
+  rg.oninput = () => { P.pause(); P.set(+rg.value); };
+  icon(); return P;
+}
+
+/* ===================== theme & nav ===================== */
+function initChrome(redrawAll) {
+  const root = document.documentElement;
+  let saved = null; try { saved = localStorage.getItem('sd-theme'); } catch (e) { }
+  if (saved) root.dataset.theme = saved;
+  $('#themeBtn').onclick = () => {
+    const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark'; try { localStorage.setItem('sd-theme', root.dataset.theme); } catch (e) { }
+    readVars(); redrawAll();
+  };
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { readVars(); redrawAll(); });
+  const links = $$('#navlinks a'), secs = links.map(a => $(a.getAttribute('href')));
+  addEventListener('scroll', () => {
+    const y = scrollY, h = document.documentElement.scrollHeight - innerHeight; $('#prog').style.width = (100 * y / Math.max(1, h)) + '%';
+    let on = -1; secs.forEach((s, i) => { if (s && s.getBoundingClientRect().top < 140) on = i; });
+    links.forEach((a, i) => a.classList.toggle('on', i === on));
+    if (on >= 0) { const a = links[on], box = a.parentElement; if (a.offsetLeft < box.scrollLeft || a.offsetLeft + a.offsetWidth > box.scrollLeft + box.clientWidth) box.scrollTo({ left: a.offsetLeft - 20, behavior: 'smooth' }); }
+  }, { passive: true });
+}
+
+/* ===================== HERO ===================== */
+function initHero() {
+  const V = runWorld3();
+  const sv = (key, label, color, max, scale) => ({ key, label, color, xs: V.t, ys: scale ? V[key].map(x => x * scale) : V[key], max, width: 2.6, noTip: false, fmt: v => fmtN(v) });
+  const ch = new Chart($('#heroCv'), { x0: 1900, x1: 2100, own: true, ghost: false, hover: false, cursor: 1900, pad: { l: 8, r: 10, t: 10, b: 24 },
+    series: [sv('nrfr', 'Tài nguyên', '--c-res', 1), sv('fpc', 'Lương thực', '--c-food', 1000), sv('iopc', 'Công nghiệp', '--c-cap', 1000), sv('pop', 'Dân số', '--c-pop', 16e9), sv('ppolx', 'Ô nhiễm', '--c-pol', 32)] });
+  let t0 = null, vis = true;
+  onVisible($('#heroCv'), v => { vis = v; if (v) requestAnimationFrame(loop); });
+  function loop(now) {
+    if (!vis) return; if (t0 == null) t0 = now;
+    const el2 = ((now - t0) / 1000) % 15; ch.cfg.cursor = reduceMotion ? 2100 : 1900 + Math.min(1, el2 / 12) * 200; ch.draw();
+    if (!reduceMotion) requestAnimationFrame(loop);
+  }
+  return ch;
+}
+
+/* ===================== CH1: bathtub ===================== */
+function initTub() {
+  const svg = $('#tubSvg'), inR = $('#tubIn'), outR = $('#tubOut');
+  // drawing
+  const g = svgEl('g', null, svg);
+  svgEl('rect', { x: 0, y: 0, width: 420, height: 300, fill: 'none' }, g);
+  // faucet
+  const faucet = svgEl('path', { d: 'M40 30 h90 a10 10 0 0 1 10 10 v14 h-16 v-8 h-84 z', fill: 'var(--faint)' }, g);
+  const streamIn = svgEl('rect', { x: 126, y: 54, width: 6, height: 200, fill: 'var(--water)', opacity: .85 }, g);
+  const cap = 100;
+  const tank = { x: 100, y: 70, w: 240, h: 180 };
+  const clipId = 'tubclip'; const cp = svgEl('clipPath', { id: clipId }, svgEl('defs', null, svg)); svgEl('rect', { x: tank.x, y: tank.y, width: tank.w, height: tank.h }, cp);
+  const water = svgEl('path', { fill: 'var(--water)', opacity: .55, 'clip-path': `url(#${clipId})` }, g);
+  svgEl('path', { d: `M${tank.x} ${tank.y} v${tank.h} h${tank.w} v-${tank.h}`, fill: 'none', stroke: 'var(--ink)', 'stroke-width': 4, 'stroke-linejoin': 'round' }, g);
+  for (let i = 1; i < 5; i++) { const y = tank.y + tank.h - i * tank.h / 5; svgEl('line', { x1: tank.x + tank.w, x2: tank.x + tank.w + 8, y1: y, y2: y, stroke: 'var(--faint)' }, g); svgEl('text', { x: tank.x + tank.w + 12, y: y + 4, class: 'svgm', 'font-size': 10 }, g).textContent = i * 20 + ' L'; }
+  // drain
+  svgEl('path', { d: `M${tank.x + tank.w - 30} ${tank.y + tank.h} v18 h50`, fill: 'none', stroke: 'var(--faint)', 'stroke-width': 10 }, g);
+  const streamOut = svgEl('rect', { x: tank.x + tank.w + 18, y: tank.y + tank.h + 12, width: 6, height: 40, fill: 'var(--water)', opacity: .85 }, g);
+  const lvlTxt = svgEl('text', { x: tank.x + tank.w / 2, y: tank.y + 26, 'text-anchor': 'middle', class: 'svgt', 'font-size': 15, 'font-weight': 700 }, g);
+  const inTxt = svgEl('text', { x: 20, y: 22, class: 'svgt', 'font-size': 12 }, g);
+  const outTxt = svgEl('text', { x: 260, y: 292, class: 'svgt', 'font-size': 12 }, g);
+  svgEl('text', { x: 20, y: 100, class: 'svgm', 'font-size': 10.5 }, g).textContent = 'DÒNG VÀO';
+  svgEl('text', { x: 20, y: 114, class: 'svgm', 'font-size': 10.5 }, g).textContent = '(rate)';
+  svgEl('text', { x: tank.x + 8, y: tank.y + tank.h - 8, class: 'svgm', 'font-size': 10.5 }, g).textContent = 'KHO (level)';
+  const S = { L: 30, t: 0, hist: { t: [], L: [], i: [], o: [] }, fade: null, vis: false, last: 0, wave: 0 };
+  const ch = new Chart($('#tubCv'), { x0: 0, x1: 60, own: true, ghost: false, xUnit: '′', series: [
+    { key: 'L', label: 'Mực nước', short: 'Nước', color: '--water', xs: S.hist.t, ys: S.hist.L, max: cap, scaleTxt: '0–100 L', fmt: v => nf1.format(v) + ' L', width: 2.8 },
+    { key: 'i', label: 'Dòng vào', short: 'Vào', color: '--pos', xs: S.hist.t, ys: S.hist.i, max: 10, scaleTxt: '0–10 L/phút', fmt: v => nf1.format(v) },
+    { key: 'o', label: 'Dòng ra', short: 'Ra', color: '--neg', xs: S.hist.t, ys: S.hist.o, max: 10, scaleTxt: '0–10 L/phút', fmt: v => nf1.format(v) }], tipX: x => 'phút ' + nf1.format(x) });
+  ch.legend($('#tubLeg'));
+  const outs = () => { $('#tubInO').textContent = nf1.format(+inR.value); $('#tubOutO').textContent = nf1.format(+outR.value); };
+  inR.oninput = outR.oninput = () => { S.fade = null; outs(); }; outs();
+  $('#tubFade').onclick = () => { S.L = Math.max(S.L, 15); outR.value = 5; inR.value = 9; S.fade = { from: 9, to: 2, dur: 40, t: 0 }; outs(); };
+  $('#tubEq').onclick = () => { S.fade = null; outR.value = inR.value; outs(); };
+  $('#tubReset').onclick = () => { S.L = 0; };
+  function step(dt) { // dt in sim-minutes
+    if (S.fade) { S.fade.t += dt; const f = Math.min(1, S.fade.t / S.fade.dur); inR.value = (S.fade.from + (S.fade.to - S.fade.from) * f).toFixed(1); outs(); if (f >= 1) S.fade = null; }
+    const qi = +inR.value; let qo = +outR.value; if (S.L <= 0.001) qo = Math.min(qo, qi);
+    S.L = clamp(S.L + dt * (qi - qo), 0, cap); S.t += dt; S.qo = qo;
+    const H = S.hist; H.t.push(S.t); H.L.push(S.L); H.i.push(qi); H.o.push(qo);
+    if (S.t > 60) { const sh = S.t - 60; ch.cfg.x0 = sh; ch.cfg.x1 = S.t; while (H.t.length && H.t[0] < sh - 1) { H.t.shift(); H.L.shift(); H.i.shift(); H.o.shift(); } }
+  }
+  function render() {
+    const qi = +inR.value, qo = S.qo != null ? S.qo : +outR.value;
+    const top = tank.y + tank.h - S.L / cap * tank.h; S.wave += .08;
+    let d = `M${tank.x} ${tank.y + tank.h} L${tank.x} ${top}`; for (let x = 0; x <= tank.w; x += 12) d += ` L${tank.x + x} ${top + Math.sin(S.wave + x / 18) * Math.min(2.5, qi / 3)}`; d += ` L${tank.x + tank.w} ${tank.y + tank.h} Z`;
+    water.setAttribute('d', d);
+    streamIn.setAttribute('width', Math.max(0, qi * 1.4)); streamIn.setAttribute('x', 131 - qi * .7); streamIn.setAttribute('height', Math.max(0, top - 54)); streamIn.style.display = qi > 0.05 ? '' : 'none';
+    streamOut.setAttribute('width', Math.max(0, qo * 1.4)); streamOut.style.display = qo > 0.05 ? '' : 'none';
+    lvlTxt.textContent = `Mực nước: ${nf1.format(S.L)} L`;
+    inTxt.textContent = `Vào: ${nf1.format(qi)} L/phút`; outTxt.textContent = `Ra: ${nf1.format(qo)} L/phút`;
+    const prev = S.L - (qi - qo);
+    $('#tubEqn').innerHTML = `<span class="k">L</span> NƯỚC(t+1′) = NƯỚC(t) + DT × (VÀO − RA)<br><span class="c">→</span> ${nf1.format(S.L + (qi - qo))} = ${nf1.format(S.L)} + 1 × (${nf1.format(qi)} − ${nf1.format(qo)})  <span class="c">${S.L >= cap - .01 && qi > qo ? '(tràn!)' : ''}</span>`;
+    ch.draw();
+  }
+  function loop(now) { if (!S.vis) return; const dt = Math.min(.1, (now - S.last) / 1000); S.last = now; const sub = 4; for (let i = 0; i < sub; i++) step(dt * 2 / sub); render(); requestAnimationFrame(loop); }
+  onVisible(svg.closest('.lab'), v => { S.vis = v; if (v) { S.last = performance.now(); requestAnimationFrame(loop); } });
+  return ch;
+}
+
+/* ===================== CH2: reinforcing loop ===================== */
+function loopArrow(g, d, sign, color, id) {
+  const p = svgEl('path', { d, fill: 'none', stroke: color || 'var(--muted)', 'stroke-width': 2, 'marker-end': 'url(#arrM)' }, g); if (id) p.id = id; return p;
+}
+function addMarker(svg) { const defs = svgEl('defs', null, svg); const m = svgEl('marker', { id: 'arrM', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, defs); svgEl('path', { d: 'M0 0 L10 5 L0 10 z', fill: 'var(--muted)' }, m); return defs; }
+function flowDots(g, path, n, color, r) { const ds = []; for (let i = 0; i < n; i++) ds.push(svgEl('circle', { r: r || 3.2, fill: color }, g)); return { path, ds, len: path.getTotalLength(), ph: 0 }; }
+function moveDots(fd, speed, dt) { fd.ph = (fd.ph + speed * dt) % 1; if (!fd.len) fd.len = fd.path.getTotalLength(); fd.ds.forEach((d, i) => { const f = (fd.ph + i / fd.ds.length) % 1; const pt = fd.path.getPointAtLength(f * fd.len); d.setAttribute('cx', pt.x); d.setAttribute('cy', pt.y); d.style.opacity = speed > 0.001 ? Math.sin(f * Math.PI) * .95 : 0; }); }
+
+function initR() {
+  const svg = $('#rSvg'); addMarker(svg); const g = svgEl('g', null, svg);
+  // nodes
+  const box = (x, y, w, h, txt, cls) => { svgEl('rect', { x: x - w / 2, y: y - h / 2, width: w, height: h, rx: 8, fill: 'var(--panel)', stroke: 'var(--ink)', 'stroke-width': cls === 'stock' ? 2.5 : 1.2 }, g); const t = svgEl('text', { x, y: y + 4, 'text-anchor': 'middle', class: 'svgt', 'font-size': 13, 'font-weight': 600 }, g); t.textContent = txt; return t; };
+  const bTxt = box(70, 105, 112, 40, 'Số sinh/năm');
+  const pTxt = box(215, 105, 124, 48, 'Dân số', 'stock');
+  const dTxt = box(360, 105, 104, 40, 'Số tử/năm');
+  const aB = loopArrow(g, 'M100 84 C 112 30, 180 30, 196 78');   // births -> population
+  const aP = loopArrow(g, 'M196 132 C 180 182, 112 182, 100 128'); // population -> births
+  const aD1 = loopArrow(g, 'M236 78 C 250 30, 318 30, 330 84');   // population -> deaths
+  const aD2 = loopArrow(g, 'M330 128 C 318 182, 250 182, 236 132'); // deaths -> population (−)
+  const sign = (x, y, s, c) => { const t = svgEl('text', { x, y, 'text-anchor': 'middle', 'font-size': 16, 'font-weight': 700, fill: c }, g); t.textContent = s; };
+  sign(204, 64, '+', 'var(--pos)'); sign(90, 150, '+', 'var(--pos)'); sign(340, 66, '+', 'var(--pos)'); sign(226, 156, '−', 'var(--neg)');
+  const rG = svgEl('g', { transform: 'translate(142 190)' }, g); svgEl('circle', { r: 14, fill: 'none', stroke: 'var(--neg)', 'stroke-width': 2, 'stroke-dasharray': '66 22' }, rG); svgEl('text', { y: 5, 'text-anchor': 'middle', 'font-size': 14, 'font-weight': 700, fill: 'var(--neg)' }, rG).textContent = 'R';
+  const bG = svgEl('g', { transform: 'translate(288 190)' }, g); svgEl('circle', { r: 14, fill: 'none', stroke: 'var(--teal)', 'stroke-width': 2, 'stroke-dasharray': '66 22' }, bG); svgEl('text', { y: 5, 'text-anchor': 'middle', 'font-size': 14, 'font-weight': 700, fill: 'var(--teal)' }, bG).textContent = 'B';
+  svgEl('text', { x: 142, y: 20, 'text-anchor': 'middle', class: 'svgm', 'font-size': 10 }, g).textContent = 'vòng tăng cường';
+  svgEl('text', { x: 288, y: 20, 'text-anchor': 'middle', class: 'svgm', 'font-size': 10 }, g).textContent = 'vòng cân bằng';
+  const fd1 = flowDots(g, aB, 4, 'var(--pos)'), fd2 = flowDots(g, aP, 4, 'var(--pos)'), fd3 = flowDots(g, aD1, 2, 'var(--neg)'), fd4 = flowDots(g, aD2, 2, 'var(--neg)');
+  const bR = $('#rB'), dR = $('#rD');
+  const N = 100, T = 100; const S = { xs: [], P: [], B: [], vis: false, t: 0, running: false, last: 0, rot: 0 };
+  const ch = new Chart($('#rCv'), { x0: 0, x1: T, xUnit: '', series: [{ key: 'P', label: 'Dân số (triệu)', short: 'Dân số', color: '--c-pop', xs: S.xs, ys: S.P, fmt: v => fmtN(v) + ' tr', width: 2.8 }], tipX: x => 'năm ' + Math.round(x), logMin: .1 });
+  ch.legend($('#rLeg'));
+  const dots = $('#rDots'); const dg = dots.getContext('2d');
+  function compute() { // closed form for display & KPIs
+    const b = +bR.value / 100, d = +dR.value / 100; return { b, d, r: b - d };
+  }
+  function restart() { S.xs.length = 0; S.P.length = 0; S.t = 0; S.Pv = 1; S.running = true; S.last = performance.now(); ch.cfg.yMax = null; kpis(); if (S.vis) requestAnimationFrame(loop); }
+  function kpis() {
+    const { r } = compute(); const dbl = r > 0 ? Math.log(2) / r : null; const P100 = Math.exp(r * T);
+    $('#rK').innerHTML = `<div class="kpi"><div class="l">Tăng ròng</div><div class="v">${nf1.format(r * 100)}%/năm</div></div><div class="kpi"><div class="l">Thời gian nhân đôi (≈70/r)</div><div class="v">${dbl ? nf1.format(dbl) + ' năm' : '∞'}</div></div><div class="kpi"><div class="l">Sau 100 năm</div><div class="v">×${P100 >= 1000 ? fmtBig(P100) : fmtN(P100)}</div></div>`;
+    $('#rBO').textContent = nf1.format(+bR.value) + '%'; $('#rDO').textContent = nf1.format(+dR.value) + '%';
+  }
+  bR.oninput = dR.oninput = () => { kpis(); restart(); };
+  $('#rPlay').onclick = restart; $('#rLog').onchange = e => { ch.cfg.log = e.target.checked; ch.draw(); };
+  function drawDots() {
+    const W = dots.clientWidth, H = dots.clientHeight, dpr = Math.min(2, devicePixelRatio || 1); if (dots.width !== Math.round(W * dpr)) { dots.width = Math.round(W * dpr); dots.height = Math.round(H * dpr); }
+    dg.setTransform(dpr, 0, 0, dpr, 0, 0); dg.clearRect(0, 0, W, H);
+    const s = 10, cols = Math.floor((W - 12) / s), rows = Math.floor((H - 26) / s), cap2 = cols * rows;
+    const per = 4; // 1 dot = 40 000 people when P in units of 10^5? P is relative: start 1 million = 25 dots
+    let n = Math.round(S.Pv * 25), full = false; if (n > cap2) { n = cap2; full = true; }
+    dg.fillStyle = col('--c-pop');
+    for (let i = 0; i < n; i++) { const cx = 6 + (i % cols) * s, cy = 20 + Math.floor(i / cols) * s; dg.beginPath(); dg.arc(cx + s / 2, cy + s / 2, s / 2 - 1, 0, 7); dg.fill(); }
+    dg.fillStyle = col('--muted'); dg.font = '11px ' + getComputedStyle(document.body).fontFamily; dg.textAlign = 'left'; dg.fillText(`Năm ${Math.floor(S.t)} · ${fmtN(S.Pv)} triệu người · 1 ô = 40 nghìn người${full ? ' · ĐÃ KÍN KHUNG!' : ''}`, 6, 13);
+  }
+  function loop(now) {
+    if (!S.vis) return; const dt = Math.min(.1, (now - S.last) / 1000); S.last = now; const { b, d, r } = compute();
+    if (S.running) {
+      const yrs = dt * 12; const steps = 6; for (let i = 0; i < steps; i++) { S.Pv *= Math.exp(r * yrs / steps); }
+      S.t += yrs; S.xs.push(S.t); S.P.push(S.Pv); if (S.t >= T) S.running = false;
+    }
+    const sp = (x) => clamp(x * 20, 0, 3);
+    moveDots(fd1, S.running ? sp(b) : 0, dt); moveDots(fd2, S.running ? sp(b) : 0, dt); moveDots(fd3, S.running ? sp(d) : 0, dt); moveDots(fd4, S.running ? sp(d) : 0, dt);
+    S.rot += dt * (S.running ? b * 4000 : 0); rG.firstChild.setAttribute('transform', `rotate(${S.rot})`); bG.firstChild.setAttribute('transform', `rotate(${-S.rot * d / Math.max(b, .001)})`);
+    pTxt.textContent = `Dân số ${fmtN(S.Pv)} tr`; bTxt.textContent = `Sinh ${fmtN(S.Pv * b * 1000, 0)} k/năm`; dTxt.textContent = `Tử ${fmtN(S.Pv * d * 1000, 0)} k/năm`;
+    ch.draw(); drawDots(); requestAnimationFrame(loop);
+  }
+  kpis();
+  onVisible(svg.closest('.lab'), v => { const was = S.vis; S.vis = v; if (v && !was) { if (!S.xs.length) restart(); else { S.last = performance.now(); requestAnimationFrame(loop); } } });
+  // lily
+  const lc = $('#lilyCv'), lg = lc.getContext('2d'), lr = $('#lilyD');
+  const rnd = mulberry(7); const pads = []; for (let i = 0; i < 1400; i++) pads.push([rnd(), rnd(), rnd()]);
+  function lily() {
+    const d = +lr.value, frac = Math.pow(2, d - 30); $('#lilyO').textContent = `ngày ${d}: ${frac < .01 ? nf2.format(frac * 100) : nf0.format(frac * 100)}% ao`;
+    const W = lc.clientWidth, H = lc.clientHeight, dpr = Math.min(2, devicePixelRatio || 1); lc.width = W * dpr; lc.height = H * dpr; lg.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const pw = Math.min(W - 20, 520), x0 = (W - pw) / 2;
+    lg.fillStyle = col('--water'); lg.globalAlpha = .35; lg.beginPath(); lg.roundRect(x0, 6, pw, H - 12, 40); lg.fill(); lg.globalAlpha = 1;
+    lg.save(); lg.beginPath(); lg.roundRect(x0, 6, pw, H - 12, 40); lg.clip();
+    // coverage: fill columns from left proportionally with lily circles
+    const covW = pw * frac; lg.fillStyle = '#3f9a4a';
+    for (const [u, v, w] of pads) { const x = x0 + u * covW, y = 6 + v * (H - 12); if (u * pw > covW + 1e-9 && covW < 1) continue; lg.beginPath(); lg.arc(x, y, 5 + w * 4, 0.3, Math.PI * 2 - 0.3); lg.lineTo(x, y); lg.fill(); }
+    if (frac > .02) { lg.fillStyle = '#5bb85f'; lg.fillRect(x0, 6, covW, H - 12); for (const [u, v, w] of pads.slice(0, 260)) { const x = x0 + u * covW, y = 6 + v * (H - 12); lg.fillStyle = w > .85 ? '#f5b5c8' : '#3f8f47'; lg.beginPath(); lg.arc(x, y, w > .85 ? 3 : 4 + w * 3, 0, 7); lg.fill(); } }
+    lg.restore();
+  }
+  lr.oninput = lily; addEventListener('resize', lily); lily();
+  $('#lilyAns').onclick = () => { lr.value = 29; lily(); $('#lilyTxt').innerHTML = '<b>Ngày 29!</b> Chỉ còn đúng <b>một ngày</b> để cứu cái ao. Ngày 25 nó mới phủ 3%, ngày 20 chưa tới 0,1%. Suốt gần cả tháng, trông như chẳng có gì đáng lo. Đó là bản chất của tăng trưởng hàm mũ, và là ví dụ mở đầu của <i>Giới hạn của sự tăng trưởng</i>.'; };
+  return [ch, { draw: lily }];
+}
+function mulberry(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+/* ===================== CH3: balancing loop ===================== */
+function initB() {
+  const svg = $('#bSvg'); addMarker(svg); const g = svgEl('g', null, svg);
+  const node = (x, y, txt, stock) => { const w = stock ? 118 : 112, h = stock ? 50 : 40; svgEl('rect', { x: x - w / 2, y: y - h / 2, width: w, height: h, rx: stock ? 6 : 20, fill: 'var(--panel)', stroke: stock ? 'var(--ink)' : 'var(--muted)', 'stroke-width': stock ? 2.5 : 1.2 }, g); const t = svgEl('text', { x, y: y - 3, 'text-anchor': 'middle', class: 'svgt', 'font-size': 12.5, 'font-weight': 600 }, g); t.textContent = txt; const v = svgEl('text', { x, y: y + 13, 'text-anchor': 'middle', class: 'svgm', 'font-size': 11 }, g); return v; };
+  const vGoal = node(90, 50, 'Mục tiêu'), vGap = node(330, 50, 'Chênh lệch'), vOrd = node(330, 200, 'Đặt hàng/tuần'), vInv = node(90, 200, 'Tồn kho', true);
+  const a1 = loopArrow(g, 'M148 50 L272 50'), a2 = loopArrow(g, 'M330 72 L330 178'), a3 = loopArrow(g, 'M272 200 L152 200'), a4 = loopArrow(g, 'M110 174 C 160 120, 230 90, 280 68');
+  const sign = (x, y, s, c) => { svgEl('text', { x, y, 'text-anchor': 'middle', 'font-size': 16, 'font-weight': 700, fill: c }, g).textContent = s; };
+  sign(262, 40, '+', 'var(--pos)'); sign(345, 172, '+', 'var(--pos)'); sign(165, 192, '+', 'var(--pos)'); sign(268, 92, '−', 'var(--neg)');
+  const bG = svgEl('g', { transform: 'translate(215 140)' }, g); svgEl('circle', { r: 17, fill: 'none', stroke: 'var(--teal)', 'stroke-width': 2.2, 'stroke-dasharray': '78 28' }, bG); svgEl('text', { y: 5, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 700, fill: 'var(--teal)' }, bG).textContent = 'B';
+  const fdA = flowDots(g, a3, 4, 'var(--water)', 3.6), fdB = flowDots(g, a4, 3, 'var(--muted)', 2.4);
+  const gR = $('#bGoal'), tR = $('#bT'); const TT = 40;
+  const S = { xs: [], I: [], G: [], O: [], vis: false, k: 0, shock: false, last: 0 };
+  let run = null;
+  const ch = new Chart($('#bCv'), { x0: 0, x1: TT, yMin: 0, yMax: 100, series: [
+    { key: 'I', label: 'Tồn kho', color: '--water', xs: S.xs, ys: S.I, width: 2.8, fmt: v => nf1.format(v) },
+    { key: 'G', label: 'Mục tiêu', color: '--accent', xs: S.xs, ys: S.G, dash: [6, 5], width: 1.6, noDot: true, fmt: v => nf0.format(v) },
+    { key: 'O', label: 'Đặt hàng/tuần', color: '--c-cap', xs: S.xs, ys: S.O, width: 1.8, fmt: v => nf1.format(v) }], tipX: x => 'tuần ' + nf1.format(x) });
+  ch.legend($('#bLeg'));
+  function compute() {
+    const G = +gR.value, T = +tR.value, dt = .05; const out = { t: [], I: [], O: [], G: [] }; let I = 10;
+    for (let t = 0; t <= TT + 1e-9; t += dt) { if (S.shock && Math.abs(t - 20) < dt / 2) I -= 30; const O = (G - I) / T; out.t.push(t); out.I.push(I); out.O.push(O); out.G.push(G); I += dt * O; }
+    ch.cfg.marks = [1, 2, 3].map(m => ({ x: m * T, label: m === 1 ? 'T' : m + 'T', color: '--teal' })).filter(m => m.x <= TT);
+    return out;
+  }
+  function restart() { run = compute(); S.k = 0; S.xs.length = S.I.length = S.G.length = S.O.length = 0; S.last = performance.now(); $('#bGoalO').textContent = gR.value; $('#bTO').textContent = nf1.format(+tR.value); if (S.vis) requestAnimationFrame(loop); }
+  gR.oninput = tR.oninput = () => { S.shock = false; restart(); };
+  $('#bRun').onclick = () => { S.shock = false; restart(); };
+  $('#bShock').onclick = () => { S.shock = true; restart(); };
+  function loop(now) {
+    if (!S.vis) return; const dt = Math.min(.1, (now - S.last) / 1000); S.last = now;
+    const adv = Math.round(dt * 8 / .05); // 8 weeks per second
+    for (let i = 0; i < adv && S.k < run.t.length; i++, S.k++) { S.xs.push(run.t[S.k]); S.I.push(run.I[S.k]); S.G.push(run.G[S.k]); S.O.push(run.O[S.k]); }
+    const k = Math.max(0, S.k - 1), I = run.I[k], O = run.O[k], G = run.G[k];
+    vGoal.textContent = nf0.format(G); vInv.textContent = nf1.format(I); vGap.textContent = nf1.format(G - I); vOrd.textContent = nf1.format(O);
+    moveDots(fdA, clamp(Math.abs(O) / 15, 0, 2), dt); moveDots(fdB, .5, dt); bG.firstChild.setAttribute('transform', `rotate(${(now / 20 * Math.min(1, Math.abs(O) / 5)) % 360})`);
+    ch.draw(); requestAnimationFrame(loop);
+  }
+  onVisible(svg.closest('.lab'), v => { const was = S.vis; S.vis = v; if (v && !was) { if (!run) restart(); else { S.last = performance.now(); requestAnimationFrame(loop); } } });
+  return ch;
+}
+
+/* ===================== CH4: delay & oscillation ===================== */
+function initDelay() {
+  const dR = $('#dDel'), tR = $('#dT'), sl = $('#dSL'); const TT = 60, dt = 1 / 16;
+  const S = { xs: [], I: [], O: [], A: [], D: [], vis: false, k: 0, last: 0, ph: 0 };
+  let run = null;
+  const ch = new Chart($('#dCv'), { x0: 0, x1: TT, series: [
+    { key: 'I', label: 'Tồn kho', color: '--water', xs: S.xs, ys: S.I, width: 2.8, fmt: v => nf0.format(v) },
+    { key: 'O', label: 'Đặt hàng', color: '--c-cap', xs: S.xs, ys: S.O, width: 1.8, fmt: v => nf0.format(v) },
+    { key: 'A', label: 'Hàng về', color: '--pos', xs: S.xs, ys: S.A, width: 1.8, fmt: v => nf0.format(v) },
+    { key: 'D', label: 'Nhu cầu', color: '--muted', xs: S.xs, ys: S.D, width: 1.5, dash: [5, 4], noDot: true, fmt: v => nf0.format(v) }], tipX: x => 'tuần ' + nf1.format(x), marks: [{ x: 5, label: 'nhu cầu +50%', color: '--muted' }, { x: 0, label: '', color: '--accent' }] });
+  ch.legend($('#dLeg'));
+  function compute() {
+    const tau = +dR.value, T = +tR.value, useSL = sl.checked; const Istar = 400; let D = 100, I = Istar;
+    const s = [D * tau / 3, D * tau / 3, D * tau / 3]; const out = { t: [], I: [], O: [], A: [], D: [], SL: [] };
+    for (let t = 0; t <= TT + 1e-9; t += dt) {
+      D = t >= 5 ? 150 : 100; const SL = s[0] + s[1] + s[2];
+      let O = D + (Istar - I) / T + (useSL ? (D * tau - SL) / T : 0); O = Math.max(0, O);
+      let A; if (tau <= 1e-6) { A = O; } else { const r = 3 / tau; A = s[2] * r; const f0 = s[0] * r, f1 = s[1] * r; s[0] += dt * (O - f0); s[1] += dt * (f0 - f1); s[2] += dt * (f1 - A); }
+      out.t.push(t); out.I.push(I); out.O.push(O); out.A.push(A); out.D.push(D); out.SL.push(tau <= 1e-6 ? 0 : SL);
+      I += dt * (A - D);
+    }
+    return out;
+  }
+  function restart() { run = compute(); S.k = 0; S.xs.length = S.I.length = S.O.length = S.A.length = S.D.length = 0; S.last = performance.now(); ch.cfg.yMin = null; ch.cfg.yMax = null; const all = run.I.concat(run.O); ch.cfg.yMax = niceCeil(Math.max(...all) * 1.05); const mn = Math.min(...all); ch.cfg.yMin = mn >= 0 ? 0 : -niceCeil(-mn * 1.05); $('#dDelO').textContent = nf1.format(+dR.value); $('#dTO').textContent = nf1.format(+tR.value); if (S.vis) requestAnimationFrame(loop); }
+  dR.oninput = tR.oninput = sl.onchange = restart; $('#dRun').onclick = restart;
+  const sc = $('#dScene'), g = sc.getContext('2d');
+  function scene(k) {
+    const W = sc.clientWidth, H = sc.clientHeight, dpr = Math.min(2, devicePixelRatio || 1); if (sc.width !== Math.round(W * dpr)) { sc.width = Math.round(W * dpr); sc.height = Math.round(H * dpr); }
+    g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
+    const font = getComputedStyle(document.body).fontFamily; const I = run.I[k], SL = run.SL[k], O = run.O[k], A = run.A[k], D = run.D[k], tau = +dR.value;
+    const fx = 14, fw = 92, wx = W - 130, ww = 116, by = 120;
+    // factory
+    g.fillStyle = col('--c-cap'); g.globalAlpha = .9; g.beginPath(); g.moveTo(fx, by + 20); g.lineTo(fx, by - 40); g.lineTo(fx + 20, by - 52); g.lineTo(fx + 20, by - 40); g.lineTo(fx + 40, by - 52); g.lineTo(fx + 40, by - 40); g.lineTo(fx + fw, by - 52); g.lineTo(fx + fw, by + 20); g.closePath(); g.fill(); g.globalAlpha = 1;
+    g.fillStyle = col('--panel'); g.font = '600 11px ' + font; g.textAlign = 'center'; g.fillText('Nhà cung cấp', fx + fw / 2, by - 8);
+    // belt
+    const bx0 = fx + fw + 6, bx1 = wx - 8; g.strokeStyle = col('--faint'); g.lineWidth = 6; g.lineCap = 'round'; g.beginPath(); g.moveTo(bx0, by + 14); g.lineTo(bx1, by + 14); g.stroke();
+    g.lineWidth = 1; for (let x = bx0; x < bx1; x += 18) { g.fillStyle = col('--line'); g.beginPath(); g.arc(x + ((S.ph * 18) % 18), by + 14, 2, 0, 7); g.fill(); }
+    const nb = Math.min(40, Math.round(SL / 40)); const span = bx1 - bx0 - 20;
+    g.fillStyle = col('--c-cap');
+    for (let i = 0; i < nb; i++) { const f = ((i + S.ph * nb / Math.max(1, nb)) / Math.max(1, nb)) % 1; const x = bx0 + 6 + f * span; g.fillRect(x, by - 2, 13, 13); g.strokeStyle = col('--panel'); g.strokeRect(x + .5, by - 1.5, 12, 12); }
+    g.fillStyle = col('--muted'); g.font = '11px ' + font; g.fillText(tau > 0 ? `Hàng đang trên đường: ${nf0.format(SL)} (${nf1.format(tau)} tuần)` : 'Giao hàng tức thì', (bx0 + bx1) / 2, by + 38);
+    g.fillText(`Đặt ${nf0.format(O)}/tuần →`, (bx0 + bx1) / 2, 24); g.fillText(`→ về ${nf0.format(A)}/tuần`, (bx0 + bx1) / 2, by - 18);
+    // warehouse
+    g.strokeStyle = col('--ink'); g.lineWidth = 2; g.beginPath(); g.moveTo(wx, by + 20); g.lineTo(wx, by - 60); g.lineTo(wx + ww / 2, by - 84); g.lineTo(wx + ww, by - 60); g.lineTo(wx + ww, by + 20); g.stroke();
+    const nI = Math.round(Math.max(0, I) / 25), cols2 = 6;
+    for (let i = 0; i < Math.min(nI, 42); i++) { const c2 = i % cols2, r = Math.floor(i / cols2); g.fillStyle = col('--water'); g.fillRect(wx + 8 + c2 * 17, by + 6 - r * 13, 15, 11); }
+    g.fillStyle = I < 0 ? col('--neg') : col('--ink'); g.font = '600 12px ' + font; g.fillText(I < 0 ? `THIẾU ${nf0.format(-I)}!` : `Tồn kho ${nf0.format(I)}`, wx + ww / 2, by + 40);
+    g.fillStyle = col('--muted'); g.font = '11px ' + font; g.fillText(`Khách lấy ${nf0.format(D)}/tuần →`, wx + ww / 2 - 10, by + 58);
+    g.textAlign = 'left'; g.fillText(`Tuần ${Math.floor(run.t[k])}`, 10, 16);
+  }
+  function loop(now) {
+    if (!S.vis) return; const dtt = Math.min(.1, (now - S.last) / 1000); S.last = now;
+    const adv = Math.round(dtt * 5 / dt);
+    for (let i = 0; i < adv && S.k < run.t.length; i++, S.k++) { S.xs.push(run.t[S.k]); S.I.push(run.I[S.k]); S.O.push(run.O[S.k]); S.A.push(run.A[S.k]); S.D.push(run.D[S.k]); }
+    const k = Math.max(0, S.k - 1); const tau = +dR.value; if (S.k < run.t.length) S.ph = (S.ph + dtt * 5 / Math.max(.5, tau)) % 1;
+    scene(k); ch.draw(); requestAnimationFrame(loop);
+  }
+  onVisible(sc.closest('.lab'), v => { const was = S.vis; S.vis = v; if (v && !was) { if (!run) restart(); else { S.last = performance.now(); requestAnimationFrame(loop); } } });
+  return { draw() { ch.draw(); if (run) scene(Math.max(0, S.k - 1)); } };
+}
+
+/* ===================== CH5: limits — sheep & meadow ===================== */
+function initLimits() {
+  const rR = $('#sR'), dR = $('#sDel'), eR = $('#sEro'); const TT = 80, dt = .02, K0 = 100;
+  const S = { xs: [], P: [], K: [], vis: false, k: 0, last: 0, preset: 's' };
+  let run = null;
+  const ch = new Chart($('#sCv'), { x0: 0, x1: TT, yMin: 0, yMax: 200, series: [
+    { key: 'P', label: 'Đàn cừu', color: '--c-pop', xs: S.xs, ys: S.P, width: 2.8, fmt: v => nf0.format(v) },
+    { key: 'K', label: 'Sức chứa đồng cỏ', color: '--c-res', xs: S.xs, ys: S.K, width: 2.2, fmt: v => nf0.format(v) }], tipX: x => 'năm ' + nf1.format(x) });
+  ch.legend($('#sLeg'));
+  function compute() {
+    const r = +rR.value / 100, tau = +dR.value, e = +eR.value; let P = 4, K = K0, Pd = 4; const s3 = [4, 4, 4];
+    const out = { t: [], P: [], K: [] };
+    for (let t = 0; t <= TT + 1e-9; t += dt) {
+      out.t.push(t); out.P.push(P); out.K.push(K);
+      let Pp; if (tau > 0) { const q = 3 / tau; s3[0] += dt * q * (P - s3[0]); s3[1] += dt * q * (s3[0] - s3[1]); s3[2] += dt * q * (s3[1] - s3[2]); Pp = s3[2]; } else Pp = P;
+      const growth = Math.max(-0.5 * P, r * P * (1 - Pp / Math.max(K, 1e-3))); // die-off at most 50%/yr
+      const regen = 0.03 * (K0 - K) * (K / K0 + 0.02);   // grass regrows slowly, slower still when degraded
+      const eat = e * Math.max(0, P - K) * 0.4;           // overgrazing erodes the carrying capacity
+      P = Math.max(0.01, P + dt * growth);
+      K = clamp(K + dt * (regen - eat), 0.5, K0);
+    }
+    return out;
+  }
+  const presets = { s: [30, 0, 0], o: [30, 4, 0], c: [30, 4, .7] };
+  $$('#sPresets .btn').forEach(b => b.onclick = () => { const p = presets[b.dataset.p]; rR.value = p[0]; dR.value = p[1]; eR.value = p[2]; S.preset = b.dataset.p; restart(); });
+  rR.oninput = dR.oninput = eR.oninput = () => { S.preset = null; restart(); };
+  function restart() {
+    run = compute(); S.k = 0; S.xs.length = S.P.length = S.K.length = 0; S.last = performance.now();
+    $('#sRO').textContent = rR.value + '%'; $('#sDelO').textContent = nf2.format(+dR.value); $('#sEroO').textContent = nf2.format(+eR.value);
+    const mx = Math.max(...run.P); ch.cfg.yMax = mx > 180 ? niceCeil(mx * 1.05) : 200;
+    $$('#sPresets .btn').forEach(b => b.classList.toggle('on', b.dataset.p === S.preset));
+    if (S.vis) requestAnimationFrame(loop);
+  }
+  const sc = $('#sScene'), g = sc.getContext('2d'); const rnd = mulberry(11);
+  const tufts = Array.from({ length: 170 }, () => [rnd(), rnd(), rnd()]).sort((a, b) => a[1] - b[1]);
+  const sheep = Array.from({ length: 70 }, () => [rnd(), rnd(), rnd() * 6.28]);
+  function story(k) {
+    const P = run.P[k], K = run.K[k], t = run.t[k], tau = +dR.value, e = +eR.value; let s;
+    const peakP = Math.max(...run.P.slice(0, k + 1));
+    if (t < 8) s = `Đàn cừu còn nhỏ, cỏ thừa thãi. Vòng <b>R</b> (cừu đẻ thêm cừu) đang chiếm ưu thế, nên đàn tăng theo hàm mũ.`;
+    else if (P > K * 1.05 && K > 30) s = `<b>Vượt ngưỡng!</b> ${nf0.format(P)} con trên đồng cỏ chỉ nuôi được ${nf0.format(K)}. Vì người chăn ${tau > 0 ? `chỉ nhận ra sau khoảng ${nf1.format(tau)} năm` : 'phản ứng ngay'}, đàn vẫn tiếp tục lớn thêm.${e > 0 ? ' Cỏ bị gặm trụi tận gốc nên <b>sức chứa bị bào mòn</b>.' : ''}`;
+    else if (K < 45 && e > 0) s = `<b>Sụp đổ.</b> Đồng cỏ chỉ còn ${nf0.format(K)}% sức chứa ban đầu và hồi phục rất chậm, nên đàn cừu phải co lại. Giới hạn đã bị chính sự vượt ngưỡng phá hỏng.`;
+    else if (Math.abs(P - K) < 3 && t > 20) s = `<b>Cân bằng.</b> Vòng <b>B</b> (càng đông càng ít cỏ cho mỗi con) đã chiếm ưu thế. Đàn dừng ở quanh sức chứa ${nf0.format(K)}.`;
+    else if (P < K && peakP > K * 1.05) s = `Đàn đang co lại sau lần vượt ngưỡng. Với trễ ${nf1.format(tau)} năm, hệ thống liên tục “sửa quá tay” nên <b>dao động</b> quanh sức chứa.`;
+    else s = `Đàn ${nf0.format(P)} con, sức chứa ${nf0.format(K)}. Càng tới gần giới hạn, vòng <b>B</b> càng mạnh và tăng trưởng chậm lại thành hình <b>chữ S</b>.`;
+    $('#sStory').innerHTML = `<span class="mono" style="color:var(--muted)">Năm ${Math.floor(t)} ·</span> ` + s;
+  }
+  function scene(k, now) {
+    const W = sc.clientWidth, H = sc.clientHeight, dpr = Math.min(2, devicePixelRatio || 1); if (sc.width !== Math.round(W * dpr)) { sc.width = Math.round(W * dpr); sc.height = Math.round(H * dpr); }
+    g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
+    const P = run.P[k], K = run.K[k], q = K / K0;
+    const sky = g.createLinearGradient(0, 0, 0, H * .4); sky.addColorStop(0, document.documentElement.dataset.theme === 'dark' || (matchMedia('(prefers-color-scheme: dark)').matches && document.documentElement.dataset.theme !== 'light') ? '#1d2a44' : '#cfe6f5'); sky.addColorStop(1, col('--bg2'));
+    g.fillStyle = sky; g.fillRect(0, 0, W, H * .4);
+    const hy = H * .34; const ground = `rgb(${Math.round(lerp(150, 92, q))},${Math.round(lerp(120, 160, q))},${Math.round(lerp(70, 70, q))})`;
+    g.fillStyle = ground; g.beginPath(); g.moveTo(0, hy + 8); g.quadraticCurveTo(W * .3, hy - 10, W * .6, hy + 4); g.quadraticCurveTo(W * .85, hy + 14, W, hy); g.lineTo(W, H); g.lineTo(0, H); g.fill();
+    const nT = Math.round(tufts.length * q);
+    for (let i = 0; i < tufts.length; i++) { const [u, v, w] = tufts[i]; const x = u * W, y = hy + 10 + v * (H - hy - 16); const alive = i < nT; g.strokeStyle = alive ? '#2f7d32' : 'rgba(120,90,50,.5)'; g.lineWidth = 1.6; const h = alive ? 6 + w * 7 : 2; g.beginPath(); g.moveTo(x - 3, y); g.lineTo(x - 4, y - h * .8); g.moveTo(x, y); g.lineTo(x, y - h); g.moveTo(x + 3, y); g.lineTo(x + 4, y - h * .8); g.stroke(); }
+    const nS = Math.min(sheep.length, Math.round(P / 200 * sheep.length));
+    g.font = '18px system-ui, "Apple Color Emoji","Segoe UI Emoji"'; g.textAlign = 'center';
+    for (let i = 0; i < nS; i++) { const [u, v, ph] = sheep[i]; const x = 14 + u * (W - 28), y = hy + 26 + v * (H - hy - 34) + Math.sin(now / 300 + ph) * 1.2; g.fillText('🐑', x, y); }
+    g.fillStyle = 'rgba(0,0,0,.45)'; g.fillRect(8, 8, 172, 40); g.fillStyle = '#fff'; g.font = '600 12px ' + getComputedStyle(document.body).fontFamily; g.textAlign = 'left';
+    g.fillText(`Năm ${Math.floor(run.t[k])}`, 16, 24); g.font = '11px ' + getComputedStyle(document.body).fontFamily; g.fillText(`🐑 ${nf0.format(P)}  ·  🌱 sức chứa ${nf0.format(K)}`, 16, 40);
+  }
+  function loop(now) {
+    if (!S.vis) return; const dtt = Math.min(.1, (now - S.last) / 1000); S.last = now;
+    const adv = Math.round(dtt * 8 / dt);
+    for (let i = 0; i < adv && S.k < run.t.length; i++, S.k++) { if (S.k % 5 === 0) { S.xs.push(run.t[S.k]); S.P.push(run.P[S.k]); S.K.push(run.K[S.k]); } }
+    const k = Math.max(0, S.k - 1); scene(k, now); story(k); ch.draw(); requestAnimationFrame(loop);
+  }
+  onVisible(sc.closest('.lab'), v => { const was = S.vis; S.vis = v; if (v && !was) { if (!run) { S.preset = 's'; restart(); } else { S.last = performance.now(); requestAnimationFrame(loop); } } });
+  return { draw() { ch.draw(); } };
+}
+/* ===================== shared bits for model studios ===================== */
+const UNPOP = [[1900, 1.65], [1910, 1.75], [1920, 1.86], [1930, 2.07], [1940, 2.3], [1950, 2.54], [1955, 2.77], [1960, 3.02], [1965, 3.34], [1970, 3.7], [1975, 4.07], [1980, 4.44], [1985, 4.86], [1990, 5.33], [1995, 5.74], [2000, 6.15], [2005, 6.54], [2010, 6.99], [2015, 7.43], [2020, 7.84], [2025, 8.19]].map(([y, v]) => [y, v * 1e9]);
+function valAt(V, key, t) { const f = (t - V.y0) / V.dt; const i = clamp(Math.floor(f), 0, V.n - 1), j = Math.min(V.n - 1, i + 1), a = f - i; const arr = V[key]; return arr[i] + (arr[j] - arr[i]) * clamp(a, 0, 1); }
+function peakOf(V, key) { let m = -Infinity, ti = 0; const a = V[key]; for (let i = 0; i < V.n; i++) if (a[i] > m) { m = a[i]; ti = V.t[i]; } return [m, ti]; }
+function tableCanvas(cv, f, x, label, xl) {
+  const W = cv.clientWidth || 180, H = cv.clientHeight || 110, dpr = Math.min(2, devicePixelRatio || 1); cv.width = W * dpr; cv.height = H * dpr; const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const xs = f.xs, ys = f.ys, x0 = xs[0], x1 = xs[xs.length - 1]; let y0 = Math.min(0, ...ys), y1 = Math.max(...ys) * 1.08; if (y1 <= y0) y1 = y0 + 1;
+  const p = { l: 30, r: 8, t: 8, b: 18 }, pw = W - p.l - p.r, ph = H - p.t - p.b;
+  const X = v => p.l + (v - x0) / (x1 - x0) * pw, Y = v => p.t + ph - (v - y0) / (y1 - y0) * ph;
+  g.font = '9.5px ' + getComputedStyle(document.body).fontFamily; g.fillStyle = col('--faint'); g.strokeStyle = col('--line');
+  g.beginPath(); g.moveTo(p.l, p.t); g.lineTo(p.l, p.t + ph); g.lineTo(p.l + pw, p.t + ph); g.stroke();
+  g.textAlign = 'right'; g.textBaseline = 'middle'; g.fillText(fmtN(y1 / 1.08), p.l - 3, Y(y1 / 1.08)); g.fillText(fmtN(y0), p.l - 3, Y(y0));
+  if (y0 <= 1 && y1 >= 1) { g.setLineDash([2, 3]); g.beginPath(); g.moveTo(p.l, Y(1)); g.lineTo(p.l + pw, Y(1)); g.stroke(); g.setLineDash([]); }
+  g.textAlign = 'center'; g.textBaseline = 'top'; g.fillText(fmtN(x0), X(x0) + 6, p.t + ph + 3); g.fillText(fmtN(x1), X(x1) - 8, p.t + ph + 3); g.fillText(xl, p.l + pw / 2, p.t + ph + 3);
+  g.strokeStyle = col('--accent'); g.lineWidth = 2; g.beginPath(); xs.forEach((xx, i) => i ? g.lineTo(X(xx), Y(ys[i])) : g.moveTo(X(xx), Y(ys[i]))); g.stroke();
+  g.fillStyle = col('--accent'); xs.forEach((xx, i) => { g.beginPath(); g.arc(X(xx), Y(ys[i]), 1.8, 0, 7); g.fill(); });
+  const xc = clamp(x, x0, x1), yc = f(x);
+  g.strokeStyle = col('--ink'); g.setLineDash([3, 3]); g.lineWidth = 1; g.beginPath(); g.moveTo(X(xc), p.t + ph); g.lineTo(X(xc), Y(yc)); g.lineTo(p.l, Y(yc)); g.stroke(); g.setLineDash([]);
+  g.fillStyle = col('--ink'); g.beginPath(); g.arc(X(xc), Y(yc), 4.5, 0, 7); g.fill(); g.fillStyle = col('--panel'); g.beginPath(); g.arc(X(xc), Y(yc), 2, 0, 7); g.fill();
+}
+const Insp = {
+  el: null, body: null, cur: null,
+  init() { this.el = $('#insp'); this.body = $('#inspBody'); $('#inspX').onclick = () => this.close(); addEventListener('keydown', e => { if (e.key === 'Escape') this.close(); }); },
+  open(owner, id) { this.cur = { owner, id }; this.el.classList.add('show'); owner.renderInsp(id, true); },
+  close() { this.el.classList.remove('show'); if (this.cur && this.cur.owner.onInspClose) this.cur.owner.onInspClose(); this.cur = null; },
+  refresh(owner) { if (this.cur && this.cur.owner === owner) owner.renderInsp(this.cur.id, false); }
+};
+
+/* ===================== WORLD2 studio ===================== */
+function initWorld2() {
+  const B = 1e9;
+  const SC = [
+    { id: 'std', name: 'Chuẩn (1971)', o: {}, d: '<b>Kịch bản chuẩn.</b> Thế giới tiếp tục như giai đoạn 1900–1970. Tài nguyên cạn dần làm vốn kém hiệu quả, mức sống vật chất giảm, tử suất tăng và dân số đi xuống sau đỉnh. Forrester gọi đây là kiểu <b>suy giảm do cạn kiệt tài nguyên</b>.' },
+    { id: 'nr', name: 'Tiết kiệm tài nguyên 75%', o: { NRUN1: .25 }, d: 'Từ 1970, mỗi người chỉ dùng <b>1/4 tài nguyên</b> (tái chế, công nghệ). Tài nguyên hết là giới hạn, nên công nghiệp và dân số tăng tiếp cho tới khi <b>ô nhiễm bùng phát</b> giữa thế kỷ 21. Ô nhiễm vượt khả năng hấp thụ của tự nhiên và dân số sụp đổ nhanh hơn cả kịch bản chuẩn. Gỡ một giới hạn thì giới hạn kế tiếp lộ ra.' },
+    { id: 'cap', name: 'Đầu tư vốn +20%', o: { CIGN1: .06 }, d: 'Từ 1970, đầu tư vốn tăng 20% (công nghiệp hóa nhanh hơn). Mức sống tăng nhanh hơn trong vài thập kỷ, nhưng ô nhiễm cũng tăng nhanh và <b>khủng hoảng ô nhiễm đến sớm hơn</b>.' },
+    { id: 'birth', name: 'Giảm sinh 30%', o: { BRN1: .028 }, d: 'Từ 1970, tỉ suất sinh chuẩn giảm 30%. Dân số đạt đỉnh thấp hơn và chất lượng sống cải thiện một thời gian, nhưng tài nguyên vẫn cạn nên cuối cùng vẫn đi xuống. <b>Chỉ kiểm soát dân số thì chưa đủ.</b>' },
+    { id: 'food', name: 'Lương thực +25%', o: { FC1: 1.25 }, d: 'Từ 1970, sản lượng lương thực tăng 25% (“cách mạng xanh”). Nhiều người sống sót hơn nên dân số đạt đỉnh cao hơn, nhưng mật độ đông hơn và tài nguyên cạn nhanh hơn, nên <b>chất lượng sống lại thấp hơn</b>. Đây là ví dụ kinh điển của <i>hệ thống kháng chính sách</i>.' },
+    { id: 'tech', name: 'Công nghệ “thần kỳ”', o: { NRUN1: 0, POLN1: .1 }, d: 'Giả định từ 1970 không cần tài nguyên nữa và ô nhiễm giảm 90%. Dân số cứ thế tăng lên hơn 8 tỉ và giới hạn chuyển sang <b>mật độ, chen chúc</b>, khiến chất lượng sống đi xuống. Công nghệ không xóa giới hạn mà chỉ <b>đổi chỗ</b> nó.' },
+    { id: 'eq', name: 'Cân bằng toàn cầu (1970)', o: { BRN1: .028, NRUN1: .25, FC1: .8, CIGN1: .03, POLN1: .5 }, d: 'Gói chính sách “<b>trạng thái cân bằng toàn cầu</b>” của Forrester, áp dụng từ 1970: giảm sinh 30%, giảm dùng tài nguyên 75%, giảm ô nhiễm 50%, giảm đầu tư vốn 40% và giảm sản xuất lương thực 20%. Hệ thống ổn định suốt hai thế kỷ, chất lượng sống giữ quanh mức năm 1970.' },
+    { id: 'eqlate', name: 'Cân bằng, nhưng từ 2000', o: { BRN1: .028, NRUN1: .25, FC1: .8, CIGN1: .03, POLN1: .5, SWT: 2000 }, d: 'Cùng gói chính sách cân bằng nhưng bắt đầu năm <b>2000</b>, tức trễ 30 năm. Dân số đã gần 5 tỉ, tài nguyên đã hao hụt và ô nhiễm đã tích tụ, nên thế giới phải đi qua một giai đoạn suy giảm trước khi ổn định. <b>Chờ đợi có cái giá của nó.</b>' },
+  ];
+  const std = runWorld2();
+  const W = { V: std, sc: 'std', t: 1900, opt: {} };
+  // ---------------- chart
+  const tabs = [
+    { id: 'lv', name: 'Biến mức', own: true, series: () => [
+      { key: 'P', label: 'Dân số', color: '--c-pop', max: 10 * B, scaleTxt: '0–10 tỉ', fmt: fmtBig, width: 2.6 },
+      { key: 'NR', label: 'Tài nguyên', color: '--c-res', max: Math.max(1e12, (W.opt.NRI || 9e11) * 1.1), scaleTxt: '0–' + fmtBig(Math.max(1e12, (W.opt.NRI || 9e11) * 1.1)), fmt: fmtBig },
+      { key: 'CI', label: 'Vốn', color: '--c-cap', max: 20 * B, scaleTxt: '0–20 tỉ', fmt: fmtBig },
+      { key: 'POLR', label: 'Ô nhiễm (×1970)', short: 'Ô nhiễm', color: '--c-pol', max: 40, scaleTxt: '0–40', fmt: v => nf2.format(v) },
+      { key: 'QL', label: 'Chất lượng sống', short: 'Chất lượng sống', color: '--c-ql', max: 2, scaleTxt: '0–2', fmt: v => nf2.format(v) }] },
+    { id: 'aux', name: 'Biến trung gian', own: true, series: () => [
+      { key: 'MSL', label: 'Mức sống vật chất', color: '--c-cap', max: 2, scaleTxt: '0–2', fmt: v => nf2.format(v) },
+      { key: 'FR', label: 'Lương thực', color: '--c-food', max: 2, scaleTxt: '0–2', fmt: v => nf2.format(v) },
+      { key: 'CR', label: 'Mật độ', color: '--c-pop', max: 4, scaleTxt: '0–4', fmt: v => nf2.format(v) },
+      { key: 'NRFR', label: 'Tài nguyên còn', color: '--c-res', max: 1, scaleTxt: '0–100%', fmt: v => nf0.format(v * 100) + '%' },
+      { key: 'CIAF', label: 'Vốn cho nông nghiệp', color: '--c-ciaf', max: 1, scaleTxt: '0–100%', fmt: v => nf0.format(v * 100) + '%' }] },
+    { id: 'fl', name: 'Sinh & tử', own: false, series: () => [
+      { key: 'BRm', label: 'Sinh (triệu/năm)', short: 'Sinh', color: '--pos', fmt: v => nf1.format(v) + ' tr', width: 2.4 },
+      { key: 'DRm', label: 'Tử (triệu/năm)', short: 'Tử', color: '--neg', fmt: v => nf1.format(v) + ' tr', width: 2.4 }] },
+  ];
+  let tab = tabs[0];
+  const ch = new Chart($('#w2Cv'), { x0: 1900, x1: 2100, own: true, cursor: 1900, series: [], yFmt: v => nf0.format(v) });
+  const tabHost = $('#w2Tabs');
+  tabs.forEach(tb => { const b = el('button', { class: 'btn' }, tabHost, tb.name); b.onclick = () => { tab = tb; $$('.btn', tabHost).forEach(x => x.classList.toggle('on', x === b)); setSeries(); }; if (tb === tab) b.classList.add('on'); });
+  function setSeries() {
+    rateMax(); const V = W.V; V.BRm = V.BR.map(x => x / 1e6); V.DRm = V.DR.map(x => x / 1e6);
+    const ss = tab.series().map(s => Object.assign(s, { xs: V.t, ys: V[s.key] }));
+    ch.cfg.refs = []; ch.cfg.marks = [];
+    if (tab.id === 'lv') {
+      if (W.sc !== 'std') ss.push({ key: 'Pstd', label: 'Dân số (kịch bản chuẩn)', short: 'Dân số chuẩn', color: '--c-pop', max: 10 * B, xs: std.t, ys: std.P, dash: [5, 5], width: 1.3, alpha: .6, noDot: true, fmt: fmtBig });
+      ch.cfg.refs = [{ series: 'P', pts: UNPOP }];
+    }
+    const sw = W.opt.SWT != null ? W.opt.SWT : 1970; if (W.sc !== 'std') ch.cfg.marks = [{ x: sw, label: 'chính sách ' + sw }];
+    ch.cfg.own = tab.own; ch.cfg.series = ss; ch.legend($('#w2Leg'));
+    if (tab.id === 'lv') el('span', { style: 'cursor:default' }, $('#w2Leg'), '<i style="width:8px;height:8px;border-radius:50%;border:1.5px solid var(--c-pop);background:transparent"></i>dân số thực tế');
+    ch.draw();
+  }
+  // ---------------- diagram
+  const svg = $('#w2Svg'); const defs = svgEl('defs', null, svg);
+  const mk = svgEl('marker', { id: 'arrW2', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 6, markerHeight: 6, orient: 'auto-start-reverse' }, defs); svgEl('path', { d: 'M0 1 L10 5 L0 9 z', fill: 'context-stroke' }, mk);
+  const mk2 = svgEl('marker', { id: 'arrW2h', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 6, markerHeight: 6, orient: 'auto-start-reverse' }, defs); svgEl('path', { d: 'M0 1 L10 5 L0 9 z', fill: 'var(--accent)' }, mk2);
+  const gPipes = svgEl('g', null, svg), gLinks = svgEl('g', null, svg), gNodes = svgEl('g', null, svg), gDots = svgEl('g', null, svg);
+  const N = {
+    P: { t: 'stock', x: 500, y: 90, w: 140, h: 64, name: 'Dân số', key: 'P', color: '--c-pop', max: () => 10 * B, fmt: fmtBig },
+    CI: { t: 'stock', x: 500, y: 560, w: 140, h: 64, name: 'Vốn đầu tư', key: 'CI', color: '--c-cap', max: () => 20 * B, fmt: fmtBig },
+    NR: { t: 'stock', x: 95, y: 250, w: 130, h: 70, name: 'Tài nguyên', key: 'NR', color: '--c-res', max: () => (W.opt.NRI || 9e11), fmt: fmtBig },
+    POL: { t: 'stock', x: 905, y: 340, w: 130, h: 70, name: 'Ô nhiễm', key: 'POLR', color: '--c-pol', max: () => 40, fmt: v => '×' + nf2.format(v) },
+    CIAF: { t: 'stock', x: 275, y: 415, w: 112, h: 54, name: 'Vốn nông nghiệp', key: 'CIAF', color: '--c-ciaf', max: () => 1, fmt: v => nf0.format(v * 100) + '%' },
+    BR: { t: 'valve', x: 330, y: 90, name: 'Sinh', key: 'BR', fmt: v => fmtBig(v) + '/n', dir: 'h' },
+    DR: { t: 'valve', x: 680, y: 90, name: 'Tử', key: 'DR', fmt: v => fmtBig(v) + '/n', dir: 'h' },
+    CIG: { t: 'valve', x: 330, y: 560, name: 'Đầu tư', key: 'CIG', fmt: v => fmtBig(v) + '/n', dir: 'h' },
+    CID: { t: 'valve', x: 680, y: 560, name: 'Khấu hao', key: 'CID', fmt: v => fmtBig(v) + '/n', dir: 'h' },
+    NRUR: { t: 'valve', x: 95, y: 385, name: 'Khai thác', key: 'NRUR', fmt: v => fmtBig(v) + '/n', dir: 'v' },
+    POLG: { t: 'valve', x: 905, y: 220, name: 'Thải ra', key: 'POLG', fmt: v => fmtBig(v) + '/n', dir: 'v' },
+    POLA: { t: 'valve', x: 905, y: 460, name: 'Hấp thụ', key: 'POLA', fmt: v => fmtBig(v) + '/n', dir: 'v' },
+    CIAFC: { t: 'valve', x: 275, y: 318, name: 'Điều chỉnh', key: 'CIAFd', fmt: v => (v >= 0 ? '+' : '') + nf2.format(v * 100) + '%/n', dir: 'v' },
+    CR: { t: 'aux', x: 655, y: 215, name: 'Mật độ', key: 'CR', fmt: v => nf2.format(v) },
+    FR: { t: 'aux', x: 410, y: 225, name: 'Lương thực', key: 'FR', fmt: v => nf2.format(v) },
+    MSL: { t: 'aux', x: 500, y: 345, name: 'Mức sống', key: 'MSL', fmt: v => nf2.format(v), r: 30 },
+    CIR: { t: 'aux', x: 655, y: 455, name: 'Vốn/người', key: 'CIR', fmt: v => nf2.format(v) },
+    NRFR: { t: 'aux', x: 185, y: 345, name: 'Tài nguyên còn', key: 'NRFR', fmt: v => nf0.format(v * 100) + '%' },
+    POLR: { t: 'aux', x: 775, y: 345, name: 'Ô nhiễm t.đối', key: 'POLR', fmt: v => nf2.format(v) },
+    QL: { t: 'aux', x: 790, y: 205, name: 'Chất lượng sống', key: 'QL', fmt: v => nf2.format(v), star: true, r: 30 },
+  };
+  const PIPES = [
+    { v: 'BR', pts: [[205, 90], [430, 90]], cloud: [195, 90] }, { v: 'DR', pts: [[570, 90], [800, 90]], cloud: [812, 90] },
+    { v: 'CIG', pts: [[205, 560], [430, 560]], cloud: [195, 560] }, { v: 'CID', pts: [[570, 560], [800, 560]], cloud: [812, 560] },
+    { v: 'NRUR', pts: [[95, 285], [95, 482]], cloud: [95, 494] }, { v: 'POLG', pts: [[905, 128], [905, 305]], cloud: [905, 116] },
+    { v: 'POLA', pts: [[905, 375], [905, 552]], cloud: [905, 564] }, { v: 'CIAFC', pts: [[275, 250], [275, 388]], cloud: [275, 238] },
+  ];
+  const L = [ // from, to, polarity, bend
+    ['P', 'BR', '+', -.25], ['P', 'DR', '+', .25], ['P', 'CR', '+', 0], ['P', 'CIR', '−', .12], ['P', 'NRUR', '+', -.18], ['P', 'CIG', '+', -.1], ['P', 'POLG', '+', .1],
+    ['CR', 'BR', '−', -.15], ['CR', 'DR', '+', 0], ['CR', 'FR', '−', .1], ['CR', 'QL', '−', 0],
+    ['CI', 'CIR', '+', .2], ['CI', 'CID', '+', .3],
+    ['CIR', 'MSL', '+', 0], ['CIR', 'FR', '+', -.25], ['CIR', 'POLG', '+', .25],
+    ['CIAF', 'FR', '+', -.15], ['CIAF', 'MSL', '−', .15],
+    ['NR', 'NRFR', '+', 0], ['NRFR', 'MSL', '+', .1],
+    ['MSL', 'BR', '−', .1], ['MSL', 'DR', '−', -.15], ['MSL', 'CIG', '+', 0], ['MSL', 'NRUR', '+', .2], ['MSL', 'QL', '+', -.2], ['MSL', 'CIAFC', '+', -.2],
+    ['FR', 'BR', '+', 0], ['FR', 'DR', '−', .2], ['FR', 'QL', '+', .25], ['FR', 'CIAFC', '−', .1],
+    ['POL', 'POLR', '+', 0], ['POL', 'POLA', '+', -.35],
+    ['POLR', 'BR', '−', -.3], ['POLR', 'DR', '+', -.1], ['POLR', 'FR', '−', .32], ['POLR', 'QL', '−', 0], ['POLR', 'POLA', '−', .3],
+  ];
+  const LOOPS = [
+    { id: 'R1', k: 'R', name: 'Sinh sản', nodes: ['P', 'BR'], links: ['P>BR'], d: '<b>R1 Sinh sản.</b> Dân số đông thì nhiều trẻ sinh ra, rồi dân số lại càng đông. Đây là động cơ tăng trưởng hàm mũ của dân số.' },
+    { id: 'B1', k: 'B', name: 'Tử vong', nodes: ['P', 'DR'], links: ['P>DR'], d: '<b>B1 Tử vong.</b> Dân số đông thì số người chết mỗi năm nhiều, kéo dân số xuống. Vòng này cân bằng vòng R1.' },
+    { id: 'R2', k: 'R', name: 'Tích lũy vốn', nodes: ['CI', 'CIR', 'MSL', 'CIG'], links: ['CI>CIR', 'CIR>MSL', 'MSL>CIG'], d: '<b>R2 Tích lũy vốn.</b> Nhiều vốn thì mức sống cao, mức sống cao thì đầu tư nhiều, đầu tư nhiều thì càng nhiều vốn. Đây là động cơ công nghiệp hóa.' },
+    { id: 'B2', k: 'B', name: 'Chen chúc', nodes: ['P', 'CR', 'DR', 'BR'], links: ['P>CR', 'CR>DR', 'CR>BR'], d: '<b>B2 Chen chúc.</b> Mật độ tăng làm tử suất tăng và sinh suất giảm. Vòng này quan trọng khi mật độ vượt 2–3 lần mức năm 1970.' },
+    { id: 'B3', k: 'B', name: 'Lương thực', nodes: ['P', 'CR', 'FR', 'DR'], links: ['P>CR', 'CR>FR', 'FR>DR'], d: '<b>B3 Lương thực.</b> Đông người thì ít đất canh tác cho mỗi người, nên ít lương thực/người, tử suất tăng và dân số giảm.' },
+    { id: 'B4', k: 'B', name: 'Cạn kiệt tài nguyên', nodes: ['NR', 'NRFR', 'MSL', 'NRUR', 'DR', 'CIG'], links: ['NR>NRFR', 'NRFR>MSL', 'MSL>NRUR', 'MSL>DR', 'MSL>CIG'], d: '<b>B4 Cạn kiệt tài nguyên.</b> Tài nguyên giảm làm hiệu quả của vốn giảm và mức sống giảm. Khi đó đầu tư giảm, tử suất tăng và việc khai thác cũng chậm lại. Đây là vòng gây suy giảm trong kịch bản chuẩn.' },
+    { id: 'B5', k: 'B', name: 'Ô nhiễm', nodes: ['P', 'POLG', 'POL', 'POLR', 'DR', 'FR', 'CIR'], links: ['P>POLG', 'CIR>POLG', 'POL>POLR', 'POLR>DR', 'POLR>FR'], d: '<b>B5 Ô nhiễm.</b> Dân số và vốn/người tạo ra ô nhiễm. Ô nhiễm làm giảm lương thực và tăng tử suất. Vòng này chi phối khi tài nguyên không còn là giới hạn.' },
+    { id: 'R3', k: 'R', name: 'Ô nhiễm tự khuếch đại', nodes: ['POL', 'POLR', 'POLA'], links: ['POL>POLR', 'POLR>POLA', 'POL>POLA'], d: '<b>R3 Ô nhiễm tự khuếch đại.</b> Ô nhiễm càng nặng thì tự nhiên càng hấp thụ chậm (POLAT tăng từ 0,6 lên 20 năm), nên ô nhiễm còn đọng lại càng nhiều. Vòng R ẩn này gây ra “bùng phát” ô nhiễm.' },
+    { id: 'B6', k: 'B', name: 'Phân bổ vốn nông nghiệp', nodes: ['FR', 'CIAFC', 'CIAF'], links: ['FR>CIAFC', 'CIAF>FR'], d: '<b>B6 Phân bổ vốn.</b> Khi thiếu ăn, xã hội chuyển vốn sang nông nghiệp; khi đủ ăn, chuyển ngược về công nghiệp. Việc điều chỉnh có trễ 15 năm.' },
+  ];
+  // geometry helpers
+  function edgePt(n, tx, ty) {
+    const dx = tx - n.x, dy = ty - n.y, d = Math.hypot(dx, dy) || 1;
+    if (n.t === 'stock') { const sx = (n.w / 2 + 4) / Math.abs(dx || 1e-9), sy = (n.h / 2 + 4) / Math.abs(dy || 1e-9), s = Math.min(sx, sy); return [n.x + dx * s, n.y + dy * s]; }
+    const r = (n.t === 'valve' ? 15 : (n.r || 24)) + 3; return [n.x + dx / d * r, n.y + dy / d * r];
+  }
+  const linkEls = {}, nodeEls = {}, pipeEls = {}, dots = [];
+  // pipes + clouds
+  for (const p of PIPES) {
+    const d = 'M' + p.pts.map(q => q.join(' ')).join(' L');
+    svgEl('path', { d, class: 'pipe' }, gPipes); svgEl('path', { d, class: 'pipe2' }, gPipes);
+    const c = svgEl('g', { transform: `translate(${p.cloud[0]} ${p.cloud[1]})`, opacity: .8 }, gPipes);
+    svgEl('path', { d: 'M-14 4 a7 7 0 0 1 2-11 a8 8 0 0 1 14-2 a7 7 0 0 1 11 6 a6 6 0 0 1-3 11 h-20 a6 6 0 0 1-4-4z', fill: 'var(--panel)', stroke: 'var(--faint)', 'stroke-width': 1.3 }, c);
+    const path = svgEl('path', { d, fill: 'none', stroke: 'none' }, gPipes); pipeEls[p.v] = path;
+    // direction: outflow pipes go stock -> cloud
+    const fd = { path, ds: [], ph: 0, len: 0, v: p.v }; for (let i = 0; i < 5; i++) fd.ds.push(svgEl('circle', { r: 3.3, fill: 'var(--water)' }, gDots)); dots.push(fd);
+  }
+  // links
+  for (const [a, b, s, bend] of L) {
+    const A = N[a], Bn = N[b]; const mx = (A.x + Bn.x) / 2, my = (A.y + Bn.y) / 2, dx = Bn.x - A.x, dy = Bn.y - A.y; const cx = mx - dy * bend, cy = my + dx * bend;
+    const p0 = edgePt(A, cx, cy), p1 = edgePt(Bn, cx, cy);
+    const g = svgEl('g', null, gLinks); const id = a + '>' + b;
+    const path = svgEl('path', { d: `M${p0[0]} ${p0[1]} Q${cx} ${cy} ${p1[0]} ${p1[1]}`, class: 'link', 'marker-end': 'url(#arrW2)' }, g);
+    // sign near end
+    const tt = .8, sx = (1 - tt) * (1 - tt) * p0[0] + 2 * (1 - tt) * tt * cx + tt * tt * p1[0], sy = (1 - tt) * (1 - tt) * p0[1] + 2 * (1 - tt) * tt * cy + tt * tt * p1[1];
+    const st = svgEl('text', { x: sx + 5, y: sy - 4, 'font-size': 13, 'font-weight': 700, fill: s === '+' ? 'var(--pos)' : 'var(--neg)', class: 'link', style: 'stroke:none' }, g); st.textContent = s;
+    linkEls[id] = [path, st];
+  }
+  // nodes
+  for (const id in N) {
+    const n = N[id]; const g = svgEl('g', { class: 'node', tabindex: 0, role: 'button', 'aria-label': n.name }, gNodes); nodeEls[id] = g; n.el = g;
+    if (n.t === 'stock') {
+      svgEl('rect', { x: n.x - n.w / 2, y: n.y - n.h / 2, width: n.w, height: n.h, rx: 4, fill: 'var(--panel)' }, g);
+      n.fill = svgEl('rect', { x: n.x - n.w / 2 + 2, y: n.y, width: n.w - 4, height: 0, fill: `var(${n.color})`, opacity: .28 }, g);
+      svgEl('rect', { x: n.x - n.w / 2, y: n.y - n.h / 2, width: n.w, height: n.h, rx: 4, fill: 'none', stroke: `var(${n.color})`, 'stroke-width': 2.6, class: 'hl' }, g);
+      const t = svgEl('text', { x: n.x, y: n.y - 6, 'text-anchor': 'middle', class: 'svgt', 'font-size': 14, 'font-weight': 700 }, g); t.textContent = n.name;
+      n.val = svgEl('text', { x: n.x, y: n.y + 14, 'text-anchor': 'middle', class: 'svgm', 'font-size': 12.5, 'font-weight': 600 }, g);
+    } else if (n.t === 'valve') {
+      const h = n.dir === 'h';
+      svgEl('circle', { cx: n.x, cy: n.y, r: 16, fill: 'transparent' }, g);
+      svgEl('path', { d: h ? `M${n.x - 11} ${n.y - 12} L${n.x + 11} ${n.y + 12} L${n.x + 11} ${n.y - 12} L${n.x - 11} ${n.y + 12} Z` : `M${n.x - 12} ${n.y - 11} L${n.x + 12} ${n.y + 11} L${n.x - 12} ${n.y + 11} L${n.x + 12} ${n.y - 11} Z`, fill: 'var(--panel)', stroke: 'var(--ink)', 'stroke-width': 1.6, 'stroke-linejoin': 'round', class: 'hl' }, g);
+      svgEl('circle', { cx: n.x, cy: n.y, r: 4, fill: 'var(--ink)' }, g);
+      const lx = h ? n.x : n.x + 22, ly = h ? n.y + 30 : n.y + 4, an = h ? 'middle' : 'start';
+      const t = svgEl('text', { x: lx, y: ly, 'text-anchor': an, class: 'svgt', 'font-size': 12, 'font-weight': 600 }, g); t.textContent = n.name;
+      n.val = svgEl('text', { x: lx, y: ly + 14, 'text-anchor': an, class: 'svgm', 'font-size': 10.5 }, g);
+    } else {
+      const r = n.r || 24;
+      if (n.star) svgEl('circle', { cx: n.x, cy: n.y, r: r + 5, fill: 'none', stroke: 'var(--c-ql)', 'stroke-width': 1.2, 'stroke-dasharray': '3 3' }, g);
+      svgEl('circle', { cx: n.x, cy: n.y, r, fill: 'var(--panel)', stroke: n.star ? 'var(--c-ql)' : 'var(--muted)', 'stroke-width': 1.6, class: 'hl' }, g);
+      n.val = svgEl('text', { x: n.x, y: n.y + 4, 'text-anchor': 'middle', class: 'svgm', 'font-size': 11.5, 'font-weight': 600, style: 'fill:var(--ink)' }, g);
+      const t = svgEl('text', { x: n.x, y: n.y + r + 15, 'text-anchor': 'middle', class: 'svgt', 'font-size': 12, 'font-weight': 600 }, g); t.textContent = n.name;
+    }
+    g.addEventListener('click', () => { Insp.open(api, id); });
+    g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); Insp.open(api, id); } });
+    g.addEventListener('pointerenter', () => { if (!W.loop) hot([id], L.filter(l => l[0] === id || l[1] === id).map(l => l[0] + '>' + l[1]), [id]); });
+    g.addEventListener('pointerleave', () => { if (!W.loop) hot(null); });
+  }
+  function hot(nodes, links, extraNodes) {
+    if (!nodes) { svg.classList.remove('dim'); $$('.hot', svg).forEach(e => e.classList.remove('hot')); $$('.link', svg).forEach(e => { if (e.tagName === 'path') e.setAttribute('marker-end', 'url(#arrW2)'); }); return; }
+    svg.classList.add('dim'); $$('.hot', svg).forEach(e => e.classList.remove('hot'));
+    const ns = new Set(nodes); links.forEach(l => { const [a, b] = l.split('>'); ns.add(a); ns.add(b); const e = linkEls[l]; if (e) { e[0].classList.add('hot'); e[1].classList.add('hot'); e[0].setAttribute('marker-end', 'url(#arrW2h)'); } });
+    ns.forEach(n => nodeEls[n] && nodeEls[n].classList.add('hot'));
+  }
+  // loops UI
+  const lh = $('#w2Loops');
+  LOOPS.forEach(lp => { const b = el('button', { class: 'loopbtn ' + lp.k }, lh, `<b>${lp.id}</b>${lp.name}`); b.onclick = () => { const on = W.loop === lp.id; W.loop = on ? null : lp.id; $$('.loopbtn', lh).forEach(x => x.classList.toggle('on', x === b && !on)); if (on) { hot(null); $('#w2LoopInfo').innerHTML = 'Bấm vào một kho, một van (dòng) hoặc một vòng tròn (biến phụ) trên sơ đồ để xem phương trình và hàm bảng của nó.'; } else { hot(lp.nodes, lp.links); $('#w2LoopInfo').innerHTML = lp.d; } }; });
+  // ---------------- scenario UI
+  const scHost = $('#w2Scen');
+  SC.forEach(s => { const b = el('button', { class: 'btn' }, scHost, s.name); b.dataset.id = s.id; b.onclick = () => setScenario(s.id, true); });
+  el('button', { class: 'btn', 'data-id': 'custom', style: 'display:none' }, scHost, 'Tự chọn');
+  const CTRLS = [
+    { k: 'SWT', l: 'Năm áp dụng chính sách', min: 1970, max: 2060, step: 1, def: 1970, f: v => nf0.format(v).replace('.', '') },
+    { k: 'BRN1', l: 'Tỉ suất sinh chuẩn', min: .01, max: .06, step: .001, def: .04, f: v => nf1.format(v * 100) + '%' },
+    { k: 'NRUN1', l: 'Tài nguyên dùng/người', min: 0, max: 2, step: .05, def: 1, f: v => '×' + nf2.format(v) },
+    { k: 'POLN1', l: 'Ô nhiễm thải/người', min: 0, max: 2, step: .05, def: 1, f: v => '×' + nf2.format(v) },
+    { k: 'CIGN1', l: 'Tốc độ đầu tư vốn', min: .01, max: .1, step: .002, def: .05, f: v => nf1.format(v * 100) + '%' },
+    { k: 'FC1', l: 'Hệ số sản xuất lương thực', min: .5, max: 2, step: .05, def: 1, f: v => '×' + nf2.format(v) },
+    { k: 'NRI', l: 'Trữ lượng tài nguyên ban đầu', min: 2.25e11, max: 3.6e12, step: 2.25e10, def: 9e11, f: v => '×' + nf2.format(v / 9e11) },
+  ];
+  const ctrlHost = $('#w2Ctrls'); const inputs = {};
+  CTRLS.forEach(c => { const row = el('div', { class: 'ctrl' }, ctrlHost); el('label', { for: 'w2c' + c.k }, row, c.l); const r = el('input', { type: 'range', id: 'w2c' + c.k, min: c.min, max: c.max, step: c.step, value: c.def }, row); const o = el('output', null, row); inputs[c.k] = { r, o, c }; r.oninput = () => { o.textContent = c.f(+r.value); custom(); }; });
+  el('div', { class: 'btns' }, ctrlHost, '<button class="btn" id="w2Reset">Về mặc định</button>');
+  $('#w2Reset').onclick = () => setScenario('std', false);
+  function syncCtrls(o) { CTRLS.forEach(c => { const v = o[c.k] != null ? o[c.k] : (c.k === 'BRN1' ? .04 : c.k === 'CIGN1' ? .05 : c.def); inputs[c.k].r.value = v; inputs[c.k].o.textContent = c.f(v); }); }
+  let custT = 0;
+  function custom() { const o = {}; CTRLS.forEach(c => { o[c.k] = +inputs[c.k].r.value; }); W.opt = o; W.sc = 'custom'; clearTimeout(custT); custT = setTimeout(() => { W.V = runWorld2(o); markScen(); setSeries(); stats(); update(W.t); }, 30); }
+  function markScen() { $$('.btn', scHost).forEach(b => { b.classList.toggle('on', b.dataset.id === W.sc); if (b.dataset.id === 'custom') b.style.display = W.sc === 'custom' ? '' : 'none'; }); }
+  function stats() {
+    const V = W.V; const [pm, pt] = peakOf(V, 'P'); const end = V.n - 1;
+    const s = SC.find(x => x.id === W.sc);
+    $('#w2Desc').innerHTML = (s ? s.d : '<b>Kịch bản tự chọn.</b> Các thanh trượt bên dưới thay đổi tham số từ năm áp dụng chính sách.') +
+      `<div class="note" style="margin-top:6px">Đỉnh dân số <b>${fmtBig(pm)}</b> (năm ${Math.round(pt)}) · Năm 2100: <b>${fmtBig(V.P[end])}</b> người, tài nguyên còn <b>${nf0.format(V.NRFR[end] * 100)}%</b>, chất lượng sống <b>${nf2.format(V.QL[end])}</b> (năm 1970 ≈ ${nf2.format(valAt(V, 'QL', 1970))})</div>`;
+  }
+  function setScenario(id, autoplay) {
+    const s = SC.find(x => x.id === id); W.sc = id; W.opt = Object.assign({}, s.o); W.V = id === 'std' ? std : runWorld2(s.o);
+    syncCtrls(Object.assign({ SWT: 1970, NRI: 9e11 }, s.o)); markScen(); setSeries(); stats();
+    if (autoplay) { player.set(1900); player.play(); } else update(W.t);
+  }
+  // ---------------- per-frame update
+  const MULT = [['BRMM', 'Sinh × mức sống'], ['BRFM', 'Sinh × lương thực'], ['BRCM', 'Sinh × mật độ'], ['BRPM', 'Sinh × ô nhiễm'], ['DRMM', 'Tử × mức sống'], ['DRFM', 'Tử × lương thực'], ['DRCM', 'Tử × mật độ'], ['DRPM', 'Tử × ô nhiễm']];
+  const mh = $('#w2Mult'); const mrows = MULT.map(([k, l]) => { const r = el('div', { class: 'mrow' }, mh, `<span>${l}</span><div class="mbar"><i></i></div><output></output>`); return { k, i: $('i', r), o: $('output', r) }; });
+  let maxRate = {};
+  function rateMax() { const V = W.V; maxRate = {}; for (const k of ['BR', 'DR', 'CIG', 'CID', 'NRUR', 'POLG', 'POLA']) { let m = 0; for (let i = 0; i < V.n; i++) m = Math.max(m, Math.abs(V[k][i])); maxRate[k] = m || 1; } }
+  function update(t) {
+    W.t = t; const V = W.V; const v = k => valAt(V, k, t);
+    ch.cfg.cursor = t; ch.draw();
+    for (const id in N) {
+      const n = N[id]; let x;
+      if (n.key === 'CIAFd') { const fr = v('FR'), q = v('QLM') / v('QLF'); x = (W2T.CFIFR(fr) * W2T.CIQR(q) - v('CIAF')) / 15; }
+      else x = v(n.key);
+      n.cur = x; n.val.textContent = n.fmt(x);
+      if (n.t === 'stock') { const f = clamp(x / n.max(), 0, 1); const hh = (n.h - 4) * f; n.fill.setAttribute('y', n.y + n.h / 2 - 2 - hh); n.fill.setAttribute('height', hh); }
+    }
+    story(t); mults(t); Insp.refresh(api);
+  }
+  function mults(t) {
+    mrows.forEach(r => { const m = valAt(W.V, r.k, t); const x = clamp(Math.log(m) / Math.log(4), -1, 1); r.i.style.left = (x >= 0 ? 50 : 50 + x * 50) + '%'; r.i.style.width = Math.abs(x) * 50 + '%'; r.i.style.background = x >= 0 ? 'var(--accent)' : 'var(--teal)'; r.o.textContent = '×' + nf2.format(m); });
+  }
+  const DNAME = { DRMM: 'mức sống vật chất thấp', DRFM: 'thiếu lương thực', DRCM: 'mật độ dân số cao', DRPM: 'ô nhiễm' };
+  function story(t) {
+    const V = W.V, v = k => valAt(V, k, t); const P = v('P'), gr = (v('BR') - v('DR')) / P;
+    let s = `<span class="mono" style="color:var(--muted)">Năm ${Math.floor(t)} ·</span> Dân số <b>${fmtBig(P)}</b>, ${gr > 0.0005 ? 'đang tăng ' + nf2.format(gr * 100) + '%/năm' : gr < -0.0005 ? '<b>đang giảm</b> ' + nf2.format(-gr * 100) + '%/năm' : 'gần như đứng yên'}. `;
+    let best = null, bm = 1.08; for (const k in DNAME) { const m = v(k); if (m > bm) { bm = m; best = k; } }
+    if (best) s += `Yếu tố đẩy tử suất lên mạnh nhất: <b>${DNAME[best]}</b> (×${nf2.format(bm)}). `;
+    const nrfr = v('NRFR'), polr = v('POLR'), fr = v('FR'), cr = v('CR'), msl = v('MSL');
+    const notes = [];
+    if (polr > 4) notes.push(`Ô nhiễm đã gấp <b>${nf1.format(polr)} lần</b> mức 1970, và tự nhiên cần ${nf1.format(v('POLAT'))} năm để hấp thụ (năm 1970 chỉ cần khoảng 2 năm).`);
+    if (nrfr < .55) notes.push(`Tài nguyên còn <b>${nf0.format(nrfr * 100)}%</b>, nên mỗi đơn vị vốn chỉ còn hiệu quả ${nf0.format(v('NREM') * 100)}%.`);
+    if (fr < .9) notes.push(`Lương thực/người chỉ bằng <b>${nf0.format(fr * 100)}%</b> mức đủ sống.`);
+    if (cr > 1.8) notes.push(`Mật độ gấp <b>${nf1.format(cr)} lần</b> mức 1970.`);
+    if (!notes.length) notes.push(msl < .6 ? 'Thế giới còn nghèo: vốn/người thấp, nhưng tài nguyên dồi dào và môi trường sạch, nên vòng R của dân số và vốn đang chiếm ưu thế.' : `Mức sống vật chất ${nf2.format(msl)} (1970 = 1). Các giới hạn chưa siết chặt.`);
+    s += notes.slice(0, 2).join(' ') + ` Chất lượng sống: <b>${nf2.format(v('QL'))}</b>.`;
+    $('#w2Story').innerHTML = s;
+  }
+  // dots animation
+  let lastNow = performance.now(), vis = false;
+  function anim(now) {
+    if (!vis) return; const dt = Math.min(.1, (now - lastNow) / 1000); lastNow = now;
+    for (const fd of dots) {
+      if (!fd.len) fd.len = fd.path.getTotalLength();
+      let sp, mag;
+      if (fd.v === 'CIAFC') { mag = Math.abs(N.CIAFC.cur || 0) / .01; sp = (N.CIAFC.cur || 0) >= 0 ? 1 : -1; }
+      else { mag = Math.abs(valAt(W.V, fd.v, W.t)) / maxRate[fd.v]; sp = 1; }
+      const speed = clamp(mag, 0, 1.2) * .5; fd.ph = (fd.ph + sp * speed * dt + 1) % 1;
+      fd.ds.forEach((d, i) => { const f = (fd.ph + i / fd.ds.length) % 1; const pt = fd.path.getPointAtLength(f * fd.len); d.setAttribute('cx', pt.x); d.setAttribute('cy', pt.y); d.setAttribute('r', 1.8 + clamp(mag, 0, 1) * 2.4); d.style.opacity = mag < .01 ? 0 : (0.25 + .75 * Math.sin(f * Math.PI)); d.setAttribute('fill', fd.v === 'POLG' || fd.v === 'POLA' ? 'var(--c-pol)' : fd.v === 'NRUR' ? 'var(--c-res)' : fd.v === 'CIG' || fd.v === 'CID' ? 'var(--c-cap)' : fd.v === 'CIAFC' ? 'var(--c-ciaf)' : 'var(--c-pop)'); });
+    }
+    requestAnimationFrame(anim);
+  }
+  // ---------------- inspector
+  const TB = { BRMM: ['Sinh theo mức sống', 'MSL'], BRFM: ['Sinh theo lương thực', 'FR'], BRCM: ['Sinh theo mật độ', 'CR'], BRPM: ['Sinh theo ô nhiễm', 'POLR'], DRMM: ['Tử theo mức sống', 'MSL'], DRFM: ['Tử theo lương thực', 'FR'], DRCM: ['Tử theo mật độ', 'CR'], DRPM: ['Tử theo ô nhiễm', 'POLR'], NREM: ['Hiệu quả khai thác theo tài nguyên còn', 'NRFR'], NRMM: ['Tiêu thụ tài nguyên theo mức sống', 'MSL'], CIM: ['Đầu tư theo mức sống', 'MSL'], FPCI: ['Lương thực theo vốn nông nghiệp/người', 'CIRA'], FCM: ['Lương thực theo mật độ', 'CR'], FPM: ['Lương thực theo ô nhiễm', 'POLR'], POLCM: ['Phát thải/người theo vốn/người', 'CIR'], POLAT: ['Thời gian hấp thụ ô nhiễm (năm)', 'POLR'], CFIFR: ['Tỉ lệ vốn NN mong muốn theo lương thực', 'FR'], CIQR: ['Hệ số theo QLM/QLF', 'QLMF'], QLM: ['Chất lượng theo mức sống', 'MSL'], QLC: ['Chất lượng theo mật độ', 'CR'], QLF: ['Chất lượng theo lương thực', 'FR'], QLP: ['Chất lượng theo ô nhiễm', 'POLR'] };
+  const INFO = {
+    P: ['Dân số (P)', 'Biến mức', 'Kho dân số toàn cầu, năm 1900 có 1,65 tỉ người. Kho này chỉ thay đổi qua dòng sinh (BR) và dòng tử (DR).', '<span class="k">L</span> P.K = P.J + DT·(BR.JK − DR.JK)', [], [['P', 'Dân số', fmtBig], ['BR', 'Sinh/năm', fmtBig], ['DR', 'Tử/năm', fmtBig]]],
+    BR: ['Sinh (BR)', 'Biến dòng', 'Số trẻ sinh mỗi năm bằng dân số × tỉ suất sinh chuẩn BRN (4%/năm) × 4 hệ số nhân. Mỗi hệ số là một hàm bảng cho biết một điều kiện của thế giới đẩy mức sinh lên (&gt;1) hay xuống (&lt;1).', '<span class="k">R</span> BR.KL = P.K · BRN · BRFM(FR) · BRMM(MSL) · BRCM(CR) · BRPM(POLR)', ['BRFM', 'BRMM', 'BRCM', 'BRPM'], [['BR', 'Sinh/năm', fmtBig]]],
+    DR: ['Tử (DR)', 'Biến dòng', 'Số người chết mỗi năm bằng dân số × tỉ suất tử chuẩn DRN (2,8%/năm) × 4 hệ số nhân. Thiếu ăn có thể làm tử suất tăng tới 30 lần, ô nhiễm nặng tăng tới 9 lần.', '<span class="k">R</span> DR.KL = P.K · DRN · DRMM(MSL) · DRPM(POLR) · DRFM(FR) · DRCM(CR)', ['DRFM', 'DRMM', 'DRCM', 'DRPM'], [['DR', 'Tử/năm', fmtBig]]],
+    NR: ['Tài nguyên thiên nhiên (NR)', 'Biến mức', 'Tài nguyên không tái tạo như khoáng sản và nhiên liệu. Năm 1900 có 900 tỉ “đơn vị”, mỗi người dùng 1 đơn vị/năm ở mức sống chuẩn, tức đủ khoảng 250 năm theo mức dùng năm 1970. Kho này chỉ giảm, không bao giờ được bổ sung.', '<span class="k">L</span> NR.K = NR.J − DT·NRUR.JK', [], [['NR', 'Còn lại', fmtBig], ['NRFR', 'Tỉ lệ còn', v => nf1.format(v * 100) + '%']]],
+    NRUR: ['Khai thác tài nguyên (NRUR)', 'Biến dòng', 'Mức sống càng cao thì mỗi người dùng càng nhiều tài nguyên (tới 4 lần).', '<span class="k">R</span> NRUR.KL = P.K · NRUN · NRMM(MSL)', ['NRMM'], [['NRUR', 'Khai thác/năm', fmtBig]]],
+    NRFR: ['Tài nguyên còn lại (NRFR)', 'Biến phụ', 'Khi tài nguyên còn ít, phải đào sâu hơn và chở xa hơn, nên mỗi đồng vốn làm ra ít của cải hơn. Hàm NREM thể hiện điều đó: còn 50% tài nguyên thì hiệu quả chỉ còn 50%, còn 25% thì chỉ còn 15%.', '<span class="k">A</span> NRFR.K = NR.K / NRI', ['NREM'], [['NRFR', 'Tỉ lệ còn', v => nf1.format(v * 100) + '%'], ['NREM', 'Hiệu quả', v => nf0.format(v * 100) + '%']]],
+    CI: ['Vốn đầu tư (CI)', 'Biến mức', 'Nhà máy, máy móc, hạ tầng. Năm 1900 có 0,4 tỉ đơn vị (đơn vị vốn tương đương 1 người ở mức sống chuẩn).', '<span class="k">L</span> CI.K = CI.J + DT·(CIG.JK − CID.JK)', [], [['CI', 'Vốn', fmtBig], ['CIR', 'Vốn/người', v => nf2.format(v)]]],
+    CIG: ['Đầu tư mới (CIG)', 'Biến dòng', 'Mức sống càng cao thì xã hội càng đầu tư nhiều (CIGN = 5%/người/năm × CIM). Cùng với vốn → mức sống, đây là vòng R2 tự khuếch đại.', '<span class="k">R</span> CIG.KL = P.K · CIM(MSL) · CIGN', ['CIM'], [['CIG', 'Đầu tư/năm', fmtBig]]],
+    CID: ['Khấu hao (CID)', 'Biến dòng', 'Vốn hao mòn 2,5%/năm, tức tuổi thọ trung bình 40 năm.', '<span class="k">R</span> CID.KL = CI.K · CIDN', [], [['CID', 'Khấu hao/năm', fmtBig]]],
+    CIR: ['Vốn trên đầu người (CIR)', 'Biến phụ', 'Vốn/người quyết định cả mức sống lẫn lượng ô nhiễm mỗi người thải ra. Mức thải tăng rất nhanh khi công nghiệp hóa, tới 8 lần.', '<span class="k">A</span> CIR.K = CI.K / P.K', ['POLCM'], [['CIR', 'Vốn/người', v => nf2.format(v)]]],
+    MSL: ['Mức sống vật chất (MSL)', 'Biến phụ', 'Bằng vốn/người dành cho phi nông nghiệp nhân với hiệu quả khai thác tài nguyên; MSL = 1 là khoảng mức năm 1970. Đây là <b>nút trung tâm</b>: nó tác động lên sinh, tử, đầu tư, tiêu thụ tài nguyên và chất lượng sống.', '<span class="k">A</span> MSL.K = CIR.K · (1 − CIAF.K) · NREM(NRFR) / (1 − CIAFN)', ['NREM', 'CIM'], [['MSL', 'Mức sống', v => nf2.format(v)]]],
+    FR: ['Tỉ lệ lương thực (FR)', 'Biến phụ', 'Lương thực/người so với mức đủ sống (FR = 1). Phụ thuộc vốn nông nghiệp/người (CIRA), mật độ (đất canh tác/người) và ô nhiễm.', '<span class="k">A</span> FR.K = FPCI(CIRA) · FCM(CR) · FPM(POLR) · FC / FN', ['FPCI', 'FCM', 'FPM'], [['FR', 'Lương thực', v => nf2.format(v)], ['CIRA', 'Vốn NN/người', v => nf2.format(v)]]],
+    CR: ['Mật độ dân số (CR)', 'Biến phụ', 'Dân số chia cho đất ở (LA = 135 triệu km²) × mật độ chuẩn (PDN = 26,5 người/km²). Chen chúc làm giảm lương thực, giảm sinh, tăng tử và giảm chất lượng sống.', '<span class="k">A</span> CR.K = P.K / (LA · PDN)', ['FCM', 'DRCM', 'QLC'], [['CR', 'Mật độ', v => nf2.format(v)]]],
+    POL: ['Ô nhiễm (POL)', 'Biến mức', 'Chất ô nhiễm tích tụ trong môi trường. POLR = POL/3,6 tỉ là ô nhiễm so với năm 1970.', '<span class="k">L</span> POL.K = POL.J + DT·(POLG.JK − POLA.JK)', [], [['POL', 'Ô nhiễm', fmtBig], ['POLR', '× năm 1970', v => nf2.format(v)]]],
+    POLG: ['Thải ô nhiễm (POLG)', 'Biến dòng', 'Dân số × mức thải/người. Mức thải/người tăng theo vốn/người (công nghiệp hóa).', '<span class="k">R</span> POLG.KL = P.K · POLN · POLCM(CIR)', ['POLCM'], [['POLG', 'Thải/năm', fmtBig]]],
+    POLA: ['Tự nhiên hấp thụ (POLA)', 'Biến dòng', 'Môi trường tự làm sạch, nhưng càng ô nhiễm thì làm sạch càng chậm: thời gian hấp thụ tăng từ 0,6 lên 20 năm. Đây là một vòng <b>R ẩn</b> có thể làm ô nhiễm bùng phát.', '<span class="k">R</span> POLA.KL = POL.K / POLAT(POLR)', ['POLAT'], [['POLA', 'Hấp thụ/năm', fmtBig], ['POLAT', 'Thời gian hấp thụ', v => nf1.format(v) + ' năm']]],
+    POLR: ['Ô nhiễm tương đối (POLR)', 'Biến phụ', 'Ô nhiễm so với năm 1970 (POLS = 3,6 tỉ đơn vị). Ô nhiễm làm tăng tử, giảm sinh, giảm lương thực và giảm chất lượng sống.', '<span class="k">A</span> POLR.K = POL.K / POLS', ['DRPM', 'FPM', 'POLAT'], [['POLR', '× năm 1970', v => nf2.format(v)]]],
+    CIAF: ['Tỉ lệ vốn cho nông nghiệp (CIAF)', 'Biến mức', 'Phần vốn dành cho nông nghiệp. Xã hội chuyển vốn sang nông nghiệp khi thiếu ăn và về công nghiệp khi đủ ăn. Việc điều chỉnh có trễ CIAFT = 15 năm, đây là một vòng B có trễ.', '<span class="k">L</span> CIAF.K = CIAF.J + (DT/CIAFT)·(CFIFR(FR)·CIQR(QLM/QLF) − CIAF.J)', ['CFIFR', 'CIQR'], [['CIAF', 'Tỉ lệ', v => nf1.format(v * 100) + '%']]],
+    QL: ['Chất lượng sống (QL)', 'Biến phụ', 'Thước đo tổng hợp do Forrester đề xuất, QL = 1 tương ứng năm 1970. Nó là tích của bốn yếu tố: mức sống vật chất, mật độ, lương thực và ô nhiễm.', '<span class="k">A</span> QL.K = QLS · QLM(MSL) · QLC(CR) · QLF(FR) · QLP(POLR)', ['QLM', 'QLC', 'QLF', 'QLP'], [['QL', 'Chất lượng sống', v => nf2.format(v)]]],
+  };
+  INFO.CIAFC = INFO.CIAF;
+  const api = {
+    renderInsp(id, full) {
+      const I = INFO[id]; const V = W.V, t = W.t, v = k => k === 'QLMF' ? valAt(V, 'QLM', t) / valAt(V, 'QLF', t) : valAt(V, k, t);
+      if (full) {
+        Insp.body.innerHTML = `<div class="chnum">${I[1]} · World2</div><h3>${I[0]}</h3><p class="note" style="margin:.2em 0 .6em">${I[2]}</p><div class="eq">${I[3]}</div><div class="kpis" id="ipK" style="margin-top:8px"></div>` +
+          (I[4].length ? `<div class="tf">${I[4].map(tn => `<div><canvas data-t="${tn}"></canvas><div><b>${tn}</b>: ${TB[tn][0]}</div></div>`).join('')}</div><p class="note" style="margin:8px 0 0">Đường cam là <b>hàm bảng</b> (table function) Forrester ước lượng từ số liệu và phán đoán. Chấm đen là điểm hệ thống đang đứng ở năm hiện tại. Bấm ▶ để xem chấm di chuyển.</p>` : '');
+        hot([id], L.filter(l => l[0] === id || l[1] === id).map(l => l[0] + '>' + l[1]));
+      }
+      $('#ipK').innerHTML = `<div class="kpi"><div class="l">Năm</div><div class="v">${Math.floor(t)}</div></div>` + I[5].map(([k, l, f]) => `<div class="kpi"><div class="l">${l}</div><div class="v">${f(v(k))}</div></div>`).join('');
+      $$('canvas[data-t]', Insp.body).forEach(cv => { const tn = cv.dataset.t; tableCanvas(cv, W2T[tn], v(TB[tn][1]), tn, TB[tn][1] === 'QLMF' ? 'QLM/QLF' : TB[tn][1]); });
+    },
+    onInspClose() { if (!W.loop) hot(null); }
+  };
+  // ---------------- player
+  const player = makePlayer($('#w2Player'), { onTime: update });
+  setScenario('std', false);
+  let started = false;
+  onVisible($('#w2'), v => { vis = v; if (v) { lastNow = performance.now(); requestAnimationFrame(anim); if (!started) { started = true; if (!reduceMotion) player.play(); else player.set(2100); } } });
+  return { draw() { ch.draw(); update(W.t); }, go(id) { started = true; setScenario(id, true); } };
+}
+/* ===================== WORLD3 studio ===================== */
+function initWorld3() {
+  const B = 1e9;
+  const TECH = { nri: 2e12, nruf2: .25 };
+  const STAB = { zpgt: 1975, fcest: 1975, iet: 1975, nruf2: .25, ppgf2: .25, alic2: 21, alsc2: 30 };
+  const SC = [
+    { id: 'std', name: '1 · Chuẩn (1972)', o: {}, d: '<b>Kịch bản chuẩn.</b> Thế giới tiếp tục như giai đoạn 1900–1970, không có thay đổi chính sách lớn. Sản lượng công nghiệp/người đạt đỉnh rồi sụp đổ vì tài nguyên cạn: ngày càng nhiều vốn bị hút vào việc khai thác. Lương thực và y tế sụt theo, tử suất tăng, dân số đạt đỉnh rồi giảm. Đây là hình vẽ nổi tiếng nhất của cuốn sách.' },
+    { id: 'dbl', name: '2 · Gấp đôi tài nguyên', o: { nri: 2e12 }, d: 'Giả sử trữ lượng tài nguyên thực ra <b>gấp đôi</b>. Tăng trưởng kéo dài thêm khoảng hai thập kỷ, nhưng chính sự tăng trưởng đó sinh ra <b>khủng hoảng ô nhiễm</b>. Ô nhiễm làm giảm tuổi thọ và độ phì đất, nên dân số còn giảm mạnh hơn kịch bản chuẩn.' },
+    { id: 'unl', name: '3 · “Tài nguyên vô hạn”', o: Object.assign({}, TECH), d: 'Gấp đôi trữ lượng, và từ 1975 nhờ tái chế và công nghệ mà mỗi đơn vị sản lượng chỉ cần <b>1/4 tài nguyên</b>. Tài nguyên không còn là giới hạn, công nghiệp tăng vọt và <b>ô nhiễm bùng nổ</b>, dẫn tới sụp đổ.' },
+    { id: 'pol', name: '4 · + Kiểm soát ô nhiễm', o: Object.assign({ ppgf2: .25 }, TECH), d: 'Như kịch bản 3, thêm công nghệ cắt <b>75% phát thải ô nhiễm</b> từ 1975. Thế giới tăng trưởng lâu hơn và dân số vượt 10 tỉ, nhưng rồi <b>đất canh tác và lương thực</b> trở thành giới hạn: lương thực/người lao dốc cuối thế kỷ 21.' },
+    { id: 'agr', name: '5 · + Năng suất đất ×2', o: Object.assign({ ppgf2: .25, lyf2: 2 }, TECH), d: 'Thêm “cách mạng xanh”: <b>năng suất đất gấp đôi</b> từ 1975. Lương thực dồi dào hơn nên dân số và công nghiệp tăng nhanh hơn, rồi xói mòn đất, đô thị hóa và ô nhiễm cộng dồn lại. Sụp đổ quanh 2060–2070. Mỗi giải pháp công nghệ đơn lẻ chỉ <b>dời thời điểm</b> sụp đổ.' },
+    { id: 'bc', name: '6 · + Kế hoạch hóa hoàn hảo', o: Object.assign({ ppgf2: .25, lyf2: 2, fcest: 1975 }, TECH), d: 'Thêm <b>kế hoạch hóa gia đình hoàn hảo</b>: mọi gia đình có đúng số con họ muốn, nhưng số con mong muốn không đổi. Dân số tăng chậm hơn một chút nhưng vẫn vượt ngưỡng và sụp đổ. Muốn ổn định, xã hội phải <i>muốn</i> ít con hơn và tăng trưởng vật chất phải dừng lại.' },
+    { id: 'st1', name: '7 · Chỉ ổn định dân số & CN', o: { zpgt: 1975, fcest: 1975, iet: 1975 }, d: 'Từ 1975: gia đình <b>2 con</b>, kế hoạch hóa hoàn hảo, sản lượng công nghiệp/người <b>dừng</b> ở mức vừa phải, nhưng <b>không có công nghệ mới</b>. Dân số dừng ở khoảng 4–5 tỉ, nhưng tài nguyên vẫn cạn và rốt cuộc vẫn suy giảm.' },
+    { id: 'stab', name: '8 · Thế giới ổn định (1975)', o: Object.assign({}, STAB), d: 'Gói chính sách đầy đủ áp dụng từ <b>1975</b> (gần đúng theo “stabilized world” của LtG 1972): gia đình 2 con, kế hoạch hóa, ổn định sản lượng công nghiệp/người, tài nguyên chỉ dùng 1/4, ô nhiễm chỉ 1/4, vốn bền hơn 50%. Dân số ổn định khoảng 5 tỉ, tuổi thọ khoảng 75 năm, lương thực dồi dào, ô nhiễm thấp. Đây là <b>trạng thái cân bằng</b> mà nhóm Meadows đề xuất.' },
+    { id: 'late', name: '9 · Ổn định, nhưng từ 2000', o: Object.assign({}, STAB, { pyear: 2000, zpgt: 2000, fcest: 2000, iet: 2000 }), d: 'Cùng gói chính sách nhưng bắt đầu năm <b>2000</b>, tức trễ 25 năm. Hệ thống vẫn ổn định, nhưng ở mức dân số cao hơn (khoảng 7 tỉ) với ít tài nguyên hơn, và tuổi thọ, lương thực, dịch vụ đều thấp hơn. Nhóm tác giả cảnh báo rằng mỗi năm trì hoãn làm số lựa chọn còn lại ít đi.' },
+  ];
+  const std = runWorld3();
+  const W = { V: std, sc: 'std', t: 1900, opt: {} };
+  // ---------------- chart
+  const kg = v => nf0.format(v) + ' kg', usd = v => nf0.format(v) + ' $';
+  const tabs = [
+    { id: 'st', name: 'Trạng thái thế giới', series: () => [
+      { key: 'nrfr', label: 'Tài nguyên còn lại', short: 'Tài nguyên', color: '--c-res', max: 1, scaleTxt: '0–100%', fmt: v => nf0.format(v * 100) + '%', width: 2.6 },
+      { key: 'fpc', label: 'Lương thực/người', short: 'Lương thực/ng', color: '--c-food', max: 1000, scaleTxt: '0–1000 kg', fmt: kg, width: 2.6 },
+      { key: 'iopc', label: 'Sản lượng CN/người', short: 'Công nghiệp/ng', color: '--c-cap', max: 1000, scaleTxt: '0–1000 $', fmt: usd, width: 2.6 },
+      { key: 'pop', label: 'Dân số', color: '--c-pop', max: 16 * B, scaleTxt: '0–16 tỉ', fmt: fmtBig, width: 2.6 },
+      { key: 'ppolx', label: 'Ô nhiễm (×1970)', short: 'Ô nhiễm', color: '--c-pol', max: 32, scaleTxt: '0–32', fmt: v => nf2.format(v), width: 2.6 }] },
+    { id: 'life', name: 'Đời sống', series: () => [
+      { key: 'le', label: 'Tuổi thọ', color: '--c-le', max: 80, scaleTxt: '0–80 năm', fmt: v => nf1.format(v) + ' năm', width: 2.6 },
+      { key: 'cbr', label: 'Sinh thô', color: '--pos', max: 50, scaleTxt: '0–50‰', fmt: v => nf1.format(v) + '‰' },
+      { key: 'cdr', label: 'Tử thô', color: '--neg', max: 50, scaleTxt: '0–50‰', fmt: v => nf1.format(v) + '‰' },
+      { key: 'sopc', label: 'Dịch vụ/người', color: '--c-serv', max: 1000, scaleTxt: '0–1000 $', fmt: usd },
+      { key: 'fpc', label: 'Lương thực/người', color: '--c-food', max: 1000, scaleTxt: '0–1000 kg', fmt: kg }] },
+    { id: 'cap', name: 'Vốn & đất', series: () => [
+      (() => { const m = niceCeil(peakOf(W.V, 'ic')[0] * 1.05); return { key: 'ic', label: 'Vốn công nghiệp', color: '--c-cap', max: m, scaleTxt: '0–' + fmtBig(m) + ' $', fmt: fmtBig, width: 2.6 }; })(),
+      { key: 'fcaor', label: 'Phần vốn cho khai thác TN', short: 'Vốn khai thác', color: '--c-res', max: 1, scaleTxt: '0–100%', fmt: v => nf0.format(v * 100) + '%', width: 2.4 },
+      { key: 'al', label: 'Đất canh tác', color: '--c-food', max: 3.2e9, scaleTxt: '0–3,2 tỉ ha', fmt: v => fmtBig(v) + ' ha' },
+      { key: 'lfert', label: 'Độ phì đất', color: '--c-ciaf', max: 600, scaleTxt: '0–600', fmt: v => nf0.format(v) }] },
+  ];
+  let tab = tabs[0];
+  const ch = new Chart($('#w3Cv'), { x0: 1900, x1: 2100, own: true, cursor: 1900, series: [] });
+  const tabHost = $('#w3Tabs');
+  tabs.forEach(tb => { const b = el('button', { class: 'btn' }, tabHost, tb.name); b.onclick = () => { tab = tb; $$('.btn', tabHost).forEach(x => x.classList.toggle('on', x === b)); setSeries(); }; if (tb === tab) b.classList.add('on'); });
+  const realCb = $('#w3Real'); realCb.onchange = () => setSeries();
+  function setSeries() {
+    const V = W.V; const ss = tab.series().map(s => Object.assign(s, { xs: V.t, ys: V[s.key] }));
+    if (tab.id === 'st' && W.sc !== 'std') ss.push({ key: 'popstd', label: 'Dân số (kịch bản chuẩn)', short: 'Dân số chuẩn', color: '--c-pop', max: 16 * B, xs: std.t, ys: std.pop, dash: [5, 5], width: 1.3, alpha: .6, noDot: true, fmt: fmtBig });
+    ch.cfg.refs = (realCb.checked && tab.id === 'st') ? [{ series: 'pop', pts: UNPOP }] : [];
+    const py = W.opt.pyear || 1975; ch.cfg.marks = W.sc !== 'std' ? [{ x: py, label: 'chính sách ' + py }] : [];
+    ch.cfg.series = ss; ch.legend($('#w3Leg')); ch.draw(); computeMax();
+  }
+  // ---------------- diagram
+  const svg = $('#w3Svg'); const defs = svgEl('defs', null, svg);
+  const mk = svgEl('marker', { id: 'arrW3', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 5, markerHeight: 5, orient: 'auto' }, defs); svgEl('path', { d: 'M0 0 L10 5 L0 10 z', fill: 'var(--faint)' }, mk);
+  const PAN = {
+    AG: { x: 20, y: 20, w: 280, h: 270, t: 'Nông nghiệp', ic: '🌾', c: '--c-food' },
+    POP: { x: 360, y: 20, w: 280, h: 270, t: 'Dân số', ic: '👥', c: '--c-pop' },
+    SV: { x: 700, y: 20, w: 280, h: 270, t: 'Dịch vụ', ic: '🏥', c: '--c-serv' },
+    RS: { x: 20, y: 360, w: 280, h: 260, t: 'Tài nguyên', ic: '⛏️', c: '--c-res' },
+    IN: { x: 360, y: 360, w: 280, h: 260, t: 'Công nghiệp', ic: '🏭', c: '--c-cap' },
+    PL: { x: 700, y: 360, w: 280, h: 260, t: 'Ô nhiễm', ic: '☁️', c: '--c-pol' },
+  };
+  const gA = svgEl('g', null, svg), gP = svgEl('g', null, svg), gD = svgEl('g', null, svg);
+  const T = (g, x, y, txt, o) => { const e = svgEl('text', Object.assign({ x, y, class: 'svgt', 'font-size': 12 }, o || {}), g); e.textContent = txt; return e; };
+  const R = (g, x, y, w, h, o) => svgEl('rect', Object.assign({ x, y, width: w, height: h }, o || {}), g);
+  const P = {};
+  for (const k in PAN) {
+    const p = PAN[k]; const g = svgEl('g', null, gP); P[k] = { g, p };
+    R(g, p.x, p.y, p.w, p.h, { rx: 14, fill: 'var(--panel)', stroke: 'var(--line)', 'stroke-width': 1.4 });
+    R(g, p.x, p.y, 6, p.h, { rx: 3, fill: `var(${p.c})` });
+    T(g, p.x + 18, p.y + 23, p.ic + '  ' + p.t, { 'font-size': 14.5, 'font-weight': 700 });
+  }
+  // --- agriculture
+  const ag = P.AG, ax = ag.p.x + 18, aw = ag.p.w - 36;
+  T(ag.g, ax, 58, 'Sử dụng đất', { class: 'svgm', 'font-size': 10.5 });
+  const landAL = R(ag.g, ax, 64, 0, 16, { fill: 'var(--c-food)' }), landPAL = R(ag.g, ax, 64, 0, 16, { fill: 'var(--c-res)', opacity: .35 }), landUIL = R(ag.g, ax, 64, 0, 16, { fill: 'var(--faint)' });
+  const landTxt = T(ag.g, ax, 95, '', { class: 'svgm', 'font-size': 10.5 }), landTxt2 = T(ag.g, ax, 109, '', { class: 'svgm', 'font-size': 10.5 });
+  T(ag.g, ax, 134, 'Độ phì đất', { class: 'svgm', 'font-size': 10.5 });
+  R(ag.g, ax, 140, aw, 10, { rx: 5, fill: 'var(--bg2)' }); const fert = R(ag.g, ax, 140, 0, 10, { rx: 5, fill: 'var(--c-ciaf)' }); const fertT = T(ag.g, ax + aw, 134, '', { class: 'svgm', 'font-size': 10.5, 'text-anchor': 'end' });
+  T(ag.g, ax, 174, 'Lương thực / người / năm', { class: 'svgm', 'font-size': 10.5 });
+  const fpcT = T(ag.g, ax, 200, '', { 'font-size': 24, 'font-weight': 700, style: 'fill:var(--c-food)' });
+  R(ag.g, ax, 212, aw, 8, { rx: 4, fill: 'var(--bg2)' }); const fpcBar = R(ag.g, ax, 212, 0, 8, { rx: 4, fill: 'var(--c-food)' });
+  svgEl('line', { x1: ax + aw * 230 / 1000, x2: ax + aw * 230 / 1000, y1: 207, y2: 225, stroke: 'var(--neg)', 'stroke-width': 2 }, ag.g); T(ag.g, ax + aw * 230 / 1000 + 4, 238, 'mức đủ sống 230 kg', { class: 'svgm', 'font-size': 9.5, style: 'fill:var(--neg)' });
+  const lyT = T(ag.g, ax, 270, '', { class: 'svgm', 'font-size': 10.5 });
+  // --- population pyramid
+  const pp = P.POP, px = pp.p.x + pp.p.w / 2;
+  const popT = T(pp.g, pp.p.x + pp.p.w - 18, pp.p.y + 23, '', { 'font-size': 16, 'font-weight': 700, 'text-anchor': 'end' });
+  const AGES = [['65+', 'p4'], ['45–64', 'p3'], ['15–44', 'p2'], ['0–14', 'p1']];
+  const pyr = AGES.map(([lab, k], i) => { const y = 52 + i * 34; const r = R(pp.g, px, y, 0, 26, { rx: 4, fill: 'var(--c-pop)', opacity: .18 + i * .14 }); const tl = T(pp.g, pp.p.x + 18, y + 17, lab, { class: 'svgm', 'font-size': 10.5 }); const tv = T(pp.g, pp.p.x + pp.p.w - 18, y + 17, '', { class: 'svgm', 'font-size': 10.5, 'text-anchor': 'end' }); return { r, tv, k }; });
+  const leT = T(pp.g, pp.p.x + 18, 212, '', { 'font-size': 13, 'font-weight': 600 });
+  const brT = T(pp.g, pp.p.x + 18, 234, '', { class: 'svgm', 'font-size': 11 });
+  const tfT = T(pp.g, pp.p.x + 18, 256, '', { class: 'svgm', 'font-size': 11 });
+  const ljT = T(pp.g, pp.p.x + 18, 276, '', { class: 'svgm', 'font-size': 11 });
+  // --- services
+  const sv = P.SV, sx = sv.p.x + 18, sw = sv.p.w - 36;
+  T(sv.g, sx, 58, 'Dịch vụ / người / năm', { class: 'svgm', 'font-size': 10.5 });
+  const sopcT = T(sv.g, sx, 88, '', { 'font-size': 24, 'font-weight': 700, style: 'fill:var(--c-serv)' });
+  R(sv.g, sx, 100, sw, 8, { rx: 4, fill: 'var(--bg2)' }); const sopcBar = R(sv.g, sx, 100, 0, 8, { rx: 4, fill: 'var(--c-serv)' });
+  const hsT = T(sv.g, sx, 136, '', { class: 'svgm', 'font-size': 11 });
+  const lmhsT = T(sv.g, sx, 156, '', { class: 'svgm', 'font-size': 11 });
+  T(sv.g, sx, 188, 'Việc làm / lực lượng lao động', { class: 'svgm', 'font-size': 10.5 });
+  R(sv.g, sx, 196, sw, 10, { rx: 5, fill: 'var(--bg2)' }); const jobBar = R(sv.g, sx, 196, 0, 10, { rx: 5, fill: 'var(--c-serv)', opacity: .6 }); const jobT = T(sv.g, sx + sw, 188, '', { class: 'svgm', 'font-size': 10.5, 'text-anchor': 'end' });
+  const scT = T(sv.g, sx, 236, '', { class: 'svgm', 'font-size': 11 });
+  const fceT = T(sv.g, sx, 258, '', { class: 'svgm', 'font-size': 11 });
+  // --- resources
+  const rs = P.RS, rx0 = rs.p.x + 18;
+  const tankX = rx0 + 4, tankY = 400, tankW = 74, tankH = 190;
+  R(rs.g, tankX, tankY, tankW, tankH, { rx: 6, fill: 'var(--bg2)', stroke: 'var(--c-res)', 'stroke-width': 2 });
+  const nrFill = R(rs.g, tankX + 3, tankY, tankW - 6, 0, { rx: 4, fill: 'var(--c-res)', opacity: .55 });
+  const nrPct = T(rs.g, tankX + tankW / 2, tankY + tankH / 2 + 6, '', { 'font-size': 17, 'font-weight': 700, 'text-anchor': 'middle' });
+  const rsx = tankX + tankW + 16;
+  T(rs.g, rsx, 412, 'Tài nguyên không tái tạo', { class: 'svgm', 'font-size': 10.5 });
+  const nrT = T(rs.g, rsx, 432, '', { 'font-size': 13, 'font-weight': 600 });
+  T(rs.g, rsx, 470, 'Phần vốn CN phải dành', { class: 'svgm', 'font-size': 10.5 }); T(rs.g, rsx, 484, 'cho khai thác (FCAOR)', { class: 'svgm', 'font-size': 10.5 });
+  const fcaorT = T(rs.g, rsx, 516, '', { 'font-size': 24, 'font-weight': 700, style: 'fill:var(--c-res)' });
+  const nrurT = T(rs.g, rsx, 548, '', { class: 'svgm', 'font-size': 10.5 });
+  const pcrT = T(rs.g, rsx, 566, '', { class: 'svgm', 'font-size': 10.5 });
+  // --- industry
+  const inP = P.IN, ix = inP.p.x + 18, iw = inP.p.w - 36;
+  T(inP.g, ix, 398, 'Sản lượng CN / người / năm', { class: 'svgm', 'font-size': 10.5 });
+  const iopcT = T(inP.g, ix, 428, '', { 'font-size': 24, 'font-weight': 700, style: 'fill:var(--c-cap)' });
+  const icT = T(inP.g, ix + iw, 428, '', { class: 'svgm', 'font-size': 11, 'text-anchor': 'end' });
+  T(inP.g, ix, 458, 'Sản lượng tiềm năng được dùng vào:', { class: 'svgm', 'font-size': 10.5 });
+  const SEG = [['fc', 'Khai thác TN', '--c-res'], ['ag', 'Nông nghiệp', '--c-food'], ['sv', 'Dịch vụ', '--c-serv'], ['co', 'Tiêu dùng', '--faint'], ['iv', 'Tái đầu tư', '--c-cap']];
+  const segs = SEG.map(([k, l, c]) => R(inP.g, ix, 466, 0, 22, { fill: `var(${c})` }));
+  const segT = SEG.map(([k, l, c], i) => { const yy = 508 + Math.floor(i / 2) * 17, xx = ix + (i % 2) * 130; svgEl('rect', { x: xx, y: yy - 9, width: 9, height: 9, rx: 2, fill: `var(${c})` }, inP.g); return T(inP.g, xx + 14, yy, l, { class: 'svgm', 'font-size': 10.5 }); });
+  const ioT = T(inP.g, ix, 586, '', { class: 'svgm', 'font-size': 10.5 }), cufT = T(inP.g, ix, 602, '', { class: 'svgm', 'font-size': 10.5 });
+  // --- pollution
+  const pl = P.PL, lx = pl.p.x + 18, lw = pl.p.w - 36;
+  T(pl.g, lx, 398, 'Ô nhiễm bền vững (1970 = 1)', { class: 'svgm', 'font-size': 10.5 });
+  const ppT = T(pl.g, lx, 430, '', { 'font-size': 26, 'font-weight': 700, style: 'fill:var(--c-pol)' });
+  R(pl.g, lx, 442, lw, 12, { rx: 6, fill: 'var(--bg2)' }); const ppBar = R(pl.g, lx, 442, 0, 12, { rx: 6, fill: 'var(--c-pol)' });
+  [.1, 1, 10, 100].forEach(v => { const xx = lx + lw * (Math.log10(v) + 1) / 3; svgEl('line', { x1: xx, x2: xx, y1: 456, y2: 462, stroke: 'var(--faint)' }, pl.g); T(pl.g, xx, 474, String(v).replace('.', ','), { class: 'svgm', 'font-size': 9.5, 'text-anchor': 'middle' }); });
+  const ahlT = T(pl.g, lx, 502, '', { class: 'svgm', 'font-size': 11 });
+  const lmpT = T(pl.g, lx, 522, '', { class: 'svgm', 'font-size': 11 });
+  const lfdT = T(pl.g, lx, 542, '', { class: 'svgm', 'font-size': 11 });
+  const srcT = T(pl.g, lx, 570, '', { class: 'svgm', 'font-size': 10.5 });
+  const delT = T(pl.g, lx, 588, 'Trễ 20 năm từ lúc thải tới lúc gây hại', { class: 'svgm', 'font-size': 10.5 });
+  // --- arrows between sectors
+  const ARW = [
+    { id: 'food', d: 'M300 120 L360 120', key: 'f', lab: 'lương thực', lx: 330, ly: 112, c: '--c-food' },
+    { id: 'serv', d: 'M700 120 L640 120', key: 'so', lab: 'y tế', lx: 670, ly: 112, c: '--c-serv' },
+    { id: 'labor', d: 'M500 290 L500 360', key: 'lf', lab: 'lao động', lx: 508, ly: 330, c: '--c-pop', anchor: 'start' },
+    { id: 'tai', d: 'M405 360 C 380 330, 300 320, 270 290', key: 'tai', lab: 'đầu tư NN', lx: 330, ly: 345, c: '--c-cap' },
+    { id: 'scir', d: 'M595 360 C 620 330, 700 320, 730 290', key: 'scir', lab: 'đầu tư DV', lx: 670, ly: 345, c: '--c-cap' },
+    { id: 'nrur', d: 'M300 455 L360 455', key: 'nrur', lab: 'nguyên liệu', lx: 330, ly: 447, c: '--c-res' },
+    { id: 'ppgio', d: 'M640 455 L700 455', key: 'ppgio', lab: 'chất thải', lx: 670, ly: 447, c: '--c-pol' },
+    { id: 'ppgao', d: 'M190 290 C 230 330, 640 300, 760 360', key: 'ppgao', lab: '', c: '--c-pol' },
+    { id: 'harm', d: 'M745 360 C 720 330, 660 300, 640 255', key: 'harm', lab: 'hại sức khỏe', lx: 700, ly: 312, c: '--neg', dash: true, anchor: 'start' },
+  ];
+  ARW.forEach(a => {
+    const path = svgEl('path', { d: a.d, fill: 'none', stroke: `var(${a.c})`, 'stroke-width': 2.5, opacity: .45, 'marker-end': 'url(#arrW3)', 'stroke-dasharray': a.dash ? '5 4' : '' }, gA);
+    if (a.lab) T(gA, a.lx, a.ly, a.lab, { class: 'svgm', 'font-size': 8.6, 'text-anchor': a.anchor || 'middle' });
+    a.fd = { path, ds: Array.from({ length: 4 }, () => svgEl('circle', { r: 3.2, fill: `var(${a.c})` }, gD)), ph: Math.random(), len: 0 };
+  });
+  let mx = {};
+  function computeMax() { const V = W.V; mx = {}; for (const k of ['f', 'so', 'lf', 'tai', 'scir', 'nrur', 'ppgio', 'ppgao', 'ic', 'sc']) { let m = 0; for (let i = 0; i < V.n; i++) if (isFinite(V[k][i])) m = Math.max(m, V[k][i]); mx[k] = m || 1; } }
+  // ---------------- per-frame update
+  function update(t) {
+    W.t = t; const V = W.V; const v = k => valAt(V, k, t);
+    ch.cfg.cursor = t; ch.draw();
+    // agri
+    const al = v('al'), pal = v('pal'), uil = v('uil'), tot = al + pal + uil;
+    let x = ax; [[landAL, al], [landPAL, pal], [landUIL, uil]].forEach(([r, val]) => { const w = aw * val / tot; r.setAttribute('x', x); r.setAttribute('width', Math.max(0, w)); x += w; });
+    landTxt.textContent = `■ canh tác ${nf2.format(al / 1e9)} tỉ ha`; landTxt2.textContent = `chưa khai hoang ${nf2.format(pal / 1e9)} · đô thị ${nf2.format(uil / 1e9)}`;
+    const lf = v('lfert'); fert.setAttribute('width', aw * clamp(lf / 600, 0, 1)); fertT.textContent = nf0.format(lf / 6) + '%';
+    const fpc = v('fpc'); fpcT.textContent = kg(fpc); fpcBar.setAttribute('width', aw * clamp(fpc / 1000, 0, 1)); fpcBar.setAttribute('fill', fpc < 230 ? 'var(--neg)' : 'var(--c-food)');
+    lyT.textContent = `Năng suất ${nf0.format(v('ly'))} kg/ha · đầu vào ${nf0.format(v('aiph'))} $/ha`;
+    // pop
+    popT.textContent = fmtBig(v('pop'));
+    pyr.forEach(q => { const val = v(q.k); const w = clamp(val / 4e9, 0, 1) * 110; q.r.setAttribute('x', px - w); q.r.setAttribute('width', 2 * w); q.tv.textContent = fmtBig(val); });
+    leT.textContent = `Tuổi thọ ${nf1.format(v('le'))} năm`;
+    brT.textContent = `Sinh ${nf1.format(v('cbr'))}‰ · Tử ${nf1.format(v('cdr'))}‰ /năm`;
+    tfT.textContent = `Số con/phụ nữ ${nf2.format(v('tf'))} · mong muốn ${nf2.format(v('dcfs'))}`;
+    ljT.textContent = `Đô thị hóa (FPU) ${nf0.format(v('fpu') * 100)}%`;
+    // services
+    const so = v('sopc'); sopcT.textContent = usd(so); sopcBar.setAttribute('width', sw * clamp(so / 1000, 0, 1));
+    hsT.textContent = `Chi y tế/người: ${nf0.format(v('hsapc'))} $`; lmhsT.textContent = `→ tuổi thọ × ${nf2.format(v('lmhs'))} nhờ y tế`;
+    const luf = v('luf'); jobBar.setAttribute('width', sw * clamp(luf / 1.2, 0, 1)); jobT.textContent = nf0.format(luf * 100) + '%';
+    scT.textContent = `Vốn dịch vụ: ${fmtBig(v('sc'))} $`; fceT.textContent = `Hiệu quả kế hoạch hóa: ${nf0.format(v('fce') * 100)}%`;
+    // resources
+    const nrfr = v('nrfr'); const hh = (tankH - 6) * clamp(nrfr, 0, 1); nrFill.setAttribute('y', tankY + tankH - 3 - hh); nrFill.setAttribute('height', hh); nrPct.textContent = nf0.format(nrfr * 100) + '%';
+    nrT.textContent = `còn ${fmtBig(v('nr'))} đv`;
+    const fc = v('fcaor'); fcaorT.textContent = nf0.format(fc * 100) + '%'; fcaorT.style.fill = fc > .3 ? 'var(--neg)' : 'var(--c-res)';
+    nrurT.textContent = `Khai thác ${fmtBig(v('nrur'))} đv/năm`; pcrT.textContent = `Mỗi người dùng ${nf2.format(v('pcrum'))} đv/năm`;
+    // industry
+    iopcT.textContent = usd(v('iopc')); icT.textContent = `vốn ${fmtBig(v('ic'))} $`;
+    const f1 = 1 - fc, parts = [fc, f1 * v('fioaa'), f1 * v('fioas'), f1 * v('fioac'), f1 * v('fioai')];
+    let xx = ix; segs.forEach((r, i) => { const w = iw * clamp(parts[i], 0, 1); r.setAttribute('x', xx); r.setAttribute('width', Math.max(0, w)); xx += w; });
+    segT.forEach((tx, i) => tx.textContent = `${SEG[i][1]} ${nf0.format(parts[i] * 100)}%`);
+    ioT.textContent = `Tổng sản lượng: ${fmtBig(v('io'))} $/năm`; cufT.textContent = `Tận dụng vốn: ${nf0.format(v('cuf') * 100)}%`;
+    // pollution
+    const ppx = v('ppolx'); ppT.textContent = '×' + (ppx < 10 ? nf2 : nf1).format(ppx); ppBar.setAttribute('width', lw * clamp((Math.log10(Math.max(ppx, .1)) + 1) / 3, 0, 1));
+    ahlT.textContent = `Thời gian bán hủy trong tự nhiên: ${nf1.format(v('ahl'))} năm`;
+    lmpT.textContent = `→ tuổi thọ × ${nf2.format(v('lmp'))}`;
+    lfdT.textContent = `→ đất mất ${nf1.format(v('lfdr') * 100)}% độ phì mỗi năm`;
+    const pi = v('ppgio'), pa = v('ppgao'); srcT.textContent = `Nguồn: công nghiệp ${nf0.format(pi / (pi + pa) * 100)}% · nông nghiệp ${nf0.format(pa / (pi + pa) * 100)}%`;
+    story(t); Insp.refresh(api);
+  }
+  function story(t) {
+    const V = W.V, v = k => valAt(V, k, t), v5 = k => valAt(V, k, Math.max(1900, t - 5));
+    const pop = v('pop'), g = (pop - v5('pop')) / Math.max(1, Math.min(5, t - 1900)) / pop;
+    const io = v('iopc'), ioTr = io - v5('iopc');
+    let s = `<span class="mono" style="color:var(--muted)">Năm ${Math.floor(t)} ·</span> Dân số <b>${fmtBig(pop)}</b> (${g > 0.0005 ? 'tăng ' + nf2.format(g * 100) + '%/năm' : g < -0.0005 ? '<b>giảm</b> ' + nf2.format(-g * 100) + '%/năm' : 'gần như đứng yên'}), tuổi thọ ${nf0.format(v('le'))} năm. `;
+    s += `Sản lượng công nghiệp/người ${io > 30 ? (ioTr > 3 ? 'đang tăng' : ioTr < -3 ? '<b>đang sụt</b>' : 'đi ngang') : 'rất thấp'} (${usd(io)}). `;
+    const notes = []; const fc = v('fcaor'), ppx = v('ppolx'), fpc = v('fpc');
+    if (fc > .15) notes.push(`<b>${nf0.format(fc * 100)}%</b> vốn công nghiệp phải dành cho khai thác tài nguyên (năm 1900 chỉ 5%), nên phần còn lại không đủ bù khấu hao.`);
+    if (ppx > 4) notes.push(`Ô nhiễm bền vững gấp <b>${nf1.format(ppx)} lần</b> năm 1970: tuổi thọ bị nhân với ${nf2.format(v('lmp'))}, đất mất ${nf1.format(v('lfdr') * 100)}% độ phì mỗi năm.`);
+    if (fpc < 300 && t > 1960) notes.push(`Lương thực chỉ còn <b>${kg(fpc)}</b>/người, sát mức đủ sống 230 kg.`);
+    if (!notes.length) notes.push(t < 1975 ? 'Tài nguyên còn dồi dào, đất còn rộng. Các vòng R của dân số và vốn công nghiệp đang chiếm ưu thế, nên mọi thứ tăng theo hàm mũ.' : 'Các giới hạn chưa siết chặt. Hãy xem các chỉ số tài nguyên, đất và ô nhiễm ở sơ đồ bên trái.');
+    s += notes.slice(0, 2).join(' ');
+    $('#w3Story').innerHTML = s;
+  }
+  let lastNow = performance.now(), vis = false;
+  function anim(now) {
+    if (!vis) return; const dt = Math.min(.1, (now - lastNow) / 1000); lastNow = now; const V = W.V, t = W.t;
+    for (const a of ARW) {
+      const fd = a.fd; if (!fd.len) fd.len = fd.path.getTotalLength();
+      let mag; if (a.key === 'harm') mag = clamp((1 - valAt(V, 'lmp', t)) * 4 + (valAt(V, 'lfdr', t)) * 3, 0, 1); else mag = clamp(valAt(V, a.key, t) / mx[a.key], 0, 1);
+      fd.ph = (fd.ph + (.12 + mag * .5) * dt) % 1;
+      fd.ds.forEach((d, i) => { const f = (fd.ph + i / fd.ds.length) % 1; const pt = fd.path.getPointAtLength(f * fd.len); d.setAttribute('cx', pt.x); d.setAttribute('cy', pt.y); d.setAttribute('r', 1.5 + mag * 3); d.style.opacity = mag < .02 ? 0 : (.3 + .7 * Math.sin(f * Math.PI)); });
+    }
+    requestAnimationFrame(anim);
+  }
+  // ---------------- scenarios & controls
+  const scHost = $('#w3Scen');
+  SC.forEach(s => { const b = el('button', { class: 'btn' }, scHost, s.name); b.dataset.id = s.id; b.onclick = () => setScenario(s.id, true); });
+  el('button', { class: 'btn', 'data-id': 'custom', style: 'display:none' }, scHost, 'Tự chọn');
+  const CT = [
+    { k: 'nri', l: 'Trữ lượng tài nguyên ban đầu', min: 5e11, max: 4e12, step: 1e11, def: 1e12, f: v => '×' + nf1.format(v / 1e12) },
+    { k: 'pyear', l: 'Năm áp dụng chính sách', min: 1975, max: 2050, step: 1, def: 1975, f: v => String(v) },
+    { k: 'nruf2', l: 'Tài nguyên cần cho mỗi đv sản lượng', min: .1, max: 1, step: .05, def: 1, f: v => '×' + nf2.format(v) },
+    { k: 'ppgf2', l: 'Phát thải ô nhiễm', min: .1, max: 1, step: .05, def: 1, f: v => '×' + nf2.format(v) },
+    { k: 'lyf2', l: 'Năng suất đất (công nghệ)', min: 1, max: 3, step: .1, def: 1, f: v => '×' + nf1.format(v) },
+    { k: 'alic2', l: 'Tuổi thọ vốn công nghiệp (năm)', min: 10, max: 28, step: 1, def: 14, f: v => v + ' năm' },
+  ];
+  const TG = [['zpgt', 'Gia đình 2 con (quy mô mong muốn = 2)'], ['fcest', 'Kế hoạch hóa gia đình hoàn hảo'], ['iet', 'Ổn định sản lượng CN/người (~400 $)']];
+  const host = $('#w3Ctrls'); const inp = {};
+  CT.forEach(c => { const row = el('div', { class: 'ctrl' }, host); el('label', { for: 'w3c' + c.k }, row, c.l); const r = el('input', { type: 'range', id: 'w3c' + c.k, min: c.min, max: c.max, step: c.step, value: c.def }, row); const o = el('output', null, row); inp[c.k] = { r, o, c }; r.oninput = () => { o.textContent = c.f(+r.value); custom(); }; });
+  const tgHost = el('div', { class: 'btns', style: 'gap:14px;margin-top:4px' }, host);
+  TG.forEach(([k, l]) => { const lb = el('label', { class: 'chk' }, tgHost, `<input type="checkbox" id="w3t${k}"> ${l}`); $('input', lb).onchange = custom; });
+  el('div', { class: 'btns' }, host, '<button class="btn" id="w3Reset">Về mặc định</button>');
+  $('#w3Reset').onclick = () => setScenario('std', false);
+  function sync(o) {
+    const py = o.pyear || 1975;
+    CT.forEach(c => { const v = o[c.k] != null ? o[c.k] : (c.k === 'pyear' ? py : c.def); inp[c.k].r.value = v; inp[c.k].o.textContent = c.f(+inp[c.k].r.value); });
+    TG.forEach(([k]) => { $('#w3t' + k).checked = o[k] != null && o[k] < 3000; });
+  }
+  let ct = 0;
+  function custom() {
+    const o = {}; CT.forEach(c => o[c.k] = +inp[c.k].r.value); o.alsc2 = o.alic2 * 20 / 14;
+    TG.forEach(([k]) => { if ($('#w3t' + k).checked) o[k] = o.pyear; });
+    W.opt = o; W.sc = 'custom'; clearTimeout(ct); ct = setTimeout(() => { W.V = runWorld3(o); mark(); setSeries(); stats(); update(W.t); }, 40);
+  }
+  function mark() { $$('.btn', scHost).forEach(b => { b.classList.toggle('on', b.dataset.id === W.sc); if (b.dataset.id === 'custom') b.style.display = W.sc === 'custom' ? '' : 'none'; }); }
+  function stats() {
+    const V = W.V, e = V.n - 1; const [pm, pt] = peakOf(V, 'pop'), [im, it] = peakOf(V, 'iopc'), [lm, lt] = peakOf(V, 'ppolx');
+    const s = SC.find(x => x.id === W.sc);
+    $('#w3Desc').innerHTML = (s ? s.d : '<b>Kịch bản tự chọn.</b> Các tham số chính sách có hiệu lực từ năm áp dụng; trữ lượng tài nguyên áp dụng ngay từ 1900.') +
+      `<div class="note" style="margin-top:6px">Đỉnh dân số <b>${fmtBig(pm)}</b> (${Math.round(pt)}) · đỉnh CN/người <b>${usd(im)}</b> (${Math.round(it)}) · đỉnh ô nhiễm <b>×${nf1.format(lm)}</b> (${Math.round(lt)}) · năm 2100: ${fmtBig(V.pop[e])} người, tuổi thọ ${nf0.format(V.le[e])} năm</div>`;
+  }
+  function setScenario(id, autoplay) {
+    const s = SC.find(x => x.id === id); W.sc = id; W.opt = Object.assign({}, s.o); W.V = id === 'std' ? std : runWorld3(s.o);
+    sync(W.opt); mark(); setSeries(); stats();
+    if (autoplay) { player.set(1900); player.play(); } else update(W.t);
+  }
+  // ---------------- inspector (sector click)
+  const SINFO = {
+    POP: ['Khu vực dân số', 'Dân số chia 4 nhóm tuổi (P1–P4). Tử suất mỗi nhóm phụ thuộc <b>tuổi thọ</b>: LE = 28 năm × hệ số lương thực × y tế × ô nhiễm × đô thị đông đúc. Số sinh phụ thuộc <b>quy mô gia đình mong muốn</b> (giảm khi thu nhập tăng) và <b>hiệu quả kế hoạch hóa</b> (tăng khi có dịch vụ y tế).', '<span class="k">L</span> P2.K = P2.J + DT·(MAT1.JK − D2.JK − MAT2.JK)<br><span class="k">A</span> LE.K = LEN · LMF(FPC/SFPC) · LMHS(EHSPC) · LMP(PPOLX) · LMC<br><span class="k">R</span> B.KL = TF.K · P2.K · 0,5 / RLT', [['pop', 'Dân số', fmtBig], ['le', 'Tuổi thọ', v => nf1.format(v)], ['tf', 'Số con/phụ nữ', v => nf2.format(v)]], [['LMF', 'fpc', 1 / 230, 'Tuổi thọ theo lương thực (FPC/230)', 'FPC/230'], ['CMI', 'iopc', 1, 'Tác hại của đô thị đông đúc theo CN/người']]],
+    IN: ['Khu vực công nghiệp', 'Vốn công nghiệp IC làm ra sản lượng IO = IC × (1 − FCAOR) × CUF / ICOR. Sản lượng được chia cho nông nghiệp, dịch vụ, tiêu dùng; <b>phần còn lại mới được tái đầu tư</b>. Khi tài nguyên cạn, FCAOR tăng mạnh và phần tái đầu tư co lại tới mức không bù được khấu hao (vốn sống 14 năm).', '<span class="k">L</span> IC.K = IC.J + DT·(ICIR.JK − ICDR.JK)<br><span class="k">A</span> IO.K = IC.K · (1 − FCAOR.K) · CUF.K / ICOR<br><span class="k">R</span> ICIR.KL = IO.K · (1 − FIOAA − FIOAS − FIOAC)', [['iopc', 'CN/người', usd], ['ic', 'Vốn CN', fmtBig], ['fioai', 'Tái đầu tư', v => nf0.format(v * 100) + '%']], [['FCAOR', 'nrfr', 1, 'Phần vốn cho khai thác theo tài nguyên còn'], ['FIOACV', 'iopc', 1 / 400, 'Tiêu dùng khi ổn định CN (IOPC/400)', 'IOPC/400']]],
+    RS: ['Khu vực tài nguyên', 'Tài nguyên không tái tạo NR (1000 tỉ đơn vị năm 1900). Mức dùng/người tăng theo sản lượng CN/người (PCRUM). Tài nguyên càng ít thì càng tốn vốn để khai thác (FCAOR từ 5% lên tới 100%).', '<span class="k">L</span> NR.K = NR.J − DT·NRUR.JK<br><span class="k">R</span> NRUR.KL = POP.K · PCRUM(IOPC) · NRUF', [['nrfr', 'Còn lại', v => nf0.format(v * 100) + '%'], ['fcaor', 'FCAOR', v => nf0.format(v * 100) + '%']], [['FCAOR', 'nrfr', 1, 'FCAOR theo tài nguyên còn lại'], ['PCRUM', 'iopc', 1, 'Tài nguyên dùng/người theo CN/người']]],
+    AG: ['Khu vực nông nghiệp', 'Lương thực = đất canh tác × năng suất. Năng suất phụ thuộc độ phì đất, đầu vào nông nghiệp/ha (phân bón, máy móc: lợi ích giảm dần) và ô nhiễm không khí. Đất mới phải khai hoang với chi phí ngày càng đắt; đất bị xói mòn khi thâm canh và bị đô thị lấn chiếm.', '<span class="k">A</span> F.K = LY.K · AL.K · LFH · (1 − PL)<br><span class="k">A</span> LY.K = LYF · LFERT.K · LYMC(AIPH) · LYMAP(IO/IO70)<br><span class="k">L</span> AL.K = AL.J + DT·(LDR.JK − LER.JK − LRUI.JK)', [['fpc', 'Lương thực/ng', kg], ['al', 'Đất canh tác', v => fmtBig(v) + ' ha'], ['lfert', 'Độ phì', v => nf0.format(v)]], [['LYMC', 'aiph', 1, 'Năng suất theo đầu vào NN/ha'], ['DCPH', 'pal', 1 / 3.2e9, 'Chi phí khai hoang/ha theo đất còn lại', 'PAL/PALT']]],
+    SV: ['Khu vực dịch vụ', 'Vốn dịch vụ SC cung cấp y tế, giáo dục… Dịch vụ/người quyết định chi y tế (HSAPC), từ đó tác động tới tuổi thọ, và quyết định hiệu quả kế hoạch hóa gia đình. Khi sản lượng CN giảm thì đầu tư dịch vụ giảm theo.', '<span class="k">L</span> SC.K = SC.J + DT·(SCIR.JK − SCDR.JK)<br><span class="k">A</span> SO.K = SC.K · CUF.K / SCOR', [['sopc', 'Dịch vụ/ng', usd], ['hsapc', 'Y tế/ng', usd], ['lmhs', 'Hệ số y tế', v => nf2.format(v)]], [['HSAPC', 'sopc', 1, 'Chi y tế/người theo dịch vụ/người'], ['LMHS2', 'ehspc', 1, 'Tuổi thọ theo y tế hiệu dụng']]],
+    PL: ['Khu vực ô nhiễm bền vững', 'Chất thải bền vững (kim loại nặng, hóa chất…) sinh ra từ công nghiệp và nông nghiệp. Chúng tới nơi gây hại sau trễ vận chuyển <b>20 năm</b> (DELAY3). Khi ô nhiễm cao, thời gian bán hủy trong tự nhiên càng dài, từ 1,5 năm (1970) lên hàng chục năm.', '<span class="k">L</span> PPOL.K = PPOL.J + DT·(PPAPR.JK − PPASR.JK)<br><span class="k">R</span> PPAPR.KL = DELAY3(PPGR.JK, PPTD)<br><span class="k">R</span> PPASR.KL = PPOL.K / (1,4 · AHL.K)', [['ppolx', '×1970', v => nf2.format(v)], ['ahl', 'Bán hủy', v => nf1.format(v) + ' năm']], [['LMP', 'ppolx', 1, 'Tuổi thọ theo ô nhiễm'], ['LFDR', 'ppolx', 1, 'Tỉ lệ mất độ phì đất theo ô nhiễm']]],
+  };
+  for (const k in P) { const g = P[k].g; g.classList.add('node'); g.setAttribute('tabindex', 0); g.setAttribute('role', 'button'); g.addEventListener('click', () => Insp.open(api, k)); g.addEventListener('keydown', e => { if (e.key === 'Enter') Insp.open(api, k); }); }
+  const api = {
+    renderInsp(id, full) {
+      const I = SINFO[id], V = W.V, t = W.t, v = k => valAt(V, k, t);
+      if (full) Insp.body.innerHTML = `<div class="chnum">World3 · khu vực</div><h3>${I[0]}</h3><p class="note" style="margin:.2em 0 .6em">${I[1]}</p><div class="eq" style="white-space:normal">${I[2]}</div><div class="kpis" id="ipK" style="margin-top:8px"></div><div class="tf">${I[4].map(q => `<div><canvas data-t="${q[0]}"></canvas><div><b>${q[0]}</b>: ${q[3]}</div></div>`).join('')}</div>`;
+      $('#ipK').innerHTML = `<div class="kpi"><div class="l">Năm</div><div class="v">${Math.floor(t)}</div></div>` + I[3].map(([k, l, f]) => `<div class="kpi"><div class="l">${l}</div><div class="v">${f(v(k))}</div></div>`).join('');
+      $$('canvas[data-t]', Insp.body).forEach(cv => { const q = I[4].find(z => z[0] === cv.dataset.t); tableCanvas(cv, W3T[q[0]], v(q[1]) * q[2], q[0], q[4] || q[1].toUpperCase()); });
+    }
+  };
+  const player = makePlayer($('#w3Player'), { onTime: update });
+  setScenario('std', false);
+  let started = false;
+  onVisible($('#w3'), vv => { vis = vv; if (vv) { lastNow = performance.now(); requestAnimationFrame(anim); if (!started) { started = true; if (!reduceMotion) player.play(); else player.set(2100); } } });
+  return { draw() { ch.draw(); update(W.t); }, go(id) { started = true; setScenario(id, true); } };
+}
+
+/* ===================== boot ===================== */
+(function boot() {
+  readVars(); Insp.init();
+  const parts = [];
+  const safe = (name, f) => { try { const r = f(); if (Array.isArray(r)) parts.push(...r); else if (r) parts.push(r); } catch (e) { console.error(name, e); } };
+  safe('hero', initHero); safe('tub', initTub); safe('r', initR); safe('b', initB); safe('delay', initDelay); safe('limits', initLimits); let w2, w3; safe('w2', () => (w2 = initWorld2())); safe('w3', () => (w3 = initWorld3()));
+  $$('a.go').forEach(a => a.addEventListener('click', () => { if (a.dataset.w2 && w2) w2.go(a.dataset.w2); if (a.dataset.w3 && w3) w3.go(a.dataset.w3); if (a.dataset.lim) { const b = $('#sPresets .btn[data-p=' + a.dataset.lim + ']'); if (b) setTimeout(() => b.click(), 400); } }));
+  initChrome(() => parts.forEach(p => p && p.draw && p.draw()));
+  window.__sd = { runWorld2, runWorld3, parts };
+})();
+
+</script>
+</body>
+</html>
