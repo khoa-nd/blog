@@ -1,0 +1,1119 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Science Island · Grade 2 Memory Game</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1d2b3a;--soft:#5d7186;--bg:#e8f5ff;--card:#fff;--line:#d3e2ef;--green:#38b24d;--blue:#2e8bff;--orange:#ff9f1c;--red:#ff5a5f;--purple:#8e5bff;--teal:#19b3b3;--pink:#ff7aa8;--c:#38b24d}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#cfeaff;color:var(--ink);font-family:'Nunito',system-ui,sans-serif;font-weight:700;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-action:manipulation}
+h1,h2,h3,.fr{font-family:'Fredoka','Nunito',system-ui,sans-serif;font-weight:600;margin:0}
+#app{position:fixed;inset:0;display:flex;flex-direction:column;background:linear-gradient(#bfe6ff,#e9f7ff 60%,#f4fbff)}
+#top{flex:none;height:54px;display:flex;align-items:center;gap:10px;padding:0 12px;padding-top:env(safe-area-inset-top);background:#fff;border-bottom:3px solid var(--line)}
+#top .ttl{font-family:Fredoka;font-weight:600;font-size:20px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ib{width:40px;height:40px;border-radius:12px;background:#eef6fd;border:2px solid var(--line);font-size:20px;display:flex;align-items:center;justify-content:center}
+.ib:active{transform:scale(.94)}
+.chip{padding:4px 12px;border-radius:99px;background:#fff6dc;border:2px solid #ffd978;font-family:Fredoka;font-weight:600;font-size:16px;white-space:nowrap}
+#stage{flex:1;min-height:0;overflow:auto;position:relative;-webkit-overflow-scrolling:touch}
+#tip{flex:none;display:flex;align-items:center;gap:10px;padding:6px 12px;padding-bottom:calc(6px + env(safe-area-inset-bottom));background:#fff;border-top:3px solid var(--line);min-height:64px}
+#tip svg{width:52px;height:52px;flex:none}
+#say{flex:1;font-size:15px;line-height:1.3;background:#f2f9ff;border:2px solid var(--line);border-radius:14px;padding:7px 12px;position:relative}
+#say.pop{animation:pop .35s}
+@keyframes pop{0%{transform:scale(.96)}60%{transform:scale(1.03)}100%{transform:scale(1)}}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 22px;border-radius:16px;background:var(--c);color:#fff;font-family:Fredoka;font-weight:600;font-size:19px;box-shadow:0 5px 0 rgba(0,0,0,.2);transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.2)}
+.btn.ghost{background:#fff;color:var(--ink);border:2px solid var(--line);box-shadow:0 4px 0 var(--line)}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.btn.sm{padding:7px 14px;font-size:16px;border-radius:12px}
+.wrap{max-width:980px;margin:0 auto;padding:12px 14px 22px}
+.card{background:#fff;border:3px solid var(--line);border-radius:22px;padding:14px;box-shadow:0 6px 0 rgba(31,77,120,.07)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.center{justify-content:center;text-align:center}
+.pips{display:flex;gap:6px;align-items:center}
+.pip{width:14px;height:14px;border-radius:50%;background:#dbe7f2;border:2px solid #c3d3e3}
+.pip.on{background:var(--c);border-color:var(--c)}.pip.cur{background:#fff;border-color:var(--c);transform:scale(1.25)}
+.labbar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--c);color:#fff}
+.labbar h2{font-size:22px;flex:1}
+.labbar .pips .pip{background:rgba(255,255,255,.35);border-color:rgba(255,255,255,.6)}
+.labbar .pips .pip.on{background:#fff;border-color:#fff}.labbar .pips .pip.cur{background:transparent;border-color:#fff}
+/* hub */
+.hub{position:relative;width:100%;max-width:1000px;margin:0 auto;aspect-ratio:16/11;min-height:430px}
+.hub svg.bg{position:absolute;inset:0;width:100%;height:100%}
+.node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:2px;width:110px;transition:transform .15s}
+.node:hover{transform:translate(-50%,-50%) scale(1.08)}
+.node .dot{width:68px;height:68px;border-radius:50%;background:var(--c);border:5px solid #fff;box-shadow:0 6px 0 rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;font-size:34px;animation:bob 3s ease-in-out infinite}
+.node:nth-child(odd) .dot{animation-delay:-1.2s}
+.node .nm{font-family:Fredoka;font-weight:600;font-size:14px;line-height:1.05;background:#fff;border-radius:10px;padding:2px 8px;box-shadow:0 2px 0 rgba(0,0,0,.12);text-align:center}
+.node .st{font-size:15px;letter-spacing:1px;color:#ffb300;text-shadow:0 1px 0 #fff;min-height:19px}
+.node .st i{font-style:normal;color:#c9d6e3}
+@keyframes bob{50%{transform:translateY(-5px)}}
+.hubfoot{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:6px 12px 16px}
+.badges{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:0 12px 14px}
+.bdg{width:42px;height:42px;border-radius:50%;background:#e6eef6;display:flex;align-items:center;justify-content:center;font-size:22px;filter:grayscale(1);opacity:.5;border:3px solid #fff;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.bdg.on{filter:none;opacity:1;background:#fff3c4}
+/* questions */
+.q{font-family:Fredoka;font-weight:600;font-size:clamp(19px,3.4vw,26px);line-height:1.25;margin:4px 0 10px}
+.opts{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.opt{padding:14px 14px;border-radius:16px;background:#fff;border:3px solid var(--line);box-shadow:0 5px 0 var(--line);font-size:17px;text-align:left;line-height:1.25;display:flex;gap:10px;align-items:center}
+.opt:active{transform:translateY(3px);box-shadow:0 2px 0 var(--line)}
+.opt.good{background:#dff7e3;border-color:var(--green);box-shadow:0 5px 0 #98d9a3}
+.opt.bad{background:#ffe2e3;border-color:var(--red);box-shadow:0 5px 0 #f3a9ab;animation:shake .4s}
+.opt.off{opacity:.35;pointer-events:none}.opt.sel{background:#e5f1ff;border-color:var(--blue);box-shadow:0 5px 0 #a4c8f5}
+.opt .em{font-size:30px;flex:none}
+@keyframes shake{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.fb{margin-top:12px;border-radius:16px;padding:10px 14px;font-size:16px;line-height:1.35;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.fb.ok{background:#dff7e3;border:3px solid var(--green)}.fb.no{background:#fff0d6;border:3px solid var(--orange)}
+.vis{display:flex;justify-content:center;margin:6px 0 10px}
+.vis svg{max-width:100%;height:auto}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.wc{padding:8px 14px;border-radius:12px;background:#fff;border:3px solid var(--line);box-shadow:0 4px 0 var(--line);font-size:17px;user-select:none;touch-action:none}
+.wc.sel{border-color:var(--blue);background:#e5f1ff}.wc.used{opacity:.3;pointer-events:none}
+.gap{display:inline-block;min-width:90px;border-bottom:4px dashed #9db4c9;text-align:center;padding:0 6px;margin:0 3px;color:var(--c);cursor:pointer}
+.gap.ok{border-bottom-color:var(--green);color:#1f8a35}.gap.no{border-bottom-color:var(--red);color:var(--red)}
+.dragging{opacity:.92;transform:rotate(-4deg) scale(1.06);box-shadow:0 10px 18px rgba(0,0,0,.25)!important}
+.lift{opacity:.35}
+.bins{display:grid;grid-template-columns:repeat(var(--n,3),1fr);gap:10px;margin-bottom:10px}
+.bin{border:4px dashed var(--bc);border-radius:18px;background:color-mix(in srgb,var(--bc) 12%,#fff);min-height:120px;padding:8px;display:flex;flex-direction:column;gap:6px;transition:transform .12s,background .12s}
+.bin.over{transform:scale(1.03);background:color-mix(in srgb,var(--bc) 30%,#fff)}
+.bin h3{font-size:16px;text-align:center;color:var(--bc);display:flex;gap:6px;justify-content:center;align-items:center}
+.bin .stack{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.it{display:flex;flex-direction:column;align-items:center;gap:0;padding:6px 10px;border-radius:14px;background:#fff;border:3px solid var(--line);box-shadow:0 4px 0 var(--line);font-size:14px;min-width:84px;text-align:center;user-select:none;touch-action:none;cursor:grab;line-height:1.1}
+.it .e{font-size:34px;line-height:1.1}
+.it.sel{border-color:var(--blue);background:#e5f1ff}
+.it.good{border-color:var(--green);background:#e5fae9}.it.bad{animation:shake .4s;border-color:var(--red)}
+.tray{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:8px;border-radius:16px;background:#f1f7fc;min-height:80px;position:relative}
+.belt{height:10px;border-radius:6px;background:repeating-linear-gradient(90deg,#9aa8b6 0 14px,#7f8da0 14px 28px);animation:belt 1s linear infinite;margin-top:-8px}
+@keyframes belt{to{background-position:28px 0}}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.tab{padding:9px 16px;border-radius:14px;background:#fff;border:3px solid var(--line);font-family:Fredoka;font-weight:600;font-size:17px;box-shadow:0 4px 0 var(--line)}
+.tab.on{background:var(--c);border-color:var(--c);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.2)}
+.scene{background:linear-gradient(#cdeeff,#eef9ff);border:3px solid var(--line);border-radius:22px;overflow:hidden;position:relative}
+.scene svg,.scene canvas{display:block;width:100%;height:auto}
+.note{background:#fffbe8;border:3px solid #ffe08a;border-radius:16px;padding:10px 14px;font-size:16px;line-height:1.35}
+.trick{background:linear-gradient(135deg,#fff7d6,#ffeaa8);border:3px solid #ffcf56;border-radius:18px;padding:10px 14px;font-size:17px;line-height:1.35}
+.trick b.k{font-family:Fredoka;letter-spacing:.06em}
+.hot{cursor:pointer}
+.hot .ring{fill:none;stroke:#fff;stroke-width:4;stroke-dasharray:6 6;animation:spin 6s linear infinite;transform-box:fill-box;transform-origin:center}
+@keyframes spin{to{transform:rotate(360deg)}}
+.slider{width:100%;accent-color:var(--c);height:28px}
+.lbl{font-family:Fredoka;font-size:17px;display:flex;justify-content:space-between;gap:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}.node{width:84px}.node .dot{width:52px;height:52px;font-size:26px}.node .nm{font-size:12px;padding:1px 6px}.hub{min-height:760px;aspect-ratio:auto;height:760px}}
+.ovl{position:fixed;inset:0;background:rgba(20,40,70,.55);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+.ovl .card{max-width:520px;width:100%;text-align:center;animation:pop .4s}
+.stars{font-size:54px;letter-spacing:6px;color:#ffb300;text-shadow:0 3px 0 rgba(0,0,0,.12)}
+.stars i{font-style:normal;color:#d5dfe9}
+.stars span{display:inline-block;animation:starIn .6s both}
+@keyframes starIn{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.4) rotate(10deg)}100%{transform:scale(1)}}
+.fc{perspective:900px;width:min(92vw,460px);height:260px;margin:0 auto;cursor:pointer}
+.fc .in{position:relative;width:100%;height:100%;transition:transform .55s;transform-style:preserve-3d}
+.fc.flip .in{transform:rotateY(180deg)}
+.fc .f,.fc .b{position:absolute;inset:0;backface-visibility:hidden;border-radius:24px;border:4px solid var(--c);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:16px;text-align:center;box-shadow:0 8px 0 rgba(0,0,0,.1)}
+.fc .b{transform:rotateY(180deg);background:#f5fff6}
+.fc .em{font-size:64px;line-height:1}
+.fc .t{font-family:Fredoka;font-size:24px;line-height:1.2}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:60}
+.toast{position:fixed;left:50%;top:70px;transform:translateX(-50%);background:#1d2b3a;color:#fff;padding:8px 16px;border-radius:99px;font-family:Fredoka;z-index:70;animation:toast 2s both}
+@keyframes toast{0%{opacity:0;top:50px}10%,80%{opacity:1;top:70px}100%{opacity:0}}
+.hz{position:absolute;transform:translate(-50%,-50%);font-size:clamp(28px,6vw,48px);line-height:1;cursor:pointer;user-select:none;filter:drop-shadow(0 3px 0 rgba(0,0,0,.2));transition:transform .15s}
+.hz:hover{transform:translate(-50%,-50%) scale(1.12)}
+.hz.found{filter:drop-shadow(0 0 0 #fff) drop-shadow(0 0 8px #ff5a5f)}
+.hz .tag{position:absolute;left:50%;top:100%;transform:translateX(-50%);white-space:nowrap;font-family:Fredoka;font-size:13px;background:#fff;color:#c33;border:2px solid #ff5a5f;border-radius:8px;padding:0 6px;margin-top:2px}
+.hz.safe .tag{color:#1f8a35;border-color:var(--green)}
+</style></head><body>
+<div id="app">
+  <div id="top"><button class="ib" id="bHome" title="Home">🏝️</button><div class="ttl" id="ttl">Science Island</div><div class="chip" id="chStars">⭐ 0</div><button class="ib" id="bSnd" title="Sound">🔊</button></div>
+  <div id="stage"></div>
+  <div id="tip"><div id="mas"></div><div id="say">Hi! I'm Sprout. Pick a lab and let's learn by playing!</div></div>
+</div>
+<script>
+'use strict';
+/* ---------- helpers ---------- */
+const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+function h(tag, a, ...k) {
+  const e = document.createElement(tag);
+  if (a) for (const [x, v] of Object.entries(a)) {
+    if (v == null || v === false) continue;
+    if (x === 'class') e.className = v; else if (x === 'html') e.innerHTML = v;
+    else if (x === 'style') { for (const [kk, vv] of Object.entries(v)) kk.startsWith('--') ? e.style.setProperty(kk, vv) : (e.style[kk] = vv); } else if (x.startsWith('on')) e.addEventListener(x.slice(2), v); else e.setAttribute(x, v);
+  }
+  k.flat(9).forEach(c => {
+    if (c == null || c === false) return;
+    if (c.nodeType) e.append(c);
+    else if (typeof c === 'string' && /<\/?[a-z][^>]*>/i.test(c)) e.insertAdjacentHTML('beforeend', c);
+    else e.append(document.createTextNode(c));
+  });
+  return e;
+}
+const rnd = (a, b) => a + Math.random() * (b - a), pick = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const hex = c => [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16));
+const mixc = (a, b, t) => { const A = hex(a), B = hex(b); return '#' + A.map((v, i) => Math.round(lerp(v, B[i], t)).toString(16).padStart(2, '0')).join(''); };
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+/* ---------- cleanup of running scenes ---------- */
+let CLEAN = [];
+const onLeave = f => CLEAN.push(f);
+function leave() { CLEAN.forEach(f => { try { f(); } catch (e) { } }); CLEAN = []; $$('.dragging').forEach(g => g.parentNode && g.parentNode.removeChild(g)); }
+function loop(fn) { // rAF loop that stops when leaving the scene
+  let on = true, last = performance.now();
+  const t = now => { if (!on) return; const dt = Math.min(.05, (now - last) / 1000); last = now; fn(dt, now / 1000); requestAnimationFrame(t); };
+  requestAnimationFrame(t); const stop = () => on = false; onLeave(stop); return stop;
+}
+
+/* ---------- save ---------- */
+let SAVE = { stars: {}, miss: {}, cards: {}, plays: 0 };
+try { const s = JSON.parse(localStorage.getItem('sciisland-save')); if (s) SAVE = Object.assign(SAVE, s); } catch (e) { }
+const save = () => { try { localStorage.setItem('sciisland-save', JSON.stringify(SAVE)); } catch (e) { } };
+const totalStars = () => Object.values(SAVE.stars).reduce((a, b) => a + b, 0);
+
+/* ---------- audio ---------- */
+let AC = null, MUTE = false; try { MUTE = localStorage.getItem('sciisland-mute') === '1'; } catch (e) { }
+function tone(f, t, d, type = 'sine', v = .15, slide) {
+  if (MUTE) return; try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === 'suspended') AC.resume();
+    const o = AC.createOscillator(), g = AC.createGain(); o.type = type; o.frequency.setValueAtTime(f, AC.currentTime + t);
+    if (slide) o.frequency.exponentialRampToValueAtTime(slide, AC.currentTime + t + d);
+    g.gain.setValueAtTime(0, AC.currentTime + t); g.gain.linearRampToValueAtTime(v, AC.currentTime + t + .02); g.gain.exponentialRampToValueAtTime(.001, AC.currentTime + t + d);
+    o.connect(g).connect(AC.destination); o.start(AC.currentTime + t); o.stop(AC.currentTime + t + d + .05);
+  } catch (e) { }
+}
+function sfx(n) {
+  if (n === 'ok') { tone(660, 0, .12, 'triangle'); tone(880, .1, .2, 'triangle'); }
+  else if (n === 'bad') { tone(220, 0, .25, 'sawtooth', .08, 140); }
+  else if (n === 'pop') tone(500, 0, .08, 'sine', .12, 900);
+  else if (n === 'star') { [523, 659, 784, 1047].forEach((f, i) => tone(f, i * .1, .25, 'triangle', .13)); }
+  else if (n === 'splash') { tone(300, 0, .2, 'sine', .08, 120); tone(200, .05, .25, 'sine', .06, 90); }
+  else if (n === 'whoosh') tone(200, 0, .3, 'sine', .06, 800);
+  else if (n === 'tick') tone(900, 0, .04, 'square', .05);
+}
+$('#bSnd').onclick = () => { MUTE = !MUTE; try { localStorage.setItem('sciisland-mute', MUTE ? '1' : '0'); } catch (e) { } $('#bSnd').textContent = MUTE ? '🔇' : '🔊'; if (!MUTE) sfx('pop'); };
+$('#bSnd').textContent = MUTE ? '🔇' : '🔊';
+
+/* ---------- mascot + tip bar ---------- */
+$('#mas').innerHTML = `<svg viewBox="0 0 64 64"><g id="sp"><path d="M32 22 C32 12 26 8 18 8 C18 17 24 22 32 22Z" fill="#43c15a"/><path d="M32 22 C32 14 38 9 47 10 C46 19 40 23 32 22Z" fill="#2ea84a"/>
+<path d="M14 30 H50 L45 58 H19 Z" fill="#e8895a"/><rect x="11" y="25" width="42" height="9" rx="4" fill="#f0a070"/>
+<circle cx="25" cy="42" r="6.5" fill="#fff" stroke="#2b6fb8" stroke-width="2.5"/><circle cx="39" cy="42" r="6.5" fill="#fff" stroke="#2b6fb8" stroke-width="2.5"/><path d="M31.5 42H32.5" stroke="#2b6fb8" stroke-width="2.5"/>
+<circle cx="25.5" cy="42.5" r="2.2" fill="#222"/><circle cx="38.5" cy="42.5" r="2.2" fill="#222"/><path d="M27 51 Q32 55 37 51" stroke="#7a3b1c" stroke-width="2" fill="none" stroke-linecap="round"/></g></svg>`;
+function say(msg) { const s = $('#say'); s.innerHTML = msg; s.classList.remove('pop'); void s.offsetWidth; s.classList.add('pop'); }
+function toast(m) { const t = h('div', { class: 'toast' }, m); document.body.append(t); setTimeout(() => t.remove(), 2100); }
+
+/* ---------- confetti ---------- */
+function confetti(n = 70) {
+  const c = h('canvas', { class: 'confetti' }); c.width = innerWidth; c.height = innerHeight; document.body.append(c); const g = c.getContext('2d');
+  const P = Array.from({ length: n }, () => ({ x: rnd(0, c.width), y: rnd(-200, -10), vx: rnd(-1.5, 1.5), vy: rnd(2, 5), r: rnd(4, 9), a: rnd(0, 6), c: pick(['#ff5a5f', '#ffb300', '#38b24d', '#2e8bff', '#8e5bff', '#ff7aa8']) }));
+  let t = 0; (function f() { g.clearRect(0, 0, c.width, c.height); P.forEach(p => { p.x += p.vx; p.y += p.vy; p.a += .1; g.fillStyle = p.c; g.save(); g.translate(p.x, p.y); g.rotate(p.a); g.fillRect(-p.r, -p.r / 2, p.r * 2, p.r); g.restore(); }); if (++t < 140) requestAnimationFrame(f); else c.remove(); })();
+}
+
+/* ---------- drag or tap-to-place ---------- */
+// items: elements; zones: elements; onDrop(zone, item) -> true if accepted
+function DD(items, zones, onDrop) {
+  let sel = null;
+  const clear = () => { if (sel) sel.classList.remove('sel'); sel = null; };
+  const zoneAt = (x, y) => { for (const el of document.elementsFromPoint(x, y)) { const z = el.closest && el.closest('[data-zone]'); if (z && zones.includes(z)) return z; } return null; };
+  items.forEach(el => {
+    el.style.touchAction = 'none';
+    el.addEventListener('pointerdown', e => {
+      if (el.dataset.lock) return; e.preventDefault();
+      const r = el.getBoundingClientRect(), dx = e.clientX - r.left, dy = e.clientY - r.top, sx = e.clientX, sy = e.clientY; let moved = false, g = null, over = null;
+      const mv = ev => {
+        if (!moved && Math.hypot(ev.clientX - sx, ev.clientY - sy) < 8) return;
+        if (!moved) { moved = true; clear(); g = el.cloneNode(true); g.classList.add('dragging'); Object.assign(g.style, { position: 'fixed', left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', zIndex: 999, pointerEvents: 'none' }); document.body.append(g); el.classList.add('lift'); sfx('pop'); }
+        g.style.left = ev.clientX - dx + 'px'; g.style.top = ev.clientY - dy + 'px';
+        const z = zoneAt(ev.clientX, ev.clientY); if (z !== over) { over && over.classList.remove('over'); over = z; over && over.classList.add('over'); }
+      };
+      const up = ev => {
+        removeEventListener('pointermove', mv); removeEventListener('pointerup', up); removeEventListener('pointercancel', up);
+        if (g) g.remove(); el.classList.remove('lift'); over && over.classList.remove('over');
+        if (moved) { const z = zoneAt(ev.clientX, ev.clientY); if (z) onDrop(z, el); }
+        else { if (sel === el) clear(); else { clear(); sel = el; el.classList.add('sel'); sfx('tick'); } }
+      };
+      addEventListener('pointermove', mv); addEventListener('pointerup', up); addEventListener('pointercancel', up);
+    });
+  });
+  zones.forEach(z => z.addEventListener('click', () => { if (sel) { const s = sel; clear(); onDrop(z, s); } }));
+  return { clear };
+}
+
+/* ---------- navigation ---------- */
+const stage = $('#stage');
+function setTitle(t) { $('#ttl').textContent = t; }
+function refreshStars() { $('#chStars').textContent = '⭐ ' + totalStars(); }
+function screen(node, color) { leave(); stage.innerHTML = ''; stage.scrollTop = 0; stage.style.setProperty('--c', color || '#38b24d'); stage.append(node); }
+$('#bHome').onclick = () => { sfx('pop'); showHub(); };
+
+/* ---------- hub ---------- */
+function showHub() {
+  setTitle('Science Island'); refreshStars();
+  const mob = innerWidth < 700;
+  const pos = mob ? { safe: [28, 7], plant: [72, 18], live: [28, 30], enq: [72, 42], matter: [28, 54], mix: [72, 66], diss: [28, 78], exam: [72, 90] } : { live: [16, 70], plant: [33, 40], enq: [50, 70], matter: [67, 36], mix: [82, 66], diss: [60, 88], safe: [20, 20], exam: [90, 16] };
+  const hub = h('div', { class: 'hub' });
+  hub.innerHTML = `<svg class="bg" viewBox="0 0 160 110" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fd3ff"/><stop offset="1" stop-color="#2aa0e8"/></linearGradient></defs>
+  <rect width="160" height="110" fill="url(#sea)"/>
+  <g opacity=".5" fill="#fff"><ellipse cx="20" cy="104" rx="14" ry="1.4"/><ellipse cx="120" cy="100" rx="18" ry="1.4"/><ellipse cx="140" cy="14" rx="10" ry="1.2"/><ellipse cx="60" cy="8" rx="12" ry="1.2"/></g>
+  <path d="M8 62 C4 40 20 18 42 14 C66 8 86 18 108 12 C134 6 156 30 152 58 C150 82 128 100 100 100 C70 106 50 98 30 92 C14 88 10 74 8 62Z" fill="#f5e0a3" stroke="#e6c874" stroke-width="1.2"/>
+  <path d="M14 62 C12 44 26 24 46 20 C68 15 86 24 108 18 C130 13 148 34 146 56 C144 76 124 92 100 93 C72 98 52 90 32 86 C20 82 16 72 14 62Z" fill="#79cf6f"/>
+  <path d="M16 70 C34 56 40 70 52 62 C68 52 82 68 98 58 C116 48 130 64 144 54" fill="none" stroke="#f5e0a3" stroke-width="3.5" stroke-dasharray="1 5" stroke-linecap="round"/>
+  <g font-size="9"><text x="86" y="26">🌴</text><text x="30" y="52">🌳</text><text x="128" y="42">🌴</text><text x="44" y="96">🪸</text><text x="112" y="84">⛵</text></g>
+  <g class="cloud" fill="#fff" opacity=".9"><ellipse cx="30" cy="10" rx="9" ry="3.2"><animate attributeName="cx" values="20;40;20" dur="30s" repeatCount="indefinite"/></ellipse><ellipse cx="124" cy="22" rx="7" ry="2.6"><animate attributeName="cx" values="130;110;130" dur="26s" repeatCount="indefinite"/></ellipse></g></svg>`;
+  LABS.forEach(L => {
+    const s = SAVE.stars[L.id] || 0;
+    const n = h('button', { class: 'node', style: { left: pos[L.id][0] + '%', top: pos[L.id][1] + '%', '--c': L.color }, onclick: () => { sfx('pop'); openLab(L.id); } },
+      h('div', { class: 'dot' }, L.icon), h('div', { class: 'nm' }, L.name), h('div', { class: 'st', html: '★'.repeat(s) + '<i>' + '★'.repeat(3 - s) + '</i>' }));
+    hub.append(n);
+  });
+  const ex = h('button', { class: 'node', style: { left: pos.exam[0] + '%', top: pos.exam[1] + '%', '--c': '#ff9f1c' }, onclick: () => { sfx('pop'); openExam(); } }, h('div', { class: 'dot' }, '🎓'), h('div', { class: 'nm' }, 'Exam Eve Quiz'), h('div', { class: 'st', html: (SAVE.stars.exam || 0) ? '★'.repeat(SAVE.stars.exam) + '<i>' + '★'.repeat(3 - SAVE.stars.exam) + '</i>' : '<i>★★★</i>' }));
+  hub.append(ex);
+  const bd = h('div', { class: 'badges' }, LABS.map(L => h('div', { class: 'bdg' + ((SAVE.stars[L.id] || 0) >= 1 ? ' on' : ''), title: L.name }, L.icon)),
+    h('div', { class: 'bdg' + ((SAVE.stars.exam || 0) >= 2 ? ' on' : ''), title: 'Exam Eve' }, '🎓'),
+    h('div', { class: 'bdg' + (Object.values(SAVE.cards).filter(Boolean).length >= CARDS.length ? ' on' : ''), title: 'All cards known' }, '🃏'));
+  const ft = h('div', { class: 'hubfoot' }, h('button', { class: 'btn', style: { '--c': '#8e5bff' }, onclick: () => { sfx('pop'); openCards(); } }, '🃏 Memory Cards'),
+    h('button', { class: 'btn ghost', onclick: () => { sfx('pop'); openReport(); } }, '📋 Parent report'));
+  screen(h('div', null, hub, bd, ft), '#38b24d');
+  const next = LABS.find(L => !(SAVE.stars[L.id] > 0));
+  say(totalStars() === 0 ? "Hi! I'm <b>Sprout</b>. Tap a place on the island. Each lab has a <b>show-me</b> part and a <b>game</b> part." : next ? `Great job! Next stop: <b>${next.name}</b> ${next.icon}` : 'You visited every lab! Try the <b>Exam Eve Quiz</b> 🎓 or flip the <b>Memory Cards</b> 🃏.');
+}
+
+/* ---------- lab runner ---------- */
+function pipsEl(n, cur, done) { return h('div', { class: 'pips' }, Array.from({ length: n }, (_, i) => h('div', { class: 'pip' + (i < done ? ' on' : '') + (i === cur ? ' cur' : '') }))); }
+function openLab(id) {
+  const L = typeof id === 'object' ? id : LABS.find(x => x.id === id); setTitle(L.name);
+  const root = h('div'), bar = h('div', { class: 'labbar' }, h('span', { style: { fontSize: '30px' } }, L.icon), h('h2', null, L.name)), body = h('div', { class: 'wrap' });
+  root.append(bar, body); screen(root, L.color);
+  const showLearn = () => {
+    body.innerHTML = ''; bar.querySelector('.pips')?.remove();
+    const box = h('div'); body.append(box); L.learn(box);
+    const go = h('div', { class: 'row center', style: { marginTop: '14px' } }, h('button', { class: 'btn', onclick: () => { sfx('pop'); startRounds(); } }, '🎮 Play the game!'));
+    body.append(go);
+  };
+  const startRounds = () => {
+    leave(); const list = typeof L.rounds === 'function' ? L.rounds() : L.rounds.slice(); let i = 0, wrong = 0, per = [];
+    const next = () => {
+      bar.querySelector('.pips')?.remove(); bar.append(pipsEl(list.length, i, i));
+      if (i >= list.length) return finish();
+      body.innerHTML = ''; stage.scrollTop = 0; const q = typeof list[i] === 'string' ? QB[list[i]] : list[i]; const box = h('div', { class: 'card' }); body.append(box);
+      R[q.t](q, box, w => { wrong += w; per.push([q.id, w]); if (w) { SAVE.miss[q.id] = (SAVE.miss[q.id] || 0) + 1; } else if (SAVE.miss[q.id]) { SAVE.miss[q.id] = Math.max(0, SAVE.miss[q.id] - 1); if (!SAVE.miss[q.id]) delete SAVE.miss[q.id]; } save(); i++; next(); }, i);
+    };
+    const finish = () => {
+      const stars = wrong <= 1 ? 3 : wrong <= 4 ? 2 : 1; const prev = SAVE.stars[L.id] || 0; SAVE.stars[L.id] = Math.max(prev, stars); SAVE.plays++; save(); refreshStars(); sfx('star'); confetti(stars * 30);
+      const o = h('div', { class: 'ovl' }, h('div', { class: 'card' },
+        h('h2', { style: { fontSize: '28px' } }, stars === 3 ? 'Perfect scientist!' : stars === 2 ? 'Great work!' : 'Nice try! Practise again'),
+        h('div', { class: 'stars', html: [0, 1, 2].map(k => k < stars ? `<span style="animation-delay:${k * .25}s">★</span>` : '<i>★</i>').join('') }),
+        h('p', { style: { margin: '4px 0 10px' } }, wrong === 0 ? 'No mistakes at all!' : `${wrong} mistake${wrong > 1 ? 's' : ''} this time. Mistakes help your brain remember!`),
+        h('div', { class: 'trick', html: `<b class="k">REMEMBER</b><br>${L.trick}` }),
+        h('div', { class: 'row center', style: { marginTop: '14px' } }, h('button', { class: 'btn ghost', onclick: () => { o.remove(); showLearn(); } }, '🔁 Show me again'), h('button', { class: 'btn', onclick: () => { o.remove(); startRounds(); } }, '🎮 Play again'), h('button', { class: 'btn', style: { '--c': '#2e8bff' }, onclick: () => { o.remove(); showHub(); } }, '🏝️ Island'))));
+      document.body.append(o);
+    };
+    next();
+  };
+  showLearn(); say(L.intro);
+  return { startRounds };
+}
+
+/* ---------- parent report ---------- */
+function openReport() {
+  setTitle('Parent report');
+  const miss = Object.entries(SAVE.miss).sort((a, b) => b[1] - a[1]).slice(0, 12);
+  const body = h('div', { class: 'wrap' }, h('div', { class: 'card' }, h('h2', { style: { fontSize: '26px', marginBottom: '8px' } }, '📋 Progress'),
+    h('table', { style: { width: '100%', borderCollapse: 'collapse', fontSize: '16px' } }, LABS.map(L => h('tr', null, h('td', { style: { padding: '6px' } }, L.icon + ' ' + L.name), h('td', { style: { padding: '6px', color: '#ffb300', fontSize: '20px' }, html: '★'.repeat(SAVE.stars[L.id] || 0) + '<span style="color:#d5dfe9">' + '★'.repeat(3 - (SAVE.stars[L.id] || 0)) + '</span>' })))),
+    h('p', null, `Exam Eve best: ${'★'.repeat(SAVE.stars.exam || 0)}${'☆'.repeat(3 - (SAVE.stars.exam || 0))} · Cards known: ${Object.values(SAVE.cards).filter(Boolean).length}/${CARDS.length}`),
+    h('h3', { style: { margin: '10px 0 4px' } }, 'Questions he still gets wrong'),
+    miss.length ? h('ul', { style: { paddingLeft: '20px', lineHeight: '1.5' } }, miss.map(([id, n]) => h('li', null, (QB[id] ? QB[id].q || QB[id].title || id : id) + ' (' + n + '×)'))) : h('p', null, 'None yet. Great!'),
+    h('div', { class: 'row', style: { marginTop: '10px' } }, h('button', { class: 'btn ghost sm', onclick: () => { if (confirm('Erase all progress?')) { SAVE = { stars: {}, miss: {}, cards: {}, plays: 0 }; save(); showHub(); } } }, 'Reset progress'), h('button', { class: 'btn sm', onclick: showHub }, 'Back'))));
+  screen(body, '#38b24d'); say('This page is for parents: it shows the stars and the questions that need more practice.');
+}
+/* ---------- SVG drawings ---------- */
+function plantInner(o = {}) {
+  const g = o.g ?? 1, w = o.wilt || 0, pl = o.pale || 0, bad = Math.max(w, pl * .8), cold = o.cold || 0;
+  const L1 = mixc(mixc('#46c45c', '#d9c95a', bad), '#8fd0e8', cold * .5), L2 = mixc(mixc('#2fa24a', '#b3a23d', bad), '#6fb2cc', cold * .5);
+  const topY = 190 - (60 + 100 * g), tx = 110 + w * 50, ty = topY + w * 55, cx = 110 + w * 8, cy = (192 + ty) / 2;
+  const pt = t => [(1 - t) * (1 - t) * 110 + 2 * (1 - t) * t * cx + t * t * tx, (1 - t) * (1 - t) * 192 + 2 * (1 - t) * t * cy + t * t * ty];
+  const leaf = (t, side, s) => { const [x, y] = pt(t); const ang = -32 + w * 100; return `<g transform="translate(${x} ${y}) scale(${side * s} ${s}) rotate(${ang})"><path d="M0 0 C16 -26 54 -26 68 0 C54 22 16 22 0 0Z" fill="${L1}" stroke="${L2}" stroke-width="2"/><path d="M4 0 H60" stroke="${L2}" stroke-width="2"/></g>`; };
+  const s = .55 + .5 * g; let out = '';
+  if (o.pot) out += `<path d="M42 206 H178 L162 280 H58Z" fill="#e0794d"/><rect x="34" y="192" width="152" height="20" rx="8" fill="#ee9060"/><ellipse cx="110" cy="194" rx="70" ry="6" fill="${o.dry ? '#c9a77c' : '#5b3a26'}"/>`;
+  else {
+    const dry = o.dry; out += `<path d="M10 192 H210 V268 Q210 282 196 282 H24 Q10 282 10 268Z" fill="${dry ? '#d3b68c' : '#8a5a3b'}"/>`;
+    if (dry) out += `<path d="M30 200 l14 14 l-6 14 M150 198 l-10 18 l12 10 M186 206 l-12 12" stroke="#a98a5e" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+    else out += `<g fill="#6f4529"><circle cx="40" cy="240" r="4"/><circle cx="170" cy="250" r="5"/><circle cx="60" cy="268" r="3"/><circle cx="150" cy="226" r="3"/></g>`;
+    out += `<rect x="10" y="186" width="200" height="9" rx="4" fill="${dry ? '#9bb34f' : '#5ab04d'}"/>`;
+    out += `<g stroke="#f6e7c8" stroke-width="4.5" stroke-linecap="round" fill="none" id="roots"><path d="M110 194 V236"/><path d="M110 206 Q88 214 76 238"/><path d="M110 206 Q132 216 146 236"/><path d="M110 224 Q96 240 98 262"/><path d="M110 224 Q126 242 124 262"/><path d="M80 226 L66 232 M142 226 L156 236" stroke-width="3"/></g>`;
+  }
+  out += `<path d="M110 192 Q${cx} ${cy} ${tx} ${ty}" fill="none" stroke="${L2}" stroke-width="9" stroke-linecap="round"/>`;
+  if (g > .5) out += leaf(.42, -1, s) + leaf(.62, 1, s);
+  if (g > .75) out += leaf(.8, -1, s * .85) + leaf(.84, 1, s * .85);
+  if (o.flower) {
+    const fc = mixc('#ff7aa8', '#b88a76', w); out += `<g transform="translate(${tx} ${ty - 6})">` + [0, 60, 120, 180, 240, 300].map(a => `<circle cx="${14 * Math.cos(a * Math.PI / 180)}" cy="${14 * Math.sin(a * Math.PI / 180)}" r="11" fill="${fc}" stroke="#fff" stroke-width="1.5"/>`).join('') + `<circle r="9" fill="#ffd23f" stroke="#f0a800" stroke-width="2"/></g>`;
+  } else out += `<ellipse cx="${tx}" cy="${ty - 4}" rx="9" ry="12" fill="${L1}" stroke="${L2}" stroke-width="2"/>`;
+  return { svg: out, tx, ty, p: pt };
+}
+function plantSVG(o = {}) { const r = plantInner(o); return `<svg viewBox="0 0 220 290" class="plant">${o.bg || ''}${r.svg}${o.extra || ''}</svg>`; }
+const iconSun = (x, y, r = 22, rays = true) => `<g transform="translate(${x} ${y})">${rays ? [...Array(10)].map((_, i) => `<path d="M0 ${-r - 6} V${-r - 16}" stroke="#ffb300" stroke-width="5" stroke-linecap="round" transform="rotate(${i * 36})"><animate attributeName="stroke-opacity" values="1;.4;1" dur="1.6s" begin="${i * .1}s" repeatCount="indefinite"/></path>`).join('') : ''}<circle r="${r}" fill="#ffd23f" stroke="#ffb300" stroke-width="3"/><circle cx="-7" cy="-4" r="2.5" fill="#7a4b00"/><circle cx="7" cy="-4" r="2.5" fill="#7a4b00"/><path d="M-8 6 Q0 13 8 6" stroke="#7a4b00" stroke-width="2.5" fill="none" stroke-linecap="round"/></g>`;
+const iconDrops = (x, y, n = 3) => [...Array(n)].map((_, i) => `<path d="M${x + i * 14} ${y} q-6 10 0 14 q6 -4 0 -14z" fill="#3aa0ff"><animate attributeName="opacity" values="0;1;0" dur="1.4s" begin="${i * .35}s" repeatCount="indefinite"/><animateTransform attributeName="transform" type="translate" values="0 -8;0 10" dur="1.4s" begin="${i * .35}s" repeatCount="indefinite"/></path>`).join('');
+const iconThermo = (x, y, lvl = .5, col = '#ff5a5f') => `<g transform="translate(${x} ${y})"><rect x="-6" y="0" width="12" height="52" rx="6" fill="#fff" stroke="#556" stroke-width="2.5"/><circle cx="0" cy="58" r="10" fill="#fff" stroke="#556" stroke-width="2.5"/><circle cx="0" cy="58" r="6.5" fill="${col}"/><rect x="-2.5" y="${48 - 42 * lvl}" width="5" height="${10 + 42 * lvl}" rx="2.5" fill="${col}"/></g>`;
+function snowDots(n = 14) { return [...Array(n)].map((_, i) => `<circle cx="${(i * 47) % 210 + 5}" cy="${(i * 31) % 160}" r="${2 + i % 3}" fill="#fff"><animate attributeName="cy" from="-10" to="190" dur="${3 + i % 4}s" begin="${-i * .5}s" repeatCount="indefinite"/></circle>`).join(''); }
+
+/* visuals used inside questions */
+const VIS = {
+  plantsABC: () => {
+    const A = plantInner({ g: .9, flower: true }), B = plantInner({ g: .7, cold: 1 }), C = plantInner({ g: .8, wilt: .9, dry: true });
+    const cap = (x, t, u) => `<text x="${x}" y="322" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="19" fill="#1d2b3a">${t}</text><text x="${x}" y="344" text-anchor="middle" font-family="Nunito" font-weight="700" font-size="14" fill="#5d7186">${u}</text>`;
+    return `<svg viewBox="0 0 690 352" width="620"><g transform="translate(5 10)">${A.svg}${iconSun(30, 40, 14, false)}${iconDrops(160, 20, 2)}</g><g transform="translate(235 10)">${B.svg}<g opacity=".9">${snowDots(10)}</g>${iconThermo(190, 30, .08, '#3a8ff0')}</g><g transform="translate(465 10)">${C.svg}${iconSun(30, 40, 14, false)}${iconThermo(190, 30, .5, '#ff5a5f')}</g>${cap(115, 'Plant A', 'water, light, right temperature')}${cap(345, 'Plant B', 'water and light, but too cold')}${cap(575, 'Plant C', 'right temperature, but no water')}</svg>`;
+  },
+  tallPale: () => {
+    const A = plantInner({ g: 1, pale: 1 }), B = plantInner({ g: .62 });
+    const cap = (x, t) => `<text x="${x}" y="318" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="19" fill="#1d2b3a">${t}</text>`;
+    return `<svg viewBox="0 0 470 330" width="440"><g transform="translate(5 8)">${A.svg}</g><g transform="translate(240 8)">${B.svg}</g>${cap(115, 'A: tall, pale, weak')}${cap(350, 'B: shorter, green, strong')}</svg>`;
+  },
+  jeff: () => {
+    const A = plantInner({ g: .8, pot: true }), B = plantInner({ g: .5, pot: true, pale: .8 });
+    return `<svg viewBox="0 0 470 330" width="440"><rect x="0" y="0" width="225" height="300" rx="14" fill="#cfeeff"/><rect x="12" y="12" width="80" height="100" rx="6" fill="#fff" stroke="#8aa" stroke-width="4"/><path d="M52 12V112M12 62H92" stroke="#8aa" stroke-width="3"/>${iconSun(160, 50, 20)}<g transform="translate(5 8)">${A.svg}</g><rect x="245" y="0" width="225" height="300" rx="14" fill="#2a2f3a"/><g transform="translate(245 8)">${B.svg}</g><text x="112" y="322" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="19">By the window</text><text x="357" y="322" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="19">In the cupboard</text></svg>`;
+  },
+  equip: () => '',
+  celery: () => `<svg viewBox="0 0 330 170" width="300"><rect x="30" y="100" width="90" height="60" rx="8" fill="#cfeaff" stroke="#556" stroke-width="3"/><rect x="33" y="125" width="84" height="33" fill="#e84a5f" opacity=".55"/><path d="M60 125 V40 M76 125 V30 M92 125 V50" stroke="#6bc46b" stroke-width="9" stroke-linecap="round"/><path d="M60 125 V90 M76 125 V78 M92 125 V100" stroke="#e84a5f" stroke-width="5" stroke-linecap="round" opacity=".8"/><g stroke="#556" stroke-width="2"><rect x="150" y="10" width="26" height="150" rx="3" fill="#fff"/>${[...Array(15)].map((_, i) => `<path d="M${150} ${160 - i * 10}h${i % 5 === 0 ? 18 : 10}"/>`).join('')}</g><table></table><text x="190" y="30" font-family="Fredoka" font-size="15" fill="#334">cm</text><text x="190" y="162" font-family="Fredoka" font-size="15" fill="#334">0</text></svg>`,
+  table: (rows, a, b) => `<table style="border-collapse:collapse;margin:4px auto;font-size:17px;background:#fff"><tr>${[a, b].map(t => `<th style="border:3px solid #d3e2ef;padding:6px 14px;background:#eef6fd;font-family:Fredoka">${t}</th>`).join('')}</tr>${rows.map(r => `<tr>${r.map(c => `<td style="border:3px solid #d3e2ef;padding:6px 14px;text-align:center">${c}</td>`).join('')}</tr>`).join('')}</table>`,
+  bottleBg: () => '',
+};
+function bottleSVG() {
+  return `<svg viewBox="0 0 260 300" class="bottle"><rect x="92" y="10" width="76" height="28" rx="6" fill="#4aa3ff" stroke="#2b6fb8" stroke-width="3"/><path d="M96 38 H164 L170 56 Q196 78 196 112 V272 Q196 292 176 292 H84 Q64 292 64 272 V112 Q64 78 90 56Z" fill="#e9f6ff" stroke="#2b6fb8" stroke-width="4"/><path d="M66 190 H194 V272 Q194 290 176 290 H84 Q66 290 66 272Z" fill="#6fc3ff" opacity=".85"><animate attributeName="d" dur="3s" repeatCount="indefinite" values="M66 190 Q98 184 130 190 T194 190 V272 Q194 290 176 290 H84 Q66 290 66 272Z;M66 190 Q98 196 130 190 T194 190 V272 Q194 290 176 290 H84 Q66 290 66 272Z;M66 190 Q98 184 130 190 T194 190 V272 Q194 290 176 290 H84 Q66 290 66 272Z"/></path><g fill="#fff" opacity=".8"><circle cx="110" cy="130" r="5"/><circle cx="150" cy="104" r="4"/><circle cx="132" cy="160" r="6"/></g></svg>`;
+}
+/* ---------- question bank (from the teacher's worksheets, booklet and revision test) ---------- */
+const QB = {};
+const add = q => { QB[q.id] = q; return q; };
+const MC = (id, lab, q, ok, wrong, why, vis) => add({ id, lab, t: 'mc', q, ok, o: [ok, ...wrong], why, vis });
+const TF = (id, lab, q, a, why) => add({ id, lab, t: 'tf', q, a, why });
+const TS = (id, lab, q, rows, why) => add({ id, lab, t: 'tfset', q, rows, why });
+const CL = (id, lab, text, bank, ans, why, any) => add({ id, lab, t: 'cloze', q: text.replace(/\{\d\}/g, '___'), text, bank, ans, why, any });
+const MU = (id, lab, q, ok, wrong, why) => add({ id, lab, t: 'multi', q, ok, o: [...ok, ...wrong], why });
+
+const BIN3 = [{ k: 'alive', label: 'Alive', e: '❤️', c: '#ff7aa8' }, { k: 'once', label: 'Once alive', e: '🍂', c: '#e8923a' }, { k: 'never', label: 'Never alive', e: '🪨', c: '#6a7f96' }];
+const BINS3 = [{ k: 'solid', label: 'Solid', e: '🧊', c: '#2e8bff' }, { k: 'liquid', label: 'Liquid', e: '💧', c: '#19b3b3' }, { k: 'gas', label: 'Gas', e: '💨', c: '#8e5bff' }];
+add({ id: 'bn_liveA', lab: 'live', t: 'bins', q: 'Sort each thing: alive, once alive or never alive?', bins: BIN3, why: 'Alive = alive now. Once alive = came from a living thing. Never alive = never lived.', items: [
+  ['🦋', 'butterfly', 'alive', 'A butterfly grows, needs food and reproduces.'], ['🪑', 'wooden chair', 'once', 'Wood comes from a tree. The tree was alive.'], ['🪨', 'rock', 'never', 'A rock was never alive.'],
+  ['👕', 'cotton t-shirt', 'once', 'Cotton comes from the cotton plant.'], ['🐟', 'fish', 'alive', 'A fish moves, grows and needs food.'], ['🧴', 'plastic bottle', 'never', 'Plastic is made in a factory. It never lived.']] });
+add({ id: 'bn_liveB', lab: 'live', t: 'bins', q: 'Sort these too!', bins: BIN3, why: 'Ask: is it alive now? Did it come from a living thing?', items: [
+  ['🍂', 'leaf on the ground', 'once', 'It came from a plant, but it is not alive now.'], ['🌻', 'sunflower', 'alive', 'A growing plant is alive.'], ['🥄', 'metal spoon', 'never', 'Metal comes from rocks. Never alive.'],
+  ['👞', 'leather shoe', 'once', 'Leather comes from the skin of an animal.'], ['🌳', 'growing tree', 'alive', 'A growing tree is alive.'], ['🪟', 'glass', 'never', 'Glass is made from sand. Never alive.']] });
+add({ id: 'bn_liveC', lab: 'live', t: 'bins', q: 'Tricky ones! Think carefully.', bins: BIN3, why: 'Moving is not enough. Living things grow, need food and reproduce.', items: [
+  ['🧶', 'wool jumper', 'once', 'Wool comes from sheep.'], ['🚲', 'bicycle', 'never', 'A bicycle moves, but it does not grow, eat or reproduce.'], ['📄', 'paper', 'once', 'Paper is made from trees.'],
+  ['🐱', 'cat', 'alive', 'A cat is alive now.'], ['🪵', 'wooden table', 'once', 'Wood comes from a tree.'], ['🤖', 'toy robot', 'never', 'A robot moves, but it is a machine. It never lived.']] });
+TF('tf_bike', 'live', 'A bicycle moves, so it is living.', false, 'No! Living things also grow, need food and reproduce. A bicycle was never alive.');
+MC('mc_leaf', 'live', 'Why is a leaf on the ground "once alive" and not "alive"?', 'It came from a living plant, but it is not alive now', ['It was made in a factory', 'It is a type of rock'], 'Once alive = came from a living thing, but it is not alive any more.');
+CL('cl_live', 'live', 'Living things grow, need {0} and {1}.', ['food', 'reproduce', 'metal'], ['food', 'reproduce'], 'Living things grow, need food and reproduce (make more of their kind).', [[0, 1]]);
+MC('mc_never', 'live', 'Which of these was NEVER alive?', 'metal spoon', ['cotton t-shirt', 'leather shoe'], 'Cotton and leather come from living things. Metal comes from rocks.');
+MC('mc_repro', 'live', 'Which life process means "making more living things", like seeds or babies?', 'Reproduction', ['Respiration', 'Excretion'], 'Reproduction = making new living things. R is for Reproduction in MRS GREN.');
+MC('mc_excr', 'live', 'Which life process means "getting rid of waste"?', 'Excretion', ['Nutrition', 'Growth'], 'Excretion = getting rid of waste. E is for Excretion in MRS GREN.');
+MC('mc_nutr', 'live', 'Which life process means "taking in food"?', 'Nutrition', ['Movement', 'Sensitivity'], 'Nutrition = needing and taking in food. N is for Nutrition.');
+MC('mc_sens', 'live', 'A cat sees a bird and its ears turn. Which life process is this?', 'Sensitivity', ['Reproduction', 'Excretion'], 'Sensitivity = sensing and reacting to the world around you (light, sound, touch).');
+add({ id: 'or_mrs', lab: 'live', t: 'order', q: 'Tap the 7 life processes in MRS GREN order.', items: ['Movement', 'Respiration', 'Sensitivity', 'Growth', 'Reproduction', 'Excretion', 'Nutrition'], why: 'M-R-S G-R-E-N: Movement, Respiration, Sensitivity, Growth, Reproduction, Excretion, Nutrition.' });
+
+/* plants */
+add({ id: 'lb_plant', lab: 'plant', t: 'label', q: 'Drag the name to the right part of the plant.', draw: 'plant', chips: [['Roots', 'roots'], ['Stem', 'stem'], ['Leaves', 'leaf'], ['Flower', 'flower']], why: 'Roots, stem, leaves, flower: the four main parts.' });
+add({ id: 'lb_jobs', lab: 'plant', t: 'label', q: 'Drag each JOB to the plant part that does it.', draw: 'plant', chips: [['absorbs water', 'roots'], ['carries water up', 'stem'], ['makes food', 'leaf'], ['makes seeds', 'flower']], why: 'Roots absorb water. The stem transports water. Leaves make food. Flowers help make seeds.' });
+add({ id: 'rm_dry', lab: 'plant', t: 'remedy', q: 'This plant is wilting. The soil is dry. What does it need?', st: 'dry', fix: 'water', why: 'Dry soil = no water. Roots take in water from the soil, so the plant needs water.' });
+add({ id: 'rm_dark', lab: 'plant', t: 'remedy', q: 'This plant is pale and weak. It has been in a dark cupboard. What does it need?', st: 'dark', fix: 'light', why: 'Leaves need light to make food. No light = pale and weak plant.' });
+add({ id: 'rm_cold', lab: 'plant', t: 'remedy', q: 'This plant is very cold and is drooping. What does it need?', st: 'cold', fix: 'warm', why: 'Plants need the right temperature to grow well. This one is too cold.' });
+MC('mc_needs', 'plant', 'Plants need the right temperature to grow. What else do plants need to be healthy?', 'Water and light', ['Plastic and metal', 'Sand and rocks'], 'Healthy plants need light, water and the right temperature.');
+MC('mc_best', 'plant', 'Which plant will grow best?', 'Plant A', ['Plant B', 'Plant C'], 'Plant A has water, light and the right temperature. B is too cold. C has no water.', 'plantsABC');
+MC('mc_wilt', 'plant', 'Which plant will be the MOST wilted? (Remember: roots take in water!)', 'Sun but no water', ['Water and sun', 'Water but no sun'], 'Without water the plant wilts, even with lots of sun.');
+CL('cl_plant', 'plant', 'Plants are {0}. Plants need {1} to make food. Plants need {2} to grow.', ['alive', 'water', 'light'], ['alive', 'light', 'water'], 'Plants are alive. Leaves use light to make food, and plants need water to grow.', [[1, 2]]);
+MC('mc_roots', 'plant', "A plant's roots are damaged. Why might it wilt?", 'The roots cannot absorb enough water', ['The leaves make too much food', 'The flower has too many seeds'], 'Roots absorb water. With damaged roots the plant gets too little water, so it wilts.');
+MC('mc_jeff', 'plant', 'Jeff puts one plant by a bright window and one in a dark cupboard. Which plant will grow more?', 'The window plant, because it gets light to make food', ['The cupboard plant, because it is cosy', 'They will grow the same'], 'Leaves need light to make food. The window plant can make food, so it grows more.', 'jeff');
+MC('mc_jeff2', 'plant', "After a week both of Jeff's plants are dying. What mistake could Jeff have made?", 'He forgot to water them', ['He used a ruler', 'He put one plant by the window'], 'Plants need water as well as light. Without water they wilt and die.');
+TS('ts_plant', 'plant', 'True or false?', [['Plants need water to survive.', true], ['Plants can stay healthy without any light.', false], ['Germination is when a seed starts to grow.', true], ['Many seeds can germinate without light.', true]], 'Plants need water and light to stay healthy. Many seeds can germinate (start to grow) without light.');
+
+/* enquiry */
+MC('mc_pred', 'enq', 'Maria says: "I think plants in sunlight will grow taller than plants in the dark." Is this an observation or a prediction?', 'Prediction', ['Observation'], 'A prediction is what you THINK will happen. An observation is what you actually SEE.');
+MC('mc_obs', 'enq', '"On Day 1 the plant was 3 cm tall." Is this an observation or a prediction?', 'Observation', ['Prediction'], 'An observation is something you actually see or measure.');
+add({ id: 'mc_tool', lab: 'enq', t: 'mc', q: 'Which equipment should Maria use to measure the HEIGHT of the plant?', ok: '📏 ruler', o: ['📏 ruler', '⚖️ balance', '🌡️ thermometer', '⏱️ stopwatch'], why: 'A ruler measures length and height. A balance measures mass, a thermometer measures temperature and a stopwatch measures time.' });
+MC('mc_cm', 'enq', 'Why are centimetres better than finger lengths for measuring a plant?', 'Fingers can be different sizes', ['It can be dangerous to use fingers', 'Finger lengths are not countable'], 'Everyone\'s fingers are different sizes, but 1 centimetre is always the same.');
+MC('mc_change', 'enq', 'Mai tests how LIGHT affects plant health. Which ONE thing does she change?', 'the amount of light', ['the amount of water', 'the type of plant'], 'In a fair test we change only ONE thing. Here it is light.');
+MU('mu_same', 'enq', 'Mai is testing light. Tick TWO things she must keep the SAME.', ['amount of water', 'type of plant'], ['amount of light'], 'In a fair test, change one thing and keep everything else the same.');
+MC('mc_fair', 'enq', 'A girl tests if the volume of water changes how much salt dissolves. Which is ONE way to make it a FAIR TEST?', 'Use the same amount of salt each time', ['Use a different amount of salt each time', 'Change the water temperature each time'], 'Keep other conditions the same: same salt, same temperature, same stirring.');
+add({ id: 'ch_days', lab: 'enq', t: 'chart', q: "Build Maria's bar chart. Tap the grid to set each bar's height.", title: 'Plant height (cm)', xs: ['Day 1', 'Day 2', 'Day 3', 'Day 4'], ys: [3, 5, 8, 10], unit: 'cm', max: 12, why: 'Each bar shows the plant height: 3, 5, 8 and 10 cm.' });
+MC('mc_pattern', 'enq', "Look at Maria's chart: 3, 5, 8, 10 cm. What pattern do you see from Day 1 to Day 4?", 'The plant is growing taller', ['The plant is growing shorter', 'The plant is staying the same'], 'The bars get taller each day, so the plant is growing taller.');
+MC('mc_grew', 'enq', 'The plant was 3 cm on Day 1 and 10 cm on Day 4. How much did it grow?', '7 cm', ['3 cm', '10 cm'], '10 − 3 = 7 cm. Subtract the start from the end!');
+add({ id: 'mc_celery', lab: 'enq', t: 'mc', q: 'Water moved up celery stems. Use the pattern to predict: how far will water travel with 8 leaves?', ok: '5 cm', o: ['4 cm', '5 cm', '6 cm'], why: 'Pattern: every 2 more leaves = 1 cm further. 2→2, 4→3, 6→4, so 8→5 cm.', vis: 'celeryTable' });
+MC('mc_research', 'enq', 'Which enquiry uses books and websites to find an answer?', 'researching', ['fair testing', 'observing over time'], 'Researching = using books, websites and experts to find out.');
+MC('mc_evid', 'enq', 'Is the tallest plant always the healthiest?', 'No. The shorter, green, strong plant (B) is healthier', ['Yes. Taller is always healthier'], 'Use evidence: healthy plants are green and strong, not just tall.', 'tallPale');
+
+/* matter */
+add({ id: 'bn_matA', lab: 'matter', t: 'bins', q: 'Which state of matter is each one at room temperature?', bins: BINS3, why: 'Solid keeps its shape. Liquid flows. Gas spreads out.', items: [
+  ['🧊', 'ice', 'solid', 'Ice is frozen water. It keeps its shape.'], ['💧', 'water', 'liquid', 'Water flows.'], ['♨️', 'steam', 'gas', 'Steam is water as a gas.'], ['🫧', 'carbon dioxide', 'gas', 'Carbon dioxide is a gas.'], ['🧴', 'shampoo', 'liquid', 'Shampoo flows.'], ['🌬️', 'oxygen', 'gas', 'Oxygen is a gas.']] });
+add({ id: 'bn_matB', lab: 'matter', t: 'bins', q: 'More to sort!', bins: BINS3, why: 'Think: can I pour it? Does it keep its own shape?', items: [
+  ['🪨', 'rock', 'solid', 'A rock keeps its shape.'], ['🍶', 'vinegar', 'liquid', 'Vinegar flows.'], ['🍯', 'honey', 'liquid', 'Honey is a thick liquid. It flows slowly.'], ['🪵', 'wood', 'solid', 'Wood keeps its shape.'], ['🎈', 'air in a balloon', 'gas', 'Air is made of gases.'], ['🥛', 'milk', 'liquid', 'Milk flows.']] });
+add({ id: 'lb_bottle', lab: 'matter', t: 'label', q: 'Name the state of matter of each part of the bottle.', draw: 'bottle', chips: [['solid', 'cap'], ['liquid', 'water'], ['gas', 'air']], why: 'The plastic cap is a solid, the water is a liquid and the air inside is a gas.' });
+MU('mu_liquid', 'matter', 'Tick ALL the liquids.', ['water', 'juice', 'honey', 'milk'], ['wood', 'air', 'paper', 'rock'], 'Liquids flow and take the shape of their container.');
+MU('mu_liqprop', 'matter', 'Tick TWO properties of a liquid.', ['flows', "takes the container's shape"], ['has a fixed shape'], 'A liquid flows and takes the shape of its container.');
+MC('mc_solid', 'matter', 'Which sentence describes a SOLID?', 'It keeps its own shape', ["It spreads out to fill its container", "It takes the shape of its container"], 'Solids keep their own shape.');
+MC('mc_gas', 'matter', 'Which sentence describes a GAS?', "It spreads out to fill its container", ['It keeps its own shape', 'It cannot move'], 'Gases spread out to fill all the space they can.');
+MC('mc_compress', 'matter', 'Which state of matter can be squashed (compressed) most easily?', 'Gas', ['Solid', 'Liquid'], 'Solids and liquids do not compress easily. Gases compress more easily (think of a bike pump).');
+TS('ts_matter', 'matter', 'True or false?', [['Water is a liquid at room temperature.', true], ['Air is made of gases.', true], ['Ice is a liquid.', false], ['Steam is a gas.', true]], 'Ice = solid water. Water = liquid. Steam = gas.');
+
+/* mixtures */
+MC('mc_mixture', 'mix', 'What is a mixture?', 'Two or more materials mixed together', ['Only one material', 'Only gases'], 'A mixture has two or more materials mixed together.');
+MC('mc_ismix', 'mix', 'Which of these is a mixture?', 'salt water', ['pure gold', 'oxygen'], 'Salt water has salt AND water. Pure gold and oxygen are only one thing.');
+MC('mc_notmix', 'mix', 'Which of these is NOT a mixture?', 'nitrogen', ['soil', 'air'], 'Soil and air have many materials. Nitrogen is only one gas.');
+const TM = {
+  nails_rice: { a: ['🔩', 'iron nails'], b: ['🍚', 'rice'], fix: 'magnet', why: 'A magnet attracts the iron nails but not the rice.' },
+  stones_sand: { a: ['🪨', 'large stones'], b: ['🏖️', 'sand'], fix: 'sieve', why: 'The sand is smaller than the holes, so it falls through. The big stones stay in the sieve.' },
+  sand_water: { a: ['🏖️', 'sand'], b: ['💧', 'water'], fix: 'filter', why: 'The water goes through the filter paper. The sand is insoluble, so it stays behind.' },
+  clips_beads: { a: ['📎', 'paper clips'], b: ['🔴', 'plastic beads'], fix: 'magnet', why: 'Steel paper clips are magnetic. Plastic beads are not.' },
+  rice_flour: { a: ['🍚', 'rice'], b: ['⚪', 'flour'], fix: 'sieve', why: 'The tiny flour falls through the holes. The bigger rice grains stay in the sieve.' },
+  pebbles_water: { a: ['🪨', 'pebbles'], b: ['💧', 'water'], fix: 'filter', why: 'Pebbles are not soluble, so they stay on the filter paper. The water goes through.' }
+};
+Object.entries(TM).forEach(([k, v]) => add({ id: 'tl_' + k, lab: 'mix', t: 'tool', q: `${v.a[1]} + ${v.b[1]}: which tool separates this mixture?`, mix: v }));
+CL('cl_filter', 'mix', 'Pour the mixture of rocks and water into the filter. The {0} goes through the filter paper. The {1} is left on the filter paper. Rock is not {2}, that is why it cannot go through.', ['soluble', 'rock', 'water'], ['water', 'rock', 'soluble'], 'Water passes through the tiny holes. The rock is insoluble, so it stays behind.');
+MC('mc_sievewhy', 'mix', 'Sand and gravel are poured into a sieve. Why does only the sand pass through?', 'Sand is smaller than gravel', ['Sand is bigger than gravel', 'Sand is heavier than gravel'], 'A sieve separates by SIZE. The small sand fits through the holes.');
+MC('mc_yuri', 'mix', 'Yuri pours sand and water through filter paper in a funnel. What is this separation method called?', 'Filtering', ['Sieving', 'Dissolving'], 'Using filter paper to separate an insoluble solid from a liquid is called filtering.');
+MC('mc_salt3', 'mix', 'A mixture has salt, beans and paper clips. How can we separate the SALT without adding anything?', 'Sieving', ['Filtering', 'Magnets'], 'Salt grains are small and fall through the sieve holes. Filtering needs water, and that would dissolve the salt.');
+MC('mc_clips', 'mix', 'Beans and paper clips are still mixed. How can we separate the paper clips QUICKLY?', 'Magnets', ['Filtering', 'Sieving'], 'A magnet picks up the steel paper clips in a second.');
+
+/* dissolving */
+['salt', 'sugar', 'coffee', 'sand', 'wood', 'clips'].forEach(k => add({ id: 'ds_' + k, lab: 'diss', t: 'dissolve', item: k, q: 'Dissolve test: ' + k }));
+TS('ts_diss', 'diss', 'True or false?', [['When a solid dissolves in a liquid it is still there.', true], ['Dissolving a solid in a liquid is an example of mixing.', true], ['When a solid dissolves, it is gone forever.', false], ['Mixing two different liquids together always makes a new substance.', false], ['Dissolving sugar in water is an example of a solid dissolving in a liquid.', true]], 'A dissolved solid is still there. You just cannot see it!');
+MC('mc_nodiss', 'diss', 'Salt, sugar and sand: two will dissolve. Which one will NOT dissolve?', 'Sand', ['Salt', 'Sugar'], 'Sand is insoluble. It stays as grains at the bottom.');
+CL('cl_diss', 'diss', 'Salt and water make a {0}. Salt is {1} in water. Things that do not dissolve are called {2}.', ['dissolve', 'mixture', 'soluble', 'insoluble'], ['mixture', 'soluble', 'insoluble'], 'Salt + water = mixture. Salt is soluble. Things that do not dissolve are insoluble.');
+MC('mc_filtersalt', 'diss', 'A girl says: "Filtering will remove dissolved salt from water." Do you agree?', 'No. The dissolved salt goes through the filter paper with the water', ['Yes. The filter paper catches the salt'], 'Dissolved salt is in tiny pieces that pass through the filter with the water.');
+MC('mc_jerry', 'diss', 'Jerry thinks metal paper clips are insoluble. How can he test this?', 'Put them in water, stir, and see if they disappear', ['Taste them', 'Hold them in the air'], 'Test it: stir in water and observe. If the clips stay, they are insoluble.');
+MC('mc_cannot', 'diss', 'The salt cannot be seen because it has ...', 'dissolved', ['melted', 'vanished'], 'The salt dissolved. It broke into tiny pieces that spread through the water. It is still there!');
+MC('mc_howtell', 'diss', 'How can the girl tell the salt has dissolved?', 'She cannot see any salt crystals any more', ['The water turns into salt', 'The salt floats on top'], 'When a solid dissolves we cannot see it any more, but it is still in the water.');
+
+/* safety */
+add({ id: 'hz_A', lab: 'safe', t: 'hazard', q: 'Find every unsafe thing in the science room!', scene: 0 });
+add({ id: 'hz_B', lab: 'safe', t: 'hazard', q: 'Another lab! Find all the dangers.', scene: 1 });
+MC('mc_safe', 'safe', 'Which is the SAFE action in a science lab?', 'Walk carefully with equipment', ['Taste the mixture', 'Run with a beaker'], 'Always walk carefully with equipment. Never run!');
+MC('mc_taste', 'safe', 'Why must we NOT taste science mixtures?', 'They might be harmful', ['They are always sweet', 'They are too cold'], 'Science mixtures can be harmful. Never taste or eat them.');
+MC('mc_goggles', 'safe', 'A girl is dissolving salt in water. Which safety rule should she follow?', 'Wear goggles if the teacher tells her to', ['Taste the mixture', 'Touch the salt with bare hands'], 'Follow the teacher: goggles protect your eyes.');
+TS('ts_safe', 'safe', 'Safe or not safe? (True = safe)', [['Wear goggles when your teacher tells you to.', true], ['Eat snacks while doing an experiment.', false], ['Leave your bag in the walkway.', false], ['Tell the teacher if something spills.', true]], 'Keep the lab safe: goggles on, no food, clear walkways, tell the teacher.');
+
+const SCENES = [
+  { items: [['🏃🧪', 22, 66, 1, 'Running with a beaker!'], ['😋🥄', 76, 46, 1, 'Tasting the mixture!'], ['💦', 52, 88, 1, 'Water spilled: slippery!'], ['🎒', 8, 84, 1, 'Bag in the walkway!'], ['🥤🍔', 56, 52, 1, 'Food and drink in the lab!'], ['🥽🧑‍🔬', 34, 46, 0, 'Goggles on: safe!'], ['👩‍🏫', 90, 72, 0, 'The teacher is watching: safe!'], ['🪴', 12, 48, 0, 'Just a plant: safe!']] },
+  { items: [['🧒🧪', 28, 52, 1, 'No goggles when pouring!'], ['🍔', 64, 46, 1, 'Eating in the lab!'], ['💥🫙', 74, 88, 1, 'Broken glass on the floor!'], ['🏃', 84, 62, 1, 'Running in the lab!'], ['🪑', 10, 74, 1, 'Chair in the walkway!'], ['🥽🧒', 46, 50, 0, 'Goggles on: safe!'], ['🧑‍🏫', 92, 36, 0, 'Teacher is helping: safe!'], ['📋', 18, 44, 0, 'A tidy clipboard: safe!']] }
+];
+
+/* ---------- memory cards ---------- */
+const CARDS = [
+  ['live', '❤️', 'Alive', 'Alive now: it grows, needs food and reproduces.', 'Think of a cat 🐱'], ['live', '🍂', 'Once alive', 'It CAME FROM a living thing, but it is not alive now.', 'Wood, paper, wool, cotton, leather, a fallen leaf'],
+  ['live', '🪨', 'Never alive', 'It was NEVER alive.', 'Rock, metal, plastic, glass'],
+  ['live', '🏃', 'M = Movement', 'Living things move their body or body parts.', 'MRS GREN: M'], ['live', '🌬️', 'R = Respiration', 'Using oxygen to get energy from food (breathing).', 'MRS GREN: R'], ['live', '👀', 'S = Sensitivity', 'Sensing and reacting to the world around you.', 'MRS GREN: S'],
+  ['live', '📏', 'G = Growth', 'Getting bigger.', 'MRS GREN: G'], ['live', '🐣', 'R = Reproduction', 'Making new living things.', 'MRS GREN: R'], ['live', '💧', 'E = Excretion', 'Getting rid of waste.', 'MRS GREN: E'], ['live', '🍎', 'N = Nutrition', 'Needing and taking in food.', 'MRS GREN: N'],
+  ['plant', '🌱', 'Roots', 'Absorb water from the soil.', 'Roots drink 🥤'], ['plant', '🌿', 'Stem', 'Transports (carries) water up the plant.', 'Stem delivers 🚚'], ['plant', '🍃', 'Leaves', 'Make food for the plant using light.', 'Leaves cook 🍳'], ['plant', '🌸', 'Flower', 'Helps make seeds.', 'Flowers make seeds 🌰'],
+  ['plant', '☀️', 'What plants need', 'Light, water and the right temperature.', 'Sun, drink, just-right warm'], ['plant', '🌰', 'Germination', 'When a seed starts to grow. Many seeds can germinate without light.', 'Seed wakes up!'],
+  ['enq', '🔮', 'Prediction', 'What you THINK will happen.', 'Predict = before'], ['enq', '👁️', 'Observation', 'What you SEE or measure.', 'Observe = look'], ['enq', '⚖️', 'Fair test', 'Change ONE thing. Keep the other conditions the same.', 'One change only!'], ['enq', '📏', 'Measuring', 'Use a ruler (cm), not fingers. Fingers are different sizes.', 'Ruler for height'], ['enq', '📊', 'Using results', 'Read tables and charts to see a pattern, then predict.', 'Look for the pattern'],
+  ['matter', '🧊', 'Solid', 'Keeps its own shape.', 'Ice, rock, wood'], ['matter', '💧', 'Liquid', 'Flows and takes the shape of its container.', 'Water, juice, shampoo'], ['matter', '💨', 'Gas', 'Spreads out to fill its container.', 'Oxygen, steam, air'], ['matter', '🧪', 'Compress', 'Solids and liquids do not compress easily. Gases compress more easily.', 'Squash a balloon!'],
+  ['mix', '🥣', 'Mixture', 'Two or more materials mixed together.', 'Salt water, soil, air'], ['mix', '🧲', 'Magnet', 'Attracts magnetic materials (iron, steel). Separates nails or paper clips.', 'Magnet picks metal'], ['mix', '🥢', 'Sieve', 'Separates by SIZE. Small bits fall through the holes.', 'Sieve = size'], ['mix', '🫗', 'Filtering', 'Filter paper lets the liquid through and keeps insoluble solids.', 'Sand stays, water goes'],
+  ['diss', '🧂', 'Soluble', 'Can dissolve in water (salt, sugar, coffee powder).', 'Soluble = disappears'], ['diss', '🏖️', 'Insoluble', 'Does NOT dissolve in water (sand, rocks, wood, metal).', 'Insoluble = stays'], ['diss', '🔎', 'Dissolved = still there', 'A dissolved solid is still present, even when we cannot see it. Filtering does not remove it.', 'Tiny pieces hide in water'],
+  ['safe', '🥽', 'Work safely', 'Goggles if told, walk carefully, keep walkways clear, tell the teacher about spills.', 'Safety first!'], ['safe', '🚫', 'Never taste', 'Never taste science mixtures: they might be harmful. No food in the lab.', 'Taste = NO']
+].map((c, i) => ({ id: 'c' + i, lab: c[0], e: c[1], t: c[2], a: c[3], trick: c[4] }));
+
+/* ---------- labs ---------- */
+const LABS = [
+  { id: 'live', name: 'Living Things', icon: '🐱', color: '#ff7aa8', intro: 'Is it <b>alive</b>, <b>once alive</b> or <b>never alive</b>? Tap things to see where they come from!', trick: '<b>Alive</b> = alive now. <b>Once alive</b> = came from a living thing (wood, wool, paper). <b>Never alive</b> = rock, metal, plastic. Life processes: <b>MRS GREN</b>.', learn: b => LEARN.live(b), rounds: () => shuffle(['bn_liveA', 'tf_bike', 'mc_leaf', 'bn_liveB', 'or_mrs', 'cl_live', 'mc_repro', 'bn_liveC', 'mc_excr', 'mc_sens']).slice(0, 8) },
+  { id: 'plant', name: 'Plant Power', icon: '🌻', color: '#38b24d', intro: 'Tap the plant parts to see what they do. Then try the <b>Plant Lab</b>: what happens with too little water, light or warmth?', trick: '<b>Roots</b> drink, <b>stem</b> delivers, <b>leaves</b> cook food, <b>flower</b> makes seeds. Plants need <b>light, water and the right temperature</b>.', learn: b => LEARN.plant(b), rounds: () => shuffle(['lb_plant', 'lb_jobs', 'rm_dry', 'rm_dark', 'rm_cold', 'mc_best', 'mc_wilt', 'mc_roots', 'mc_jeff', 'cl_plant', 'ts_plant', 'mc_jeff2']).slice(0, 9) },
+  { id: 'enq', name: 'Fair Test Lab', icon: '🔬', color: '#ff9f1c', intro: 'Be a scientist! Choose what to <b>change</b>, what to keep the <b>same</b>, then watch the plants grow.', trick: 'A <b>fair test</b> changes <b>ONE</b> thing. A <b>prediction</b> is what you think; an <b>observation</b> is what you see. Measure with a <b>ruler</b> (cm).', learn: b => LEARN.enq(b), rounds: () => shuffle(['mc_pred', 'mc_tool', 'mc_cm', 'mc_change', 'mu_same', 'ch_days', 'mc_pattern', 'mc_grew', 'mc_celery', 'mc_evid', 'mc_fair', 'mc_research', 'mc_obs']).slice(0, 9) },
+  { id: 'matter', name: 'Matter Playground', icon: '🧊', color: '#2e8bff', intro: 'Heat and squash tiny particles to see how <b>solids</b>, <b>liquids</b> and <b>gases</b> behave!', trick: '<b>Solid</b> keeps its shape. <b>Liquid</b> flows and takes the shape of its container. <b>Gas</b> spreads out. Gases squash (compress) easily.', learn: b => LEARN.matter(b), rounds: () => shuffle(['bn_matA', 'lb_bottle', 'mu_liquid', 'mc_solid', 'bn_matB', 'mc_gas', 'mc_compress', 'ts_matter', 'mu_liqprop']).slice(0, 8) },
+  { id: 'mix', name: 'Separation Station', icon: '🧲', color: '#8e5bff', intro: 'A <b>mixture</b> has two or more materials. Pick a machine and watch it separate: magnet, sieve or filter!', trick: '<b>Magnet</b> picks up iron things. <b>Sieve</b> separates by size. <b>Filter paper</b> keeps insoluble solids and lets liquid through.', learn: b => LEARN.mix(b), rounds: () => shuffle(['mc_mixture', 'tl_nails_rice', 'tl_stones_sand', 'tl_sand_water', 'tl_clips_beads', 'tl_rice_flour', 'cl_filter', 'mc_sievewhy', 'mc_salt3', 'mc_clips', 'mc_ismix', 'mc_notmix', 'mc_yuri']).slice(0, 9) },
+  { id: 'diss', name: 'Dissolving Lab', icon: '🧂', color: '#19b3b3', intro: 'Stir things into water. Which ones <b>dissolve</b>? Then use the magnifier: is the solid really gone?', trick: '<b>Soluble</b> things dissolve. <b>Insoluble</b> things do not. A dissolved solid is <b>still there</b>. Filtering does not remove it.', learn: b => LEARN.diss(b), rounds: () => shuffle(['ds_salt', 'ds_sand', 'ts_diss', 'ds_sugar', 'cl_diss', 'mc_filtersalt', 'ds_coffee', 'mc_jerry', 'mc_nodiss', 'mc_cannot', 'mc_howtell']).slice(0, 8) },
+  { id: 'safe', name: 'Safety Squad', icon: '🥽', color: '#ff5a5f', intro: 'Safety first! Learn the lab rules, then hunt for dangers in two messy science rooms.', trick: 'Goggles when told. <b>Walk</b>, never run. <b>Never taste</b> mixtures. No food. Keep walkways clear. Tell the teacher about spills.', learn: b => LEARN.safe(b), rounds: () => ['hz_A', 'mc_safe', 'hz_B', 'mc_taste', 'ts_safe', 'mc_goggles'] }
+];
+/* ---------- round renderers: R[type](q, box, done(wrongCount)) ---------- */
+VIS.celeryTable = () => VIS.celery() + VIS.table([[2, 2], [4, 3], [6, 4]], 'Number of leaves', 'Distance water travelled (cm)');
+const R = {};
+function qhead(box, q, extra) { box.append(h('div', { class: 'q', html: q.q }), extra || ''); if (q.vis && VIS[q.vis]) box.append(h('div', { class: 'vis', html: VIS[q.vis]() })); }
+function finish(box, q, wrong, done) {
+  const f = h('div', { class: 'fb ' + (wrong ? 'no' : 'ok') }, h('div', { html: (wrong ? '💡 ' : '✅ ') + q.why }), h('button', { class: 'btn sm', onclick: () => done(wrong) }, 'Next ▶'));
+  box.append(f); sfx('ok'); say(wrong ? 'Mistakes help your brain remember. Read the fact and say it out loud!' : pick(['Super!', 'Yes! Great thinking!', 'You got it!', 'Brilliant!', 'Correct!'])); f.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+function stdMC(q, box, done, opts, okFn) {
+  qhead(box, q); let wrong = 0, over = false; const grid = h('div', { class: 'opts' }); box.append(grid);
+  opts.forEach(o => {
+    const b = h('button', { class: 'opt' }, o.e ? h('span', { class: 'em' }, o.e) : null, o.t); grid.append(b); b._ok = okFn(o);
+    b.onclick = () => {
+      if (over) return;
+      if (b._ok) { b.classList.add('good'); $$('.opt', grid).forEach(x => { if (x !== b) x.classList.add('off'); }); over = true; finish(box, q, wrong, done); }
+      else { b.classList.add('bad', 'off'); wrong++; sfx('bad'); say('Not quite. Look again and think!'); if (wrong >= 2) { over = true; $$('.opt', grid).forEach(x => { if (x._ok) x.classList.add('good'); else x.classList.add('off'); }); finish(box, q, wrong, done); } }
+    };
+  });
+}
+R.mc = (q, box, done) => { const opts = shuffle(q.o).map(t => ({ t })); stdMC(q, box, done, opts, o => o.t === q.ok); };
+R.tf = (q, box, done) => stdMC(q, box, done, [{ e: '✅', t: 'True' }, { e: '❌', t: 'False' }], o => (o.t === 'True') === q.a);
+
+R.tfset = (q, box, done) => {
+  qhead(box, q.q); let wrong = 0, tries = 0; const sel = q.rows.map(() => null), list = h('div'); box.append(list);
+  const rows = q.rows.map((r, i) => {
+    const row = h('div', { class: 'row', style: { justifyContent: 'space-between', padding: '8px 4px', borderBottom: '2px dashed #e1ebf4' } }, h('div', { style: { flex: '1 1 260px', fontSize: '17px' } }, (i + 1) + '. ' + r[0]));
+    const bt = [true, false].map(v => h('button', { class: 'opt', style: { padding: '8px 16px' }, onclick: () => { if (row._lock) return; sel[i] = v; bt.forEach((b, k) => b.classList.toggle('sel', (k === 0) === v)); row.classList.remove('bad'); sfx('tick'); } }, v ? '✅ True' : '❌ False'));
+    row.append(h('div', { class: 'row' }, bt)); list.append(row); return { row, bt };
+  });
+  const chk = h('button', { class: 'btn', style: { marginTop: '10px' }, onclick: () => {
+    if (sel.some(s => s === null)) { say('Answer every sentence first!'); return; }
+    tries++; const bad = q.rows.map((r, i) => sel[i] !== r[1]);
+    if (!bad.some(Boolean) || tries >= 3) { rows.forEach(({ row, bt }, i) => { row._lock = 1; bt.forEach((b, k) => { b.classList.remove('sel'); if ((k === 0) === q.rows[i][1]) b.classList.add('good'); else b.classList.add('off'); }); }); chk.remove(); finish(box, q, wrong, done); }
+    else { wrong++; sfx('bad'); say(`${bad.filter(Boolean).length} to fix. Read those sentences again!`); rows.forEach(({ row, bt }, i) => { if (bad[i]) { row.classList.add('bad'); row.style.background = '#ffe9ea'; sel[i] = null; bt.forEach(b => b.classList.remove('sel')); } else { row.style.background = '#effbf1'; row._lock = 1; } }); }
+  } }, 'Check ✔'); box.append(chk);
+};
+
+R.multi = (q, box, done) => {
+  qhead(box, q); let wrong = 0, tries = 0, over = false; const grid = h('div', { class: 'opts' }), on = new Set(); box.append(grid);
+  const os = shuffle(q.o).map(t => { const b = h('button', { class: 'opt', onclick: () => { if (over) return; on.has(t) ? on.delete(t) : on.add(t); b.classList.toggle('sel'); sfx('tick'); } }, '☐ ' + t); b.dataset.t = t; grid.append(b); return b; });
+  const chk = h('button', { class: 'btn', style: { marginTop: '10px' }, onclick: () => {
+    tries++; const good = on.size === q.ok.length && q.ok.every(x => on.has(x));
+    if (good || tries >= 3) { over = true; os.forEach(b => { b.classList.remove('sel'); b.classList.add(q.ok.includes(b.dataset.t) ? 'good' : 'off'); }); chk.remove(); finish(box, q, wrong, done); }
+    else { wrong++; sfx('bad'); say(`Tick ${q.ok.length === 1 ? 'one' : q.ok.length === 2 ? 'TWO' : 'all the right'} answers. Think again!`); on.clear(); os.forEach(b => b.classList.remove('sel')); }
+  } }, 'Check ✔'); box.append(chk);
+};
+
+R.cloze = (q, box, done) => {
+  box.append(h('div', { class: 'q' }, 'Fill the gaps. Tap a word, or drag it to a gap.')); let wrong = 0, tries = 0;
+  const parts = q.text.split(/\{(\d)\}/), p = h('div', { class: 'q', style: { lineHeight: '2.1', fontSize: 'clamp(18px,3vw,23px)' } }), gaps = [];
+  parts.forEach((s, i) => { if (i % 2 === 0) p.append(s); else { const g = h('span', { class: 'gap', 'data-zone': 1 }); g._i = +s; g._w = null; gaps.push(g); p.append(g); } });
+  const chips = h('div', { class: 'chips' }), cs = shuffle(q.bank).map(w => { const c = h('div', { class: 'wc' }, w); c._w = w; chips.append(c); return c; });
+  box.append(p, chips);
+  const fill = (g, c) => { if (g._w) free(g); g._w = c._w; g._c = c; g.textContent = c._w; c.classList.add('used'); sfx('pop'); g.classList.remove('no'); };
+  const free = g => { if (g._c) g._c.classList.remove('used'); g._w = null; g._c = null; g.textContent = ''; g.classList.remove('ok', 'no'); };
+  gaps.forEach(g => g.addEventListener('click', () => { if (g._w && !g._lock) free(g); }));
+  const dd = DD(cs, gaps, (g, c) => { if (!g._lock) fill(g, c); });
+  cs.forEach(c => c.addEventListener('dblclick', () => { const g = gaps.find(x => !x._w); g && fill(g, c); }));
+  // tapping a chip without a selected gap fills the first empty gap
+  cs.forEach(c => c.addEventListener('pointerup', () => setTimeout(() => { if (c.classList.contains('sel')) { const g = gaps.find(x => !x._w && !x._lock); if (g) { dd.clear(); fill(g, c); } } }, 20)));
+  const chk = h('button', { class: 'btn', style: { marginTop: '6px' }, onclick: () => {
+    if (gaps.some(g => !g._w)) { say('Fill every gap first!'); return; }
+    tries++; const ok = gaps.map(g => g._w === q.ans[g._i]);
+    (q.any || []).forEach(grp => { const got = grp.map(i => gaps.find(g => g._i === i)._w).sort().join('|'), want = grp.map(i => q.ans[i]).sort().join('|'); if (got === want) grp.forEach(i => ok[gaps.findIndex(g => g._i === i)] = true); });
+    if (ok.every(Boolean) || tries >= 3) { gaps.forEach((g, k) => { g.classList.add(ok[k] ? 'ok' : 'no'); if (!ok[k]) { g.textContent = q.ans[g._i]; g.classList.replace('no', 'ok'); } g._lock = 1; }); chk.remove(); chips.remove(); finish(box, q, wrong, done); }
+    else { wrong++; sfx('bad'); say('Some words are in the wrong gap. Read the sentence again!'); gaps.forEach((g, k) => { if (!ok[k]) { g.classList.add('no'); const gg = g; setTimeout(() => free(gg), 900); } else { g.classList.add('ok'); g._lock = 1; } }); }
+  } }, 'Check ✔'); box.append(chk);
+};
+
+R.order = (q, box, done) => {
+  box.append(h('div', { class: 'q' }, q.q)); let wrong = 0, n = 0; const slots = h('div', { class: 'chips' }), chips = h('div', { class: 'chips' });
+  q.items.forEach((_, i) => slots.append(h('div', { class: 'wc', style: { minWidth: '112px', textAlign: 'center', background: '#f0f6fb', color: '#8aa' } }, (i + 1) + '.')));
+  shuffle(q.items).forEach(t => { const c = h('div', { class: 'wc', style: { cursor: 'pointer' }, onclick: () => {
+    if (t === q.items[n]) { const s = slots.children[n]; s.textContent = t; s.style.background = '#dff7e3'; s.style.color = '#1d2b3a'; s.style.borderColor = '#38b24d'; c.classList.add('used'); n++; sfx('ok'); say(`<b>${t[0]}</b> for ${t}!`); if (n === q.items.length) finish(box, q, wrong, done); }
+    else { wrong++; sfx('bad'); c.classList.add('bad'); setTimeout(() => c.classList.remove('bad'), 400); say(`Next is number ${n + 1}. Think: M R S G R E N!`); }
+  } }, t); chips.append(c); });
+  box.append(slots, h('div', { class: 'note' }, 'Hint: the first letters spell MRS GREN.'), chips);
+};
+
+R.bins = (q, box, done) => {
+  box.append(h('div', { class: 'q' }, q.q)); let wrong = 0, left = q.items.length; const bins = h('div', { class: 'bins', style: { '--n': q.bins.length } }), tray = h('div', { class: 'tray' });
+  const zs = q.bins.map(b => { const z = h('div', { class: 'bin', 'data-zone': 1, 'data-k': b.k, style: { '--bc': b.c } }, h('h3', null, h('span', { style: { fontSize: '24px' } }, b.e), b.label), h('div', { class: 'stack' })); bins.append(z); return z; });
+  const its = shuffle(q.items).map(([e, n, k, why]) => { const it = h('div', { class: 'it' }, h('div', { class: 'e' }, e), n); it.dataset.k = k; it._why = why; tray.append(it); return it; });
+  box.append(bins, tray, h('div', { class: 'belt' }));
+  DD(its, zs, (z, it) => {
+    if (it.dataset.lock) return;
+    if (z.dataset.k === it.dataset.k) { it.dataset.lock = 1; it.classList.add('good'); z.querySelector('.stack').append(it); left--; sfx('ok'); say('✅ ' + it._why); if (!left) { tray.remove(); finish(box, q, wrong, done); } }
+    else { wrong++; sfx('bad'); it.classList.add('bad'); setTimeout(() => it.classList.remove('bad'), 450); say('Hmm, not that bin. 💡 ' + it._why); }
+  });
+};
+
+/* label parts of a drawing */
+R.label = (q, box, done) => {
+  box.append(h('div', { class: 'q' }, q.q)); let wrong = 0, left = q.chips.length;
+  let spec;
+  if (q.draw === 'plant') { const P = plantInner({ g: 1, flower: true }); spec = { vb: '0 0 440 290', body: `<g transform="translate(110 0)">${P.svg}</g>`, z: { flower: [355, 36, 224, 22], leaf: [355, 108, 272, 88], stem: [85, 140, 216, 140], roots: [85, 240, 216, 232] } }; }
+  else spec = { vb: '0 0 470 300', body: `<g transform="translate(40 0)">${bottleSVG()}</g>`, z: { cap: [375, 28, 172, 24], air: [375, 112, 150, 120], water: [375, 236, 150, 236] } };
+  let svg = `<svg viewBox="${spec.vb}" style="max-width:640px;width:100%;touch-action:none">${spec.body}`;
+  Object.entries(spec.z).forEach(([k, [x, y, tx, ty]]) => { svg += `<path d="M${x} ${y} L${tx} ${ty}" stroke="#2e8bff" stroke-width="3" stroke-dasharray="6 5"/><circle cx="${tx}" cy="${ty}" r="5" fill="#2e8bff"/>`; });
+  Object.entries(spec.z).forEach(([k, [x, y]]) => { svg += `<g data-zone="1" data-k="${k}" class="lz"><rect x="${x - 78}" y="${y - 20}" width="156" height="40" rx="14" fill="#fff" stroke="#2e8bff" stroke-width="3" stroke-dasharray="6 5"/><text x="${x}" y="${y + 6}" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="18" fill="#2e8bff">?</text></g>`; });
+  svg += '</svg>'; const vis = h('div', { class: 'vis', html: svg }); const zs = $$('.lz', vis);
+  const chips = h('div', { class: 'chips', style: { justifyContent: 'center' } }), cs = shuffle(q.chips).map(([t, k]) => { const c = h('div', { class: 'wc' }, t); c.dataset.k = k; chips.append(c); return c; });
+  box.append(vis, chips);
+  DD(cs, zs, (z, c) => {
+    if (c.dataset.lock || z._done) return;
+    if (z.dataset.k === c.dataset.k) { z._done = 1; c.dataset.lock = 1; c.classList.add('used'); const r = z.querySelector('rect'), t = z.querySelector('text'); r.setAttribute('stroke', '#38b24d'); r.setAttribute('fill', '#e5fae9'); r.removeAttribute('stroke-dasharray'); t.textContent = c.textContent; t.setAttribute('fill', '#1f8a35'); left--; sfx('ok'); if (!left) { chips.remove(); finish(box, q, wrong, done); } }
+    else { wrong++; sfx('bad'); const r = z.querySelector('rect'); r.setAttribute('stroke', '#ff5a5f'); setTimeout(() => r.setAttribute('stroke', '#2e8bff'), 500); say('Not that one! Look at where the dotted line points.'); }
+  });
+};
+
+/* Plant Doctor */
+R.remedy = (q, box, done) => {
+  box.append(h('div', { class: 'q' }, q.q)); let wrong = 0, over = false;
+  const S = { dry: { bad: { g: .85, wilt: .95, dry: true }, good: { g: .85, wilt: 0, dry: false, flower: true } }, dark: { bad: { g: 1, pale: 1, pot: true }, good: { g: .85, pale: 0, pot: true, flower: true } }, cold: { bad: { g: .8, wilt: .75, cold: 1 }, good: { g: .85, wilt: 0, cold: 0, flower: true } } }[q.st];
+  const view = h('div', { class: 'scene', 'data-zone': 1, style: { maxWidth: '360px', margin: '0 auto' } }); box.append(view);
+  const draw = (t, fx) => {
+    const o = {}; for (const k of new Set([...Object.keys(S.bad), ...Object.keys(S.good)])) { const a = S.bad[k] ?? 0, b = S.good[k] ?? 0; o[k] = typeof a === 'boolean' || typeof b === 'boolean' ? (t < .5 ? S.bad[k] : S.good[k]) : lerp(a, b, t); }
+    let bg = '', extra = '';
+    if (q.st === 'dark' && t < .35) bg = '<rect x="0" y="0" width="220" height="290" fill="#222834"/><rect x="0" y="0" width="30" height="290" fill="#3b4150"/>'; else if (q.st === 'dark') bg = '<rect x="0" y="0" width="220" height="290" fill="#cfeeff"/>';
+    if (q.st === 'cold') { bg = `<rect x="0" y="0" width="220" height="290" fill="${mixc('#c4dcf0', '#cfeeff', t)}"/>`; if (t < .5) extra += `<g>${snowDots(16)}</g>` + iconThermo(190, 20, .05, '#3a8ff0'); }
+    if (q.st === 'dry' && t < .5) extra += iconThermo(190, 20, .5, '#ff5a5f');
+    if (fx === 'water') extra += iconDrops(86, 8 + (1 - t) * 0, 4).replace(/translate/g, 'translate');
+    if (fx === 'light') extra += iconSun(40, 44, 20);
+    if (fx === 'warm') extra += iconThermo(190, 20, .6, '#ff9f1c') + `<circle cx="110" cy="150" r="90" fill="#ffd9a0" opacity=".25"/>`;
+    view.innerHTML = plantSVG({ ...o, bg, extra });
+  };
+  draw(0, null);
+  const tools = h('div', { class: 'row center', style: { margin: '10px 0' } }); const TL = [['water', '💧', 'Water'], ['light', '☀️', 'Light'], ['warm', '🌡️', 'Warm up']];
+  const its = TL.map(([k, e, n]) => { const t = h('div', { class: 'it', style: { minWidth: '110px' } }, h('div', { class: 'e', style: { fontSize: '44px' } }, e), n); t.dataset.k = k; tools.append(t); return t; });
+  box.append(tools, h('div', { class: 'note' }, 'Drag a tool onto the plant (or tap the tool, then tap the plant).'));
+  DD(its, [view], (z, it) => {
+    if (over) return;
+    if (it.dataset.k === q.fix) { over = true; sfx(q.fix === 'water' ? 'splash' : 'whoosh'); let t = 0; const id = setInterval(() => { t = Math.min(1, t + .04); draw(t, q.fix); if (t >= 1) { clearInterval(id); setTimeout(() => finish(box, q, wrong, done), 300); } }, 40); onLeave(() => clearInterval(id)); say('Look! The plant is feeling better 🌱'); }
+    else { wrong++; sfx('bad'); it.classList.add('bad'); setTimeout(() => it.classList.remove('bad'), 450); say('That is not what this plant needs. Look at the clues: soil, light, temperature!'); }
+  });
+};
+
+/* choose the separation tool */
+const MV = { nails_rice: 'a', stones_sand: 'b', sand_water: 'b', clips_beads: 'a', rice_flour: 'b', pebbles_water: 'b' };
+const TOOLS = {
+  magnet: ['<span style="font-size:38px">🧲</span>', 'Magnet'],
+  sieve: ['<svg width="42" height="42" viewBox="0 0 42 42"><circle cx="19" cy="19" r="15" fill="#e8eef5" stroke="#556" stroke-width="3"/><path d="M8 14h22M6 19h26M8 24h22M13 6v26M19 5v28M25 6v26" stroke="#889" stroke-width="1.5"/><path d="M30 30l10 10" stroke="#556" stroke-width="5" stroke-linecap="round"/></svg>', 'Sieve'],
+  filter: ['<svg width="42" height="42" viewBox="0 0 42 42"><path d="M4 6h34L25 24v14h-8V24z" fill="#e8f3ff" stroke="#556" stroke-width="3" stroke-linejoin="round"/><path d="M9 11h24" stroke="#889" stroke-width="2"/></svg>', 'Filter paper and funnel']
+};
+R.tool = (q, box, done) => {
+  const mix = q.mix, key = Object.keys(TM).find(k => TM[k] === mix), mv = MV[key]; let wrong = 0, over = false;
+  box.append(h('div', { class: 'q', html: `Which tool separates <b>${mix.a[1]}</b> and <b>${mix.b[1]}</b>?` }));
+  const demo = h('div', { class: 'scene', style: { height: '250px', position: 'relative', maxWidth: '520px', margin: '0 auto' } });
+  const els = { a: [], b: [] }; ['a', 'b'].forEach(g => { for (let i = 0; i < 9; i++) { const s = h('span', { style: { position: 'absolute', fontSize: '26px', left: (14 + Math.random() * 68) + '%', top: (46 + Math.random() * 40) + '%', transition: 'transform 1.4s ease-in, opacity 1.4s', transitionDelay: (i * .08) + 's' } }, mix[g][0]); demo.append(s); els[g].push(s); } });
+  const lab = h('div', { style: { position: 'absolute', left: '10px', top: '8px', fontFamily: 'Fredoka', fontSize: '16px', background: '#fff', borderRadius: '10px', padding: '2px 10px' } }, `${mix.a[0]} ${mix.a[1]} + ${mix.b[0]} ${mix.b[1]}`); demo.append(lab);
+  const toolEl = h('div', { style: { position: 'absolute', right: '12%', top: '4%', fontSize: '40px', opacity: 0, transition: 'opacity .4s', filter: 'drop-shadow(0 3px 0 rgba(0,0,0,.2))' } }); demo.append(toolEl);
+  const row = h('div', { class: 'opts', style: { marginTop: '10px' } }); box.append(demo, row);
+  Object.entries(TOOLS).forEach(([k, [ic, nm]]) => row.append(h('button', { class: 'opt', style: { justifyContent: 'center' }, onclick: function () {
+    if (over) return; const b = this;
+    if (k === mix.fix) {
+      over = true; b.classList.add('good'); $$('.opt', row).forEach(x => x !== b && x.classList.add('off')); sfx(k === 'magnet' ? 'whoosh' : 'splash'); toolEl.innerHTML = ic; toolEl.style.opacity = 1;
+      els[mv].forEach(s => { if (k === 'magnet') { s.style.transform = `translate(${(78 - parseFloat(s.style.left)) * 5}px, -${demo.clientHeight * .5}px)`; } else { s.style.transform = `translateY(${demo.clientHeight * .8}px)`; s.style.opacity = 0; } });
+      setTimeout(() => finish(box, q, wrong, done), 1700);
+    } else { b.classList.add('bad', 'off'); wrong++; sfx('bad'); say(`That tool will not work here. 💡 Magnet = magnetic things. Sieve = different sizes. Filter = liquid + insoluble solid.`); if (wrong >= 2) { over = true; $$('.opt', row).forEach(x => x.classList.add('off')); finish(box, q, wrong, done); } }
+  } }, h('span', { html: ic }), nm)));
+};
+
+/* hazard hunt */
+R.hazard = (q, box, done) => {
+  const sc = SCENES[q.scene]; let wrong = 0, found = 0; const total = sc.items.filter(i => i[3]).length;
+  const cnt = h('span', { class: 'chip' }, `Dangers found: 0 / ${total}`);
+  box.append(h('div', { class: 'row', style: { justifyContent: 'space-between' } }, h('div', { class: 'q' }, q.q), cnt), h('div', { class: 'note', style: { marginBottom: '8px' } }, 'Tap the unsafe things. Careful: some things are safe!'));
+  const room = h('div', { class: 'scene', style: { position: 'relative', aspectRatio: '16/9', background: '#f4e7c8' } });
+  room.innerHTML = `<svg viewBox="0 0 160 90" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%"><rect width="160" height="48" fill="#d8ecf8"/><rect y="48" width="160" height="42" fill="#c9a77c"/><path d="M0 56H160M0 66H160M0 78H160" stroke="#b8946a" stroke-width=".6"/><rect x="8" y="8" width="26" height="22" rx="2" fill="#bfe6ff" stroke="#fff" stroke-width="2"/><path d="M21 8V30M8 19H34" stroke="#fff" stroke-width="1.5"/><rect x="60" y="10" width="40" height="3" fill="#a07a50"/><rect x="108" y="6" width="44" height="26" rx="2" fill="#fff" stroke="#bbb"/><path d="M114 14H146M114 20H140M114 26H134" stroke="#9ab" stroke-width="1.5"/><rect x="40" y="50" width="86" height="14" rx="2" fill="#8d6a46"/><rect x="42" y="64" width="3" height="14" fill="#6c4c30"/><rect x="121" y="64" width="3" height="14" fill="#6c4c30"/></svg>`;
+  sc.items.forEach(([e, x, y, hz, tag]) => { const it = h('div', { class: 'hz', style: { left: x + '%', top: y + '%' } }, e); it.onclick = () => {
+    if (it._d) return; it._d = 1; it.append(h('div', { class: 'tag' }, tag));
+    if (hz) { it.classList.add('found'); found++; sfx('ok'); say('✅ ' + tag); cnt.textContent = `Dangers found: ${found} / ${total}`; if (found === total) setTimeout(() => finish(box, { why: 'Great safety eyes! Goggles on, walk carefully, no food, keep floors and walkways clear, never taste.' }, wrong, done), 700); }
+    else { it.classList.add('safe'); wrong++; sfx('bad'); say('That one is safe! ' + tag); }
+  }; room.append(it); });
+  box.append(room);
+  const hint = h('button', { class: 'btn ghost sm', style: { marginTop: '8px' }, onclick: () => { const z = $$('.hz', room).find((el, i) => sc.items[i][3] && !el._d); if (z) { z.animate([{ transform: 'translate(-50%,-50%) scale(1)' }, { transform: 'translate(-50%,-50%) scale(1.5)' }, { transform: 'translate(-50%,-50%) scale(1)' }], { duration: 700, iterations: 3 }); } } }, '💡 Hint'); box.append(hint);
+};
+
+/* bar chart builder */
+R.chart = (q, box, done) => {
+  box.append(h('div', { class: 'q' }, q.q), h('div', { class: 'vis', html: VIS.table(q.xs.map((x, i) => [x, q.ys[i] + ' ' + q.unit]), 'Day', q.title) })); let wrong = 0, tries = 0; const val = q.xs.map(() => 0);
+  const grid = h('div', { style: { display: 'flex', gap: '8px', justifyContent: 'center', alignItems: 'flex-end', padding: '8px 4px 0' } });
+  const yax = h('div', { style: { display: 'flex', flexDirection: 'column', fontSize: '13px', color: '#5d7186', textAlign: 'right', paddingTop: '0' } }); for (let r = q.max; r >= 1; r--) yax.append(h('div', { style: { height: '22px', lineHeight: '22px', paddingRight: '4px' } }, r));
+  const cols = q.xs.map((x, i) => { const col = h('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center' } }); const cells = []; for (let r = q.max; r >= 1; r--) { const c = h('div', { style: { width: 'min(17vw,76px)', height: '22px', border: '1px solid #dce8f2', background: '#fff', cursor: 'pointer' }, onclick: () => { val[i] = r; paint(); sfx('tick'); } }); cells.push([r, c]); col.append(c); } col.append(h('div', { style: { fontFamily: 'Fredoka', fontSize: '15px', marginTop: '4px' } }, x)); grid.append(col); return cells; });
+  const paint = () => cols.forEach((cells, i) => cells.forEach(([r, c]) => { c.style.background = r <= val[i] ? '#ffb347' : '#fff'; c.style.borderColor = r <= val[i] ? '#e68a00' : '#dce8f2'; }));
+  box.append(h('div', { class: 'row center', style: { alignItems: 'flex-end', gap: '0' } }, yax, grid), h('div', { class: 'lbl', style: { justifyContent: 'center', marginTop: '4px' } }, q.title + ' ↑'));
+  const chk = h('button', { class: 'btn', style: { marginTop: '10px' }, onclick: () => {
+    tries++; const bad = val.map((v, i) => v !== q.ys[i]);
+    if (!bad.some(Boolean) || tries >= 3) { q.ys.forEach((y, i) => val[i] = y); paint(); chk.remove(); finish(box, q, wrong, done); }
+    else { wrong++; sfx('bad'); say(`${bad.filter(Boolean).length} bar${bad.filter(Boolean).length > 1 ? 's are' : ' is'} not right. Check the table and count the squares!`); cols.forEach((cells, i) => { if (bad[i]) cells.forEach(([r, c]) => { c.animate([{ transform: 'translateX(-4px)' }, { transform: 'translateX(4px)' }], { duration: 120, iterations: 4 }); }); }); }
+  } }, 'Check chart ✔'); box.append(chk);
+};
+
+/* dissolve test: predict, then test in the beaker */
+R.dissolve = (q, box, done) => {
+  const I = SOLIDS[q.item]; let wrong = 0, pred = null;
+  box.append(h('div', { class: 'q', html: `Will <b>${I.e} ${I.n}</b> dissolve in water?` }));
+  const simBox = h('div'); box.append(simBox); const sim = beakerSim(simBox, q.item);
+  const ctl = h('div', { class: 'row center', style: { marginTop: '10px' } }); box.append(ctl);
+  const ask = () => { ctl.innerHTML = ''; say('Make a <b>prediction</b> first: what do you think will happen?'); ctl.append(h('button', { class: 'btn', style: { '--c': '#19b3b3' }, onclick: () => go(true) }, '🧂 Soluble (it dissolves)'), h('button', { class: 'btn', style: { '--c': '#a07a50' }, onclick: () => go(false) }, '🪨 Insoluble (it stays)')); };
+  const go = p => { pred = p; ctl.innerHTML = ''; ctl.append(h('button', { class: 'btn', onclick: async function () { this.disabled = true; await sim.pour(); await sim.stir(); sim.reveal(); const right = pred === I.sol; if (!right) wrong++; ctl.innerHTML = ''; if (I.sol) { let on = false; const mb = h('button', { class: 'btn ghost', style: { margin: '10px auto 0', display: 'flex' }, onclick: () => { on = !on; sim.setMag(on); mb.textContent = on ? '🔍 Magnifier ON: it is still there!' : '🔍 Look closer'; sfx('pop'); } }, '🔍 Look closer'); box.append(mb); } box.append(h('div', { class: 'fb ' + (right ? 'ok' : 'no') }, h('div', { html: `${right ? '✅ Your prediction was right!' : '💡 Surprise! Your prediction was different.'} <b>${I.n}</b> is <b>${I.sol ? 'soluble' : 'insoluble'}</b>. ${I.sol ? 'It dissolved, but it is still there in the water.' : 'It did not dissolve. It ' + I.stay + '.'}` }), h('button', { class: 'btn sm', onclick: () => done(wrong) }, 'Next ▶'))); sfx(right ? 'ok' : 'tick'); say(right ? 'Great prediction!' : 'Scientists learn from surprises!'); } }, '🥄 Pour in and stir')); say(`You predicted <b>${pred ? 'soluble' : 'insoluble'}</b>. Let's test it!`); };
+  ask();
+};
+/* ---------- animation css ---------- */
+document.head.append(h('style', null, `
+@keyframes breathe{50%{transform:scale(1.08)}}@keyframes blink{0%,92%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+@keyframes runx{0%{transform:translateX(-60px)}100%{transform:translateX(60px)}}@keyframes grow3{0%{transform:scale(.4)}60%,100%{transform:scale(1.15)}}
+@keyframes spinTo{0%,100%{transform:rotate(-25deg)}50%{transform:rotate(25deg)}}@keyframes drip{0%{transform:translateY(-14px);opacity:0}30%{opacity:1}100%{transform:translateY(34px);opacity:0}}
+@keyframes bite{0%,100%{transform:scale(1)}50%{transform:scale(.55) rotate(18deg)}}@keyframes hatch{0%,40%{transform:scale(1)}50%{transform:scale(1.3) rotate(8deg)}100%{transform:scale(1)}}
+@keyframes arrowgo{0%{transform:translateX(-8px);opacity:.3}60%{opacity:1}100%{transform:translateX(8px);opacity:.3}}
+@keyframes wob{25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}@keyframes fadein{from{opacity:0;transform:translateY(10px)}}
+.big3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.big3 .c{background:#fff;border:3px solid var(--bc);border-radius:20px;padding:10px;text-align:center;box-shadow:0 5px 0 rgba(0,0,0,.08)}
+.big3 .c .e{font-size:54px;line-height:1.1;display:inline-block}.big3 .c h3{color:var(--bc);font-size:20px}.big3 .c p{margin:2px 0 0;font-size:15px;line-height:1.25}
+.src{display:flex;align-items:center;justify-content:center;gap:14px;font-size:54px;min-height:96px;animation:fadein .4s}.src .ar{font-size:36px;animation:arrowgo 1s ease-in-out infinite;color:#2e8bff}.src small{display:block;font-size:14px;font-family:Fredoka;text-align:center}
+.prod{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0}.prod .p{padding:6px 12px;border-radius:14px;border:3px solid var(--line);background:#fff;font-size:15px;box-shadow:0 4px 0 var(--line);display:flex;gap:6px;align-items:center}.prod .p b{font-size:26px}.prod .p.on{border-color:var(--c);background:#fff0f6}
+.tag3{display:inline-block;padding:2px 12px;border-radius:99px;color:#fff;font-family:Fredoka;font-size:15px}
+.mr{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.mr button{padding:8px 1px;border-radius:14px;background:#fff;border:3px solid var(--line);box-shadow:0 4px 0 var(--line);font-family:Fredoka;font-size:12.5px;line-height:1.05;overflow:hidden}.mr button b{display:block;font-size:30px;color:var(--c)}.mr button.on{border-color:var(--c);background:#fff0f6}
+@media(max-width:640px){.mr{grid-template-columns:repeat(4,1fr)}.big3 .c .e{font-size:42px}.big3 .c p{font-size:13px}}
+.stg{height:150px;display:flex;align-items:center;justify-content:center;font-size:60px;position:relative;overflow:hidden;background:linear-gradient(#e7f6ff,#fff);border-radius:16px;margin-top:8px}
+.stg span{display:inline-block}
+.sw{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:8px 0}.sw .p{padding:8px 14px;border-radius:14px;border:3px solid var(--line);background:#fff;box-shadow:0 4px 0 var(--line);font-size:16px;display:flex;gap:6px;align-items:center}.sw .p.on{border-color:var(--c);background:#e8fbfb}.sw .p b{font-size:24px}
+`));
+
+/* ---------- shared sim helpers ---------- */
+const SOLIDS = {
+  salt: { n: 'salt', e: '🧂', sol: true, col: '#ffffff', ol: '#9fb2c4', stay: '' },
+  sugar: { n: 'sugar', e: '🍬', sol: true, col: '#fff6f8', ol: '#e49ab0', stay: '' },
+  coffee: { n: 'coffee powder', e: '☕', sol: true, col: '#6b4a2f', ol: '#3d2815', stay: '' },
+  sand: { n: 'sand', e: '🏖️', sol: false, col: '#e6c887', ol: '#b99a55', stay: 'sank and stayed as grains at the bottom' },
+  wood: { n: 'wood chips', e: '🪵', sol: false, col: '#b07a45', ol: '#7b5128', stay: 'floated on top and stayed as chips' },
+  clips: { n: 'paper clips', e: '📎', sol: false, col: '#a9b4c2', ol: '#6a7686', stay: 'sank to the bottom and stayed as paper clips' }
+};
+function mkCanvas(box, w, hh, cls) { const cv = h('canvas', { width: w * 2, height: hh * 2, style: { width: '100%', maxWidth: w + 'px', aspectRatio: w + '/' + hh, display: 'block', margin: '0 auto' } }); const ctx = cv.getContext('2d'); ctx.scale(2, 2); box.append(cv); return { cv, ctx, w, h: hh }; }
+function rr(ctx, x, y, w, hh, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + hh, r); ctx.arcTo(x + w, y + hh, x, y + hh, r); ctx.arcTo(x, y + hh, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+
+/* beaker with stirring: pour -> stir -> reveal */
+function beakerSim(box, key, opts = {}) {
+  const I = SOLIDS[key], C = mkCanvas(box, 520, 330), ctx = C.ctx; const BX = 140, BW = 240, WT = 130, BOT = 292; let parts = [], stirT = -1, mag = false, reveal = false, spoon = 0, stirring = false;
+  const mk = () => ({ x: rnd(BX + 40, BX + BW - 40), y: rnd(10, 70), vx: 0, vy: 0, r: key === 'clips' ? 7 : key === 'wood' ? 8 : key === 'sand' ? 3.4 : 4.6, st: 'fall', rot: rnd(0, 6), life: 1, dx: 0, dy: 0 });
+  const tint = () => key === 'coffee' ? Math.min(1, parts.filter(p => p.st === 'dis').length / 30) * .75 : 0;
+  const draw = () => {
+    ctx.clearRect(0, 0, 520, 330);
+    ctx.fillStyle = '#e9f7ff'; ctx.fillRect(0, 0, 520, 330); ctx.fillStyle = '#c9a77c'; ctx.fillRect(0, 300, 520, 30);
+    ctx.fillStyle = '#c3e8ff'; rr(ctx, BX + 4, WT, BW - 8, BOT - WT, 8); ctx.fill();
+    if (key === 'coffee') { ctx.fillStyle = `rgba(107,74,47,${tint()})`; rr(ctx, BX + 4, WT, BW - 8, BOT - WT, 8); ctx.fill(); }
+    ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(BX + 4, WT); ctx.lineTo(BX + BW - 4, WT); ctx.stroke();
+    parts.forEach(p => {
+      if (p.st === 'dis' && !mag) return; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.globalAlpha = p.st === 'dis' ? .95 : 1;
+      ctx.fillStyle = I.col; ctx.strokeStyle = I.ol; ctx.lineWidth = 1.4;
+      if (p.st === 'dis') { ctx.beginPath(); ctx.arc(0, 0, 2.6, 0, 7); ctx.fill(); ctx.strokeStyle = key === 'coffee' ? '#2b1a0c' : '#4a7fb0'; ctx.stroke(); }
+      else if (key === 'clips') { ctx.lineWidth = 2; ctx.strokeStyle = '#78879a'; rr(ctx, -7, -3.5, 14, 7, 3.5); ctx.stroke(); rr(ctx, -4, -1.5, 8, 3, 1.5); ctx.stroke(); }
+      else if (key === 'wood') { ctx.fillRect(-8, -4, 16, 8); ctx.strokeRect(-8, -4, 16, 8); }
+      else { ctx.beginPath(); ctx.rect(-p.r, -p.r, p.r * 2, p.r * 2); ctx.fill(); ctx.stroke(); }
+      ctx.restore();
+    });
+    // glass
+    ctx.strokeStyle = '#6f8fb0'; ctx.lineWidth = 5; ctx.lineJoin = 'round'; ctx.beginPath(); ctx.moveTo(BX, 40); ctx.lineTo(BX, BOT - 4); ctx.quadraticCurveTo(BX, BOT + 8, BX + 14, BOT + 8); ctx.lineTo(BX + BW - 14, BOT + 8); ctx.quadraticCurveTo(BX + BW, BOT + 8, BX + BW, BOT - 4); ctx.lineTo(BX + BW, 40); ctx.stroke();
+    if (stirring) { ctx.strokeStyle = '#b07a45'; ctx.lineWidth = 7; ctx.lineCap = 'round'; const sx = BX + BW / 2 + Math.cos(spoon) * 60, sy = 200 + Math.sin(spoon * 1.3) * 18; ctx.beginPath(); ctx.moveTo(sx + 36, 30); ctx.lineTo(sx, sy); ctx.stroke(); }
+    if (mag) { ctx.fillStyle = 'rgba(255,255,255,.0)'; ctx.font = '40px serif'; ctx.fillText('🔍', 430, 70); ctx.font = '600 15px Fredoka'; ctx.fillStyle = '#1d2b3a'; ctx.fillText('magnifier ON', 420, 90); }
+    if (opts.label) { ctx.font = '600 18px Fredoka'; ctx.fillStyle = '#1d2b3a'; ctx.fillText(I.e + ' ' + I.n + ' + water', 14, 30); }
+  };
+  loop((dt) => {
+    spoon += dt * 7; const dis = parts.filter(p => p.st === 'dis').length;
+    parts.forEach(p => {
+      if (p.st === 'fall') { p.vy += 500 * dt; p.y += p.vy * dt; if (p.y >= WT) { if (key === 'wood') { p.st = 'float'; p.y = WT + 4; p.vy = 0; } else { p.st = 'sink'; p.vy *= .15; } } }
+      else if (p.st === 'sink') { p.vy = Math.min(p.vy + 140 * dt, 90); p.y += p.vy * dt; const fl = BOT - 2 - (p.fo ?? (p.fo = rnd(0, 14))); if (p.y >= fl) { p.y = fl; p.st = 'sit'; p.vy = 0; } }
+      else if (p.st === 'float') { p.y = WT + 4 + Math.sin(performance.now() / 400 + p.x) * 2; p.x += Math.sin(performance.now() / 900 + p.rot) * .15; }
+      else if (p.st === 'melt') { p.r -= dt * 2.2; if (p.r < 1.2) { p.st = 'dis'; p.y = clamp(p.y, WT + 12, BOT - 10); p.tx = rnd(BX + 14, BX + BW - 14); p.ty = rnd(WT + 14, BOT - 14); } }
+      else if (p.st === 'dis') { p.x += (p.tx - p.x) * dt * 1.2 + rnd(-.4, .4); p.y += (p.ty - p.y) * dt * 1.2 + rnd(-.4, .4); if (Math.random() < .01) { p.tx = rnd(BX + 14, BX + BW - 14); p.ty = rnd(WT + 14, BOT - 14); } }
+      if (stirring && !I.sol && (p.st === 'sit' || p.st === 'sink')) { p.x += Math.cos(spoon + p.rot) * 30 * dt; p.y -= 12 * dt * Math.random(); if (p.st === 'sit') p.st = 'sink'; p.rot += dt * 3; }
+      if (stirring && I.sol && p.st === 'sit' && Math.random() < dt * 2.2) p.st = 'melt';
+      if (stirring && I.sol && p.st === 'sink') p.st = 'melt';
+      p.x = clamp(p.x, BX + 12, BX + BW - 12);
+    });
+    draw();
+  });
+  draw();
+  return {
+    pour: () => new Promise(res => { sfx('splash'); const n = key === 'clips' ? 10 : key === 'wood' ? 12 : 46; for (let i = 0; i < n; i++) setTimeout(() => parts.push(mk()), i * 35); setTimeout(res, n * 35 + 1500); }),
+    stir: () => new Promise(res => { stirring = true; sfx('whoosh'); setTimeout(() => { stirring = false; res(); }, 3200); }),
+    reveal: () => { }, setMag: b => { mag = b; }, parts: () => parts, el: C.cv, isSol: I.sol
+  };
+}
+
+/* filter funnel sim: mode 'sand' | 'salt' | key */
+function filterSim(box, key) {
+  const I = SOLIDS[key] || SOLIDS.sand, C = mkCanvas(box, 520, 330), ctx = C.ctx; let P = [], run = false, level = 0, t0 = 0; const kept = [];
+  const cx = 260, PY = 150;
+  const draw = () => {
+    ctx.clearRect(0, 0, 520, 330); ctx.fillStyle = '#e9f7ff'; ctx.fillRect(0, 0, 520, 330); ctx.fillStyle = '#c9a77c'; ctx.fillRect(0, 310, 520, 20);
+    ctx.fillStyle = '#9aa7b5'; ctx.fillRect(448, 40, 10, 270); ctx.fillRect(400, 300, 100, 10); ctx.fillRect(330, 98, 128, 8);
+    ctx.fillStyle = '#c3e8ff'; ctx.beginPath(); ctx.moveTo(cx - 70, 232); ctx.lineTo(cx + 70, 232); ctx.lineTo(cx + 70, 300); ctx.quadraticCurveTo(cx + 70, 310, cx + 56, 310); ctx.lineTo(cx - 56, 310); ctx.quadraticCurveTo(cx - 70, 310, cx - 70, 300); ctx.closePath(); ctx.fillStyle = 'rgba(195,232,255,.35)'; ctx.fill();
+    const wl = 308 - level * 66; ctx.fillStyle = key === 'coffee' && I.sol ? '#9b7a55' : '#7fc7f5'; ctx.beginPath(); ctx.rect(cx - 66, wl, 132, 308 - wl); ctx.fill();
+    ctx.strokeStyle = '#6f8fb0'; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(cx - 70, 226); ctx.lineTo(cx - 70, 300); ctx.quadraticCurveTo(cx - 70, 312, cx - 56, 312); ctx.lineTo(cx + 56, 312); ctx.quadraticCurveTo(cx + 70, 312, cx + 70, 300); ctx.lineTo(cx + 70, 226); ctx.stroke();
+    ctx.strokeStyle = '#7a8a9b'; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(cx - 90, 70); ctx.lineTo(cx - 8, 170); ctx.lineTo(cx - 8, 214); ctx.moveTo(cx + 90, 70); ctx.lineTo(cx + 8, 170); ctx.lineTo(cx + 8, 214); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,.9)'; ctx.strokeStyle = '#b9c4d0'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(cx - 80, 82); ctx.lineTo(cx, PY); ctx.lineTo(cx + 80, 82); ctx.stroke();
+    P.forEach(p => { if (p.t === 'w') { ctx.fillStyle = '#4aa8f0'; ctx.beginPath(); ctx.arc(p.x, p.y, 3.3, 0, 7); ctx.fill(); } else if (p.t === 'd') { ctx.fillStyle = I.col; ctx.strokeStyle = key === 'coffee' ? '#2b1a0c' : '#4a7fb0'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(p.x, p.y, 2.8, 0, 7); ctx.fill(); ctx.stroke(); } else { ctx.fillStyle = I.col; ctx.strokeStyle = I.ol; ctx.lineWidth = 1.2; ctx.fillRect(p.x - 3, p.y - 3, 6, 6); ctx.strokeRect(p.x - 3, p.y - 3, 6, 6); } });
+    kept.forEach(k => { ctx.beginPath(); ctx.arc(k.x, k.y, 2.8, 0, 7); ctx.fillStyle = I.col; ctx.fill(); ctx.strokeStyle = key === 'coffee' ? '#2b1a0c' : '#4a7fb0'; ctx.lineWidth = 1.2; ctx.stroke(); });
+    ctx.font = '600 17px Fredoka'; ctx.fillStyle = '#1d2b3a'; ctx.fillText('filter paper', 20, 92); ctx.fillText('filtrate', 20, 270);
+    if (kept.length > 6) { ctx.font = '600 15px Fredoka'; ctx.fillStyle = '#c0392b'; ctx.fillText('the dissolved ' + I.n + ' is still in the water!', 20, 292); }
+    ctx.font = '40px serif'; ctx.fillText('🫗', 340, 44);
+  };
+  loop(dt => {
+    if (run) { t0 += dt; if (t0 < 3.2 && Math.random() < dt * 40) { const q = Math.random(); P.push({ t: q < .55 ? 'w' : (I.sol ? 'd' : 's'), x: cx + rnd(-50, 40), y: 60, vy: 40, s: 'in' }); } }
+    kept.forEach(k => { k.x = clamp(k.x + k.vx * dt, cx - 60, cx + 60); k.y = clamp(k.y + k.vy * dt, 244, 302); if (Math.random() < .02) { k.vx = rnd(-10, 10); k.vy = rnd(-10, 10); } });
+    P.forEach(p => {
+      if (p.s === 'in') { p.vy += 380 * dt; p.y += p.vy * dt; const half = 82 - (p.y - 82) * 0; if (p.y >= PY - Math.abs(p.x - cx) * .85 + 0) { if (p.t === 's') { p.s = 'stay'; p.y = PY - Math.abs(p.x - cx) * .85 - rnd(0, 6); p.vy = 0; } else if (p.y > 172) { p.s = 'out'; p.x = cx + rnd(-4, 4); p.vy = 60; } else { p.x += (cx - p.x) * dt * 3; } } }
+      else if (p.s === 'out') { p.vy += 300 * dt; p.y += p.vy * dt; if (p.y > 308 - level * 66) { p.s = 'dead'; level = Math.min(.85, level + .004); if (p.t === 'd') kept.push({ x: cx + rnd(-58, 58), y: rnd(Math.max(240, 308 - level * 66 + 6), 302), vx: rnd(-8, 8), vy: rnd(-8, 8) }); } }
+    }); P = P.filter(p => p.s !== 'dead'); draw();
+  });
+  draw();
+  return { go: () => { P = []; kept.length = 0; level = 0; t0 = 0; run = true; sfx('splash'); }, reset: () => { P = []; kept.length = 0; run = false; level = 0; draw(); } };
+}
+
+/* ---------- LEARN scenes ---------- */
+const LEARN = {};
+function tabsEl(names, onPick, first = 0) { const w = h('div', { class: 'tabs' }); const bs = names.map((n, i) => h('button', { class: 'tab' + (i === first ? ' on' : ''), onclick: () => { bs.forEach((b, k) => b.classList.toggle('on', k === i)); sfx('tick'); onPick(i); } }, n)); w.append(...bs); return w; }
+
+LEARN.live = box => {
+  const stage1 = h('div'), stage2 = h('div'); const area = h('div'); box.append(tabsEl(['🐱 Alive or not?', '🔤 MRS GREN'], i => { area.innerHTML = ''; area.append(i ? stage2 : stage1); say(i ? 'Seven life processes. Tap each one and watch!' : 'Tap the things below to see where they come from.'); }), area); area.append(stage1);
+  stage1.append(h('div', { class: 'big3' },
+    h('div', { class: 'c', style: { '--bc': '#ff7aa8' } }, h('div', { class: 'e', style: { animation: 'breathe 2s infinite' } }, '🐱'), h('h3', null, 'Alive'), h('p', null, 'Alive now. It grows, needs food and reproduces.')),
+    h('div', { class: 'c', style: { '--bc': '#e8923a' } }, h('div', { class: 'e', style: { animation: 'wob 3s infinite' } }, '🪑'), h('h3', null, 'Once alive'), h('p', null, 'It came from a living thing, like a wooden chair from a tree.')),
+    h('div', { class: 'c', style: { '--bc': '#6a7f96' } }, h('div', { class: 'e' }, '🪨'), h('h3', null, 'Never alive'), h('p', null, 'It was never alive, like a rock.'))));
+  const show = h('div', { class: 'card', style: { marginTop: '12px', minHeight: '170px', textAlign: 'center' } }, h('div', { class: 'q', style: { margin: 0 } }, '👇 Tap a thing: where does it come from?'));
+  const P = [['👕', 'cotton t-shirt', '🌿', 'cotton plant', 'once', 'Cotton comes from the cotton plant.'], ['🧶', 'wool jumper', '🐑', 'sheep', 'once', 'Wool is the hair of a sheep.'], ['👞', 'leather shoe', '🐄', 'animal skin', 'once', 'Leather is made from animal skin.'], ['📄', 'paper', '🌳', 'tree', 'once', 'Paper is made from trees.'], ['🪑', 'wooden chair', '🌳', 'tree', 'once', 'Wood comes from a tree.'], ['🍂', 'leaf on the ground', '🌳', 'plant', 'once', 'It fell from a plant. It is not alive now.'], ['🥄', 'metal spoon', '⛰️', 'rocks (ore)', 'never', 'Metal comes from rocks. Rocks were never alive.'], ['🧴', 'plastic bottle', '🏭', 'factory', 'never', 'Plastic is made in a factory. It never lived.']];
+  const row = h('div', { class: 'prod' });
+  P.forEach(p => { const b = h('button', { class: 'p', onclick: () => { $$('.p', row).forEach(x => x.classList.remove('on')); b.classList.add('on'); sfx('pop'); const o = p[4] === 'once'; show.innerHTML = ''; show.append(h('div', { class: 'src' }, h('div', null, p[2], h('small', null, p[3])), h('div', { class: 'ar' }, '➜'), h('div', null, p[0], h('small', null, p[1]))), h('div', null, h('span', { class: 'tag3', style: { background: o ? '#e8923a' : '#6a7f96' } }, o ? 'ONCE ALIVE' : 'NEVER ALIVE')), h('p', { style: { margin: '8px 0 0', fontSize: '17px' } }, p[5])); say(p[5]); } }, h('b', null, p[0]), p[1]); row.append(b); });
+  stage1.append(row, show);
+  /* MRS GREN */
+  const M = [['M', 'Movement', 'Living things can move their body or body parts.', '🐇', 'runx 1.2s ease-in-out infinite alternate'], ['R', 'Respiration', 'Using oxygen to get energy from food. We breathe in and out.', '😮', 'breathe 1.6s ease-in-out infinite'], ['S', 'Sensitivity', 'Sensing the world around you (light, sound, touch) and reacting.', '🌻', 'spinTo 2.4s ease-in-out infinite'], ['G', 'Growth', 'Getting bigger as you get older.', '🌱', 'grow3 2s ease-out infinite alternate'], ['R', 'Reproduction', 'Making new living things (babies, eggs, seeds).', '🐣', 'hatch 2s ease-in-out infinite'], ['E', 'Excretion', 'Getting rid of waste from the body.', '💧', 'drip 1.4s ease-in infinite'], ['N', 'Nutrition', 'Needing and taking in food.', '🍎', 'bite 1.5s ease-in-out infinite']];
+  const grid = h('div', { class: 'mr' }), info = h('div', { class: 'card', style: { marginTop: '10px', textAlign: 'center' } }, h('div', { class: 'q', style: { margin: 0 } }, 'Tap a letter!'));
+  M.forEach((m, i) => { const b = h('button', { onclick: () => { $$('button', grid).forEach(x => x.classList.remove('on')); b.classList.add('on'); sfx('pop'); info.innerHTML = ''; const e = h('span', { style: { animation: m[4] } }, m[3]); info.append(h('div', { class: 'stg' }, e, m[1] === 'Sensitivity' ? h('span', { style: { fontSize: '40px', marginLeft: '20px' } }, '☀️') : m[1] === 'Nutrition' ? h('span', { style: { fontSize: '40px', marginLeft: '8px' } }, '🐛') : null), h('h3', { style: { margin: '8px 0 2px', color: 'var(--c)' } }, m[0] + ' = ' + m[1]), h('div', { style: { fontSize: '17px' } }, m[2])); say(`<b>${m[0]}</b> is for <b>${m[1]}</b>.`); } }, h('b', null, m[0]), m[1]); grid.append(b); });
+  stage2.append(h('div', { class: 'note', style: { marginBottom: '10px' } }, 'All living things do the <b>7 life processes</b>. Remember the trick: <b>MRS GREN</b>!'), grid, info);
+};
+
+LEARN.plant = box => {
+  const area = h('div'); const tabs = tabsEl(['🌿 Parts and jobs', '🧪 Plant needs lab', '🌰 Seed story'], i => { leave(); area.innerHTML = ''; [partsTab, needsTab, seedTab][i](area); }); box.append(tabs, area);
+  const partsTab = host => {
+    const info = h('div', { class: 'card', style: { flex: '1 1 260px' } }), sv = h('div', { class: 'scene', style: { flex: '1 1 300px', maxWidth: '380px' } });
+    const J = { roots: ['Roots', '🥤', 'Roots <b>absorb</b> (take in) <b>water</b> from the soil.'], stem: ['Stem', '🚚', 'The stem <b>transports</b> (carries) <b>water</b> up the plant.'], leaf: ['Leaves', '🍳', 'Leaves <b>make food</b> for the plant. They use light.'], flower: ['Flower', '🌰', 'The flower <b>helps make seeds</b>.'] };
+    const P = plantInner({ g: 1, flower: true }), lp = P.p(.62);
+    const over = k => {
+      let o = '';
+      if (k === 'roots') o = [84, 98, 110, 124, 138].map((x, i) => `<circle cx="${x}" r="4" fill="#3aa0ff" stroke="#fff" stroke-width="1"><animate attributeName="cy" from="266" to="198" dur="1.9s" begin="${i * .35}s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="1.9s" begin="${i * .35}s" repeatCount="indefinite"/></circle>`).join('') + '<path d="M60 245 q-20 -10 -34 4" stroke="#3aa0ff" stroke-width="3" fill="none" stroke-dasharray="4 5"><animate attributeName="stroke-dashoffset" from="0" to="-18" dur="1s" repeatCount="indefinite"/></path>';
+      if (k === 'stem') o = [0, 1, 2, 3, 4].map(i => `<circle r="5" fill="#3aa0ff" stroke="#fff" stroke-width="1.2"><animateMotion dur="2.4s" begin="${i * .48}s" repeatCount="indefinite" path="M110 196 Q110 111 110 38"/><animate attributeName="opacity" values="0;1;1;0" dur="2.4s" begin="${i * .48}s" repeatCount="indefinite"/></circle>`).join('');
+      if (k === 'leaf') o = iconSun(34, 42, 18) + [0, 1, 2].map(i => `<path d="M${52 + i * 6} ${64 + i * 8} L${150 - i * 10} ${100 + i * 4}" stroke="#ffd23f" stroke-width="3" stroke-dasharray="5 6" opacity=".8"><animate attributeName="stroke-dashoffset" from="0" to="-22" dur=".9s" repeatCount="indefinite"/></path>`).join('') + [0, 1, 2, 3].map(i => `<circle r="4.5" fill="#ffb300" stroke="#fff" stroke-width="1.2"><animateMotion dur="2.4s" begin="${i * .6}s" repeatCount="indefinite" path="M${lp[0] + 30} ${lp[1]} Q112 ${lp[1] + 20} 110 190"/><animate attributeName="opacity" values="0;1;1;0" dur="2.4s" begin="${i * .6}s" repeatCount="indefinite"/></circle>`).join('') + `<text x="168" y="70" font-size="18" font-family="Fredoka" fill="#1d6b2d">food!</text>`;
+      if (k === 'flower') o = `<text font-size="26"><animateMotion dur="3.2s" repeatCount="indefinite" path="M${P.tx - 30} ${P.ty - 20} a34 22 0 1 1 .1 0"/>🐝</text>` + [0, 1, 2].map(i => `<ellipse cx="${P.tx + 34 + i * 12}" cy="${P.ty + 40 + i * 4}" rx="5" ry="8" fill="#8b5a2b" stroke="#5c3a18" stroke-width="1.5" opacity="0"><animate attributeName="opacity" values="0;0;1" dur="2.4s" begin="${i * .5}s" fill="freeze"/><animateTransform attributeName="transform" type="scale" values="0;1.3;1" dur=".8s" begin="${i * .5 + 1}s" fill="freeze" additive="sum"/></ellipse>`).join('');
+      return o;
+    };
+    const hot = `<g class="hot" data-part="flower"><circle cx="${P.tx}" cy="${P.ty - 6}" r="32" fill="#fff" fill-opacity=".01"/><circle class="ring" cx="${P.tx}" cy="${P.ty - 6}" r="30"/></g><g class="hot" data-part="leaf"><circle cx="${lp[0] + 36}" cy="${lp[1] - 4}" r="30" fill="#fff" fill-opacity=".01"/><circle class="ring" cx="${lp[0] + 36}" cy="${lp[1] - 4}" r="28"/></g><g class="hot" data-part="stem"><circle cx="110" cy="160" r="22" fill="#fff" fill-opacity=".01"/><circle class="ring" cx="110" cy="160" r="20"/></g><g class="hot" data-part="roots"><circle cx="110" cy="238" r="34" fill="#fff" fill-opacity=".01"/><circle class="ring" cx="110" cy="238" r="32"/></g>`;
+    const render = k => { sv.innerHTML = `<svg viewBox="0 0 220 290">${P.svg.replace(/^/, '')}${k ? over(k) : ''}${hot}</svg>`; $$('.hot', sv).forEach(g => g.addEventListener('click', () => pick2(g.dataset.part))); };
+    const pick2 = k => { sfx('pop'); render(k); const j = J[k]; info.innerHTML = ''; info.append(h('h3', { style: { fontSize: '28px', color: 'var(--c)' } }, j[0]), h('div', { class: 'q', html: j[2], style: { margin: '6px 0' } }), h('div', { class: 'note', html: `Memory trick: <b>${j[0]}</b> ${j[1]}` })); say(j[2]); };
+    const first = h('div', { class: 'note', style: { marginBottom: '8px' } }, 'Tap the glowing circles on the plant.'); render(null);
+    info.append(h('div', { class: 'q', style: { margin: 0 } }, '👈 Tap a plant part!'), h('div', { class: 'trick', style: { marginTop: '10px' }, html: '<b class="k">SONG</b><br>Roots <b>drink</b> 🥤<br>Stem <b>delivers</b> 🚚<br>Leaves <b>cook</b> 🍳<br>Flower makes <b>seeds</b> 🌰' }));
+    host.append(first, h('div', { class: 'row', style: { alignItems: 'stretch' } }, sv, info));
+  };
+  const needsTab = host => {
+    const st = { water: 60, light: 70, temp: 22 }, scene = h('div', { class: 'scene', style: { flex: '1 1 280px', maxWidth: '360px' } }), ctl = h('div', { class: 'card', style: { flex: '1 1 280px' } }), msg = h('div', { class: 'note', style: { marginTop: '8px' } });
+    let g = .55, gt = .55;
+    const mk = (k, lbl, min, max, unit) => { const v = h('b'), s = h('input', { class: 'slider', type: 'range', min, max, value: st[k], oninput: () => { st[k] = +s.value; upd(); } }); const w = h('div', { style: { marginBottom: '8px' } }, h('div', { class: 'lbl' }, h('span', null, lbl), v), s); w._v = v; w._u = unit; ctl.append(w); return w; };
+    const w1 = mk('water', '💧 Water', 0, 100, '%'), w2 = mk('light', '☀️ Light', 0, 100, '%'), w3 = mk('temp', '🌡️ Temperature', -5, 45, '°C');
+    const diag = () => { const m = []; if (st.water < 35) m.push('Not enough <b>water</b>: the roots cannot take in enough, so the plant <b>wilts</b>.'); if (st.light < 35) m.push('Not enough <b>light</b>: the leaves cannot make food, so the plant turns <b>pale and weak</b>.'); if (st.temp < 12) m.push('Too <b>cold</b>: plants need the right temperature.'); if (st.temp > 32) m.push('Too <b>hot</b>: plants need the right temperature.'); return m; };
+    const upd = () => {
+      w1._v.textContent = st.water + '%'; w2._v.textContent = st.light + '%'; w3._v.textContent = st.temp + '°C';
+      const wilt = clamp(Math.max((35 - st.water) / 35, (st.temp > 32 ? (st.temp - 32) / 12 : 0), (st.temp < 12 ? (12 - st.temp) / 17 * .8 : 0)), 0, 1), pale = clamp((35 - st.light) / 35, 0, 1), cold = st.temp < 12 ? clamp((12 - st.temp) / 17, 0, 1) : 0, d = diag();
+      gt = d.length ? .45 : 1; const o = { g, wilt, pale, cold, pot: true, dry: st.water < 20, flower: !d.length && g > .9 };
+      let extra = iconSun(34, 38, 14 + st.light / 12, st.light > 10).replace('stroke-opacity', 'stroke-opacity') + iconThermo(190, 18, clamp((st.temp + 5) / 50, 0, 1), st.temp < 12 ? '#3a8ff0' : st.temp > 32 ? '#ff5a5f' : '#38b24d');
+      if (st.water > 50) extra += iconDrops(150, 12, 2); scene.innerHTML = plantSVG({ ...o, extra, bg: `<rect width="220" height="290" fill="${mixc('#cfeeff', '#2c3447', clamp(1 - st.light / 60, 0, .85))}"/>` });
+      msg.innerHTML = d.length ? d.join('<br>') : '✅ A <b>healthy</b> plant: it has water, light and the right temperature, so it grows tall and makes flowers!';
+      msg.style.background = d.length ? '#fff0d6' : '#dff7e3'; msg.style.borderColor = d.length ? '#ffcf56' : '#38b24d'; ctl.append(msg);
+    };
+    loop(dt => { if (Math.abs(gt - g) > .005) { g += (gt - g) * dt * .7; upd(); } });
+    upd(); host.append(h('div', { class: 'note', style: { marginBottom: '8px' } }, 'Move the sliders. Can you make the plant <b>wilt</b>? Can you make it <b>pale</b>? Then fix it!'), h('div', { class: 'row', style: { alignItems: 'flex-start' } }, scene, ctl));
+    say('Plants need <b>light, water and the right temperature</b>. Try to break the plant, then fix it!');
+  };
+  const seedTab = host => {
+    const sv = h('div', { class: 'scene', style: { maxWidth: '400px', margin: '0 auto' } }), cap = h('div', { class: 'note', style: { marginTop: '10px', textAlign: 'center' } }); let dark = false, stg = 0, timer = null;
+    const soil = '<rect x="10" y="190" width="200" height="92" rx="12" fill="#8a5a3b"/><rect x="10" y="186" width="200" height="9" rx="4" fill="#5ab04d"/>';
+    const draw = s => {
+      let c = '';
+      const bg = dark && s < 3 ? '<rect width="220" height="290" fill="#222834"/>' : dark ? '<rect width="220" height="290" fill="#222834"/>' : '<rect width="220" height="290" fill="#cfeeff"/>';
+      if (s === 0) c = soil + '<ellipse cx="110" cy="220" rx="12" ry="8" fill="#b9814c" stroke="#7d5330" stroke-width="2"/>';
+      else if (s === 1) c = soil + '<ellipse cx="110" cy="220" rx="12" ry="8" fill="#b9814c" stroke="#7d5330" stroke-width="2"/><path d="M106 226 Q104 246 100 262" stroke="#f6e7c8" stroke-width="4" fill="none" stroke-linecap="round"/>' + iconDrops(70, 205, 2);
+      else if (s === 2) c = soil + '<path d="M110 222 Q104 246 100 262 M108 232 Q130 242 138 258" stroke="#f6e7c8" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M110 222 Q108 190 118 168" stroke="#2fa24a" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M118 168 q-3 -12 6 -16 q6 10 -6 16z" fill="#46c45c"/>';
+      else if (s === 3) c = plantInner({ g: .35, pale: dark ? 1 : 0 }).svg;
+      else c = plantInner({ g: dark ? .9 : .85, pale: dark ? 1 : 0, flower: !dark }).svg;
+      sv.innerHTML = `<svg viewBox="0 0 220 290">${bg}${c}${!dark && s >= 3 ? iconSun(34, 38, 14, false) : ''}</svg>`;
+      cap.innerHTML = ['<b>1. Seed.</b> A seed sleeps in damp soil.', '<b>2. Germination!</b> The seed starts to grow. The root comes out first.', '<b>3. Shoot.</b> A shoot grows up, towards the light.', '<b>4. Seedling.</b> The first leaves open.', dark ? '<b>5. Pale and weak.</b> No light: the leaves cannot make food. <b>Many seeds can germinate without light, but the plant needs light to stay healthy.</b>' : '<b>5. Healthy plant.</b> Light, water and the right temperature: it grows strong and makes flowers.'][s];
+    };
+    const play = () => { clearInterval(timer); stg = 0; draw(0); sfx('pop'); timer = setInterval(() => { stg++; draw(stg); sfx('pop'); if (stg >= 4) clearInterval(timer); }, 1700); onLeave(() => clearInterval(timer)); };
+    const tg = h('button', { class: 'btn ghost sm', onclick: () => { dark = !dark; tg.textContent = dark ? '🌑 In the dark cupboard' : '☀️ In the light'; play(); } }, '☀️ In the light');
+    host.append(h('div', { class: 'note', style: { marginBottom: '8px' } }, '<b>Germination</b> is when a seed starts to grow. Press play, then try the dark cupboard!'.replace(/<b>|<\/b>/g, '')), sv, cap, h('div', { class: 'row center', style: { marginTop: '10px' } }, h('button', { class: 'btn sm', onclick: play }, '▶ Play seed story'), tg)); draw(0); say('Many seeds can <b>germinate</b> without light. But a plant in the dark ends up pale and weak!');
+  };
+  partsTab(area);
+};
+LEARN.enq = box => {
+  const area = h('div'); box.append(tabsEl(['🌱 Grow-o-matic', '📏 Measure it'], i => { leave(); area.innerHTML = ''; (i ? measureTab : growTab)(area); }), area);
+  const growTab = host => {
+    const V = { light: { n: 'Light', a: '☀️ Sunny window', b: '🌑 Dark cupboard' }, water: { n: 'Water', a: '💧 Lots of water', b: '🏜️ Little water' }, type: { n: 'Plant type', a: '🫘 Bean plant', b: '🌻 Sunflower' } };
+    const DATA = { light: [[3, 5, 8, 10], [3, 4, 4, 4]], water: [[3, 5, 8, 10], [3, 4, 4, 3]], type: [[3, 5, 8, 10], [3, 6, 10, 14]] };
+    const mode = { light: 'same', water: 'same', type: 'same' }; let t = -1, run = false, res = null, pred = null;
+    const ctl = h('div', { class: 'card', style: { flex: '1 1 270px' } }), scene = h('div', { class: 'scene', style: { flex: '1 1 340px', padding: '8px' } }), out = h('div', { style: { marginTop: '10px' } });
+    ctl.append(h('div', { class: 'q', style: { fontSize: '20px', margin: '0 0 6px' } }, '1. What will you CHANGE?'));
+    const rows = Object.keys(V).map(k => { const bc = h('button', { class: 'tab', onclick: () => { mode[k] = mode[k] === 'change' ? 'same' : 'change'; rows.forEach(r => r.upd()); ready(); sfx('tick'); } }), r = { k, bc, upd: () => { bc.classList.toggle('on', mode[k] === 'change'); bc.textContent = mode[k] === 'change' ? '🔄 CHANGE' : '🔒 SAME'; } }; r.upd(); ctl.append(h('div', { class: 'row', style: { justifyContent: 'space-between', margin: '6px 0' } }, h('div', { style: { fontFamily: 'Fredoka', fontSize: '17px' } }, V[k].n, h('div', { style: { fontSize: '13px', color: '#5d7186', fontFamily: 'Nunito' } }, V[k].a + '  vs  ' + V[k].b)), bc)); return r; });
+    const pbox = h('div', { class: 'row', style: { margin: '8px 0' } }), runb = h('button', { class: 'btn', style: { marginTop: '8px' }, onclick: () => go() }, '▶ Grow for 4 days!');
+    ctl.append(h('div', { class: 'q', style: { fontSize: '20px', margin: '10px 0 4px' } }, '2. PREDICT'), pbox, runb);
+    const nChange = () => Object.values(mode).filter(m => m === 'change').length, which = () => Object.keys(mode).find(k => mode[k] === 'change');
+    const ready = () => { const n = nChange(); pbox.innerHTML = ''; pred = null; if (n === 1) { const k = which(); ['a', 'b'].forEach(s => pbox.append(h('button', { class: 'tab', onclick: function () { pred = s; $$('.tab', pbox).forEach(x => x.classList.remove('on')); this.classList.add('on'); sfx('tick'); } }, 'I predict ' + V[k][s].replace(/^\S+\s/, '') + ' grows taller'))); } else pbox.append(h('div', { class: 'note' }, n === 0 ? 'Choose ONE thing to change.' : '⚠️ You are changing ' + n + ' things. That is NOT a fair test!')); };
+    const heights = d => d.map(x => x);
+    const draw = (day) => {
+      const d = res ? res.d : [DATA.light[0], DATA.light[0]], f = Math.min(3, Math.max(0, day)), i = Math.floor(f), fr = f - i, hAt = a => day < 0 ? 0 : lerp(a[i], a[Math.min(3, i + 1)], fr), A = hAt(d[0]), B = hAt(d[1]), k = res ? res.k : 'light';
+      const pl = (x, v, bad, cap) => `<g transform="translate(${x} 0) scale(.9)">${plantInner({ g: .25 + .75 * clamp(v / 14, 0, 1), pot: true, pale: bad ? .8 : 0 }).svg}</g><text x="${x + 100}" y="296" text-anchor="middle" font-family="Fredoka" font-size="15" fill="#1d2b3a">${cap}</text><text x="${x + 100}" y="316" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="19" fill="#1d6b2d">${v.toFixed(0)} cm</text>`;
+      const nm = res ? V[res.k] : V.light; const unfair = res && res.n > 1;
+      const bgA = k === 'light' || !res ? '#cfeeff' : '#e6f4ff', bgB = (k === 'light' && res) ? '#2a2f3a' : '#e6f4ff';
+      scene.innerHTML = `<svg viewBox="0 0 520 330" style="width:100%"><rect x="6" y="6" width="248" height="270" rx="14" fill="${bgA}"/><rect x="266" y="6" width="248" height="270" rx="14" fill="${bgB}"/>${pl(24, A, false, res ? nm.a : 'Plant A')}${pl(284, B, res && (k === 'light' || k === 'water') && B < 6, res ? nm.b : 'Plant B')}${day < 0 ? '' : `<rect x="222" y="12" width="76" height="28" rx="14" fill="#fff" stroke="#d3e2ef" stroke-width="3"/><text x="260" y="32" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="18" fill="#1d2b3a">Day ${Math.min(4, Math.floor(day) + 1)}</text>`}<g stroke="#556" stroke-width="2"><rect x="238" y="46" width="14" height="196" fill="#fff"/>${[...Array(15)].map((_, j) => `<path d="M238 ${242 - j * 13}h${j % 5 === 0 ? 12 : 7}"/>`).join('')}</g></svg>`;
+    };
+    const go = () => {
+      const n = nChange(); if (n === 0) { say('First choose <b>ONE</b> thing to change!'); return; } if (n === 1 && !pred) { say('Make a <b>prediction</b> first: what do you think will happen?'); return; }
+      const k = n === 1 ? which() : 'light'; res = { k, n, d: DATA[k] }; t = 0; run = true; out.innerHTML = ''; runb.disabled = true; sfx('whoosh'); say('Watch the plants grow for 4 days…');
+    };
+    loop(dt => {
+      if (!run) return; t += dt * .6; draw(t); if (t >= 3.99) { run = false; runb.disabled = false; draw(3.99);
+        const d = res.d, k = res.k, fin = [d[0][3], d[1][3]], rows2 = [0, 1, 2, 3].map(i => `<tr><td>Day ${i + 1}</td><td>${d[0][i]} cm</td><td>${d[1][i]} cm</td></tr>`).join('');
+        const tbl = `<table style="border-collapse:collapse;margin:6px auto;background:#fff;font-size:16px">${['', V[k].a, V[k].b].map(x => `<th style="border:3px solid #d3e2ef;padding:5px 10px;background:#eef6fd;font-family:Fredoka">${x}</th>`).join('')}${rows2}</table>`;
+        out.innerHTML = res.n > 1 ? `<div class="fb no"><div>❌ <b>UNFAIR TEST!</b> You changed ${res.n} things at once. If the plants are different, we cannot tell <b>which</b> change caused it. Change only <b>ONE</b> thing and keep everything else the <b>same</b>.</div></div>` : `<div class="fb ok"><div>${tbl}<b>${pred ? (fin[pred === 'a' ? 0 : 1] >= fin[pred === 'a' ? 1 : 0] ? '✅ Your prediction was right!' : '💡 Your prediction was different from the result.') : ''}</b> This is the <b>observation</b>: ${k === 'light' ? 'the plant in the light grew taller. Plants need light.' : k === 'water' ? 'the plant with more water grew taller. Plants need water.' : 'the sunflower grew taller. Different plants grow at different speeds.'}<br>This was a <b>fair test</b>: only <b>${V[k].n.toLowerCase()}</b> changed.</div></div>`;
+        sfx(res.n > 1 ? 'bad' : 'ok'); say(res.n > 1 ? 'A fair test changes <b>ONE</b> thing!' : 'A <b>prediction</b> is what you think. An <b>observation</b> is what you see.'); }
+    });
+    ready(); draw(-1); host.append(h('div', { class: 'row', style: { alignItems: 'flex-start' } }, ctl, scene), out);
+    say('A <b>fair test</b> changes <b>ONE</b> thing. Pick one, make a prediction, then run it. Try changing two things to see what happens!');
+  };
+  const measureTab = host => {
+    let ruler = false; const sv = h('div', { class: 'scene', style: { padding: '6px', maxWidth: '560px', margin: '0 auto' } });
+    const draw = () => {
+      const plant = `<g transform="translate(200 0) scale(.9)">${plantInner({ g: .75, pot: true }).svg}</g>`;
+      const hand = (x, fingers, name) => `<g transform="translate(${x} 200)"><text x="0" y="-130" text-anchor="middle" font-size="42">${name === 'Mia' ? '👧' : '👦'}</text>${ruler ? '' : [...Array(fingers)].map((_, i) => `<rect x="-9" y="${-i * 22 - 20}" width="${name === 'Mia' ? 14 : 20}" height="18" rx="6" fill="#f3c9a0" stroke="#c99a6a" stroke-width="2" transform="translate(${name === 'Mia' ? 0 : 0} 0)"/>`).join('')}</g>`;
+      sv.innerHTML = `<svg viewBox="0 0 560 300" style="width:100%"><rect width="560" height="300" fill="#eaf7ff" rx="14"/>${plant}${ruler ? '<g stroke="#556" stroke-width="2"><rect x="372" y="40" width="26" height="224" fill="#fff6c8"/>' + [...Array(15)].map((_, j) => `<path d="M372 ${262 - j * 15}h${j % 5 === 0 ? 18 : 10}"/>`).join('') + '</g><text x="410" y="205" font-family="Fredoka" font-size="20" fill="#1d6b2d">14 cm</text>' : ''}${hand(90, 7, 'Mia')}${hand(480, 10, 'Leo')}<text x="90" y="290" text-anchor="middle" font-family="Fredoka" font-size="18">Mia: ${ruler ? '14 cm' : '7 fingers'}</text><text x="480" y="290" text-anchor="middle" font-family="Fredoka" font-size="18">Leo: ${ruler ? '14 cm' : '10 fingers'}</text></svg>`;
+    };
+    const b = h('button', { class: 'btn', onclick: () => { ruler = !ruler; b.textContent = ruler ? '👆 Measure with fingers' : '📏 Measure with a ruler'; draw(); sfx('pop'); say(ruler ? 'Now they AGREE: <b>14 cm</b>. A centimetre is always the same size!' : 'Mia has 7 fingers, Leo has 10 fingers. Same plant! Fingers are <b>different sizes</b>.'); } }, '📏 Measure with a ruler');
+    draw(); host.append(h('div', { class: 'note', style: { marginBottom: '8px' } }, 'Mia and Leo measure the <b>same</b> plant with their fingers. Why do they get different answers?'), sv, h('div', { class: 'row center', style: { marginTop: '10px' } }, b), h('div', { class: 'trick', style: { marginTop: '10px', textAlign: 'center' }, html: '<b class="k">REMEMBER</b> Use a <b>ruler (cm)</b> to measure height. Fingers are different sizes!' }));
+    say('Same plant, different answers! Press the button to measure with a ruler.');
+  };
+  growTab(area);
+};
+
+LEARN.matter = box => {
+  const area = h('div'); box.append(tabsEl(['🔥 Heat it up', '💉 Squash it'], i => { leave(); area.innerHTML = ''; (i ? squash : heat)(area); }), area);
+  const heat = host => {
+    const C = mkCanvas(host, 560, 330), ctx = C.ctx, N = 60; let T = 20; const lbl = h('div', { class: 'card', style: { marginTop: '10px', textAlign: 'center' } });
+    const P = Array.from({ length: N }, (_, i) => { const cx = i % 10, cy = Math.floor(i / 10); return { hx: 230 + cx * 20, hy: 262 - cy * 20, x: 230 + cx * 20, y: 262 - cy * 20, vx: 0, vy: 0 }; });
+    const BOX = { x: 190, y: 20, w: 240, h: 290 };
+    const state = () => T < 0 ? 'solid' : T <= 100 ? 'liquid' : 'gas';
+    let last = ''; const info = { solid: ['🧊 Solid (ice)', 'The particles are packed tightly in fixed places. They only jiggle. A solid <b>keeps its own shape</b>.'], liquid: ['💧 Liquid (water)', 'The particles slide past each other. A liquid <b>flows</b> and <b>takes the shape of its container</b>.'], gas: ['♨️ Gas (steam)', 'The particles are far apart and zoom everywhere. A gas <b>spreads out to fill its container</b>.'] };
+    loop(dt => {
+      const s = state(), sp = s === 'solid' ? 6 + (T + 20) * .6 : s === 'liquid' ? 40 + T * .5 : 120 + (T - 100) * 2;
+      P.forEach(p => {
+        if (s === 'solid') { p.vx += (p.hx - p.x) * 60 * dt + rnd(-1, 1) * sp * dt * 6; p.vy += (p.hy - p.y) * 60 * dt + rnd(-1, 1) * sp * dt * 6; p.vx *= .88; p.vy *= .88; }
+        else if (s === 'liquid') { p.vy += 380 * dt; p.vx += rnd(-1, 1) * sp * dt * 8; p.vy += rnd(-1, 1) * sp * dt * 8; p.vx *= .985; p.vy *= .985; const m = Math.hypot(p.vx, p.vy); if (m > sp * 1.6) { p.vx *= sp * 1.6 / m; p.vy *= sp * 1.6 / m; } }
+        else { if (Math.hypot(p.vx, p.vy) < sp * .7) { const a = rnd(0, 6.28); p.vx += Math.cos(a) * sp * dt * 6; p.vy += Math.sin(a) * sp * dt * 6; } const m = Math.hypot(p.vx, p.vy); if (m > sp * 1.2) { p.vx *= sp * 1.2 / m; p.vy *= sp * 1.2 / m; } }
+        p.x += p.vx * dt; p.y += p.vy * dt;
+        if (p.x < BOX.x + 10) { p.x = BOX.x + 10; p.vx = Math.abs(p.vx) * .8; } if (p.x > BOX.x + BOX.w - 10) { p.x = BOX.x + BOX.w - 10; p.vx = -Math.abs(p.vx) * .8; }
+        if (p.y < BOX.y + 10) { p.y = BOX.y + 10; p.vy = Math.abs(p.vy) * .8; } if (p.y > BOX.y + BOX.h - 10) { p.y = BOX.y + BOX.h - 10; p.vy = -Math.abs(p.vy) * (s === 'gas' ? 1 : .2); }
+      });
+      if (s === 'liquid') for (let k = 0; k < 2; k++) for (let i = 0; i < N; i++) for (let j = i + 1; j < N; j++) { const a = P[i], b = P[j], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy); if (d < 18 && d > 0) { const f = (18 - d) / 2 / d; a.x -= dx * f; a.y -= dy * f; b.x += dx * f; b.y += dy * f; } }
+      ctx.clearRect(0, 0, 560, 330); ctx.fillStyle = s === 'gas' ? '#f4eaff' : s === 'liquid' ? '#e6f7fb' : '#e6f1ff'; rr(ctx, BOX.x, BOX.y, BOX.w, BOX.h, 14); ctx.fill();
+      ctx.strokeStyle = '#6f8fb0'; ctx.lineWidth = 5; ctx.stroke();
+      P.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, 8.5, 0, 7); ctx.fillStyle = s === 'solid' ? '#6fb4ff' : s === 'liquid' ? '#35c4d6' : '#b58bff'; ctx.fill(); ctx.strokeStyle = 'rgba(0,0,0,.25)'; ctx.lineWidth = 1.5; ctx.stroke(); });
+      // thermometer
+      ctx.fillStyle = '#fff'; rr(ctx, 60, 30, 26, 250, 13); ctx.fill(); ctx.strokeStyle = '#556'; ctx.lineWidth = 3; ctx.stroke(); const lv = clamp((T + 20) / 140, 0, 1); ctx.fillStyle = T < 0 ? '#3a8ff0' : T > 100 ? '#ff5a5f' : '#ff9f1c'; rr(ctx, 67, 270 - lv * 232, 12, lv * 232 + 6, 6); ctx.fill(); ctx.beginPath(); ctx.arc(73, 296, 18, 0, 7); ctx.fill(); ctx.strokeStyle = '#556'; ctx.stroke();
+      ctx.font = '600 22px Fredoka'; ctx.fillStyle = '#1d2b3a'; ctx.fillText(Math.round(T) + '°C', 100, 60); ctx.font = '600 15px Fredoka'; ctx.fillStyle = '#5d7186'; ctx.fillText('freezes 0°', 100, 250); ctx.fillText('boils 100°', 100, 90);
+      if (s === 'gas') { ctx.font = '36px serif'; ctx.fillText('♨️', 460, 70); } else if (s === 'solid') { ctx.font = '36px serif'; ctx.fillText('❄️', 460, 70); } else { ctx.font = '36px serif'; ctx.fillText('💧', 460, 70); }
+      if (s !== last) { last = s; lbl.innerHTML = `<h3 style="font-size:26px;color:var(--c)">${info[s][0]}</h3><div style="font-size:17px">${info[s][1]}</div>`; say(info[s][1]); sfx('pop'); }
+    });
+    const sl = h('input', { class: 'slider', type: 'range', min: -20, max: 120, value: 20, oninput: () => { T = +sl.value; } });
+    const jump = (n, v) => h('button', { class: 'btn sm', style: { '--c': v < 0 ? '#2e8bff' : v > 100 ? '#ff5a5f' : '#19b3b3' }, onclick: () => { T = v; sl.value = v; } }, n);
+    host.append(h('div', { class: 'row center', style: { marginTop: '8px' } }, jump('❄️ Freeze −10°', -10), jump('💧 Room 20°', 20), jump('🔥 Boil 110°', 110)), sl, lbl);
+    say('Slide the temperature and watch the tiny particles change!');
+  };
+  const squash = host => {
+    const C = mkCanvas(host, 560, 300), ctx = C.ctx; let p = 0; const mk = (n, dense) => Array.from({ length: n }, (_, i) => dense ? { fx: (i % 10) / 10 + .05, fy: Math.floor(i / 10) / 5 + .08, x: 0, y: 0, vx: 0, vy: 0 } : { fx: Math.random(), fy: Math.random(), x: 0, y: 0, vx: rnd(-90, 90), vy: rnd(-90, 90) });
+    const air = mk(14, false), wat = mk(40, true); const AX = 40, WX = 330, TOP = 60, LEN = 200, W = 120;
+    air.forEach(a => { a.x = AX + a.fx * W; a.y = TOP + a.fy * LEN; }); wat.forEach(a => { a.x = WX + a.fx * W; a.y = TOP + a.fy * LEN; });
+    loop(dt => {
+      const aL = LEN * (1 - .6 * p), wL = LEN * (1 - .04 * p); ctx.clearRect(0, 0, 560, 300); ctx.fillStyle = '#eaf7ff'; ctx.fillRect(0, 0, 560, 300);
+      const syr = (x, L, col, fill, label) => { ctx.fillStyle = fill; rr(ctx, x, TOP + (LEN - L) * 0, W, LEN, 10); ctx.fillStyle = '#fff'; rr(ctx, x - 6, TOP - 6, W + 12, LEN + 16, 12); ctx.fill(); ctx.strokeStyle = '#6f8fb0'; ctx.lineWidth = 5; ctx.stroke(); ctx.fillStyle = col; rr(ctx, x - 6, TOP - 6, W + 12, LEN - L + 6, 6); ctx.fill(); ctx.fillStyle = '#8a97a6'; ctx.fillRect(x + W / 2 - 6, TOP - 56 + (LEN - L), 12, 56); ctx.fillRect(x + 10, TOP - 64 + (LEN - L), W - 20, 10); ctx.font = '600 20px Fredoka'; ctx.fillStyle = '#1d2b3a'; ctx.textAlign = 'center'; ctx.fillText(label, x + W / 2, TOP + LEN + 38); ctx.textAlign = 'left'; };
+      ctx.fillStyle = '#fff'; syr(AX, aL, '#8e5bff', '#f4eaff', '💨 Air (gas)'); syr(WX, wL, '#2e8bff', '#e6f7fb', '💧 Water (liquid)');
+      air.forEach(a => { a.x += a.vx * dt; a.y += a.vy * dt; const top = TOP + (LEN - aL), bot = TOP + LEN - 6; if (a.x < AX + 8 || a.x > AX + W - 8) a.vx *= -1; if (a.y < top + 8 || a.y > bot) a.vy *= -1; a.x = clamp(a.x, AX + 8, AX + W - 8); a.y = clamp(a.y, top + 8, bot); ctx.beginPath(); ctx.arc(a.x, a.y, 8, 0, 7); ctx.fillStyle = '#b58bff'; ctx.fill(); ctx.strokeStyle = 'rgba(0,0,0,.3)'; ctx.lineWidth = 1.5; ctx.stroke(); });
+      wat.forEach(a => { const top = TOP + (LEN - wL); const tx = WX + 10 + a.fx * (W - 20), ty = top + 12 + a.fy * (wL - 24); a.x = tx + Math.sin(performance.now() / 200 + a.fx * 20) * 1.5; a.y = ty + Math.cos(performance.now() / 230 + a.fy * 20) * 1.5; ctx.beginPath(); ctx.arc(a.x, a.y, 7.5, 0, 7); ctx.fillStyle = '#35c4d6'; ctx.fill(); ctx.strokeStyle = 'rgba(0,0,0,.3)'; ctx.lineWidth = 1.5; ctx.stroke(); });
+    });
+    const sl = h('input', { class: 'slider', type: 'range', min: 0, max: 100, value: 0, oninput: () => { p = sl.value / 100; if (p > .95) say('The <b>water</b> will not squash! Liquids do not compress easily.'); else if (p > .4) say('The <b>air</b> squashes easily! Gases compress.'); } });
+    host.append(h('div', { class: 'note', style: { marginBottom: '8px' } }, 'Push both plungers. What happens to the air? What happens to the water?'), sl, h('div', { class: 'trick', style: { marginTop: '10px' }, html: '<b class="k">REMEMBER</b> Solids and liquids do <b>not</b> compress easily. <b>Gases</b> compress more easily.' }));
+    say('Slide to push the plungers down. Watch the gap between the particles!');
+  };
+  heat(area);
+};
+
+LEARN.mix = box => {
+  const area = h('div'); const names = ['🧲 Magnet', '🥢 Sieve', '🫗 Filter']; box.append(h('div', { class: 'note', style: { marginBottom: '8px' } }, 'A <b>mixture</b> has <b>two or more</b> materials mixed together. Choose a machine and press Start!'), tabsEl(names, i => { leave(); area.innerHTML = ''; [magnet, sieve, filt][i](area); }), area);
+  const bar = (host, txt, start, reset) => host.append(h('div', { class: 'row center', style: { margin: '8px 0' } }, h('button', { class: 'btn', onclick: start }, '▶ Start'), h('button', { class: 'btn ghost', onclick: reset }, '↺ Reset')), h('div', { class: 'card', html: txt }));
+  const magnet = host => {
+    const C = mkCanvas(host, 560, 320), ctx = C.ctx; let t = -1; const B = [], K = [];
+    const init = () => { B.length = 0; K.length = 0; for (let i = 0; i < 16; i++) B.push({ x: rnd(60, 380), y: rnd(250, 296), r: rnd(0, 3) }); for (let i = 0; i < 8; i++) K.push({ x: rnd(80, 360), y: rnd(250, 296), r: rnd(0, 3), st: 0, hx: 0, hy: 0 }); t = -1; };
+    init(); let mx = 220, my = 40;
+    loop(dt => {
+      if (t >= 0) t += dt;
+      if (t >= 0 && t < 1.2) { my = lerp(40, 190, t / 1.2); mx = 220; } else if (t >= 1.2 && t < 2.8) { my = 190; K.forEach((k, i) => { if (k.st === 0 && t > 1.3 + i * .12) { k.st = 1; k.hx = rnd(-30, 30); k.hy = rnd(26, 38); } }); } else if (t >= 2.8 && t < 4.2) { const u = (t - 2.8) / 1.4; my = lerp(190, 60, u); mx = lerp(220, 470, u); } else if (t >= 4.2 && t < 4.4) { K.forEach(k => { if (k.st === 1) k.st = 2; }); }
+      ctx.clearRect(0, 0, 560, 320); ctx.fillStyle = '#eef6ff'; ctx.fillRect(0, 0, 560, 320); ctx.fillStyle = '#c9a77c'; ctx.fillRect(0, 306, 560, 14);
+      ctx.fillStyle = '#d9e4ef'; rr(ctx, 40, 240, 360, 64, 10); ctx.fill(); ctx.strokeStyle = '#8aa'; ctx.lineWidth = 4; ctx.stroke(); ctx.fillStyle = '#fff'; rr(ctx, 440, 230, 100, 76, 10); ctx.fill(); ctx.stroke(); ctx.font = '600 16px Fredoka'; ctx.fillStyle = '#1d2b3a'; ctx.fillText('paper clips', 450, 224);
+      B.forEach(b => { ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.r); ctx.fillStyle = '#b07a45'; ctx.strokeStyle = '#7b5128'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(0, 0, 9, 6, 0, 0, 7); ctx.fill(); ctx.stroke(); ctx.restore(); });
+      K.forEach(k => { if (k.st === 1) { const tx = mx + k.hx, ty = my + k.hy; k.x += (tx - k.x) * Math.min(1, dt * 7); k.y += (ty - k.y) * Math.min(1, dt * 7); k.r += dt * 2; } else if (k.st === 2) { k.vy = (k.vy || 0) + 700 * dt; k.y += k.vy * dt; k.x += (490 - k.x) * dt * 2; if (k.y > 296) { k.y = 296 - (k.o ?? (k.o = rnd(0, 10))); k.vy = 0; } } else if (t >= 0 && t < 1.3) { k.y -= (k.y > 250 ? 0 : 0); }
+        ctx.save(); ctx.translate(k.x, k.y); ctx.rotate(k.r); ctx.strokeStyle = '#78879a'; ctx.lineWidth = 2.4; rr(ctx, -9, -4.5, 18, 9, 4.5); ctx.stroke(); rr(ctx, -5, -2, 10, 4, 2); ctx.stroke(); ctx.restore(); });
+      ctx.save(); ctx.translate(mx, my); ctx.lineWidth = 12; ctx.lineCap = 'butt'; ctx.strokeStyle = '#e8453c'; ctx.beginPath(); ctx.arc(0, -4, 26, Math.PI, Math.PI * 1.5 + .0); ctx.stroke(); ctx.strokeStyle = '#e8453c'; ctx.beginPath(); ctx.arc(0, 0, 26, 0, Math.PI, true); ctx.stroke(); ctx.strokeStyle = '#e8453c'; ctx.beginPath(); ctx.arc(0, 4, 26, Math.PI, 0); ctx.stroke(); ctx.fillStyle = '#c8d0da'; ctx.fillRect(-32, 4, 12, 12); ctx.fillRect(20, 4, 12, 12); ctx.font = '700 12px Fredoka'; ctx.fillStyle = '#fff'; ctx.restore();
+      ctx.font = '40px serif'; ctx.fillText('🧲', mx - 20, my + 16);
+    });
+    bar(host, '🧲 A <b>magnet</b> attracts <b>magnetic</b> things like iron and steel. The paper clips stick. The beans do not. Use a magnet for <b>iron nails</b> or <b>paper clips</b>.', () => { init(); t = 0; sfx('whoosh'); say('Watch! Only the steel paper clips jump to the magnet.'); }, () => init());
+    say('Press Start: the magnet will pull out the paper clips.');
+  };
+  const sieve = host => {
+    const C = mkCanvas(host, 560, 320), ctx = C.ctx; let t = -1; const S = [], G = [];
+    const init = () => { S.length = 0; G.length = 0; for (let i = 0; i < 7; i++) G.push({ x: 200 + i * 28 + rnd(-8, 8), y: 128 - rnd(0, 10), r: rnd(11, 16), a: rnd(0, 6) }); for (let i = 0; i < 80; i++) S.push({ x: rnd(160, 400), y: rnd(120, 150), vy: 0, go: rnd(.4, 3), st: 0 }); t = -1; };
+    init();
+    loop(dt => {
+      if (t >= 0) t += dt; const sx = t >= 0 && t < 4 ? Math.sin(t * 22) * 6 : 0;
+      S.forEach(s => { if (s.st === 0 && t > s.go) s.st = 1; if (s.st === 1) { s.vy += 600 * dt; s.y += s.vy * dt; if (s.y > 290) { s.y = 290 - Math.random() * 14; s.st = 2; s.vy = 0; } } });
+      ctx.clearRect(0, 0, 560, 320); ctx.fillStyle = '#eef6ff'; ctx.fillRect(0, 0, 560, 320); ctx.fillStyle = '#c9a77c'; ctx.fillRect(0, 306, 560, 14);
+      ctx.fillStyle = '#d9e4ef'; rr(ctx, 130, 276, 300, 30, 8); ctx.fill(); ctx.strokeStyle = '#8aa'; ctx.lineWidth = 4; ctx.stroke();
+      ctx.save(); ctx.translate(sx, 0);
+      ctx.strokeStyle = '#7a8a9b'; ctx.lineWidth = 7; ctx.beginPath(); ctx.moveTo(150, 120); ctx.quadraticCurveTo(150, 180, 280, 180); ctx.quadraticCurveTo(410, 180, 410, 120); ctx.stroke(); ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(410, 130); ctx.lineTo(500, 100); ctx.stroke();
+      ctx.fillStyle = 'rgba(190,205,222,.35)'; ctx.beginPath(); ctx.moveTo(150, 120); ctx.quadraticCurveTo(150, 180, 280, 180); ctx.quadraticCurveTo(410, 180, 410, 120); ctx.closePath(); ctx.fill(); ctx.strokeStyle = '#9fb0c2'; ctx.lineWidth = 1.5; for (let x = 160; x < 410; x += 14) { ctx.beginPath(); ctx.moveTo(x, 122); ctx.lineTo(x, 178 - Math.abs(x - 280) * .12); ctx.stroke(); } for (let y = 134; y < 180; y += 12) { ctx.beginPath(); ctx.moveTo(152, y); ctx.lineTo(408, y); ctx.stroke(); }
+      G.forEach(g => { ctx.save(); ctx.translate(g.x, g.y + (t >= 0 ? 36 : 0)); ctx.rotate(g.a); ctx.fillStyle = '#8e99a8'; ctx.strokeStyle = '#59636f'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(-g.r, 0); ctx.lineTo(-g.r * .4, -g.r); ctx.lineTo(g.r * .7, -g.r * .8); ctx.lineTo(g.r, g.r * .3); ctx.lineTo(0, g.r); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore(); });
+      ctx.restore();
+      S.forEach(s => { if (s.st === 0) return; ctx.fillStyle = '#e6c887'; ctx.fillRect(s.x + (s.st === 1 ? sx : 0), s.y, 4, 4); });
+      if (t < 0) { ctx.fillStyle = '#e6c887'; S.forEach(s => ctx.fillRect(s.x + 0, 140 + (s.y % 18), 4, 4)); }
+      ctx.font = '600 16px Fredoka'; ctx.fillStyle = '#1d2b3a'; ctx.fillText('sieve', 190, 210); ctx.fillText('sand (small)', 150, 300); ctx.fillText('large stones', 210, 84);
+    });
+    bar(host, '🥢 A <b>sieve</b> separates by <b>size</b>. The small sand falls through the holes. The big stones are bigger than the holes, so they stay behind. Use a sieve for <b>sand and gravel</b>, <b>rice and flour</b>, or <b>salt and beans</b>.', () => { init(); t = 0; sfx('whoosh'); say('Shake, shake! The small sand falls through. Stones stay.'); }, () => init());
+    say('Press Start and shake the sieve.');
+  };
+  const filt = host => {
+    let key = 'sand'; const ar = h('div'); const mk = () => { ar.innerHTML = ''; leave(); const f = filterSim(ar, key); onLeave(() => { }); window.__fs = f; return f; };
+    const sw = h('div', { class: 'sw' }); const b1 = h('button', { class: 'p on', onclick: () => { key = 'sand'; $$('.p', sw).forEach((x, i) => x.classList.toggle('on', i === 0)); f = mk(); say('Sand is <b>insoluble</b>. It stays on the filter paper.'); } }, h('b', null, '🏖️'), 'Sand + water'), b2 = h('button', { class: 'p', onclick: () => { key = 'salt'; $$('.p', sw).forEach((x, i) => x.classList.toggle('on', i === 1)); f = mk(); say('Salt is <b>soluble</b>. It dissolved, so it is in tiny pieces. Will the filter catch it?'); } }, h('b', null, '🧂'), 'Salt dissolved in water');
+    sw.append(b1, b2); let f = mk(); host.append(sw, ar);
+    host.append(h('div', { class: 'row center', style: { margin: '8px 0' } }, h('button', { class: 'btn', onclick: () => f.go() }, '▶ Pour it in'), h('button', { class: 'btn ghost', onclick: () => f.reset() }, '↺ Reset')), h('div', { class: 'card', html: '🫗 <b>Filtering</b> separates an <b>insoluble</b> solid from a liquid. The water goes through the tiny holes in the filter paper, and the sand is left behind.<br>⚠️ But <b>dissolved</b> salt is so tiny that it goes through with the water! Filtering does <b>not</b> remove it.' }));
+    say('Pour sand and water through the filter. Then try dissolved salt!');
+  };
+  magnet(area);
+};
+
+LEARN.diss = box => {
+  const area = h('div'); box.append(h('div', { class: 'note', style: { marginBottom: '8px' } }, 'Pick a material, <b>pour it in</b> and <b>stir</b>. Then turn on the <b>magnifier</b>. Fill the lab notebook!'), area);
+  const keys = ['salt', 'sugar', 'coffee', 'sand', 'wood', 'clips']; let cur = 'salt', sim = null, busy = false; const nb = {};
+  const sw = h('div', { class: 'sw' }), simBox = h('div'), tbl = h('div', { style: { marginTop: '10px' } }), msg = h('div', { class: 'card', style: { marginTop: '10px' } }, 'Pour in and stir to find out.');
+  keys.forEach(k => { const I = SOLIDS[k]; sw.append(h('button', { class: 'p' + (k === cur ? ' on' : ''), onclick: function () { if (busy) return; cur = k; $$('.p', sw).forEach(x => x.classList.remove('on')); this.classList.add('on'); setup(); sfx('pop'); } }, h('b', null, I.e), I.n)); });
+  const nbRender = () => { tbl.innerHTML = `<div class="q" style="font-size:18px;margin:0 0 4px">📒 Lab notebook</div><table style="border-collapse:collapse;width:100%;background:#fff;font-size:16px"><tr>${['Material', 'After stirring', 'Soluble or insoluble?'].map(x => `<th style="border:3px solid #d3e2ef;padding:5px 8px;background:#eef6fd;font-family:Fredoka">${x}</th>`).join('')}</tr>${keys.map(k => `<tr><td style="border:3px solid #d3e2ef;padding:5px 8px">${SOLIDS[k].e} ${SOLIDS[k].n}</td><td style="border:3px solid #d3e2ef;padding:5px 8px">${nb[k] ? (SOLIDS[k].sol ? 'No grains can be seen.' : 'Pieces remain.') : ''}</td><td style="border:3px solid #d3e2ef;padding:5px 8px;font-family:Fredoka;color:${nb[k] ? (SOLIDS[k].sol ? '#19a3a3' : '#a0702a') : '#aaa'}">${nb[k] ? (SOLIDS[k].sol ? 'soluble' : 'insoluble') : '?'}</td></tr>`).join('')}</table>`; };
+  const mag = h('button', { class: 'btn ghost', onclick: () => { magOn = !magOn; sim.setMag(magOn); mag.textContent = magOn ? '🔍 Magnifier ON' : '🔍 Magnifier OFF'; if (magOn) say(SOLIDS[cur].sol && done ? 'Look! Tiny pieces of <b>' + SOLIDS[cur].n + '</b> are spread through the water. It is <b>still there</b>!' : 'The magnifier shows tiny dissolved pieces. Stir a soluble material first.'); } }, '🔍 Magnifier OFF');
+  let magOn = false, done = false;
+  const go = h('button', { class: 'btn', onclick: async () => { if (busy || done) return; busy = true; go.disabled = true; say('Pouring in…'); await sim.pour(); say('Stirring…'); await sim.stir(); done = true; busy = false; nb[cur] = 1; nbRender(); const I = SOLIDS[cur]; msg.innerHTML = I.sol ? `<b>${I.e} ${I.n}</b> is <b>soluble</b>: it dissolved. We cannot see it now, but it is <b>still there</b>. Press the magnifier!` : `<b>${I.e} ${I.n}</b> is <b>insoluble</b>: it did <b>not</b> dissolve. It ${I.stay}.`; say(I.sol ? 'It is gone from view, but it is <b>still there</b>. Try the magnifier!' : 'It did not dissolve: <b>insoluble</b>.'); sfx('ok'); } }, '🥄 Pour in and stir');
+  const reset = h('button', { class: 'btn ghost', onclick: () => { if (!busy) setup(); } }, '↺ New beaker');
+  const setup = () => { leave(); simBox.innerHTML = ''; done = false; magOn = false; mag.textContent = '🔍 Magnifier OFF'; go.disabled = false; sim = beakerSim(simBox, cur, { label: true }); msg.innerHTML = 'Pour in and stir to find out.'; };
+  area.append(sw, simBox, h('div', { class: 'row center', style: { marginTop: '8px' } }, go, mag, reset), msg, tbl); nbRender(); setup();
+  say('Pour a material into the water and stir. Does it dissolve?');
+};
+
+LEARN.safe = box => {
+  const R2 = [['🥽', 'Wear goggles', 'if your teacher tells you to. They protect your eyes.'], ['🚶', 'Walk carefully', 'with equipment. Never run with a beaker!'], ['🚫', 'Never taste', 'science mixtures. They might be harmful.'], ['🍔', 'No food or drink', 'in the science room.'], ['🎒', 'Keep walkways clear', 'Bags and chairs stay out of the way.'], ['🙋', 'Tell the teacher', 'about spills or broken glass.']];
+  const g = h('div', { class: 'opts' }); R2.forEach(r => { const c = h('button', { class: 'opt', style: { flexDirection: 'column', textAlign: 'center', alignItems: 'center' }, onclick: () => { sfx('pop'); c.querySelector('.em').animate([{ transform: 'rotate(-12deg) scale(1.3)' }, { transform: 'rotate(12deg) scale(1.3)' }, { transform: 'none' }], { duration: 500 }); c.querySelector('.d').style.display = 'block'; say(`<b>${r[1]}</b> ${r[2]}`); } }, h('span', { class: 'em', style: { fontSize: '56px', display: 'inline-block' } }, r[0]), h('b', { style: { fontFamily: 'Fredoka', fontSize: '20px' } }, r[1]), h('span', { class: 'd', style: { display: 'none', fontSize: '15px' } }, r[2])); g.append(c); });
+  box.append(h('div', { class: 'note', style: { marginBottom: '8px' } }, 'Six science room rules. Tap each card!'), g);
+};
+
+/* ---------- Exam Eve ---------- */
+function openExam() {
+  const EXAM = { id: 'exam', name: 'Exam Eve Quiz', icon: '🎓', color: '#ff9f1c', intro: 'Mixed questions from <b>all</b> labs, like the real exam. Questions you missed before come first!', trick: 'You are ready! Read each question twice, CIRCLE the answer, and use the facts you learned. Then check the Memory Cards for anything tricky.', learn: b => b.append(h('div', { class: 'card center', style: { textAlign: 'center' } }, h('div', { style: { fontSize: '80px' } }, '🎓'), h('h2', { style: { fontSize: '28px' } }, 'Exam Eve Quiz'), h('p', { style: { fontSize: '18px' } }, '12 questions from every lab. Questions you missed before come first. Good luck, scientist!'))), rounds: () => {
+    const ok = Object.values(QB).filter(q => ['mc', 'tf', 'tfset', 'cloze', 'multi'].includes(q.t)), missed = shuffle(ok.filter(q => SAVE.miss[q.id])).slice(0, 5), per = {};
+    missed.forEach(q => per[q.lab] = (per[q.lab] || 0) + 1); const rest = shuffle(ok.filter(q => !missed.includes(q))).filter(q => (per[q.lab] = (per[q.lab] || 0) + 1) <= 3);
+    return shuffle([...missed, ...rest].slice(0, 12));
+  } };
+  openLab(EXAM);
+}
+
+/* ---------- Memory cards ---------- */
+function openCards() {
+  setTitle('Memory Cards'); let filt = 'all', deck = [], i = 0, flipped = false;
+  const root = h('div', { class: 'wrap' }), top = h('div', { class: 'tabs' }), cardBox = h('div'), ctl = h('div', { class: 'row center', style: { marginTop: '14px' } }), prog = h('div', { class: 'center row', style: { margin: '8px 0', justifyContent: 'center', fontFamily: 'Fredoka', fontSize: '17px' } });
+  const mk = () => { const cs = CARDS.filter(c => filt === 'all' || c.lab === filt); deck = shuffle(cs.filter(c => !SAVE.cards[c.id])); if (!deck.length) deck = shuffle(cs); i = 0; show(); };
+  [['all', '🃏 All'], ...LABS.map(L => [L.id, L.icon + ' ' + L.name.split(' ')[0]])].forEach(([k, n]) => top.append(h('button', { class: 'tab' + (k === filt ? ' on' : ''), onclick: function () { filt = k; $$('.tab', top).forEach(x => x.classList.remove('on')); this.classList.add('on'); mk(); } }, n)));
+  const show = () => {
+    cardBox.innerHTML = ''; ctl.innerHTML = ''; flipped = false; const known = CARDS.filter(c => filt === 'all' || c.lab === filt).filter(c => SAVE.cards[c.id]).length, tot = CARDS.filter(c => filt === 'all' || c.lab === filt).length; prog.textContent = `Known: ${known} / ${tot}`;
+    if (i >= deck.length) { cardBox.append(h('div', { class: 'card', style: { textAlign: 'center' } }, h('div', { style: { fontSize: '70px' } }, '🎉'), h('h2', null, known === tot ? 'You know ALL these cards!' : 'Deck finished!'), h('p', null, known === tot ? 'Amazing memory!' : 'Cards marked "Again" will come back.'))); if (known === tot) confetti(); ctl.append(h('button', { class: 'btn', onclick: mk }, '🔁 Go again')); return; }
+    const c = deck[i], L = LABS.find(l => l.id === c.lab), el = h('div', { class: 'fc', style: { '--c': L.color }, onclick: () => { flipped = !flipped; el.classList.toggle('flip', flipped); sfx('pop'); if (flipped) say(c.a); } }, h('div', { class: 'in' }, h('div', { class: 'f' }, h('div', { class: 'em' }, c.e), h('div', { class: 't' }, c.t), h('div', { style: { fontSize: '14px', color: '#5d7186' } }, 'Say the answer, then tap to flip')), h('div', { class: 'b' }, h('div', { class: 't', style: { fontSize: '21px' } }, c.a), h('div', { class: 'note', style: { fontSize: '15px' } }, '💡 ' + c.trick))));
+    cardBox.append(el); say('Try to say the answer <b>out loud</b> first. Then flip the card!');
+    ctl.append(h('button', { class: 'btn ghost', onclick: () => { SAVE.cards[c.id] = 0; save(); deck.push(c); i++; show(); } }, '🔁 Again'), h('button', { class: 'btn', onclick: () => { SAVE.cards[c.id] = 1; save(); sfx('ok'); i++; show(); } }, '✅ I know it!'));
+  };
+  root.append(top, prog, cardBox, ctl); screen(root, '#8e5bff'); mk();
+}
+
+showHub();
+window.__sci = { SAVE, QB, LABS, R, openLab, openExam, openCards, showHub, CARDS };
+</script></body></html>
