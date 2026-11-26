@@ -1,0 +1,2208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 2 ESL · Unit 2: Families — Digital Lesson Booklet</title>
+<style>
+  :root {
+    --bg: #f6f8fc;
+    --surface: #ffffff;
+    --ink: #1f2937;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --primary: #4f46e5;
+    --primary-light: #eef2ff;
+    --primary-dark: #3730a3;
+    --accent: #f59e0b;
+    --accent-light: #fef3c7;
+    --green: #10b981;
+    --green-light: #d1fae5;
+    --pink: #ec4899;
+    --pink-light: #fce7f3;
+    --sky: #0ea5e9;
+    --sky-light: #e0f2fe;
+    --red: #ef4444;
+    --red-light: #fee2e2;
+    --radius: 18px;
+    --shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.55;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Top Voice & Progress Bar */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid var(--border);
+    padding: 10px 18px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .menu-btn {
+    display: none;
+    background: var(--primary-light);
+    color: var(--primary);
+    border: none;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 18px;
+    cursor: pointer;
+    font-weight: 700;
+  }
+
+  .brand-badge {
+    background: linear-gradient(135deg, #4f46e5, #0ea5e9);
+    color: #fff;
+    font-weight: 800;
+    font-size: 13px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    letter-spacing: 0.4px;
+  }
+
+  .brand-title {
+    font-weight: 800;
+    font-size: 17px;
+    color: var(--ink);
+  }
+
+  .voice-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    background: #f8fafc;
+    border: 1.5px solid var(--border);
+    border-radius: 999px;
+    padding: 5px 12px;
+  }
+
+  .voice-bar label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  .voice-select {
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 12.5px;
+    background: #fff;
+    color: var(--ink);
+    max-width: 175px;
+    font-family: inherit;
+  }
+
+  .speed-group {
+    display: inline-flex;
+    background: #e2e8f0;
+    border-radius: 999px;
+    padding: 2px;
+    gap: 2px;
+  }
+
+  .speed-btn {
+    border: none;
+    background: transparent;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+
+  .speed-btn.active {
+    background: #fff;
+    color: var(--primary);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .stop-btn {
+    border: none;
+    background: var(--red-light);
+    color: var(--red);
+    border-radius: 999px;
+    padding: 5px 11px;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: transform 0.12s;
+    font-family: inherit;
+  }
+
+  .stop-btn:hover { transform: scale(1.04); }
+
+  /* Layout */
+  .layout {
+    display: flex;
+    flex: 1;
+    max-width: 1220px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+    gap: 22px;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 270px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border);
+    box-shadow: var(--shadow);
+    padding: 16px;
+    align-self: flex-start;
+    position: sticky;
+    top: 76px;
+    max-height: calc(100vh - 96px);
+    overflow-y: auto;
+  }
+
+  .progress-wrap {
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1.5px dashed var(--border);
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12.5px;
+    font-weight: 800;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .progress-track {
+    height: 10px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #0ea5e9);
+    border-radius: 999px;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  .nav-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink);
+    transition: background 0.15s, color 0.15s;
+    border: 1.5px solid transparent;
+  }
+
+  .nav-item:hover { background: #f1f5f9; }
+  .nav-item.active {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    border-color: #c7d2fe;
+  }
+
+  .nav-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 7px;
+    background: #f1f5f9;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .nav-item.active .nav-num {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  .nav-done-dot {
+    margin-left: auto;
+    font-size: 14px;
+    opacity: 0.25;
+  }
+  .nav-item.done .nav-done-dot { opacity: 1; }
+
+  /* Main Stage */
+  .stage {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .page {
+    display: none;
+    background: var(--surface);
+    border-radius: 24px;
+    border: 1.5px solid var(--border);
+    box-shadow: var(--shadow);
+    padding: 28px 30px;
+    animation: fadeIn 0.22s ease;
+  }
+
+  .page.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-bottom: 8px;
+  }
+  .tag-start { background: var(--primary-light); color: var(--primary); }
+  .tag-words { background: var(--sky-light); color: #0369a1; }
+  .tag-grammar { background: var(--accent-light); color: #b45309; }
+  .tag-writing { background: var(--pink-light); color: #be185d; }
+  .tag-me { background: var(--green-light); color: #047857; }
+
+  h1 {
+    font-size: 29px;
+    font-weight: 900;
+    color: #0f172a;
+    line-height: 1.2;
+  }
+
+  .page-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .btn {
+    border: none;
+    border-radius: 12px;
+    padding: 9px 15px;
+    font-size: 13.5px;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: transform 0.12s, box-shadow 0.15s, background 0.15s;
+    font-family: inherit;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+
+  .btn-listen {
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+  }
+  .btn-done {
+    background: #f1f5f9;
+    color: var(--ink);
+    border: 1.5px solid var(--border);
+  }
+  .btn-done.checked {
+    background: var(--green-light);
+    color: #065f46;
+    border-color: #6ee7b7;
+  }
+
+  /* Boxes */
+  .meaning-box {
+    background: linear-gradient(135deg, #eef2ff, #f0f9ff);
+    border: 1.5px solid #c7d2fe;
+    border-radius: 16px;
+    padding: 15px 18px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .box-kicker {
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 4px;
+  }
+
+  .meaning-text {
+    font-size: 16.5px;
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  .hl {
+    font-weight: 900;
+    text-decoration: underline;
+    text-decoration-thickness: 2.5px;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--primary);
+    color: #1e1b4b;
+  }
+
+  .section-label {
+    font-size: 11.5px;
+    font-weight: 900;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 20px 0 10px;
+  }
+
+  /* Pattern pills */
+  .pattern-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .pill {
+    padding: 7px 14px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 15.5px;
+    border: 2px solid #cbd5e1;
+    background: #fff;
+    color: var(--ink);
+  }
+  .pill-dark {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+  }
+  .pill-accent {
+    background: #0ea5e9;
+    border-color: #0ea5e9;
+    color: #fff;
+  }
+  .plus {
+    font-weight: 900;
+    color: var(--muted);
+    font-size: 16px;
+  }
+
+  /* Speakable rows */
+  .example-list {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .speak-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 14px;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 16.5px;
+  }
+
+  .speak-row:hover {
+    background: #eef2ff;
+    border-color: #a5b4fc;
+    transform: translateX(2px);
+  }
+
+  .speak-row.speaking, .word-card.speaking, .mini-chip.speaking, .meaning-box.speaking, .remember-box.speaking, tr.speaking {
+    background: #fef3c7 !important;
+    border-color: #f59e0b !important;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25);
+  }
+
+  .row-emoji {
+    font-size: 24px;
+    width: 32px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .row-text { flex: 1; }
+
+  .spk-btn {
+    border: none;
+    background: #fff;
+    color: var(--primary);
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+    flex-shrink: 0;
+    transition: transform 0.12s, background 0.15s;
+  }
+  .spk-btn:hover { background: var(--primary); color: #fff; transform: scale(1.08); }
+
+  /* Remember & Info boxes */
+  .remember-box {
+    margin-top: 22px;
+    border: 2px dashed #f59e0b;
+    background: #fffbeb;
+    border-radius: 16px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    cursor: pointer;
+  }
+  .remember-box .box-kicker { color: #b45309; }
+
+  .wrong {
+    text-decoration: line-through;
+    color: #94a3b8;
+    margin-left: 10px;
+  }
+  .right {
+    color: #059669;
+    font-weight: 800;
+  }
+
+  /* Tables */
+  table.clean-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  table.clean-table th {
+    background: #f1f5f9;
+    text-align: left;
+    padding: 11px 14px;
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #334155;
+    border-bottom: 1.5px solid var(--border);
+  }
+  table.clean-table td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 15.5px;
+    vertical-align: middle;
+  }
+  table.clean-table tr:last-child td { border-bottom: none; }
+  table.clean-table tbody tr { cursor: pointer; transition: background 0.12s; }
+  table.clean-table tbody tr:hover { background: #f8fafc; }
+
+  /* Word Bank */
+  .wb-category {
+    border: 1.5px solid var(--border);
+    border-radius: 18px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    background: #fafcff;
+  }
+  .wb-cat-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .wb-cat-title {
+    font-size: 16px;
+    font-weight: 900;
+    color: #1e293b;
+  }
+  .wb-play-cat {
+    border: none;
+    background: var(--primary-light);
+    color: var(--primary);
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .wb-play-cat:hover { background: var(--primary); color: #fff; }
+
+  .word-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+  }
+
+  .word-card {
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .word-card:hover {
+    border-color: #818cf8;
+    background: #eef2ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(79,70,229,0.1);
+  }
+  .word-card .w-emoji { font-size: 24px; }
+  .word-card .w-spk { margin-left: auto; font-size: 13px; opacity: 0.55; }
+
+  /* Listen & Find Game */
+  .listen-game {
+    background: linear-gradient(135deg, #ecfdf5, #e0f2fe);
+    border: 2px solid #6ee7b7;
+    border-radius: 18px;
+    padding: 16px 18px;
+    margin-bottom: 18px;
+  }
+  .game-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .game-opt {
+    background: #fff;
+    border: 2px solid #cbd5e1;
+    border-radius: 14px;
+    padding: 10px 16px;
+    font-size: 15.5px;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .game-opt:hover { border-color: var(--primary); transform: translateY(-1px); }
+  .game-opt.correct { background: #d1fae5; border-color: #10b981; color: #065f46; }
+  .game-opt.wrong-pick { background: #fee2e2; border-color: #ef4444; color: #991b1b; }
+
+  /* Two-column grids */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .mini-chip {
+    background: #f8fafc;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 9px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 15px;
+    font-weight: 700;
+    transition: all 0.15s;
+  }
+  .mini-chip:hover { background: #eef2ff; border-color: #a5b4fc; }
+
+  /* Timeline (Page 4) */
+  .timeline {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0 6px;
+  }
+  .tl-card {
+    background: #fff;
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tl-card.mid { background: #eef2ff; border-color: #818cf8; }
+  .tl-card:hover { transform: translateY(-2px); border-color: var(--primary); }
+  .tl-emoji { font-size: 28px; display: block; margin-bottom: 4px; }
+  .tl-arrow { font-size: 22px; font-weight: 900; color: var(--primary); text-align: center; }
+
+  /* Prep cards (Page 10) */
+  .prep-card {
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    background: #fff;
+  }
+  .prep-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .prep-word {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--primary);
+  }
+  .prep-desc {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  /* I can checklist (Page 15) */
+  .face-group {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+  }
+  .face-btn {
+    border: 2px solid var(--border);
+    background: #fff;
+    border-radius: 12px;
+    width: 44px;
+    height: 40px;
+    font-size: 22px;
+    cursor: pointer;
+    opacity: 0.45;
+    transition: all 0.15s;
+  }
+  .face-btn:hover { opacity: 0.85; transform: scale(1.08); }
+  .face-btn.selected {
+    opacity: 1;
+    border-color: var(--green);
+    background: var(--green-light);
+    transform: scale(1.1);
+  }
+  .face-btn.selected.mid-face { border-color: var(--accent); background: var(--accent-light); }
+  .face-btn.selected.sad-face { border-color: var(--red); background: var(--red-light); }
+
+  /* Notes (Page 16) */
+  .notes-area {
+    width: 100%;
+    min-height: 360px;
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 20px;
+    font-family: inherit;
+    font-size: 17px;
+    line-height: 2.2;
+    color: var(--ink);
+    background: repeating-linear-gradient(
+      #ffffff,
+      #ffffff 36px,
+      #e2e8f0 36px,
+      #e2e8f0 37.5px
+    );
+    resize: vertical;
+  }
+  .notes-area:focus { outline: none; border-color: var(--primary); }
+
+  /* Bottom Pager */
+  .pager {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 22px;
+    padding-top: 16px;
+    border-top: 1.5px solid var(--border);
+  }
+
+  .pager-btn {
+    background: #fff;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 10px 18px;
+    font-size: 14.5px;
+    font-weight: 800;
+    color: var(--ink);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .pager-btn:hover:not(:disabled) {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+  }
+  .pager-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .pager-info { font-weight: 800; color: var(--muted); font-size: 14px; }
+
+  /* Banner on page 15 */
+  .cheer-banner {
+    margin-top: 20px;
+    background: linear-gradient(135deg, #eef2ff, #fef3c7);
+    border: 2px solid #fde68a;
+    border-radius: 18px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  @media (max-width: 860px) {
+    .menu-btn { display: inline-flex; }
+    .layout { flex-direction: column; padding: 12px; }
+    .sidebar {
+      display: none;
+      position: fixed;
+      top: 66px;
+      left: 12px;
+      right: 12px;
+      width: auto;
+      z-index: 95;
+      max-height: 75vh;
+    }
+    .sidebar.open { display: block; }
+    .page { padding: 20px 16px; }
+    .two-col, .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; }
+    .timeline { grid-template-columns: 1fr; }
+    .tl-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <button class="menu-btn" onclick="toggleSidebar()">☰ Pages</button>
+    <span class="brand-badge">ESL · UNIT 2</span>
+    <span class="brand-title">Families — Lesson Booklet</span>
+  </div>
+  <div class="voice-bar" aria-label="Voice controls">
+    <label for="voiceSelect">🔊 Voice:</label>
+    <select id="voiceSelect" class="voice-select" title="Choose reading voice"></select>
+    <div class="speed-group" role="group" aria-label="Reading speed">
+      <button class="speed-btn" data-rate="0.75" onclick="setRate(0.75, this)">🐢 Slow</button>
+      <button class="speed-btn active" data-rate="0.95" onclick="setRate(0.95, this)">🐇 Normal</button>
+      <button class="speed-btn" data-rate="1.15" onclick="setRate(1.15, this)">🚀 Fast</button>
+    </div>
+    <button class="stop-btn" onclick="stopSpeech()">⏹ Stop</button>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span>My Booklet Progress</span>
+        <span id="progressText">0 / 15</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <ul class="nav-list" id="navList"></ul>
+  </aside>
+
+  <main class="stage">
+
+    <!-- PAGE 1: START HERE -->
+    <section class="page active" data-page="1" data-title="What is in my booklet?">
+      <div class="page-header">
+        <div>
+          <span class="tag tag-start">Start Here</span>
+          <h1>What is in my booklet?</h1>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-listen" onclick="readPage(1)">🔊 Listen to this page</button>
+        </div>
+      </div>
+
+      <div class="meaning-box" onclick="speakEl(this, 'Read one page at a time. Click the speaker buttons to listen and read the examples out loud. Tick Done when you know it!')">
+        <div>
+          <div class="box-kicker">How to use this digital booklet</div>
+          <div class="meaning-text">Read one page at a time. Click any 🔊 button to listen and read the examples out loud. Tick <strong>Done</strong> when you know it!</div>
+        </div>
+        <button class="spk-btn" title="Listen">🔊</button>
+      </div>
+
+      <table class="clean-table" id="tocTable">
+        <thead>
+          <tr><th>Part</th><th>Topic</th><th>Page</th><th style="text-align:center;">Done</th></tr>
+        </thead>
+        <tbody id="tocBody"></tbody>
+      </table>
+
+      <div class="remember-box" onclick="speakEl(this, 'How to use this booklet. 1. Read What does it mean? 2. Look at the pattern. 3. Listen and read the examples. 4. Learn the Remember box.')">
+        <div>
+          <div class="box-kicker">How to use this booklet</div>
+          <div><strong>1.</strong> Read <em>What does it mean?</em> &nbsp; <strong>2.</strong> Look at the <strong>pattern</strong>. &nbsp; <strong>3.</strong> Listen &amp; read the <strong>examples</strong>. &nbsp; <strong>4.</strong> Learn the <strong>Remember!</strong> box.</div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+    </section>
+
+    <!-- PAGE 2: MY WORD BANK -->
+    <section class="page" data-page="2" data-title="My word bank">
+      <div class="page-header">
+        <div>
+          <span class="tag tag-words">Words</span>
+          <h1>My word bank</h1>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-listen" onclick="toggleListenGame()">🎧 Listen &amp; Find Game</button>
+          <button class="btn btn-done" data-done-btn="2" onclick="toggleDone(2)">☐ Mark Done</button>
+        </div>
+      </div>
+
+      <p style="color:var(--muted); margin-bottom:14px; font-weight:700;">Tap any word card to hear how to say it! 🔊</p>
+
+      <div id="listenGameBox" class="listen-game" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <div>
+            <strong style="font-size:16px; color:#065f46;">🎧 Listen &amp; Find!</strong>
+            <span id="gameScore" style="margin-left:10px; font-weight:800; color:#0369a1;">Score: 0</span>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-listen" style="padding:6px 13px; font-size:13px;" onclick="replayGameWord()">🔊 Hear Word Again</button>
+            <button class="btn btn-done" style="padding:6px 13px; font-size:13px;" onclick="nextGameRound()">Next Word ➔</button>
+          </div>
+        </div>
+        <div id="gameFeedback" style="margin-top:8px; font-weight:800; font-size:14.5px; color:#334155;">Click "Hear Word Again" and pick the matching word!</div>
+        <div class="game-options" id="gameOptions"></div>
+      </div>
+
+      <div id="wordBankContainer"></div>
+    </section>
+
+    <!-- PAGE 3: ORDER WORDS -->
+    <section class="page" data-page="3" data-title="Order words">
+      <div class="page-header">
+        <div>
+          <span class="tag tag-grammar">Grammar</span>
+          <h1>Order words</h1>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-listen" onclick="readPage(3)">🔊 Listen to this page</button>
+          <button class="btn btn-done" data-done-btn="3" onclick="toggleDone(3)">☐ Mark Done</button>
+        </div>
+      </div>
+
+      <div class="meaning-box" onclick="speakEl(this, 'Order words tell us the order things happen: what happens first, and what happens last.')">
+        <div>
+          <div class="box-kicker">What does it mean?</div>
+          <div class="meaning-text">Order words tell us the <span class="hl">order</span> things happen: what happens first, and what happens last.</div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+
+      <div class="section-label">The Order</div>
+      <div class="pattern-row">
+        <span class="pill pill-dark" style="cursor:pointer" onclick="speak('First')">First</span>
+        <span class="plus">+</span>
+        <span class="pill" style="cursor:pointer" onclick="speak('Next')">Next</span>
+        <span class="plus">+</span>
+        <span class="pill" style="cursor:pointer" onclick="speak('Then')">Then</span>
+        <span class="plus">+</span>
+        <span class="pill" style="cursor:pointer" onclick="speak('After that')">After that</span>
+        <span class="plus">+</span>
+        <span class="pill pill-dark" style="cursor:pointer" onclick="speak('Finally')">Finally</span>
+      </div>
+
+      <div class="section-label">The Pattern</div>
+      <div class="pattern-row">
+        <span class="pill pill-dark">First</span>
+        <span class="plus">+</span>
+        <span class="pill">,</span>
+        <span class="plus">+</span>
+        <span class="pill">sentence</span>
+      </div>
+
+      <div class="section-label">Examples: A Wedding Day</div>
+      <div class="example-list">
+        <div class="speak-row" data-say="First, the bride got ready."><span class="row-emoji">👰</span><span class="row-text"><span class="hl">First,</span> the bride got ready.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="Next, the guests arrived."><span class="row-emoji">🚗</span><span class="row-text"><span class="hl">Next,</span> the guests arrived.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="Then, the bride and groom got married."><span class="row-emoji">💍</span><span class="row-text"><span class="hl">Then,</span> the bride and groom got married.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="After that, the photographer took photos."><span class="row-emoji">📷</span><span class="row-text"><span class="hl">After that,</span> the photographer took photos.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="Finally, everyone ate at the banquet."><span class="row-emoji">🍽️</span><span class="row-text"><span class="hl">Finally,</span> everyone ate at the banquet.</span><button class="spk-btn">🔊</button></div>
+      </div>
+
+      <div class="section-label">Examples: Make a Pop-up Card</div>
+      <div class="example-list">
+        <div class="speak-row" data-say="First, fold the paper in half."><span class="row-emoji">📄</span><span class="row-text"><span class="hl">First,</span> fold the paper in half.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="Next, cut two short lines."><span class="row-emoji">✂️</span><span class="row-text"><span class="hl">Next,</span> cut two short lines.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="Then, push the middle part in."><span class="row-emoji">👉</span><span class="row-text"><span class="hl">Then,</span> push the middle part in.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="Finally, draw a cake and write Happy Birthday!"><span class="row-emoji">🎂</span><span class="row-text"><span class="hl">Finally,</span> draw a cake and write “Happy Birthday!”</span><button class="spk-btn">🔊</button></div>
+      </div>
+
+      <div class="remember-box" onclick="speakEl(this, 'Remember! Put a comma after the order word: First, Next, Finally.')">
+        <div>
+          <div class="box-kicker">Remember!</div>
+          <div>Put a <span class="hl">comma ,</span> after the order word: <em>First, … &nbsp; Next, … &nbsp; Finally, …</em></div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+    </section>
+
+    <!-- PAGE 4: BEFORE AND AFTER -->
+    <section class="page" data-page="4" data-title="before and after">
+      <div class="page-header">
+        <div>
+          <span class="tag tag-grammar">Grammar</span>
+          <h1>before and after</h1>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-listen" onclick="readPage(4)">🔊 Listen to this page</button>
+          <button class="btn btn-done" data-done-btn="4" onclick="toggleDone(4)">☐ Mark Done</button>
+        </div>
+      </div>
+
+      <div class="meaning-box" onclick="speakEl(this, 'Before means earlier, first. After means later. They tell us when something happens.')">
+        <div>
+          <div class="box-kicker">What does it mean?</div>
+          <div class="meaning-text"><span class="hl">before</span> = earlier, first. &nbsp; <span class="hl">after</span> = later. They tell us <span class="hl">when</span> something happens.</div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+
+      <div class="section-label">Look</div>
+      <div class="timeline">
+        <div class="tl-card" onclick="speak('Wash my hands before lunch.')">
+          <span class="tl-emoji">🧼</span>
+          <strong>wash my hands</strong>
+          <div style="font-size:13px; color:var(--primary); font-weight:800; margin-top:4px;">before lunch</div>
+        </div>
+        <div class="tl-arrow">➜</div>
+        <div class="tl-card mid" onclick="speak('Eat lunch.')">
+          <span class="tl-emoji">🍚</span>
+          <strong>eat lunch</strong>
+          <div style="font-size:13px; color:var(--muted); font-weight:700; margin-top:4px;">middle</div>
+        </div>
+        <div class="tl-arrow">➜</div>
+        <div class="tl-card" onclick="speak('Play after lunch.')">
+          <span class="tl-emoji">⚽</span>
+          <strong>play</strong>
+          <div style="font-size:13px; color:var(--primary); font-weight:800; margin-top:4px;">after lunch</div>
+        </div>
+      </div>
+
+      <div class="section-label">The Pattern</div>
+      <div class="pattern-row">
+        <span class="pill">sentence</span>
+        <span class="plus">+</span>
+        <span class="pill pill-dark">before / after</span>
+        <span class="plus">+</span>
+        <span class="pill">time or event</span>
+      </div>
+
+      <div class="section-label">Examples</div>
+      <div class="example-list">
+        <div class="speak-row" data-say="I wash my hands before lunch."><span class="row-emoji">🧼</span><span class="row-text">I wash my hands <span class="hl">before</span> lunch.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="I play after lunch."><span class="row-emoji">⚽</span><span class="row-text">I play <span class="hl">after</span> lunch.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="I brush my teeth before bed."><span class="row-emoji">🪥</span><span class="row-text">I brush my teeth <span class="hl">before</span> bed.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="Before the party, we made a cake."><span class="row-emoji">🎂</span><span class="row-text"><span class="hl">Before</span> the party, we made a cake.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="We took photos after the wedding."><span class="row-emoji">📷</span><span class="row-text">We took photos <span class="hl">after</span> the wedding.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="After school, I do my homework."><span class="row-emoji">📚</span><span class="row-text"><span class="hl">After</span> school, I do my homework.</span><button class="spk-btn">🔊</button></div>
+      </div>
+
+      <div class="remember-box" onclick="speakEl(this, 'Remember! At the start of a sentence, add a comma. After school, I play.')">
+        <div>
+          <div class="box-kicker">Remember!</div>
+          <div>At the start of a sentence, add a <span class="hl">comma ,</span> → <em>After school, I play.</em></div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+    </section>
+
+    <!-- PAGE 5: DESCRIBING PEOPLE -->
+    <section class="page" data-page="5" data-title="Describing people">
+      <div class="page-header">
+        <div>
+          <span class="tag tag-grammar">Grammar</span>
+          <h1>Describing people</h1>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-listen" onclick="readPage(5)">🔊 Listen to this page</button>
+          <button class="btn btn-done" data-done-btn="5" onclick="toggleDone(5)">☐ Mark Done</button>
+        </div>
+      </div>
+
+      <div class="meaning-box" onclick="speakEl(this, 'We can say how people feel, what they look like, and what they are wearing.')">
+        <div>
+          <div class="box-kicker">What does it mean?</div>
+          <div class="meaning-text">We can say how people <strong>feel</strong>, what they <strong>look like</strong> and what they <strong>are wearing</strong>.</div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+
+      <div class="section-label">The Patterns (Click any row to listen)</div>
+      <table class="clean-table">
+        <thead><tr><th>Pattern</th><th>Example</th><th style="width:50px;"></th></tr></thead>
+        <tbody>
+          <tr onclick="speakEl(this, 'She is happy. He is tall.')"><td>He / She <span class="hl">is</span> + describing word</td><td>She <strong>is</strong> happy. He <strong>is</strong> tall.</td><td><button class="spk-btn">🔊</button></td></tr>
+          <tr onclick="speakEl(this, 'She has long black hair.')"><td>He / She <span class="hl">has</span> + hair / eyes</td><td>She <strong>has</strong> long black hair.</td><td><button class="spk-btn">🔊</button></td></tr>
+          <tr onclick="speakEl(this, 'He is wearing a black suit.')"><td>He / She <span class="hl">is wearing</span> + clothes</td><td>He <strong>is wearing</strong> a black suit.</td><td><button class="spk-btn">🔊</button></td></tr>
+        </tbody>
+      </table>
+
+      <div class="section-label">Examples</div>
+      <div class="example-list">
+        <div class="speak-row" data-say="The bride is wearing a white dress. She is happy."><span class="row-emoji">👰</span><span class="row-text">The bride <span class="hl">is wearing</span> a white dress. She <span class="hl">is</span> happy.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="The groom is wearing a black suit. He is proud."><span class="row-emoji">🤵</span><span class="row-text">The groom <span class="hl">is wearing</span> a black suit. He <span class="hl">is</span> proud.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="My grandmother has short grey hair. She is wearing a necklace."><span class="row-emoji">👵</span><span class="row-text">My grandmother <span class="hl">has</span> short grey hair. She <span class="hl">is wearing</span> a necklace.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="My cousin is excited. He has big brown eyes."><span class="row-emoji">🧒</span><span class="row-text">My cousin <span class="hl">is</span> excited. He <span class="hl">has</span> big brown eyes.</span><button class="spk-btn">🔊</button></div>
+      </div>
+
+      <div class="section-label">Feeling Words</div>
+      <div class="pattern-row">
+        <span class="mini-chip" onclick="speakEl(this, 'happy')">😊 happy 🔊</span>
+        <span class="mini-chip" onclick="speakEl(this, 'excited')">🤩 excited 🔊</span>
+        <span class="mini-chip" onclick="speakEl(this, 'proud')">🏅 proud 🔊</span>
+        <span class="mini-chip" onclick="speakEl(this, 'peaceful means calm')">😌 peaceful = calm 🔊</span>
+        <span class="mini-chip" onclick="speakEl(this, 'contented means happy and calm')">☺️ contented = happy and calm 🔊</span>
+      </div>
+
+      <div class="remember-box" onclick="speakEl(this, 'Remember! Say: She is wearing a dress. Do not say: She wearing a dress.')">
+        <div>
+          <div class="box-kicker">Remember!</div>
+          <div><span class="right">✓ She <strong>is wearing</strong> a dress.</span> <span class="wrong">She wearing a dress.</span></div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+    </section>
+
+    <!-- PAGE 6: THE PAST -->
+    <section class="page" data-page="6" data-title="The past: played, went, ate">
+      <div class="page-header">
+        <div>
+          <span class="tag tag-grammar">Grammar</span>
+          <h1>The past: played, went, ate</h1>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-listen" onclick="readPage(6)">🔊 Listen to this page</button>
+          <button class="btn btn-done" data-done-btn="6" onclick="toggleDone(6)">☐ Mark Done</button>
+        </div>
+      </div>
+
+      <div class="meaning-box" onclick="speakEl(this, 'We use the past to talk about things that happened before and are finished: yesterday, last week, last year.')">
+        <div>
+          <div class="box-kicker">What does it mean?</div>
+          <div class="meaning-text">We use the past to talk about things that <span class="hl">happened before</span> and are finished: yesterday, last week, last year.</div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+
+      <div class="two-col">
+        <div>
+          <div class="section-label" style="margin-top:0;">Most Words: Add -ed</div>
+          <table class="clean-table">
+            <tbody>
+              <tr onclick="speakEl(this, 'play, played')"><td>play</td><td><strong>played</strong></td><td style="color:var(--muted);font-size:13px;">add -ed</td><td>🔊</td></tr>
+              <tr onclick="speakEl(this, 'dance, danced')"><td>dance</td><td><strong>danced</strong></td><td style="color:var(--muted);font-size:13px;">ends in e: add -d</td><td>🔊</td></tr>
+              <tr onclick="speakEl(this, 'carry, carried')"><td>carry</td><td><strong>carried</strong></td><td style="color:var(--muted);font-size:13px;">y → ied</td><td>🔊</td></tr>
+              <tr onclick="speakEl(this, 'stop, stopped')"><td>stop</td><td><strong>stopped</strong></td><td style="color:var(--muted);font-size:13px;">short word: double</td><td>🔊</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <div class="section-label" style="margin-top:0;">Special Words – Learn Them!</div>
+          <div class="two-col" style="gap:7px;">
+            <div class="mini-chip" onclick="speakEl(this, 'go, went')"><span>go → <strong>went</strong></span><span>🔊</span></div>
+            <div class="mini-chip" onclick="speakEl(this, 'have, had')"><span>have → <strong>had</strong></span><span>🔊</span></div>
+            <div class="mini-chip" onclick="speakEl(this, 'eat, ate')"><span>eat → <strong>ate</strong></span><span>🔊</span></div>
+            <div class="mini-chip" onclick="speakEl(this, 'get, got')"><span>get → <strong>got</strong></span><span>🔊</span></div>
+            <div class="mini-chip" onclick="speakEl(this, 'see, saw')"><span>see → <strong>saw</strong></span><span>🔊</span></div>
+            <div class="mini-chip" onclick="speakEl(this, 'give, gave')"><span>give → <strong>gave</strong></span><span>🔊</span></div>
+            <div class="mini-chip" onclick="speakEl(this, 'make, made')"><span>make → <strong>made</strong></span><span>🔊</span></div>
+            <div class="mini-chip" onclick="speakEl(this, 'take, took')"><span>take → <strong>took</strong></span><span>🔊</span></div>
+            <div class="mini-chip" onclick="speakEl(this, 'wear, wore')"><span>wear → <strong>wore</strong></span><span>🔊</span></div>
+            <div class="mini-chip" onclick="speakEl(this, 'come, came')"><span>come → <strong>came</strong></span><span>🔊</span></div>
+            <div class="mini-chip" onclick="speakEl(this, 'is, was')"><span>is → <strong>was</strong></span><span>🔊</span></div>
+            <div class="mini-chip" onclick="speakEl(this, 'are, were')"><span>are → <strong>were</strong></span><span>🔊</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label">Examples</div>
+      <div class="example-list">
+        <div class="speak-row" data-say="Yesterday I played with my cousin."><span class="row-emoji">🧒</span><span class="row-text">Yesterday I <span class="hl">played</span> with my cousin.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="Last year my aunt got married."><span class="row-emoji">💍</span><span class="row-text">Last year my aunt <span class="hl">got</span> married.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="We ate rice cakes at the party."><span class="row-emoji">🍡</span><span class="row-text">We <span class="hl">ate</span> rice cakes at the party.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="Grandpa gave me a teddy bear."><span class="row-emoji">🎁</span><span class="row-text">Grandpa <span class="hl">gave</span> me a teddy bear.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="We went to the beach last week."><span class="row-emoji">🏖️</span><span class="row-text">We <span class="hl">went</span> to the beach last week.</span><button class="spk-btn">🔊</button></div>
+      </div>
+
+      <div class="section-label">Past Time Words</div>
+      <div class="pattern-row">
+        <span class="mini-chip" onclick="speakEl(this, 'yesterday')">yesterday 🔊</span>
+        <span class="mini-chip" onclick="speakEl(this, 'last week')">last week 🔊</span>
+        <span class="mini-chip" onclick="speakEl(this, 'last year')">last year 🔊</span>
+        <span class="mini-chip" onclick="speakEl(this, 'two days ago')">two days ago 🔊</span>
+        <span class="mini-chip" onclick="speakEl(this, 'when I was little')">when I was little 🔊</span>
+      </div>
+
+      <div class="remember-box" onclick="speakEl(this, 'Remember! One past word in a sentence is enough: I went home. Not I goed home.')">
+        <div>
+          <div class="box-kicker">Remember!</div>
+          <div>One past word in a sentence is enough: <span class="right">✓ I <strong>went</strong> home.</span> <span class="wrong">I goed home.</span></div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+    </section>
+
+    <!-- PAGE 7: QUESTIONS ABOUT THE PAST -->
+    <section class="page" data-page="7" data-title="Questions about the past">
+      <div class="page-header">
+        <div>
+          <span class="tag tag-grammar">Grammar</span>
+          <h1>Questions about the past</h1>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-listen" onclick="readPage(7)">🔊 Listen to this page</button>
+          <button class="btn btn-done" data-done-btn="7" onclick="toggleDone(7)">☐ Mark Done</button>
+        </div>
+      </div>
+
+      <div class="meaning-box" onclick="speakEl(this, 'To ask about the past, we use Did. After did, use the normal action word like go, eat, see.')">
+        <div>
+          <div class="box-kicker">What does it mean?</div>
+          <div class="meaning-text">To ask about the past, we use <span class="hl">Did</span>. After did, use the <span class="hl">normal action word</span> (go, eat, see).</div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+
+      <div class="section-label">Yes / No Questions</div>
+      <div class="pattern-row">
+        <span class="pill pill-dark">Did</span><span class="plus">+</span>
+        <span class="pill">you</span><span class="plus">+</span>
+        <span class="pill">go</span><span class="plus">+</span>
+        <span class="pill">to the party?</span>
+      </div>
+      <div class="example-list">
+        <div class="speak-row" data-say="Did you go to the wedding? Yes, I did."><span class="row-emoji">🎉</span><span class="row-text"><span class="hl">Did</span> you go to the wedding? — <span class="hl">Yes, I did.</span></span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="Did you eat cake? No, I didn't."><span class="row-emoji">🎂</span><span class="row-text"><span class="hl">Did</span> you eat cake? — <span class="hl">No, I didn’t.</span></span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="Did your grandma come? Yes, she did."><span class="row-emoji">👵</span><span class="row-text"><span class="hl">Did</span> your grandma come? — <span class="hl">Yes, she did.</span></span><button class="spk-btn">🔊</button></div>
+      </div>
+
+      <div class="section-label">Wh- Questions</div>
+      <div class="pattern-row">
+        <span class="pill pill-dark">What / Where / Who / When</span><span class="plus">+</span>
+        <span class="pill">did</span><span class="plus">+</span>
+        <span class="pill">you</span><span class="plus">+</span>
+        <span class="pill">do?</span>
+      </div>
+      <div class="example-list">
+        <div class="speak-row" data-say="What did you do on your birthday? I had a party."><span class="row-emoji">🎁</span><span class="row-text"><span class="hl">What did</span> you do on your birthday? — I had a party.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="Where did you go? I went to the beach."><span class="row-emoji">🏖️</span><span class="row-text"><span class="hl">Where did</span> you go? — I went to the beach.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="Who did you see? I saw my grandfather."><span class="row-emoji">👴</span><span class="row-text"><span class="hl">Who did</span> you see? — I saw my grandfather.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="What did the baby pick? The baby picked a coin."><span class="row-emoji">🪙</span><span class="row-text"><span class="hl">What did</span> the baby pick? — The baby picked a coin.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="When did your uncle get married? Last year."><span class="row-emoji">📅</span><span class="row-text"><span class="hl">When did</span> your uncle get married? — Last year.</span><button class="spk-btn">🔊</button></div>
+      </div>
+
+      <div class="remember-box" onclick="speakEl(this, 'Remember! Say Did you go? Not Did you went? Answer with the past: I went.')">
+        <div>
+          <div class="box-kicker">Remember!</div>
+          <div><span class="right">✓ Did you <strong>go</strong>?</span> <span class="wrong">Did you went?</span> &nbsp; Answer with the past: <strong>I went …</strong></div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+    </section>
+
+    <!-- PAGE 8: WHY? TO + ACTION WORD -->
+    <section class="page" data-page="8" data-title="Why? to + action word">
+      <div class="page-header">
+        <div>
+          <span class="tag tag-grammar">Grammar</span>
+          <h1>Why? to + action word</h1>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-listen" onclick="readPage(8)">🔊 Listen to this page</button>
+          <button class="btn btn-done" data-done-btn="8" onclick="toggleDone(8)">☐ Mark Done</button>
+        </div>
+      </div>
+
+      <div class="meaning-box" onclick="speakEl(this, 'We use to plus an action word to say why we do something.')">
+        <div>
+          <div class="box-kicker">What does it mean?</div>
+          <div class="meaning-text">We use <span class="hl">to + action word</span> to say <span class="hl">why</span> we do something.</div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+
+      <div class="section-label">The Pattern</div>
+      <div class="pattern-row">
+        <span class="pill">I went to the shop</span><span class="plus">+</span>
+        <span class="pill pill-dark">to</span><span class="plus">+</span>
+        <span class="pill">buy a present.</span>
+      </div>
+
+      <div class="section-label">Examples</div>
+      <div class="example-list">
+        <div class="speak-row" data-say="I went to the shop to buy a present."><span class="row-emoji">🛍️</span><span class="row-text">I went to the shop <span class="hl">to buy</span> a present.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="The photographer came to take photos."><span class="row-emoji">📷</span><span class="row-text">The photographer came <span class="hl">to take</span> photos.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="We went to Grandma's house to say Happy birthday!"><span class="row-emoji">👵</span><span class="row-text">We went to Grandma’s house <span class="hl">to say</span> “Happy birthday!”</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="I use scissors to cut paper."><span class="row-emoji">✂️</span><span class="row-text">I use scissors <span class="hl">to cut</span> paper.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="We use string to make a necklace."><span class="row-emoji">🧵</span><span class="row-text">We use string <span class="hl">to make</span> a necklace.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="I made a card to give to my mum."><span class="row-emoji">💌</span><span class="row-text">I made a card <span class="hl">to give</span> to my mum.</span><button class="spk-btn">🔊</button></div>
+      </div>
+
+      <div class="section-label">Ask “Why?”</div>
+      <div class="example-list">
+        <div class="speak-row" data-say="Why did you go to the shop? To buy a cake."><span class="row-emoji">❓</span><span class="row-text">Why did you go to the shop? — <span class="hl">To buy</span> a cake.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="Why do you need a camera? To take photos."><span class="row-emoji">❓</span><span class="row-text">Why do you need a camera? — <span class="hl">To take</span> photos.</span><button class="spk-btn">🔊</button></div>
+      </div>
+
+      <div class="remember-box" onclick="speakEl(this, 'Remember! After to, use the normal action word: to buy. Not to bought or to buying.')">
+        <div>
+          <div class="box-kicker">Remember!</div>
+          <div>After <span class="hl">to</span>, use the normal action word: <span class="right">✓ to <strong>buy</strong></span> <span class="wrong">to bought</span> <span class="wrong">to buying</span></div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+    </section>
+
+    <!-- PAGE 9: POLITE TITLES -->
+    <section class="page" data-page="9" data-title="Polite titles: Mr, Mrs, Miss, Ms">
+      <div class="page-header">
+        <div>
+          <span class="tag tag-writing">Writing</span>
+          <h1>Polite titles: Mr, Mrs, Miss, Ms</h1>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-listen" onclick="readPage(9)">🔊 Listen to this page</button>
+          <button class="btn btn-done" data-done-btn="9" onclick="toggleDone(9)">☐ Mark Done</button>
+        </div>
+      </div>
+
+      <div class="meaning-box" onclick="speakEl(this, 'We use a title before a person\'s name to be polite to adults.')">
+        <div>
+          <div class="box-kicker">What does it mean?</div>
+          <div class="meaning-text">We use a <span class="hl">title</span> before a person’s name to be <span class="hl">polite</span> to adults.</div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+
+      <div class="section-label">Which Title? (Click to listen)</div>
+      <table class="clean-table">
+        <thead><tr><th>Title</th><th>Who?</th><th>Example</th><th style="width:50px;"></th></tr></thead>
+        <tbody>
+          <tr onclick="speakEl(this, 'Mister. A man, married or not married. Mister Lee.')"><td><strong>Mr</strong></td><td>a man (married or not married)</td><td>Mr Lee</td><td><button class="spk-btn">🔊</button></td></tr>
+          <tr onclick="speakEl(this, 'Missus. A married woman. Missus Smith.')"><td><strong>Mrs</strong></td><td>a married woman</td><td>Mrs Smith</td><td><button class="spk-btn">🔊</button></td></tr>
+          <tr onclick="speakEl(this, 'Miss. A woman or girl who is not married. Miss Brown.')"><td><strong>Miss</strong></td><td>a woman or girl who is not married</td><td>Miss Brown</td><td><button class="spk-btn">🔊</button></td></tr>
+          <tr onclick="speakEl(this, 'Miz. Any woman, married or not married. Miz Park.')"><td><strong>Ms</strong></td><td>any woman (married or not married)</td><td>Ms Park</td><td><button class="spk-btn">🔊</button></td></tr>
+        </tbody>
+      </table>
+
+      <div class="section-label">Name and Surname</div>
+      <div class="speak-row" style="justify-content:center; flex-direction:column; text-align:center;" data-say="Mai Tran. Mai is my first name. Tran is my surname, my family name.">
+        <div style="font-size:24px; font-weight:900; color:var(--primary);">Mai &nbsp; Tran</div>
+        <div><strong>Mai</strong> = my <span class="hl">name</span> (first name) &nbsp;&nbsp; <strong>Tran</strong> = my <span class="hl">surname</span> (family name)</div>
+      </div>
+
+      <div class="section-label">Polite Greetings</div>
+      <div class="example-list">
+        <div class="speak-row" data-say="Good morning, Mister Lee."><span class="row-emoji">👋</span><span class="row-text">Good morning, <span class="hl">Mr</span> Lee.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="Hello, Missus Smith. How are you?"><span class="row-emoji">😊</span><span class="row-text">Hello, <span class="hl">Mrs</span> Smith. How are you?</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="Nice to meet you. Nice to meet you, too."><span class="row-emoji">🤝</span><span class="row-text">Nice to meet you. — Nice to meet you, too.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="What's your surname? My surname is Tran."><span class="row-emoji">🏷️</span><span class="row-text">What’s your surname? — My surname is Tran.</span><button class="spk-btn">🔊</button></div>
+      </div>
+
+      <div class="remember-box" onclick="speakEl(this, 'Remember! Titles, names and surnames start with a capital letter: Mrs Smith.')">
+        <div>
+          <div class="box-kicker">Remember!</div>
+          <div>Titles, names and surnames start with a <span class="hl">capital letter</span>: <strong>Mrs Smith</strong></div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+    </section>
+
+    <!-- PAGE 10: FROM, WITH, WITHOUT, BY -->
+    <section class="page" data-page="10" data-title="from, with, without, by">
+      <div class="page-header">
+        <div>
+          <span class="tag tag-grammar">Grammar</span>
+          <h1>from, with, without, by</h1>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-listen" onclick="readPage(10)">🔊 Listen to this page</button>
+          <button class="btn btn-done" data-done-btn="10" onclick="toggleDone(10)">☐ Mark Done</button>
+        </div>
+      </div>
+
+      <div class="prep-card">
+        <div class="prep-head"><span class="prep-word">from</span><span class="prep-desc">= the country or place it comes from</span></div>
+        <div class="example-list">
+          <div class="speak-row" data-say="I am from Thailand."><span class="row-emoji">🇹🇭</span><span class="row-text">I am <span class="hl">from</span> Thailand.</span><button class="spk-btn">🔊</button></div>
+          <div class="speak-row" data-say="Aiko is from Japan. Kimonos are from Japan."><span class="row-emoji">👘</span><span class="row-text">Aiko is <span class="hl">from</span> Japan. Kimonos are <span class="hl">from</span> Japan.</span><button class="spk-btn">🔊</button></div>
+          <div class="speak-row" data-say="A lei is from Hawaii."><span class="row-emoji">🌺</span><span class="row-text">A lei is <span class="hl">from</span> Hawaii.</span><button class="spk-btn">🔊</button></div>
+        </div>
+      </div>
+
+      <div class="prep-card">
+        <div class="prep-head"><span class="prep-word">with</span><span class="prep-desc">= together, or using something</span></div>
+        <div class="example-list">
+          <div class="speak-row" data-say="I went to the wedding with my mum."><span class="row-emoji">👩</span><span class="row-text">I went to the wedding <span class="hl">with</span> my mum.</span><button class="spk-btn">🔊</button></div>
+          <div class="speak-row" data-say="I cut the paper with scissors."><span class="row-emoji">✂️</span><span class="row-text">I cut the paper <span class="hl">with</span> scissors.</span><button class="spk-btn">🔊</button></div>
+        </div>
+      </div>
+
+      <div class="prep-card">
+        <div class="prep-head"><span class="prep-word">without</span><span class="prep-desc">= not with</span></div>
+        <div class="example-list">
+          <div class="speak-row" data-say="I drink tea without sugar."><span class="row-emoji">🍵</span><span class="row-text">I drink tea <span class="hl">without</span> sugar.</span><button class="spk-btn">🔊</button></div>
+          <div class="speak-row" data-say="He went out without his umbrella."><span class="row-emoji">🌧️</span><span class="row-text">He went out <span class="hl">without</span> his umbrella.</span><button class="spk-btn">🔊</button></div>
+        </div>
+      </div>
+
+      <div class="prep-card">
+        <div class="prep-head"><span class="prep-word">by</span><span class="prep-desc">= who made it or did it</span></div>
+        <div class="example-list">
+          <div class="speak-row" data-say="This card was made by my sister."><span class="row-emoji">💌</span><span class="row-text">This card was made <span class="hl">by</span> my sister.</span><button class="spk-btn">🔊</button></div>
+          <div class="speak-row" data-say="The photos were taken by the photographer."><span class="row-emoji">📷</span><span class="row-text">The photos were taken <span class="hl">by</span> the photographer.</span><button class="spk-btn">🔊</button></div>
+        </div>
+      </div>
+
+      <div class="remember-box" onclick="speakEl(this, 'Remember! Ask: Where are you from? I am from Thailand. Countries start with a capital letter.')">
+        <div>
+          <div class="box-kicker">Remember!</div>
+          <div>Ask <span class="hl">Where are you from?</span> → I am from Thailand. Countries start with a <span class="hl">capital letter</span>.</div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+    </section>
+
+    <!-- PAGE 11: MONTHS, DATES AND 1ST, 2ND, 3RD -->
+    <section class="page" data-page="11" data-title="Months, dates and 1st, 2nd, 3rd">
+      <div class="page-header">
+        <div>
+          <span class="tag tag-words">Words</span>
+          <h1>Months, dates and 1st, 2nd, 3rd</h1>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-listen" onclick="readPage(11)">🔊 Listen to this page</button>
+          <button class="btn btn-done" data-done-btn="11" onclick="toggleDone(11)">☐ Mark Done</button>
+        </div>
+      </div>
+
+      <div class="meaning-box" onclick="speakEl(this, 'There are 12 months in a year. For dates we use order numbers: first, second, third.')">
+        <div>
+          <div class="box-kicker">What does it mean?</div>
+          <div class="meaning-text">There are <span class="hl">12 months</span> in a year. For dates we use <span class="hl">order numbers</span>: 1st, 2nd, 3rd …</div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+
+      <div class="section-label">The Months (Tap to hear!)</div>
+      <div class="grid-4" id="monthsGrid"></div>
+
+      <div class="section-label">Order Numbers (Tap to hear!)</div>
+      <div class="grid-3" id="ordinalsGrid"></div>
+
+      <div class="section-label">The Pattern</div>
+      <div class="pattern-row">
+        <span class="pill">My birthday is</span><span class="plus">+</span>
+        <span class="pill pill-dark">on the</span><span class="plus">+</span>
+        <span class="pill">5th</span><span class="plus">+</span>
+        <span class="pill">of May.</span>
+      </div>
+
+      <div class="section-label">Examples</div>
+      <div class="example-list">
+        <div class="speak-row" data-say="When is your birthday? It's on the third of June."><span class="row-emoji">🎂</span><span class="row-text">When is your birthday? — It’s <span class="hl">on the 3rd of June</span>.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="My aunt got married on the twenty-first of March."><span class="row-emoji">💒</span><span class="row-text">My aunt got married <span class="hl">on the 21st of March</span>.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="Songkran is in April."><span class="row-emoji">🎉</span><span class="row-text">Songkran is <span class="hl">in April</span>.</span><button class="spk-btn">🔊</button></div>
+      </div>
+
+      <div class="remember-box" onclick="speakEl(this, 'Remember! Months start with a capital letter, like May. Endings: first, second, third, fourth, twenty-first, twenty-second, twenty-third.')">
+        <div>
+          <div class="box-kicker">Remember!</div>
+          <div>Months start with a <span class="hl">capital letter</span>: <strong>May</strong>. &nbsp; Endings: 1<span class="hl">st</span>, 2<span class="hl">nd</span>, 3<span class="hl">rd</span>, 4<span class="hl">th</span> … 21<span class="hl">st</span>, 22<span class="hl">nd</span>, 23<span class="hl">rd</span></div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+    </section>
+
+    <!-- PAGE 12: GIVING REASONS: BECAUSE -->
+    <section class="page" data-page="12" data-title="Giving reasons: because">
+      <div class="page-header">
+        <div>
+          <span class="tag tag-grammar">Grammar</span>
+          <h1>Giving reasons: because</h1>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-listen" onclick="readPage(12)">🔊 Listen to this page</button>
+          <button class="btn btn-done" data-done-btn="12" onclick="toggleDone(12)">☐ Mark Done</button>
+        </div>
+      </div>
+
+      <div class="meaning-box" onclick="speakEl(this, 'We use because to give a reason. It answers the question Why?')">
+        <div>
+          <div class="box-kicker">What does it mean?</div>
+          <div class="meaning-text">We use <span class="hl">because</span> to give a <span class="hl">reason</span>. It answers the question <span class="hl">Why?</span></div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+
+      <div class="section-label">The Pattern</div>
+      <div class="pattern-row">
+        <span class="pill">sentence</span><span class="plus">+</span>
+        <span class="pill pill-dark">because</span><span class="plus">+</span>
+        <span class="pill">reason</span>
+      </div>
+
+      <div class="section-label">Examples</div>
+      <div class="example-list">
+        <div class="speak-row" data-say="My favourite month is April because it is hot and sunny."><span class="row-emoji">☀️</span><span class="row-text">My favourite month is April <span class="hl">because</span> it is hot and sunny.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="I like December because it is cool."><span class="row-emoji">🍃</span><span class="row-text">I like December <span class="hl">because</span> it is cool.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="I don't like July because it is rainy."><span class="row-emoji">🌧️</span><span class="row-text">I don’t like July <span class="hl">because</span> it is rainy.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="I was excited because it was my birthday."><span class="row-emoji">🎂</span><span class="row-text">I was excited <span class="hl">because</span> it was my birthday.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="Grandma was proud because I tried hard."><span class="row-emoji">🏅</span><span class="row-text">Grandma was proud <span class="hl">because</span> I tried hard.</span><button class="spk-btn">🔊</button></div>
+      </div>
+
+      <div class="section-label">Asking and Answering</div>
+      <div class="example-list">
+        <div class="speak-row" data-say="Why do you like May? Because my birthday is in May."><span class="row-emoji">❓</span><span class="row-text">Why do you like May? — <span class="hl">Because</span> my birthday is in May.</span><button class="spk-btn">🔊</button></div>
+      </div>
+
+      <div class="section-label">Weather Words</div>
+      <div class="pattern-row">
+        <span class="mini-chip" onclick="speakEl(this, 'cold')">🥶 cold 🔊</span>
+        <span class="mini-chip" onclick="speakEl(this, 'cool')">🍃 cool 🔊</span>
+        <span class="mini-chip" onclick="speakEl(this, 'warm')">🌤️ warm 🔊</span>
+        <span class="mini-chip" onclick="speakEl(this, 'hot')">🥵 hot 🔊</span>
+        <span class="mini-chip" onclick="speakEl(this, 'sunny')">☀️ sunny 🔊</span>
+        <span class="mini-chip" onclick="speakEl(this, 'windy')">💨 windy 🔊</span>
+        <span class="mini-chip" onclick="speakEl(this, 'rainy')">🌧️ rainy 🔊</span>
+      </div>
+
+      <div class="remember-box" onclick="speakEl(this, 'Remember! Why goes with because. Use because to join two ideas into one sentence.')">
+        <div>
+          <div class="box-kicker">Remember!</div>
+          <div><span class="hl">Why?</span> → <span class="hl">because</span> &nbsp; Use because to join two ideas into one sentence.</div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+    </section>
+
+    <!-- PAGE 13: COULD AND COULDN'T -->
+    <section class="page" data-page="13" data-title="could and couldn't">
+      <div class="page-header">
+        <div>
+          <span class="tag tag-grammar">Grammar</span>
+          <h1>could and couldn’t</h1>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-listen" onclick="readPage(13)">🔊 Listen to this page</button>
+          <button class="btn btn-done" data-done-btn="13" onclick="toggleDone(13)">☐ Mark Done</button>
+        </div>
+      </div>
+
+      <div class="meaning-box" onclick="speakEl(this, 'Could means I was able to do it in the past. Couldn\'t, or could not, means I was not able to do it.')">
+        <div>
+          <div class="box-kicker">What does it mean?</div>
+          <div class="meaning-text"><span class="hl">could</span> = I was able to do it <span class="hl">in the past</span>. &nbsp; <span class="hl">couldn’t</span> (could not) = I was not able to do it.</div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+
+      <div class="section-label">The Pattern</div>
+      <div class="pattern-row">
+        <span class="pill">I / He / She / We / They</span><span class="plus">+</span>
+        <span class="pill pill-dark">could / couldn’t</span><span class="plus">+</span>
+        <span class="pill">action word</span>
+      </div>
+
+      <div class="section-label">Examples</div>
+      <div class="example-list">
+        <div class="speak-row" data-say="When I was a baby, I couldn't walk."><span class="row-emoji">👶</span><span class="row-text">When I was a baby, I <span class="hl">couldn’t</span> walk.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="When I was five, I could swim."><span class="row-emoji">🏊</span><span class="row-text">When I was five, I <span class="hl">could</span> swim.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="At the wedding, I could see the bride."><span class="row-emoji">👰</span><span class="row-text">At the wedding, I <span class="hl">could</span> see the bride.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="I couldn't find my teddy bear."><span class="row-emoji">🧸</span><span class="row-text">I <span class="hl">couldn’t</span> find my teddy bear.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="We played hide and seek. Nobody could find me!"><span class="row-emoji">🙈</span><span class="row-text">We played hide and seek. Nobody <span class="hl">could</span> find me!</span><button class="spk-btn">🔊</button></div>
+      </div>
+
+      <div class="section-label">Asking and Answering</div>
+      <div class="example-list">
+        <div class="speak-row" data-say="Could you read when you were four? Yes, I could. No, I couldn't."><span class="row-emoji">❓</span><span class="row-text"><span class="hl">Could</span> you read when you were four? — <span class="hl">Yes, I could.</span> / <span class="hl">No, I couldn’t.</span></span><button class="spk-btn">🔊</button></div>
+      </div>
+
+      <div class="section-label">Now and the Past</div>
+      <table class="clean-table">
+        <thead><tr><th>Now</th><th>In the past</th><th style="width:50px;"></th></tr></thead>
+        <tbody>
+          <tr onclick="speakEl(this, 'Now: I can ride a bike. In the past: I couldn\'t ride a bike when I was three.')">
+            <td>I <strong>can</strong> ride a bike.</td>
+            <td>I <strong>couldn’t</strong> ride a bike when I was three.</td>
+            <td><button class="spk-btn">🔊</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="remember-box" onclick="speakEl(this, 'Remember! After could, use the normal action word: could swim. Not could swam.')">
+        <div>
+          <div class="box-kicker">Remember!</div>
+          <div>After <span class="hl">could</span>, use the normal action word: <span class="right">✓ could <strong>swim</strong></span> <span class="wrong">could swam</span></div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+    </section>
+
+    <!-- PAGE 14: JOINING SENTENCES: AND -->
+    <section class="page" data-page="14" data-title="Joining sentences: and">
+      <div class="page-header">
+        <div>
+          <span class="tag tag-writing">Writing</span>
+          <h1>Joining sentences: and</h1>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-listen" onclick="readPage(14)">🔊 Listen to this page</button>
+          <button class="btn btn-done" data-done-btn="14" onclick="toggleDone(14)">☐ Mark Done</button>
+        </div>
+      </div>
+
+      <div class="meaning-box" onclick="speakEl(this, 'We use and to join two words or two short sentences. It makes our writing better.')">
+        <div>
+          <div class="box-kicker">What does it mean?</div>
+          <div class="meaning-text">We use <span class="hl">and</span> to <span class="hl">join</span> two words or two short sentences. It makes our writing better.</div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+
+      <div class="section-label">The Pattern</div>
+      <div class="pattern-row">
+        <span class="pill">sentence</span><span class="plus">+</span>
+        <span class="pill pill-dark">and</span><span class="plus">+</span>
+        <span class="pill">sentence</span>
+      </div>
+
+      <div class="section-label">Two Sentences → One Sentence</div>
+      <table class="clean-table">
+        <thead><tr><th>Two sentences</th><th>One sentence with <em>and</em></th><th style="width:50px;"></th></tr></thead>
+        <tbody>
+          <tr onclick="speakEl(this, 'I went to the beach and I played in the sand.')">
+            <td>I went to the beach. I played in the sand.</td>
+            <td>I went to the beach <span class="hl">and</span> I played in the sand.</td>
+            <td><button class="spk-btn">🔊</button></td>
+          </tr>
+          <tr onclick="speakEl(this, 'Grandma made a cake and we ate it.')">
+            <td>Grandma made a cake. We ate it.</td>
+            <td>Grandma made a cake <span class="hl">and</span> we ate it.</td>
+            <td><button class="spk-btn">🔊</button></td>
+          </tr>
+          <tr onclick="speakEl(this, 'The bride wore a dress and the groom wore a suit.')">
+            <td>The bride wore a dress. The groom wore a suit.</td>
+            <td>The bride wore a dress <span class="hl">and</span> the groom wore a suit.</td>
+            <td><button class="spk-btn">🔊</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="section-label">Joining Words</div>
+      <div class="example-list">
+        <div class="speak-row" data-say="My aunt and uncle came to the party."><span class="row-emoji">👩</span><span class="row-text">My aunt <span class="hl">and</span> uncle came to the party.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="I was happy and excited."><span class="row-emoji">😊</span><span class="row-text">I was happy <span class="hl">and</span> excited.</span><button class="spk-btn">🔊</button></div>
+        <div class="speak-row" data-say="The bridesmaids threw petals and everyone smiled."><span class="row-emoji">🌸</span><span class="row-text">The bridesmaids threw petals <span class="hl">and</span> everyone smiled.</span><button class="spk-btn">🔊</button></div>
+      </div>
+
+      <div class="remember-box" onclick="speakEl(this, 'Remember! No capital letter after and, only for names and I. One full stop at the very end.')">
+        <div>
+          <div class="box-kicker">Remember!</div>
+          <div>No capital letter after <span class="hl">and</span> (only for names and I). One <span class="hl">full stop</span> at the very end.</div>
+        </div>
+        <button class="spk-btn">🔊</button>
+      </div>
+    </section>
+
+    <!-- PAGE 15: I CAN ... -->
+    <section class="page" data-page="15" data-title="I can … checklist">
+      <div class="page-header">
+        <div>
+          <span class="tag tag-me">Me</span>
+          <h1>I can …</h1>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-listen" onclick="readPage(15)">🔊 Listen to all</button>
+          <button class="btn btn-done" data-done-btn="15" onclick="toggleDone(15)">☐ Mark Done</button>
+        </div>
+      </div>
+
+      <p style="color:var(--muted); margin-bottom:14px; font-weight:700;">Tap a face for each line to show how confident you feel! (Tap any sentence to hear it.)</p>
+
+      <table class="clean-table">
+        <thead>
+          <tr><th>What I can do</th><th style="text-align:center; width:170px;">How I feel</th></tr>
+        </thead>
+        <tbody id="icanBody"></tbody>
+      </table>
+
+      <div class="cheer-banner" onclick="speak('Well done! You worked hard. Good luck in your E O S 1 exams!')">
+        <div style="font-size:24px; font-weight:900; color:#1e1b4b;">⭐ Well done! You worked hard. ⭐</div>
+        <div style="font-size:16px; font-weight:700; color:#475569; margin-top:4px;">Good luck in your EOS 1 exams! 🔊</div>
+      </div>
+    </section>
+
+    <!-- PAGE 16: MY NOTES -->
+    <section class="page" data-page="16" data-title="My notes">
+      <div class="page-header">
+        <div>
+          <span class="tag tag-me">Me</span>
+          <h1>My notes</h1>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-listen" onclick="readNotes()">🔊 Read my notes</button>
+          <button class="btn btn-done" onclick="clearNotes()">🗑️ Clear</button>
+        </div>
+      </div>
+      <p style="color:var(--muted); margin-bottom:12px; font-weight:700;">Write new words or rules here. Your notes save automatically, and you can press <strong>Read my notes</strong> to hear them!</p>
+      <textarea id="notesArea" class="notes-area" placeholder="Type new words or example sentences here..."></textarea>
+    </section>
+
+    <!-- Bottom Navigation -->
+    <div class="pager">
+      <button class="pager-btn" id="prevBtn" onclick="changePage(-1)">⬅ Previous</button>
+      <span class="pager-info" id="pagerInfo">Page 1 of 16</span>
+      <button class="pager-btn" id="nextBtn" onclick="changePage(1)">Next ➔</button>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const STORAGE_KEY = 'esl_u2_booklet_v1';
+let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+if (!state.done) state.done = {};
+if (!state.ican) state.ican = {};
+if (typeof state.notes !== 'string') state.notes = '';
+
+let currentPage = 1;
+const totalPages = 16;
+
+const TOC = [
+  { part: 'Start', topic: 'What is in my booklet?', page: 1 },
+  { part: 'Words', topic: 'My word bank', page: 2 },
+  { part: 'Grammar', topic: 'Order words: first, next, then, finally', page: 3 },
+  { part: 'Grammar', topic: 'before and after', page: 4 },
+  { part: 'Grammar', topic: 'Describing people: is, has, is wearing', page: 5 },
+  { part: 'Grammar', topic: 'The past: played, went, ate', page: 6 },
+  { part: 'Grammar', topic: 'Questions about the past: Did you …?', page: 7 },
+  { part: 'Grammar', topic: 'Why? to + action word', page: 8 },
+  { part: 'Writing', topic: 'Polite titles: Mr, Mrs, Miss, Ms', page: 9 },
+  { part: 'Grammar', topic: 'from, with, without, by', page: 10 },
+  { part: 'Words', topic: 'Months, dates and 1st, 2nd, 3rd', page: 11 },
+  { part: 'Grammar', topic: 'Giving reasons: because', page: 12 },
+  { part: 'Grammar', topic: 'could and couldn’t', page: 13 },
+  { part: 'Writing', topic: 'Joining sentences: and', page: 14 },
+  { part: 'Me', topic: 'I can … checklist', page: 15 },
+  { part: 'Me', topic: 'My notes', page: 16 }
+];
+
+const WORD_BANK = [
+  {
+    cat: 'Family',
+    words: [
+      ['👵', 'grandmother'], ['👴', 'grandfather'], ['👦', 'grandson'], ['👧', 'granddaughter'],
+      ['👩', 'aunt'], ['👨', 'uncle'], ['🧒', 'cousin'], ['👧', 'sister'], ['👦', 'brother']
+    ]
+  },
+  {
+    cat: 'Weddings',
+    words: [
+      ['👰', 'bride'], ['🤵', 'groom'], ['📷', 'photographer'], ['💐', 'bridesmaids'],
+      ['🌸', 'petals'], ['🍽️', 'banquet'], ['💒', 'get married'], ['💍', 'married'], ['🙂', 'unmarried']
+    ]
+  },
+  {
+    cat: 'Wedding customs',
+    words: [
+      ['👘', 'kimono'], ['🖐️', 'henna'], ['🌀', 'patterns'], ['🌺', 'lei'], ['📿', 'necklace']
+    ]
+  },
+  {
+    cat: 'Feelings',
+    words: [
+      ['😊', 'happy'], ['🤩', 'excited'], ['🏅', 'proud'], ['😌', 'peaceful'], ['☺️', 'contented']
+    ]
+  },
+  {
+    cat: 'Birthdays and memories',
+    words: [
+      ['🪙', 'coin'], ['🧵', 'string'], ['🍡', 'rice cake'], ['🧠', 'clever'],
+      ['🧸', 'teddy bear'], ['🙈', 'hide and seek'], ['🏖️', 'beach']
+    ]
+  },
+  {
+    cat: 'Weather',
+    words: [
+      ['🥶', 'cold'], ['🍃', 'cool'], ['🌤️', 'warm'], ['🥵', 'hot'],
+      ['☀️', 'sunny'], ['💨', 'windy'], ['🌧️', 'rainy']
+    ]
+  },
+  {
+    cat: 'Names',
+    words: [
+      ['👨', 'Mr', 'Mister'], ['👩', 'Mrs', 'Missus'], ['👧', 'Miss', 'Miss'],
+      ['👩‍💼', 'Ms', 'Miz'], ['🏷️', 'name'], ['🏷️', 'surname']
+    ]
+  }
+];
+
+const MONTHS = [
+  'January','February','March','April','May','June',
+  'July','August','September','October','November','December'
+];
+
+const ORDINALS = [
+  ['1st','first'], ['2nd','second'], ['3rd','third'],
+  ['4th','fourth'], ['5th','fifth'], ['6th','sixth'],
+  ['7th','seventh'], ['8th','eighth'], ['9th','ninth'],
+  ['10th','tenth'], ['12th','twelfth'], ['20th','twentieth'],
+  ['21st','twenty-first'], ['22nd','twenty-second'], ['23rd','twenty-third'],
+  ['31st','thirty-first']
+];
+
+const ICAN_ITEMS = [
+  'I can use order words: first, next, then, finally.',
+  'I can use before and after.',
+  'I can describe people (is, has, is wearing).',
+  'I can use the past: played, went, ate.',
+  'I can ask questions with Did …? and What did …?',
+  'I can say why with to + action word.',
+  'I can use Mr, Mrs, Miss and Ms.',
+  'I can use from, with, without and by.',
+  'I can say the months and dates (1st, 2nd, 3rd).',
+  'I can give reasons with because.',
+  'I can use could and couldn’t.',
+  'I can join sentences with and.',
+  'I know my Unit 2 words.'
+];
+
+/* ========== SPEECH ENGINE ========== */
+let voices = [];
+let selectedVoice = null;
+let speechRate = 0.95;
+let speechQueueToken = 0;
+
+function loadVoices() {
+  if (!('speechSynthesis' in window)) return;
+  const all = speechSynthesis.getVoices();
+  voices = all.filter(v => v.lang && v.lang.toLowerCase().startsWith('en'));
+  if (!voices.length) voices = all;
+  const sel = document.getElementById('voiceSelect');
+  const prev = sel.value;
+  sel.innerHTML = '';
+  voices.forEach((v, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = `${v.name.replace(/Microsoft |Google /g, '')} (${v.lang})`;
+    sel.appendChild(opt);
+  });
+  // Pick a clear default English voice
+  const preferred = voices.findIndex(v => /samantha|karen|serena|daniel|google us english|google uk english female/i.test(v.name));
+  if (prev !== '' && voices[prev]) {
+    sel.value = prev;
+  } else if (preferred >= 0) {
+    sel.value = preferred;
+  }
+  selectedVoice = voices[sel.value] || voices[0] || null;
+}
+
+if ('speechSynthesis' in window) {
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+document.getElementById('voiceSelect').addEventListener('change', (e) => {
+  selectedVoice = voices[e.target.value] || null;
+  speak('Hello! Let us learn Unit 2 together.');
+});
+
+function setRate(r, btn) {
+  speechRate = r;
+  document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function clearHighlights() {
+  document.querySelectorAll('.speaking').forEach(el => el.classList.remove('speaking'));
+}
+
+function stopSpeech() {
+  speechQueueToken++;
+  if ('speechSynthesis' in window) speechSynthesis.cancel();
+  clearHighlights();
+}
+
+function speak(text, onEnd, highlightEl) {
+  if (!('speechSynthesis' in window)) {
+    alert('Sorry, your browser does not support built-in speech.');
+    return;
+  }
+  speechSynthesis.cancel();
+  clearHighlights();
+  const u = new SpeechSynthesisUtterance(text);
+  if (selectedVoice) u.voice = selectedVoice;
+  u.lang = selectedVoice ? selectedVoice.lang : 'en-GB';
+  u.rate = speechRate;
+  u.pitch = 1.02;
+  if (highlightEl) highlightEl.classList.add('speaking');
+  u.onend = () => {
+    if (highlightEl) highlightEl.classList.remove('speaking');
+    if (onEnd) onEnd();
+  };
+  u.onerror = () => {
+    if (highlightEl) highlightEl.classList.remove('speaking');
+  };
+  speechSynthesis.speak(u);
+}
+
+function speakEl(el, text) {
+  speechQueueToken++;
+  speak(text, null, el);
+}
+
+function speakSequence(items) {
+  stopSpeech();
+  const token = ++speechQueueToken;
+  let idx = 0;
+  function next() {
+    if (token !== speechQueueToken || idx >= items.length) {
+      clearHighlights();
+      return;
+    }
+    const { text, el } = items[idx++];
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    speak(text, () => setTimeout(next, 240), el);
+  }
+  next();
+}
+
+function readPage(pageNum) {
+  const sec = document.querySelector(`.page[data-page="${pageNum}"]`);
+  if (!sec) return;
+  const items = [];
+  const title = sec.querySelector('h1');
+  if (title) items.push({ text: title.textContent, el: null });
+  sec.querySelectorAll('.meaning-box, .speak-row, .remember-box').forEach(el => {
+    const say = el.getAttribute('data-say') || el.innerText.replace(/🔊/g, '').trim();
+    if (say) items.push({ text: say, el });
+  });
+  if (pageNum === 15) {
+    sec.querySelectorAll('#icanBody tr').forEach(tr => {
+      items.push({ text: tr.dataset.say, el: tr });
+    });
+  }
+  speakSequence(items);
+}
+
+/* ========== RENDER DYNAMIC SECTIONS ========== */
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function renderNavAndToc() {
+  const nav = document.getElementById('navList');
+  const tocBody = document.getElementById('tocBody');
+  nav.innerHTML = '';
+  tocBody.innerHTML = '';
+  let doneCount = 0;
+
+  TOC.forEach(item => {
+    const isDone = !!state.done[item.page];
+    if (item.page >= 2 && item.page <= 15 && isDone) doneCount++;
+
+    const li = document.createElement('li');
+    li.className = 'nav-item' + (item.page === currentPage ? ' active' : '') + (isDone ? ' done' : '');
+    li.innerHTML = `<span class="nav-num">${item.page}</span><span>${item.topic}</span><span class="nav-done-dot">${item.page >= 2 && item.page <= 15 ? (isDone ? '✅' : '○') : ''}</span>`;
+    li.onclick = () => { goToPage(item.page); document.getElementById('sidebar').classList.remove('open'); };
+    nav.appendChild(li);
+
+    if (item.page >= 2 && item.page <= 15) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${item.part}</strong></td>
+        <td style="color:var(--primary-dark); font-weight:700;">${item.topic}</td>
+        <td>${item.page}</td>
+        <td style="text-align:center;">
+          <input type="checkbox" ${isDone ? 'checked' : ''} style="width:18px;height:18px;cursor:pointer;" onclick="event.stopPropagation(); toggleDone(${item.page})">
+        </td>`;
+      tr.onclick = () => goToPage(item.page);
+      tocBody.appendChild(tr);
+    }
+  });
+
+  document.getElementById('progressText').textContent = `${doneCount} / 14`;
+  document.getElementById('progressFill').style.width = `${Math.round((doneCount / 14) * 100)}%`;
+
+  document.querySelectorAll('[data-done-btn]').forEach(btn => {
+    const p = Number(btn.getAttribute('data-done-btn'));
+    const d = !!state.done[p];
+    btn.classList.toggle('checked', d);
+    btn.textContent = d ? '✅ Done!' : '☐ Mark Done';
+  });
+}
+
+function toggleDone(pageNum) {
+  state.done[pageNum] = !state.done[pageNum];
+  saveState();
+  renderNavAndToc();
+}
+
+function renderWordBank() {
+  const wrap = document.getElementById('wordBankContainer');
+  wrap.innerHTML = '';
+  WORD_BANK.forEach((group, gi) => {
+    const div = document.createElement('div');
+    div.className = 'wb-category';
+    div.innerHTML = `
+      <div class="wb-cat-head">
+        <span class="wb-cat-title">${group.cat}</span>
+        <button class="wb-play-cat" onclick="playWordCategory(${gi})">🔊 Play all</button>
+      </div>
+      <div class="word-grid" id="wb-cat-${gi}"></div>`;
+    wrap.appendChild(div);
+    const grid = div.querySelector('.word-grid');
+    group.words.forEach(w => {
+      const [emoji, label, spoken] = w;
+      const card = document.createElement('div');
+      card.className = 'word-card';
+      card.dataset.say = spoken || label;
+      card.innerHTML = `<span class="w-emoji">${emoji}</span><span>${label}</span><span class="w-spk">🔊</span>`;
+      card.onclick = () => speakEl(card, spoken || label);
+      grid.appendChild(card);
+    });
+  });
+}
+
+function playWordCategory(gi) {
+  const cards = [...document.querySelectorAll(`#wb-cat-${gi} .word-card`)];
+  speakSequence(cards.map(c => ({ text: c.dataset.say, el: c })));
+}
+
+/* Listen & Find Mini-Game */
+const ALL_WORDS = WORD_BANK.flatMap(g => g.words.map(([emoji, label, spoken]) => ({ emoji, label, say: spoken || label })));
+let gameTarget = null;
+let gameScore = 0;
+
+function toggleListenGame() {
+  const box = document.getElementById('listenGameBox');
+  const open = box.style.display === 'none';
+  box.style.display = open ? 'block' : 'none';
+  if (open) nextGameRound();
+}
+
+function nextGameRound() {
+  const pool = [...ALL_WORDS].sort(() => Math.random() - 0.5).slice(0, 4);
+  gameTarget = pool[Math.floor(Math.random() * pool.length)];
+  const opts = document.getElementById('gameOptions');
+  opts.innerHTML = '';
+  document.getElementById('gameFeedback').textContent = 'Listen carefully and tap the word you hear!';
+  pool.forEach(w => {
+    const btn = document.createElement('button');
+    btn.className = 'game-opt';
+    btn.innerHTML = `<span>${w.emoji}</span><span>${w.label}</span>`;
+    btn.onclick = () => {
+      if (w.label === gameTarget.label) {
+        btn.classList.add('correct');
+        gameScore++;
+        document.getElementById('gameScore').textContent = `Score: ${gameScore} ⭐`;
+        document.getElementById('gameFeedback').textContent = `🎉 Great job! That is "${w.label}"!`;
+        speak(`Great job! ${w.say}`);
+        setTimeout(nextGameRound, 1500);
+      } else {
+        btn.classList.add('wrong-pick');
+        document.getElementById('gameFeedback').textContent = `Try again! Listen to the word again.`;
+        speak(gameTarget.say);
+      }
+    };
+    opts.appendChild(btn);
+  });
+  speak(gameTarget.say);
+}
+
+function replayGameWord() {
+  if (gameTarget) speak(gameTarget.say);
+}
+
+/* Page 11: Months & Ordinals */
+function renderPage11() {
+  const mg = document.getElementById('monthsGrid');
+  MONTHS.forEach((m, i) => {
+    const d = document.createElement('div');
+    d.className = 'mini-chip';
+    d.innerHTML = `<span><strong>${i + 1}</strong> &nbsp; ${m}</span><span>🔊</span>`;
+    d.onclick = () => speakEl(d, m);
+    mg.appendChild(d);
+  });
+  const og = document.getElementById('ordinalsGrid');
+  ORDINALS.forEach(([num, word]) => {
+    const d = document.createElement('div');
+    d.className = 'mini-chip';
+    d.innerHTML = `<span><strong>${num}</strong> &nbsp; ${word}</span><span>🔊</span>`;
+    d.onclick = () => speakEl(d, word);
+    og.appendChild(d);
+  });
+}
+
+/* Page 15: I can checklist */
+function renderICan() {
+  const body = document.getElementById('icanBody');
+  body.innerHTML = '';
+  ICAN_ITEMS.forEach((text, i) => {
+    const val = state.ican[i] || '';
+    const tr = document.createElement('tr');
+    tr.dataset.say = text;
+    tr.innerHTML = `
+      <td onclick="speakEl(this.parentElement, '${text.replace(/'/g, "\\'")}')">🔊 &nbsp; ${text}</td>
+      <td>
+        <div class="face-group">
+          <button class="face-btn ${val === 'good' ? 'selected' : ''}" title="I can do this!" onclick="setICan(${i}, 'good')">😄</button>
+          <button class="face-btn mid-face ${val === 'ok' ? 'selected' : ''}" title="Almost!" onclick="setICan(${i}, 'ok')">🙂</button>
+          <button class="face-btn sad-face ${val === 'help' ? 'selected' : ''}" title="Need more practice" onclick="setICan(${i}, 'help')">😕</button>
+        </div>
+      </td>`;
+    body.appendChild(tr);
+  });
+}
+
+function setICan(idx, val) {
+  state.ican[idx] = val;
+  saveState();
+  renderICan();
+}
+
+/* Page 16: Notes */
+const notesArea = document.getElementById('notesArea');
+notesArea.value = state.notes;
+notesArea.addEventListener('input', () => {
+  state.notes = notesArea.value;
+  saveState();
+});
+function readNotes() {
+  const txt = notesArea.value.trim();
+  if (!txt) speak('Your notes page is empty. Type some words or sentences first!');
+  else speak(txt);
+}
+function clearNotes() {
+  if (confirm('Clear all your notes?')) {
+    notesArea.value = '';
+    state.notes = '';
+    saveState();
+  }
+}
+
+/* Page Switching */
+function goToPage(n) {
+  stopSpeech();
+  currentPage = Math.max(1, Math.min(totalPages, n));
+  document.querySelectorAll('.page').forEach(p => {
+    p.classList.toggle('active', Number(p.dataset.page) === currentPage);
+  });
+  document.getElementById('prevBtn').disabled = currentPage === 1;
+  document.getElementById('nextBtn').disabled = currentPage === totalPages;
+  document.getElementById('pagerInfo').textContent = `Page ${currentPage} of ${totalPages}`;
+  renderNavAndToc();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function changePage(delta) {
+  goToPage(currentPage + delta);
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+/* Wire up click-to-speak on all .speak-row elements */
+document.querySelectorAll('.speak-row').forEach(row => {
+  row.addEventListener('click', () => {
+    const say = row.getAttribute('data-say') || row.innerText.replace(/🔊/g, '').trim();
+    speakEl(row, say);
+  });
+});
+
+document.addEventListener('keydown', (e) => {
+  if (document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT') return;
+  if (e.key === 'ArrowRight') changePage(1);
+  if (e.key === 'ArrowLeft') changePage(-1);
+});
+
+renderWordBank();
+renderPage11();
+renderICan();
+goToPage(1);
+</script>
+</body>
+</html>
