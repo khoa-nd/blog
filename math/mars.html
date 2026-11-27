@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Mars Rover Explorer</title>
+<meta name="description" content="Drive a rover across seven Mars missions, drill rocks and answer science questions.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23c4562d'/%3E%3Ccircle cx='22' cy='24' r='6' fill='%23a3431f'/%3E%3Ccircle cx='42' cy='40' r='8' fill='%23a3431f'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#12080f; --ink:#fff4ea; --mute:#c9a794; --card:rgba(30,14,20,.86); --line:rgba(255,190,150,.22);
+  --mars:#ff7a3d; --mars2:#ffb067; --sci:#3fe0cf; --ok:#52e08a; --bad:#ff5d6c; --warn:#ffd166;
+  --h:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --b:'Nunito','Trebuchet MS',system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:var(--b);overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+canvas#cv{position:fixed;inset:0;width:100%;height:100%;display:block}
+.hide{display:none!important}
+button{font-family:inherit;cursor:pointer}
+.btn{border:0;border-radius:14px;padding:12px 22px;font:800 18px var(--h);color:#2a0f06;background:linear-gradient(180deg,#ffc48a,#ff8a45);box-shadow:0 4px 0 #a8461a,0 8px 18px rgba(0,0,0,.35);transition:transform .08s,box-shadow .08s}
+.btn:hover{filter:brightness(1.07)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #a8461a}
+.btn.alt{background:linear-gradient(180deg,#8ff0e4,#2fc7b6);box-shadow:0 4px 0 #17776d,0 8px 18px rgba(0,0,0,.35);color:#05302b}
+.btn.ghost{background:rgba(255,255,255,.08);color:var(--ink);box-shadow:0 0 0 1.5px var(--line) inset}
+.btn.small{padding:7px 14px;font-size:15px;border-radius:11px}
+.btn:disabled{opacity:.45;pointer-events:none}
+
+/* screens */
+#ui{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+#ui>*{pointer-events:auto}
+.panel{background:var(--card);border:1.5px solid var(--line);border-radius:22px;box-shadow:0 20px 60px rgba(0,0,0,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.scr{width:min(1040px,96vw);max-height:96vh;overflow:auto;padding:22px 24px;touch-action:pan-y}
+.title{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;position:fixed;inset:0;justify-content:flex-start;padding-top:7vh;pointer-events:none}
+.title>*{pointer-events:auto}
+.title h1{font:800 clamp(40px,8vw,84px)/0.95 var(--h);margin:0;letter-spacing:.5px;color:#fff3e6;text-shadow:0 3px 0 #b4491e,0 6px 0 #6e2610,0 14px 28px rgba(0,0,0,.5)}
+.title h1 small{display:block;font:800 clamp(14px,2.4vw,24px) var(--h);letter-spacing:7px;color:var(--mars2);text-shadow:0 2px 8px #000;margin-bottom:4px}
+.title p{margin:6px 0 10px;color:#ffe2c8;font-weight:700;text-shadow:0 2px 8px #000;max-width:560px;padding:0 14px}
+.menu{display:flex;flex-direction:column;gap:12px;align-items:center;margin-top:8px}
+.menu .row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.seg{display:inline-flex;background:rgba(0,0,0,.4);border-radius:14px;padding:4px;gap:4px;border:1.5px solid var(--line)}
+.seg button{border:0;background:transparent;color:var(--mute);font:800 15px var(--h);padding:7px 15px;border-radius:10px}
+.seg button.on{background:linear-gradient(180deg,#ffc48a,#ff8a45);color:#2a0f06}
+h2{font:800 clamp(24px,4vw,36px) var(--h);margin:0 0 4px}
+h3{font:800 20px var(--h);margin:0}
+.sub{color:var(--mute);font-weight:700;margin:0 0 14px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+
+/* map */
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.mc{position:relative;border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(255,150,90,.18),rgba(255,255,255,.04));border:1.5px solid var(--line);text-align:left;color:var(--ink);transition:transform .12s,border-color .12s;min-height:150px;display:flex;flex-direction:column;gap:4px}
+.mc:hover{transform:translateY(-3px);border-color:var(--mars2)}
+.mc .n{position:absolute;top:10px;right:12px;font:800 15px var(--h);color:var(--mars2)}
+.mc .e{font-size:38px;line-height:1}
+.mc .nm{font:800 20px var(--h)}
+.mc .tg{font-size:13px;color:var(--mute);font-weight:700}
+.mc .st{margin-top:auto;font-size:22px;letter-spacing:2px}
+.mc.lock{opacity:.5;filter:grayscale(.7);pointer-events:none}
+.mc.lock::after{content:'🔒';position:absolute;right:12px;bottom:10px;font-size:22px}
+.star{color:#ffd24a;text-shadow:0 0 8px rgba(255,200,60,.5)}
+.star.off{color:#5b4a48;text-shadow:none}
+
+/* HUD */
+#hud{position:fixed;left:0;right:0;top:0;padding:max(10px,env(safe-area-inset-top)) 12px 0;display:flex;gap:10px;align-items:flex-start;pointer-events:none;z-index:5}
+#hud>*{pointer-events:auto}
+.hbox{background:rgba(20,8,12,.72);border:1.5px solid var(--line);border-radius:14px;padding:7px 11px;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+.gauges{display:flex;flex-direction:column;gap:5px;min-width:170px}
+.g{display:flex;align-items:center;gap:7px;font:800 13px var(--h)}
+.g .bar{flex:1;height:11px;border-radius:7px;background:rgba(255,255,255,.12);overflow:hidden;min-width:100px}
+.g .bar i{display:block;height:100%;width:100%;border-radius:7px;background:linear-gradient(90deg,#ffd166,#52e08a);transition:width .15s}
+.g.hull .bar i{background:linear-gradient(90deg,#ff5d6c,#ffb067)}
+.g.low .bar i{background:#ff5d6c;animation:blink .5s infinite alternate}
+@keyframes blink{to{opacity:.35}}
+.objs{display:flex;gap:7px;flex-wrap:wrap;align-items:center;font:800 15px var(--h);margin:0 auto}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.1)}
+.chip.ok{background:rgba(82,224,138,.28)}
+.hb{display:flex;gap:6px;margin-left:auto}
+.ib{width:42px;height:42px;border-radius:12px;border:1.5px solid var(--line);background:rgba(20,8,12,.72);color:var(--ink);font-size:20px;line-height:1}
+#mini{position:fixed;right:10px;bottom:max(10px,env(safe-area-inset-bottom));width:168px;height:112px;border-radius:12px;border:1.5px solid var(--line);background:rgba(20,8,12,.7);z-index:5;pointer-events:none}
+#msg{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:6;max-width:min(560px,92vw);pointer-events:none}
+.toast{background:rgba(20,8,12,.9);border:1.5px solid var(--mars2);padding:10px 16px;border-radius:14px;font-weight:800;font-size:15px;line-height:1.35;text-align:center;animation:pop .25s ease-out;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.toast.sci{border-color:var(--sci)}
+@keyframes pop{from{transform:translateY(14px) scale(.96);opacity:0}}
+#scan{position:fixed;left:50%;top:44%;transform:translate(-50%,-50%);z-index:6;pointer-events:none;text-align:center;font:800 16px var(--h);text-shadow:0 2px 6px #000}
+#scan .ring{width:74px;height:74px;border-radius:50%;margin:0 auto 4px;background:conic-gradient(var(--sci) var(--p,0%),rgba(255,255,255,.15) 0);display:flex;align-items:center;justify-content:center}
+#scan .ring i{width:58px;height:58px;border-radius:50%;background:rgba(10,4,8,.85);display:flex;align-items:center;justify-content:center;font-style:normal;font-size:26px}
+#stick{position:fixed;width:120px;height:120px;border-radius:50%;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.07);z-index:6;pointer-events:none;transform:translate(-50%,-50%)}
+#stick i{position:absolute;left:50%;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;background:rgba(255,190,140,.55);border:2px solid rgba(255,255,255,.6)}
+#boost{position:fixed;left:14px;bottom:max(18px,env(safe-area-inset-bottom));z-index:6;width:74px;height:74px;border-radius:50%;border:2px solid var(--line);background:rgba(255,122,61,.55);color:#fff;font:800 14px var(--h)}
+
+/* modal */
+#ov{position:fixed;inset:0;background:rgba(8,3,6,.6);display:flex;align-items:center;justify-content:center;z-index:20;padding:10px}
+.modal{width:min(720px,100%);max-height:96vh;overflow:auto;padding:20px 22px;touch-action:pan-y}
+.badge{display:inline-flex;align-items:center;gap:6px;font:800 13px var(--h);letter-spacing:1px;text-transform:uppercase;padding:4px 11px;border-radius:999px;background:rgba(63,224,207,.18);color:var(--sci);margin-bottom:8px}
+.badge.lab{background:rgba(255,176,103,.18);color:var(--mars2)}
+.q{font:800 clamp(19px,3.4vw,26px)/1.25 var(--h);margin:2px 0 14px}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;padding:13px 16px;border-radius:14px;border:2px solid var(--line);background:rgba(255,255,255,.06);color:var(--ink);font:800 clamp(15px,2.6vw,19px)/1.25 var(--b);display:flex;gap:11px;align-items:center;transition:transform .08s,background .12s,border-color .12s}
+.opt:hover{border-color:var(--mars2);background:rgba(255,176,103,.14)}
+.opt:active{transform:scale(.985)}
+.opt .k{flex:none;width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font:800 15px var(--h)}
+.opt.ok{border-color:var(--ok);background:rgba(82,224,138,.22)}
+.opt.bad{border-color:var(--bad);background:rgba(255,93,108,.16);opacity:.55;pointer-events:none;animation:shake .35s}
+@keyframes shake{20%{transform:translateX(-8px)}50%{transform:translateX(8px)}80%{transform:translateX(-4px)}}
+.shake{animation:shake .35s}
+.fb{margin-top:14px;padding:12px 14px;border-radius:14px;font-weight:700;line-height:1.4;background:rgba(82,224,138,.14);border:1.5px solid rgba(82,224,138,.5)}
+.fb.bad{background:rgba(255,93,108,.12);border-color:rgba(255,93,108,.5)}
+.fb b{font-family:var(--h)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.row.end{justify-content:flex-end}
+.ord{display:flex;flex-wrap:wrap;gap:10px}
+.tile{padding:12px 15px;border-radius:14px;border:2px solid var(--line);background:rgba(255,255,255,.07);color:var(--ink);font:800 clamp(15px,2.6vw,18px) var(--b);position:relative;text-align:left}
+.tile.done{border-color:var(--ok);background:rgba(82,224,138,.2);pointer-events:none}
+.tile.done::before{content:attr(data-n);position:absolute;left:-8px;top:-10px;width:24px;height:24px;border-radius:50%;background:var(--ok);color:#06240f;font:800 14px/24px var(--h);text-align:center}
+.slots{display:flex;gap:6px;margin-bottom:12px}
+.slots i{flex:1;height:8px;border-radius:5px;background:rgba(255,255,255,.14)}
+.slots i.on{background:var(--ok)}
+.pairs{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px}
+.pairs .tile.sel{border-color:var(--mars2);background:rgba(255,176,103,.22)}
+.pairs .tile.m1{border-color:#52e08a;background:rgba(82,224,138,.2)}
+.pairs .tile.m2{border-color:#3fb6ff;background:rgba(63,182,255,.2)}
+.pairs .tile.m3{border-color:#ffd166;background:rgba(255,209,102,.2)}
+.pairs .tile.m4{border-color:#e79bff;background:rgba(231,155,255,.2)}
+.pairs .tile.lk{pointer-events:none}
+.big{font-size:54px;line-height:1;margin-bottom:6px}
+.stars{font-size:46px;letter-spacing:6px;margin:6px 0}
+.stars span{display:inline-block;animation:starIn .5s both}
+.stars span:nth-child(2){animation-delay:.25s}.stars span:nth-child(3){animation-delay:.5s}
+@keyframes starIn{from{transform:scale(3) rotate(-40deg);opacity:0}}
+.facts{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:7px;font-weight:700;font-size:15px;line-height:1.35}
+.facts li{padding:8px 11px;border-radius:11px;background:rgba(255,255,255,.07)}
+.kv{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0}
+.kv div{background:rgba(255,255,255,.08);border-radius:12px;padding:6px 12px;font:800 15px var(--h)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tabs button{border:1.5px solid var(--line);background:rgba(255,255,255,.06);color:var(--ink);padding:6px 12px;border-radius:999px;font:800 14px var(--h)}
+.tabs button.on{background:var(--mars);color:#2a0f06;border-color:transparent}
+.fcard{padding:11px 13px;border-radius:14px;background:rgba(255,255,255,.07);border:1.5px solid var(--line);font-weight:700;font-size:15px;line-height:1.4}
+.fcard.lk{opacity:.5;font-style:italic}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px}
+kbd{background:rgba(255,255,255,.14);padding:2px 8px;border-radius:7px;font:800 14px var(--h);border:1px solid var(--line)}
+.rocket{font-size:90px;animation:lift 3.2s ease-in forwards}
+@keyframes lift{0%{transform:translateY(0) scale(1)}15%{transform:translateY(6px) scale(1.02)}100%{transform:translateY(-120vh) scale(.6)}}
+.cert{border:3px double var(--mars2);border-radius:18px;padding:22px;text-align:center;background:linear-gradient(160deg,rgba(255,150,90,.15),rgba(255,255,255,.03))}
+.cert h2{color:var(--mars2)}
+@media(max-width:640px){#hud{flex-wrap:wrap;gap:6px}.objs{order:3;flex-basis:100%;justify-content:center;margin:0}.hb{margin-left:auto}.scr{padding:16px 14px}.pairs{grid-template-columns:1fr}.hbox{padding:5px 8px}.gauges{min-width:130px}.g .bar{min-width:60px}#mini{width:120px;height:80px}.objs{font-size:13px}}
+@media(max-height:520px){.title{padding-top:3vh}.title p{display:none}}
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<div id="hud" class="hide">
+  <div class="hbox gauges">
+    <div class="g bat"><span>⚡</span><div class="bar"><i id="gbat"></i></div><span id="tbat">100%</span></div>
+    <div class="g hull"><span>🛡️</span><div class="bar"><i id="ghull"></i></div><span id="thull">100%</span></div>
+  </div>
+  <div class="hbox objs" id="objs"></div>
+  <div class="hb"><button class="ib" id="bmute" title="Sound">🔊</button><button class="ib" id="bpause" title="Pause">⏸</button></div>
+</div>
+<canvas id="mini" class="hide" width="336" height="224"></canvas>
+<div id="scan" class="hide"><div class="ring"><i id="scani">🔬</i></div><span id="scant">Hold still…</span></div>
+<div id="msg"></div>
+<div id="stick" class="hide"><i></i></div>
+<button id="boost" class="hide">BOOST</button>
+<div id="ui"></div>
+<div id="ov" class="hide"></div>
+<script>
+// ============ QUESTION BANK ============
+// mc(topic, question, correct, [wrong...], why)
+const BANK = [];
+function mc(t, q, a, w, why) { BANK.push({ id: BANK.length, t, type: 'mc', q, a, w, why }); }
+function ord(t, q, items, why) { BANK.push({ id: BANK.length, t, type: 'order', q, items, why }); }
+function pairs(t, q, items, why) { BANK.push({ id: BANK.length, t, type: 'pairs', q, items, why }); }
+
+const TOPICS = {
+  rover:   { name: 'Rovers & landing',   emoji: '🤖' },
+  mars:    { name: 'Meet Mars',           emoji: '🔴' },
+  water:   { name: 'Water & rocks',       emoji: '💧' },
+  volcano: { name: 'Volcano & gravity',   emoji: '🌋' },
+  canyon:  { name: 'Canyons & distance',  emoji: '🏞️' },
+  climate: { name: 'Cold, air & ice',     emoji: '🧊' },
+  power:   { name: 'Power & moons',       emoji: '🔋' }
+};
+
+// ---- rover ----
+mc('rover', 'What is a rover?', 'A robot vehicle that drives around another world to explore it', ['A rocket that carries astronauts', 'A kind of Martian rock', 'A space telescope'], 'A rover is a robot explorer on wheels. Scientists on Earth send it plans, and it drives, takes pictures and studies rocks.');
+mc('rover', 'Why does a rover have a tall mast with cameras on top?', 'So it can see far, like eyes on a tall head', ['To catch rain water', 'To keep its wheels cool', 'To tell the time'], 'The mast lifts the cameras high up so the rover can spot rocks, hills and dangers far away.');
+mc('rover', 'Which part of the rover drills and picks up rock samples?', 'The robotic arm', ['The wheels', 'The antenna', 'The solar panel'], 'The robotic arm holds tools: a drill, a camera and a tiny lab. It can reach out and touch rocks.');
+mc('rover', 'Which rover landed on Mars in February 2021?', 'Perseverance', ['Sojourner', 'Opportunity', 'Voyager'], 'Perseverance landed in Jezero Crater on 18 February 2021. Sojourner was the very first Mars rover, in 1997.');
+mc('rover', 'What did the little helicopter Ingenuity do on Mars?', 'It was the first helicopter to fly on another planet', ['It dug a deep hole', 'It carried the rover on its back', 'It made rain'], 'Ingenuity flew in April 2021. Mars air is very thin, so its blades had to spin super fast.');
+mc('rover', 'Radio messages take minutes to reach Mars. Why can\'t scientists steer a rover live with a joystick, like in this game?', 'The message would arrive too late', ['Joysticks do not work in space', 'Mars has no radio waves', 'Rovers cannot move'], 'Real rovers get a plan from Earth, then drive short bits by themselves and check for danger with their own cameras.');
+ord('rover', 'Put Perseverance\'s trip in the right order.', ['Rocket launches from Earth', 'Flies through space for about 7 months', 'Parachute opens', 'Sky crane lowers the rover', 'Rover drives away'], 'The landing took only about 7 minutes. Engineers called it "seven minutes of terror" because nobody could help in time.');
+mc('rover', 'How many wheels does the Perseverance rover have?', '6', ['4', '8', '2'], 'Six strong metal wheels, each with its own motor, help it climb over rocks and sand.');
+pairs('rover', 'Match each rover part to its job.', [['Mast camera', 'Takes pictures'], ['Robotic arm', 'Drills rock'], ['Wheels', 'Drive over rocks'], ['Antenna', 'Talks to Earth']], 'Every part has a job: eyes (camera), hand (arm), legs (wheels) and a radio (antenna).');
+
+// ---- mars ----
+mc('mars', 'Which planet from the Sun is Mars?', 'Fourth', ['Second', 'Sixth', 'First'], 'Mercury, Venus, Earth, then Mars. Mars is our next-door neighbour, farther from the Sun than Earth.');
+mc('mars', 'Why does Mars look red?', 'Its dust has rust (iron oxide) in it', ['It is very hot like a fire', 'It is covered in red paint', 'It has red oceans'], 'Iron in the ground has rusted, just like an old nail. The rusty dust makes Mars the Red Planet.');
+mc('mars', 'How many moons does Mars have?', 'Two', ['None', 'Five', 'One hundred'], 'Mars has two small moons called Phobos and Deimos.');
+mc('mars', 'True or false: Mars is about half as wide as Earth.', 'True', ['False'], 'Mars is about 6,800 km wide and Earth about 12,700 km, so Mars is roughly half the width.');
+mc('mars', 'A day on Mars is called a "sol". How long is it?', 'About the same as an Earth day (24 hours 40 minutes)', ['Twice as long as an Earth day', 'Only 6 hours', 'A whole week'], 'A sol is only about 40 minutes longer than an Earth day. Scientists on the rover team even live on "Mars time"!');
+mc('mars', 'How long is a year on Mars?', '687 Earth days, almost 2 Earth years', ['365 days, the same as Earth', '88 days', '10 years'], 'Mars is farther from the Sun, so its trip around the Sun takes longer than ours.');
+mc('mars', 'What colour is the Mars sky in the daytime?', 'Butterscotch (pinky-orange)', ['Bright blue', 'Green', 'Purple'], 'Fine dust floats in the thin air and turns the daytime sky pinky-orange. Sunsets on Mars look blue!');
+mc('mars', 'What is a dust devil?', 'A spinning column of wind and dust', ['A Martian animal', 'A kind of rover', 'A rock made of fire'], 'Dust devils are whirling winds. On Mars some are taller than a skyscraper. They once cleaned dust off the solar panels of the Spirit rover.');
+mc('mars', 'Mars dust has iron in it. Which tool could pick up iron-rich dust from the sand?', 'A magnet', ['A sieve', 'A ruler', 'A funnel'], 'Magnets attract iron. Mars rovers carry magnets to catch dust and learn what it is made of.');
+mc('mars', 'You want to separate big pebbles from fine sand. Which tool is best?', 'A sieve', ['A magnet', 'A thermometer', 'A balance scale'], 'A sieve has holes. Fine sand falls through, and the pebbles stay on top. This is how mixtures can be separated.');
+
+// ---- water ----
+mc('water', 'Scientists think Jezero Crater was once...', 'A lake fed by a river', ['A hot volcano', 'A forest', 'A city'], 'Jezero has a fan-shaped delta where a river once flowed in. Perseverance landed there to search for signs of ancient life.');
+mc('water', 'Why do scientists search for water on Mars?', 'Life as we know it needs water', ['Rovers need a drink', 'Water makes Mars red', 'To fill swimming pools'], 'All living things on Earth need water. If Mars once had water, tiny life might have lived there too.');
+mc('water', 'Rocks made of tiny grains of mud and sand that settled in layers are called...', 'Sedimentary rocks', ['Igneous rocks', 'Magnet rocks', 'Cloud rocks'], 'Sedimentary rock forms in layers, often under water. Finding it on Mars is a clue that water was there long ago.');
+mc('water', 'Rocks that form when hot melted rock (lava) cools down are called...', 'Igneous rocks', ['Sedimentary rocks', 'Ice rocks', 'Salt rocks'], 'Igneous means "made by fire". Volcanoes make igneous rocks such as basalt.');
+mc('water', 'Perseverance seals rock samples inside...', 'Metal sample tubes', ['Paper bags', 'Water bottles', 'Glass jars of sand'], 'The rover packs rock cores in tidy tubes so they can be collected and studied by labs on Earth one day.');
+mc('water', 'Mars was once warmer and wetter. About how long ago?', 'About 3 to 4 billion years ago', ['Last year', 'About 100 years ago', 'About 5,000 years ago'], 'That is longer ago than the dinosaurs! Mars lost most of its thick air and its water slowly.');
+mc('water', 'True or false: Rivers of liquid water flow on the surface of Mars today.', 'False', ['True'], 'It is too cold and the air is too thin. Water on Mars today is mostly ice, at the poles and underground.');
+mc('water', 'Scientists search for tiny signs of ancient life called microbes. What are microbes?', 'Living things too small to see', ['Tiny robots', 'Very small rocks', 'Space dust clouds'], 'Microbes are tiny living things, like bacteria. If life ever existed on Mars, it may have been microbes.');
+mc('water', 'A river delta forms where a river slows down and drops...', 'Mud and sand (sediment)', ['Fish', 'Metal', 'Ice cream'], 'Rivers carry mud and sand. When they slow down at a lake, they drop it and build a fan-shaped delta.');
+
+// ---- volcano ----
+mc('volcano', 'Olympus Mons is the tallest volcano in our solar system. How tall is it compared with Mount Everest?', 'About 2½ times taller', ['About the same height', 'Half as tall', 'As tall as a house'], 'Olympus Mons is about 22 km high. Everest is about 9 km.');
+mc('volcano', 'Mount Everest is about 9 km tall. Olympus Mons is about 22 km tall. How much taller is Olympus Mons?', '13 km', ['31 km', '9 km', '22 km'], '22 − 9 = 13. Olympus Mons is 13 km taller than Everest.');
+mc('volcano', 'Hot melted rock that flows out of a volcano is called...', 'Lava', ['Water', 'Sand', 'Snow'], 'Under the ground it is called magma. When it comes out, it is called lava.');
+mc('volcano', 'Gravity on Mars is weaker than on Earth. On Mars you would weigh...', 'About one third as much', ['More than on Earth', 'The same', 'Nothing at all'], 'Mars gravity is about 38% of Earth\'s. A child who weighs 30 kg on Earth would weigh only about 11 kg on Mars.');
+mc('volcano', 'A rock weighs 100 kg on Earth. About how much would it weigh on Mars?', 'About 38 kg', ['100 kg', '250 kg', '1 kg'], 'Mars pulls things with about 38% of Earth\'s gravity, so 100 kg feels like 38 kg.');
+mc('volcano', 'Because gravity is weaker on Mars, an astronaut who jumps would...', 'Jump much higher than on Earth', ['Not be able to jump', 'Float away into space', 'Jump exactly the same'], 'Weaker gravity pulls you down more gently, so jumps go about 3 times higher. You would not float away though!');
+mc('volcano', 'Why does a rover use more battery when it drives up a steep slope?', 'Its motors have to work harder', ['The Sun gets hotter', 'The wheels get heavier', 'The slope makes electricity'], 'Climbing is hard work. Engineers plan routes so the rover avoids steep hills when they can.');
+mc('volcano', 'A volcano made of hardened lava is made of what kind of rock?', 'Igneous rock', ['Sedimentary rock', 'Salt', 'Ice'], 'Igneous rock forms when lava cools and goes hard. Olympus Mons is a giant pile of it.');
+
+// ---- canyon ----
+mc('canyon', 'Valles Marineris is a giant canyon on Mars. About how long is it?', 'About 4,000 km, as wide as the USA', ['About 10 km, like a street', 'About 100 km', 'About 40 km'], 'It is one of the biggest canyons in the solar system: up to 7 km deep in places.');
+mc('canyon', 'The Grand Canyon on Earth is about 450 km long. Valles Marineris is about 4,000 km long. About how many times longer?', 'About 9 times longer', ['About 2 times longer', 'The same length', '100 times longer'], '450 × 9 = 4,050, so Valles Marineris is about 9 Grand Canyons end to end.');
+mc('canyon', 'What is a canyon?', 'A deep valley with steep sides', ['A tall pointy mountain', 'A round hole made by a space rock', 'A sandy hill'], 'Canyons are cut or cracked deep into the ground. Rovers must keep away from the edges.');
+mc('canyon', 'A bowl-shaped hole made when a space rock hits the ground is called a...', 'Crater', ['Canyon', 'Delta', 'Dune'], 'Mars has millions of craters. Jezero is a crater about 45 km wide.');
+mc('canyon', 'Radio messages take between 3 and 22 minutes to reach Mars. Why does the time change?', 'Earth and Mars move, so the distance changes', ['Radio waves sometimes go faster', 'Mars spins backwards', 'The Sun blocks them every day'], 'Both planets circle the Sun. Sometimes they are close and sometimes on opposite sides of the Sun.');
+mc('canyon', 'A message from Mars takes 10 minutes to reach Earth. Mission Control replies right away. How long until the rover gets the answer?', '20 minutes', ['10 minutes', '5 minutes', '1 hour'], '10 minutes there + 10 minutes back = 20 minutes of waiting. That is why rovers need to think for themselves.');
+mc('canyon', 'A rover drives about 150 m in one hour. How far does it drive in 2 hours?', '300 m', ['150 m', '75 m', '3,000 m'], '150 + 150 = 300 metres. Real rovers drive slowly and carefully, a bit like a snail with a mission.');
+mc('canyon', 'Before driving next to a cliff edge, a rover should...', 'Take pictures and check the slope first', ['Drive as fast as possible', 'Close its cameras', 'Turn off its brakes'], 'Rover drivers look at pictures first. One wrong move could break the rover, and nobody can rescue it.');
+
+// ---- climate ----
+mc('climate', 'How cold is Mars on average?', 'About −60 °C, colder than a freezer', ['About +30 °C, like a beach', 'About 0 °C', 'About +100 °C'], 'It is much colder than Earth. At night near the poles it can drop below −120 °C!');
+mc('climate', 'What is the air on Mars mostly made of?', 'Carbon dioxide', ['Oxygen', 'Helium', 'Steam'], 'About 95% of Mars air is carbon dioxide. There is almost no oxygen to breathe.');
+mc('climate', 'Could you breathe the air on Mars?', 'No, it is very thin and has almost no oxygen', ['Yes, it is just like Earth', 'Only at night', 'Only near volcanoes'], 'Astronauts would need a space suit and their own air supply.');
+mc('climate', 'The polar caps of Mars are made of...', 'Water ice and frozen carbon dioxide (dry ice)', ['Only sand', 'Liquid lava', 'Salt and sugar'], 'The white caps at the top and bottom of Mars are frozen. Part is water ice and part is dry ice.');
+mc('climate', 'Dry ice is frozen carbon dioxide. When it warms up, it turns straight from a solid into a...', 'Gas', ['Liquid', 'Metal', 'Rock'], 'Solid to gas with no puddle in between! On Mars, the dry ice at the poles does this every spring.');
+mc('climate', 'Why does Mars have seasons?', 'Its axis is tilted, like Earth\'s', ['It has two moons', 'Dust devils make them', 'It changes colour'], 'Mars leans over by about 25°, almost the same as Earth, so it has spring, summer, autumn and winter.');
+mc('climate', 'The rover\'s wheels begin to slide on ice. What is the best thing to do?', 'Go slowly and steer gently', ['Speed up fast', 'Turn the wheel sharply', 'Jump out'], 'On slippery ground, a gentle touch works best. Quick turns make you slide sideways, just like a car on ice.');
+mc('climate', 'MOXIE was a machine on Perseverance. What did it make from the Mars air?', 'Oxygen', ['Water', 'Fuel for the rover', 'Rocks'], 'MOXIE split carbon dioxide to make oxygen. One day astronauts could use this to breathe.');
+mc('climate', 'Why is Mars so cold, even in the daytime?', 'It is far from the Sun and its thin air holds little heat', ['It is closer to the Sun than Earth', 'It is covered in ice cream', 'Its moons block the Sun'], 'Thick air on Earth works like a warm blanket. Mars has only a very thin blanket of air.');
+
+// ---- power ----
+mc('power', 'Why do solar-powered rovers need to rest at night?', 'Solar panels need sunlight to make electricity', ['They get scared of the dark', 'Their wheels freeze solid', 'The Sun turns off the radio'], 'No sunlight, no solar power. The rovers Spirit and Opportunity slept through the cold Martian nights.');
+mc('power', 'Perseverance has no big solar panels. What makes its electricity?', 'A nuclear battery (RTG) that uses heat', ['A wind turbine', 'Petrol', 'A hamster wheel'], 'The RTG turns the heat from a special material into power day and night, even in dust storms.');
+mc('power', 'In 2018 a giant dust storm covered the whole of Mars. Why was this bad for the Opportunity rover?', 'The dust blocked the sunlight from its solar panels', ['Wind blew it into space', 'Rain flooded it', 'The dust ate its wheels'], 'Without sunshine the panels made no power, and Opportunity went silent after 14 years of exploring.');
+mc('power', 'What are the names of the two moons of Mars?', 'Phobos and Deimos', ['Titan and Europa', 'Luna and Sol', 'Mars One and Mars Two'], 'Phobos means "fear" and Deimos means "panic" in Greek, named after the two sons of the Greek war god.');
+mc('power', 'What shape is Phobos, the biggest moon of Mars?', 'A lumpy potato', ['A perfect ball', 'A cube', 'A pyramid'], 'Phobos and Deimos are tiny and too light to pull themselves into a ball, so they look like potatoes.');
+ord('power', 'Put these planets in order, starting nearest to the Sun.', ['Mercury', 'Venus', 'Earth', 'Mars'], 'My Very Easy Method Just Speeds Up Naming: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune.');
+mc('power', 'Scientists want a rocket to bring the sample tubes home. Why bring Mars rocks to Earth?', 'Earth labs have bigger, better machines to study them', ['To sell them', 'To plant them', 'Because the rover is bored'], 'A rover carries only small tools. Giant lab machines on Earth can look at rocks in much more detail.');
+mc('power', 'Engineers test two wheel designs on sand. To make it a fair test, they change...', 'Only the wheel design', ['The wheels, the sand and the speed', 'Nothing at all', 'The planet'], 'In a fair test you change just one thing and keep everything else the same. Then you know what made the difference.');
+mc('power', 'Which planet have scientists explored most with rovers?', 'Mars', ['Jupiter', 'Venus', 'Neptune'], 'Mars has solid ground and mild(ish) weather. Jupiter has no surface, and Venus is hot enough to melt lead!');
+
+// ============ MISSIONS ============
+const MISSIONS = [
+  { id: 1, name: 'Jezero Landing', emoji: '🛬', topic: 'rover', tag: 'Rovers & landing', w: 2300, h: 1500, seed: 11,
+    biome: { c1: [168, 90, 56], c2: [198, 122, 78], c3: [128, 72, 52], c3w: .7, rock: ['#c58660', '#7b4632'], dust: '205,140,100', feat: null, sky: '#e2a070' },
+    rocks: 62, sand: 2, ice: 0, rough: 0, devils: 0, cliff: 0, night: 0, storm: 0, samples: 3, stations: 2, batt: 4,
+    story: 'Landing day! Your rover Rusty has just touched down in <b>Jezero Crater</b>, the same place the real rover Perseverance landed in 2021. Mission Control needs you to test your drill and cameras.',
+    goal: 'Drill 3 rock samples, scan 2 science stations, then return to the lander.' },
+  { id: 2, name: 'Dusty Plains', emoji: '🌪️', topic: 'mars', tag: 'Meet Mars', w: 2600, h: 1700, seed: 23,
+    biome: { c1: [190, 118, 78], c2: [216, 156, 104], c3: [150, 84, 56], c3w: .55, rock: ['#cf9269', '#85503a'], dust: '222,166,118', feat: null, sky: '#efb98a' },
+    rocks: 70, sand: 5, ice: 0, rough: 0, devils: 3, cliff: 0, night: 0, storm: 0, samples: 3, stations: 2, batt: 5,
+    story: 'The Dusty Plains are wide, flat and windy. Dust devils whirl across the land. Mission Control wants soil samples and photos of the red dust.',
+    goal: 'Avoid the dust devils and sandy patches. Collect samples and scan the stations.' },
+  { id: 3, name: 'Ancient River Delta', emoji: '💧', topic: 'water', tag: 'Water & rocks', w: 2600, h: 1700, seed: 37,
+    biome: { c1: [160, 126, 100], c2: [190, 152, 120], c3: [120, 128, 124], c3w: .85, rock: ['#b79b86', '#6f5d54'], dust: '196,160,128', feat: 'delta', sky: '#e3b98f' },
+    rocks: 74, sand: 3, ice: 0, rough: 0, devils: 1, cliff: 0, night: 0, storm: 0, samples: 3, stations: 2, batt: 5,
+    story: 'Look at the grey-blue stripes: a river once flowed here more than 3 billion years ago! Scientists think clay rocks in a delta could hide signs of ancient life.',
+    goal: 'Follow the old riverbed. Drill clay and sandstone samples.' },
+  { id: 4, name: 'Olympus Slopes', emoji: '🌋', topic: 'volcano', tag: 'Volcano & gravity', w: 2700, h: 1800, seed: 41,
+    biome: { c1: [108, 70, 58], c2: [150, 92, 70], c3: [70, 52, 50], c3w: .8, rock: ['#8a6a5c', '#473430'], dust: '150,100,80', feat: 'volc', sky: '#d99a78' },
+    rocks: 80, sand: 2, ice: 0, rough: 7, devils: 1, cliff: 0, night: 0, storm: 0, samples: 3, stations: 2, batt: 6,
+    story: 'You are on the foothills of <b>Olympus Mons</b>, the tallest volcano in the solar system. The ground is covered in sharp, dark lava rock. Drive carefully!',
+    goal: 'Slow down on the lava fields. Collect igneous rock samples.' },
+  { id: 5, name: 'Canyon Rim', emoji: '🏞️', topic: 'canyon', tag: 'Canyons & distance', w: 2800, h: 1700, seed: 53,
+    biome: { c1: [158, 70, 46], c2: [196, 96, 60], c3: [110, 44, 34], c3w: .7, rock: ['#c0714f', '#6e3426'], dust: '200,110,76', feat: 'canyon', sky: '#e39a72' },
+    rocks: 66, sand: 2, ice: 0, rough: 0, devils: 1, cliff: 1, night: 0, storm: 0, samples: 3, stations: 2, batt: 5,
+    story: '<b>Valles Marineris</b> is a canyon as long as the USA is wide. A huge crack cuts across your map. Use the two land bridges to cross, and keep away from the cliffs!',
+    goal: 'Find the land bridges. Collect samples on both sides of the canyon.' },
+  { id: 6, name: 'Polar Ice Cap', emoji: '🧊', topic: 'climate', tag: 'Cold, air & ice', w: 2600, h: 1800, seed: 67,
+    biome: { c1: [214, 222, 232], c2: [236, 240, 246], c3: [196, 150, 130], c3w: .45, rock: ['#a9b3c2', '#5b6577'], dust: '225,230,240', feat: 'polar', sky: '#cdd8e8' },
+    rocks: 60, sand: 0, ice: 9, rough: 0, devils: 0, cliff: 0, night: 0, storm: 0, samples: 3, stations: 2, batt: 6,
+    story: 'The north pole of Mars is a frozen desert of water ice and dry ice. It is freezing, and the ice is slippery. Take it slow and steer gently.',
+    goal: 'Cross the slippery ice. Drill ice samples and scan the stations.' },
+  { id: 7, name: 'Night Storm Launch', emoji: '🚀', topic: 'power', tag: 'Power & moons', w: 2700, h: 1700, seed: 79,
+    biome: { c1: [150, 84, 58], c2: [184, 110, 76], c3: [110, 62, 48], c3w: .6, rock: ['#b07050', '#6a3c2c'], dust: '190,120,86', feat: null, sky: '#3a2038' },
+    rocks: 72, sand: 3, ice: 0, rough: 0, devils: 3, cliff: 0, night: 1, storm: 1, samples: 3, stations: 2, batt: 7,
+    story: 'Final mission! Night falls and a dust storm blows in. Your solar panels are useless in the dark, so watch the battery. Collect the last sample tubes and load them into the rocket before the storm gets worse.',
+    goal: 'Use your headlights. Collect 3 tubes, then reach the rocket for the Launch Check.' }
+];
+
+const LEVELS = {
+  rookie: { name: 'Rookie', drain: .6,  dmg: .55, opts: 3, dev: .5, rocks: .8,  wrong: 6,  speed: 1.05 },
+  pro:    { name: 'Pro',    drain: 1,   dmg: 1,   opts: 4, dev: 1,  rocks: 1,   wrong: 10, speed: 1 },
+  champ:  { name: 'Champion', drain: 1.35, dmg: 1.4, opts: 4, dev: 1.5, rocks: 1.2, wrong: 14, speed: 1 }
+};
+'use strict';
+// ================= helpers =================
+const $ = s => document.querySelector(s);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const dist = (a, b, c, d) => Math.hypot(c - a, d - b);
+const angDiff = (a, b) => { let d = (b - a) % (Math.PI * 2); if (d > Math.PI) d -= Math.PI * 2; if (d < -Math.PI) d += Math.PI * 2; return d; };
+const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+function rng(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+function shuffle(a, R) { R = R || Math.random; a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function hash2(x, y, s) { let h = Math.imul(x, 374761393) + Math.imul(y, 668265263) + Math.imul(s, 1442695041) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; }
+function vnoise(x, y, s) { const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf); const a = hash2(xi, yi, s), b = hash2(xi + 1, yi, s), c = hash2(xi, yi + 1, s), d = hash2(xi + 1, yi + 1, s); return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v; }
+function fbm(x, y, s) { return (vnoise(x, y, s) * .5 + vnoise(x * 2, y * 2, s + 1) * .25 + vnoise(x * 4, y * 4, s + 2) * .125 + vnoise(x * 8, y * 8, s + 3) * .0625) / .9375; }
+const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+
+// ================= save =================
+const SKEY = 'marsrover-save';
+let SAVE = (() => { const d = { stars: {}, facts: {}, missed: {}, level: 'pro', sound: true, seen: false }; try { return Object.assign(d, JSON.parse(localStorage.getItem(SKEY) || '{}')); } catch (e) { return d; } })();
+function persist() { try { localStorage.setItem(SKEY, JSON.stringify(SAVE)); } catch (e) { } }
+
+// ================= audio =================
+let AC = null, engineOsc = null, engineGain = null;
+function audio() { if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { } } if (AC && AC.state === 'suspended') AC.resume(); return AC; }
+function tone(f, d, type = 'sine', vol = .12, when = 0, slide = 0) {
+  if (!SAVE.sound) return; const a = audio(); if (!a) return;
+  const o = a.createOscillator(), g = a.createGain(), t = a.currentTime + when;
+  o.type = type; o.frequency.setValueAtTime(f, t); if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(30, f + slide), t + d);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + .015); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+  o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + d + .02);
+}
+const SFX = {
+  ok() { [523, 659, 784, 1047].forEach((f, i) => tone(f, .22, 'triangle', .13, i * .08)); },
+  bad() { tone(180, .28, 'sawtooth', .1, 0, -60); tone(140, .3, 'sawtooth', .1, .12, -50); },
+  pick() { tone(880, .12, 'square', .07); tone(1320, .16, 'square', .07, .08); },
+  hit() { tone(110, .18, 'square', .14, 0, -50); },
+  drill() { tone(240 + Math.random() * 40, .08, 'sawtooth', .035); },
+  done() { [392, 523, 659, 784, 1047].forEach((f, i) => tone(f, .26, 'triangle', .13, i * .09)); },
+  click() { tone(660, .06, 'square', .05); },
+  boom() { tone(90, .8, 'sawtooth', .16, 0, -50); tone(60, 1.4, 'square', .1, .1, -20); },
+  fanfare() { [523, 659, 784, 1047, 784, 1047, 1318].forEach((f, i) => tone(f, .3, 'triangle', .14, i * .13)); }
+};
+function engineSound(on, sp) {
+  if (!SAVE.sound) on = false; if (!on && !engineOsc) return; const a = audio(); if (!a) return;
+  if (!engineOsc) { engineOsc = a.createOscillator(); engineGain = a.createGain(); engineOsc.type = 'triangle'; engineOsc.frequency.value = 55; engineGain.gain.value = 0; engineOsc.connect(engineGain); engineGain.connect(a.destination); engineOsc.start(); }
+  engineGain.gain.setTargetAtTime(on ? clamp(sp / 170, 0, 1.3) * .035 : 0, a.currentTime, .08); engineOsc.frequency.setTargetAtTime(48 + sp * .22, a.currentTime, .1);
+}
+
+// ================= ground (biome) =================
+let BIO = null, BSEED = 1, BW = 2000, BH = 1500;
+function groundColor(x, y) {
+  const b = BIO, n = fbm(x * .0035, y * .0035, BSEED), m = fbm(x * .018 + 40, y * .018, BSEED + 7);
+  let t = n, r, g, bl;
+  let c1 = b.c1, c2 = b.c2, c3 = b.c3, w3 = smooth(.52, .78, m) * b.c3w;
+  if (b.feat === 'volc') { const f = fbm(x * .0016, y * .009, BSEED + 3); w3 = Math.max(w3, smooth(.5, .7, f) * .9); }
+  if (b.feat === 'canyon') { const s = Math.sin(y * .045 + n * 7) * .5 + .5; t = clamp(t * .6 + s * .4, 0, 1); }
+  r = lerp(c1[0], c2[0], t); g = lerp(c1[1], c2[1], t); bl = lerp(c1[2], c2[2], t);
+  if (b.feat === 'delta') {
+    let best = 9e9; for (let k = 0; k < 3; k++) { const cx = BW * (.22 + .28 * k) + Math.sin(y * .0034 + k * 2) * 190 + Math.sin(y * .011 + k) * 50; const wd = 40 + (y / BH) * 150; const d = Math.abs(x - cx) / wd; if (d < best) best = d; }
+    const ch = 1 - smooth(.55, 1, best); const st = Math.sin(y * .06 + n * 9) * .5 + .5;
+    r = lerp(r, c3[0] + st * 14, ch * .9); g = lerp(g, c3[1] + st * 12, ch * .9); bl = lerp(bl, c3[2] + st * 10, ch * .9);
+  } else {
+    r = lerp(r, c3[0], w3); g = lerp(g, c3[1], w3); bl = lerp(bl, c3[2], w3);
+  }
+  if (b.feat === 'polar') { const cr = Math.abs(fbm(x * .006 + 9, y * .006, BSEED + 5) - .5); if (cr < .018) { r -= 36; g -= 26; bl -= 10; } }
+  return [r, g, bl];
+}
+const TILES = new Map(), TS = 256;
+function getTile(tx, ty) {
+  const key = tx + ',' + ty; let c = TILES.get(key); if (c) return c;
+  c = document.createElement('canvas'); c.width = c.height = TS; const g = c.getContext('2d'), id = g.createImageData(TS, TS), d = id.data;
+  for (let py = 0; py < TS; py += 2) for (let px = 0; px < TS; px += 2) {
+    const col = groundColor(tx * TS + px, ty * TS + py);
+    for (let j = 0; j < 2; j++) for (let i = 0; i < 2; i++) {
+      const o = ((py + j) * TS + px + i) * 4, sp = (hash2(tx * TS + px + i, ty * TS + py + j, 5) - .5) * 14;
+      d[o] = col[0] + sp; d[o + 1] = col[1] + sp * .9; d[o + 2] = col[2] + sp * .8; d[o + 3] = 255;
+    }
+  }
+  g.putImageData(id, 0, 0);
+  const R = rng(hash2(tx, ty, BSEED) * 1e9 | 0);
+  for (let i = 0; i < 14; i++) { // pebbles
+    const x = R() * TS, y = R() * TS, r = 1 + R() * 2.6;
+    g.fillStyle = 'rgba(30,12,8,.28)'; g.beginPath(); g.ellipse(x + 1.2, y + 1.4, r, r * .75, 0, 0, 7); g.fill();
+    g.fillStyle = BIO.rock[0]; g.globalAlpha = .75; g.beginPath(); g.ellipse(x, y, r, r * .8, R() * 3, 0, 7); g.fill(); g.globalAlpha = 1;
+  }
+  TILES.set(key, c); if (TILES.size > 160) TILES.delete(TILES.keys().next().value);
+  return c;
+}
+
+// ================= world generation =================
+const RADIUS = 20; // rover collision radius
+function rockSprite(r, R, biome) {
+  const pad = 10, S = Math.ceil(r * 2 + pad * 2), c = document.createElement('canvas'); c.width = c.height = S; const g = c.getContext('2d'), cx = S / 2, cy = S / 2;
+  const n = 9, pts = []; for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2, rr = r * (.8 + R() * .26); pts.push([cx + Math.cos(a) * rr, cy + Math.sin(a) * rr]); }
+  const path = (ox, oy) => { g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0] + ox, p[1] + oy) : g.moveTo(p[0] + ox, p[1] + oy)); g.closePath(); };
+  g.fillStyle = 'rgba(25,8,6,.34)'; path(r * .28, r * .34); g.fill();
+  const gr = g.createLinearGradient(cx - r, cy - r, cx + r, cy + r); gr.addColorStop(0, biome.rock[0]); gr.addColorStop(1, biome.rock[1]);
+  g.fillStyle = gr; path(0, 0); g.fill(); g.lineWidth = 1.5; g.strokeStyle = 'rgba(20,8,5,.45)'; g.stroke();
+  g.fillStyle = 'rgba(255,235,210,.22)'; g.beginPath(); g.ellipse(cx - r * .25, cy - r * .3, r * .42, r * .26, -.6, 0, 7); g.fill();
+  g.strokeStyle = 'rgba(20,8,5,.3)'; g.lineWidth = 1; for (let i = 0; i < 2; i++) { g.beginPath(); g.moveTo(cx + (R() - .5) * r, cy + (R() - .3) * r); g.lineTo(cx + (R() - .5) * r * 1.2, cy + (R() + .1) * r * .8); g.stroke(); }
+  return c;
+}
+function zoneSprite(z, R, biome) {
+  const S = Math.ceil(z.r * 2 + 8), c = document.createElement('canvas'); c.width = c.height = S; const g = c.getContext('2d'), cx = S / 2, cy = S / 2;
+  const n = 28, pts = []; const ph = R() * 9; for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2, rr = z.r * (.8 + .2 * Math.sin(a * 3 + ph) + .06 * R()); pts.push([cx + Math.cos(a) * rr * .95, cy + Math.sin(a) * rr * .95]); }
+  g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); g.save(); g.clip();
+  if (z.k === 'sand') {
+    g.fillStyle = 'rgba(236,196,128,.55)'; g.fillRect(0, 0, S, S);
+    g.strokeStyle = 'rgba(150,100,50,.45)'; g.lineWidth = 2; for (let y = 6; y < S; y += 11) { g.beginPath(); for (let x = 0; x <= S; x += 8) g.lineTo(x, y + Math.sin(x * .09 + y) * 3); g.stroke(); }
+    g.strokeStyle = 'rgba(255,240,200,.4)'; for (let y = 11; y < S; y += 11) { g.beginPath(); for (let x = 0; x <= S; x += 8) g.lineTo(x, y + Math.sin(x * .09 + y) * 3); g.stroke(); }
+  } else if (z.k === 'ice') {
+    const gr = g.createRadialGradient(cx, cy, 0, cx, cy, z.r); gr.addColorStop(0, 'rgba(210,240,255,.82)'); gr.addColorStop(1, 'rgba(150,205,240,.6)'); g.fillStyle = gr; g.fillRect(0, 0, S, S);
+    g.strokeStyle = 'rgba(255,255,255,.85)'; g.lineWidth = 2; for (let i = 0; i < 7; i++) { g.beginPath(); let x = cx + (R() - .5) * z.r, y = cy + (R() - .5) * z.r; g.moveTo(x, y); for (let k = 0; k < 4; k++) { x += (R() - .5) * 60; y += (R() - .5) * 60; g.lineTo(x, y); } g.stroke(); }
+    g.strokeStyle = 'rgba(90,150,200,.5)'; g.lineWidth = 1; for (let i = 0; i < 5; i++) { g.beginPath(); g.arc(cx + (R() - .5) * z.r, cy + (R() - .5) * z.r, 10 + R() * 30, 0, 3); g.stroke(); }
+  } else { // rough lava rock field
+    g.fillStyle = 'rgba(40,24,24,.62)'; g.fillRect(0, 0, S, S);
+    for (let i = 0; i < z.r * .7; i++) { const x = R() * S, y = R() * S, r = 2 + R() * 6; g.fillStyle = R() < .5 ? 'rgba(20,10,10,.8)' : 'rgba(110,80,70,.7)'; g.beginPath(); for (let k = 0; k < 5; k++) { const a = k / 5 * 6.28; g.lineTo(x + Math.cos(a) * r * (.7 + R() * .5), y + Math.sin(a) * r * (.7 + R() * .5)); } g.fill(); }
+  }
+  g.restore(); g.lineWidth = 3; g.strokeStyle = z.k === 'sand' ? 'rgba(160,110,60,.7)' : z.k === 'ice' ? 'rgba(255,255,255,.7)' : 'rgba(0,0,0,.45)'; g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); g.stroke();
+  return c;
+}
+
+function genWorld(mi, lvKey) {
+  const m = MISSIONS[mi], L = LEVELS[lvKey], R = rng(5000 + mi * 7919), w = m.w, h = m.h;
+  const Wd = { m, mi, w, h, obs: [], zones: [], devils: [], samples: [], stations: [], batts: [], lander: { x: 190, y: h * .5 }, solids: [] };
+  const free = (x, y, r, gap) => Wd.solids.every(c => dist(c.x, c.y, x, y) > c.r + r + gap) && dist(x, y, Wd.lander.x, Wd.lander.y) > r + 130;
+  const addSolid = (o) => { Wd.solids.push(o); Wd.obs.push(o); };
+  // canyon wall with two land bridges
+  if (m.cliff) {
+    const gaps = [h * .27, h * .74], wallX = y => w * .5 + Math.sin(y * .006) * 80 + Math.sin(y * .017) * 24;
+    for (let y = -40; y < h + 60; y += 52) { if (gaps.some(gp => Math.abs(y - gp) < 140)) continue; addSolid({ x: wallX(y), y, r: 64, k: 'cliff' }); }
+    Wd.wallX = wallX; Wd.gaps = gaps;
+  }
+  // objectives
+  const objs = [], spaced = (x, y) => objs.every(o => dist(o.x, o.y, x, y) > 340) && dist(x, y, Wd.lander.x, Wd.lander.y) > 330;
+  function placeObj(side) {
+    for (let t = 0; t < 900; t++) {
+      let x = 260 + R() * (w - 440), y = 150 + R() * (h - 300);
+      if (side === 'L' && x > w * .5 - 120) continue; if (side === 'R' && x < w * .5 + 120) continue;
+      if (free(x, y, 52, 26) && spaced(x, y)) { const o = { x, y }; objs.push(o); return o; }
+    } return null;
+  }
+  const sides = m.cliff ? ['L', 'R', 'R', 'L', 'R'] : [null, null, null, null, null];
+  for (let i = 0; i < m.samples; i++) { const o = placeObj(sides[i]); if (o) { o.kind = 'sample'; o.done = false; o.prog = 0; Wd.samples.push(o); } }
+  for (let i = 0; i < m.stations; i++) { const o = placeObj(sides[3 + i]); if (o) { o.kind = 'station'; o.done = false; o.prog = 0; Wd.stations.push(o); } }
+  objs.forEach(o => Wd.solids.push({ x: o.x, y: o.y, r: 40, k: 'pad' })); // keep rocks off pads
+  // rocks
+  const nr = Math.round(m.rocks * L.rocks);
+  for (let i = 0, t = 0; i < nr && t < 6000; t++) {
+    const big = R() < .18, r = big ? 30 + R() * 22 : 12 + R() * 18, x = 60 + R() * (w - 120), y = 60 + R() * (h - 120);
+    if (free(x, y, r, 62)) { const o = { x, y, r, k: 'rock' }; o.spr = rockSprite(r, R, m.biome); addSolid(o); i++; }
+  }
+  Wd.solids = Wd.solids.filter(s => s.k !== 'pad');
+  // zones
+  const mkZone = (k, rmin, rmax) => { for (let t = 0; t < 300; t++) { const r = rmin + R() * (rmax - rmin), x = 120 + R() * (w - 240), y = 120 + R() * (h - 240); if (dist(x, y, Wd.lander.x, Wd.lander.y) > r + 150 && (!m.cliff || Math.abs(x - m.w * .5) > r + 120)) { const z = { x, y, r, k }; z.spr = zoneSprite(z, R, m.biome); Wd.zones.push(z); return; } } };
+  for (let i = 0; i < m.sand; i++) mkZone('sand', 110, 190);
+  for (let i = 0; i < m.ice; i++) mkZone('ice', 130, 250);
+  for (let i = 0; i < m.rough; i++) mkZone('rough', 120, 210);
+  // devils
+  const nd = Math.round(m.devils * L.dev);
+  for (let i = 0; i < nd; i++) Wd.devils.push({ x: 500 + R() * (w - 800), y: 200 + R() * (h - 400), tx: 0, ty: 0, r: 38, ph: R() * 9, sp: 38 + R() * 20 });
+  Wd.devils.forEach(d => { d.tx = d.x; d.ty = d.y; });
+  // batteries
+  for (let i = 0; i < m.batt; i++) for (let t = 0; t < 300; t++) { const x = 120 + R() * (w - 240), y = 120 + R() * (h - 240); if (free(x, y, 16, 40) && objs.every(o => dist(o.x, o.y, x, y) > 90)) { Wd.batts.push({ x, y, got: false }); break; } }
+  return Wd;
+}
+
+// BFS reachability (rover radius) from lander to every objective
+function reachable(Wd) {
+  const cell = 16, gw = Math.ceil(Wd.w / cell), gh = Math.ceil(Wd.h / cell), blk = new Uint8Array(gw * gh);
+  for (const s of Wd.solids) { const rr = s.r + RADIUS - 2; for (let gy = Math.max(0, Math.floor((s.y - rr) / cell)); gy <= Math.min(gh - 1, Math.floor((s.y + rr) / cell)); gy++) for (let gx = Math.max(0, Math.floor((s.x - rr) / cell)); gx <= Math.min(gw - 1, Math.floor((s.x + rr) / cell)); gx++) if (dist(gx * cell + cell / 2, gy * cell + cell / 2, s.x, s.y) < rr) blk[gy * gw + gx] = 1; }
+  const seen = new Uint8Array(gw * gh), q = [], sx = Math.floor(Wd.lander.x / cell), sy = Math.floor(Wd.lander.y / cell); q.push(sy * gw + sx); seen[sy * gw + sx] = 1;
+  for (let i = 0; i < q.length; i++) { const c = q[i], x = c % gw, y = (c / gw) | 0; for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const nx = x + dx, ny = y + dy; if (nx < 1 || ny < 1 || nx >= gw - 1 || ny >= gh - 1) continue; const k = ny * gw + nx; if (!seen[k] && !blk[k]) { seen[k] = 1; q.push(k); } } }
+  const bad = []; for (const o of [...Wd.samples, ...Wd.stations]) if (!seen[Math.floor(o.y / cell) * gw + Math.floor(o.x / cell)]) bad.push(o.kind + '@' + Math.round(o.x) + ',' + Math.round(o.y));
+  return bad;
+}
+
+// ================= rover drawing (top view) =================
+function drawRover(g, x, y, a, o) {
+  o = o || {}; const ph = o.wheel || 0, mast = o.mast || 0, sc = o.scale || 1;
+  g.save(); g.translate(x, y); g.rotate(a); g.scale(sc, sc);
+  g.fillStyle = 'rgba(25,8,6,.35)'; g.beginPath(); g.ellipse(5, 7, 30, 21, 0, 0, 7); g.fill();
+  // wheels
+  for (const wx of [-16, 0, 16]) for (const wy of [-17, 17]) {
+    g.fillStyle = '#26201f'; g.beginPath(); g.roundRect(wx - 7, wy - 5.5, 14, 11, 3); g.fill();
+    g.strokeStyle = '#6b605c'; g.lineWidth = 1.4; for (let k = 0; k < 4; k++) { const tx = wx - 6 + ((k * 3.6 + ph) % 14.4); g.beginPath(); g.moveTo(tx, wy - 5); g.lineTo(tx, wy + 5); g.stroke(); }
+  }
+  // rocker bars
+  g.strokeStyle = '#8c8f94'; g.lineWidth = 3; for (const s of [-1, 1]) { g.beginPath(); g.moveTo(-16, s * 17); g.lineTo(0, s * 12); g.lineTo(16, s * 17); g.stroke(); }
+  // body
+  const bg = g.createLinearGradient(0, -14, 0, 14); bg.addColorStop(0, '#fbfdff'); bg.addColorStop(1, '#bfc7cf');
+  g.fillStyle = bg; g.beginPath(); g.roundRect(-22, -13, 44, 26, 6); g.fill(); g.lineWidth = 1.5; g.strokeStyle = '#6e767e'; g.stroke();
+  g.strokeStyle = 'rgba(80,90,100,.45)'; g.lineWidth = 1; g.beginPath(); g.moveTo(-8, -13); g.lineTo(-8, 13); g.moveTo(8, -13); g.lineTo(8, 13); g.stroke();
+  g.fillStyle = '#ff7a3d'; g.fillRect(-22, -2.4, 44, 4.8);
+  g.fillStyle = '#2d6cdf'; g.fillRect(-19, -9, 8, 4); g.fillRect(-19, 5, 8, 4);
+  // rear RTG
+  g.fillStyle = '#4b4f55'; g.beginPath(); g.roundRect(-33, -6, 12, 12, 3); g.fill(); g.strokeStyle = '#9aa0a8'; g.lineWidth = 1; for (let k = -4; k <= 4; k += 4) { g.beginPath(); g.moveTo(-33, k); g.lineTo(-21, k); g.stroke(); }
+  // arm (front-left)
+  g.strokeStyle = '#4a4f57'; g.lineWidth = 3; g.lineCap = 'round'; g.beginPath(); g.moveTo(21, -8); g.lineTo(31, -12); g.lineTo(36 + (o.armOut || 0), -8); g.stroke();
+  g.fillStyle = o.armOut ? '#3fe0cf' : '#2a2d33'; g.beginPath(); g.arc(36 + (o.armOut || 0), -8, 3, 0, 7); g.fill();
+  // antenna dish
+  g.fillStyle = '#e3e8ee'; g.strokeStyle = '#6e767e'; g.lineWidth = 1; g.beginPath(); g.arc(-12, 6, 6, 0, 7); g.fill(); g.stroke();
+  // mast + camera head
+  g.save(); g.translate(14, 6); g.fillStyle = '#9aa0a8'; g.beginPath(); g.arc(0, 0, 3, 0, 7); g.fill(); g.rotate(mast); g.fillStyle = '#2a2d33'; g.beginPath(); g.roundRect(-3, -6, 8, 12, 2); g.fill(); g.fillStyle = '#3fe0cf'; g.beginPath(); g.arc(4, -3, 1.7, 0, 7); g.arc(4, 3, 1.7, 0, 7); g.fill(); g.restore();
+  // headlights
+  g.fillStyle = o.lights ? '#fff6c0' : '#d8d2b8'; g.beginPath(); g.arc(22, -9, 2, 0, 7); g.arc(22, 9, 2, 0, 7); g.fill();
+  g.restore();
+}
+// side-view rover (title screen)
+function drawRoverSide(g, x, y, s, ph) {
+  g.save(); g.translate(x, y); g.scale(s, s);
+  g.fillStyle = 'rgba(0,0,0,.3)'; g.beginPath(); g.ellipse(0, 0, 70, 7, 0, 0, 7); g.fill();
+  g.strokeStyle = '#9aa0a8'; g.lineWidth = 5; g.beginPath(); g.moveTo(-44, -16); g.lineTo(-8, -26); g.lineTo(26, -16); g.lineTo(44, -18); g.stroke(); g.beginPath(); g.moveTo(-8, -26); g.lineTo(-8, -34); g.stroke();
+  const wh = (cx) => { g.fillStyle = '#2b2423'; g.beginPath(); g.arc(cx, -12, 13, 0, 7); g.fill(); g.strokeStyle = '#8a7e78'; g.lineWidth = 3; for (let k = 0; k < 6; k++) { const a = ph + k * Math.PI / 3; g.beginPath(); g.moveTo(cx + Math.cos(a) * 4, -12 + Math.sin(a) * 4); g.lineTo(cx + Math.cos(a) * 12, -12 + Math.sin(a) * 12); g.stroke(); } g.fillStyle = '#b8aea8'; g.beginPath(); g.arc(cx, -12, 4, 0, 7); g.fill(); };
+  wh(-44); wh(0); wh(44);
+  const bg = g.createLinearGradient(0, -64, 0, -30); bg.addColorStop(0, '#ffffff'); bg.addColorStop(1, '#b9c1c9');
+  g.fillStyle = bg; g.beginPath(); g.roundRect(-52, -58, 100, 30, 8); g.fill(); g.strokeStyle = '#6e767e'; g.lineWidth = 2; g.stroke();
+  g.fillStyle = '#ff7a3d'; g.fillRect(-52, -46, 100, 6); g.fillStyle = '#4b4f55'; g.beginPath(); g.roundRect(-66, -52, 16, 18, 4); g.fill();
+  g.strokeStyle = '#4a4f57'; g.lineWidth = 4; g.lineCap = 'round'; g.beginPath(); g.moveTo(34, -34); g.lineTo(56, -26); g.lineTo(64, -34); g.stroke();
+  g.strokeStyle = '#9aa0a8'; g.lineWidth = 4; g.beginPath(); g.moveTo(26, -58); g.lineTo(26, -92); g.stroke();
+  g.fillStyle = '#2a2d33'; g.beginPath(); g.roundRect(15, -104, 26, 14, 4); g.fill(); g.fillStyle = '#3fe0cf'; g.beginPath(); g.arc(36, -97, 3.4, 0, 7); g.fill();
+  g.fillStyle = '#e3e8ee'; g.strokeStyle = '#6e767e'; g.lineWidth = 1.5; g.beginPath(); g.ellipse(-30, -66, 14, 7, -.5, 0, 7); g.fill(); g.stroke();
+  g.restore();
+}
+// ================= canvas / view =================
+const cv = $('#cv'), ctx = cv.getContext('2d'), mini = $('#mini'), mg = mini.getContext('2d');
+let DPR = 1, Z = 1, VW = 1000, VH = 600, SW = 1000, SH = 600, dk = null, dkg = null;
+function resize() {
+  DPR = Math.min(2, window.devicePixelRatio || 1); SW = innerWidth; SH = innerHeight;
+  cv.width = Math.round(SW * DPR); cv.height = Math.round(SH * DPR);
+  Z = clamp(Math.min(SW / 1000, SH / 620), .62, 1.25); VW = SW / Z; VH = SH / Z;
+  dk = document.createElement('canvas'); dk.width = cv.width; dk.height = cv.height; dkg = dk.getContext('2d');
+}
+addEventListener('resize', resize); resize();
+const TOUCH = (matchMedia && matchMedia('(pointer:coarse)').matches) || 'ontouchstart' in window;
+
+// ================= state =================
+let scr = 'title', P = null; const keys = {}; let wallT = performance.now();
+const stick = { on: false, id: -1, ox: 0, oy: 0, dx: 0, dy: 0 };
+const STARS = Array.from({ length: 170 }, (_, i) => ({ x: hash2(i, 1, 9), y: hash2(i, 2, 9) * .72, s: .4 + hash2(i, 3, 9) * 1.5, p: hash2(i, 4, 9) * 6 }));
+const ATT = { dust: [] };
+const UNLOCK_ALL = /unlock/.test(location.search);
+const isUnlocked = i => UNLOCK_ALL || i === 0 || (SAVE.stars[MISSIONS[i - 1].id] || 0) > 0;
+const totalStars = () => MISSIONS.reduce((s, m) => s + (SAVE.stars[m.id] || 0), 0);
+
+// ================= toast =================
+let toastT = 0;
+function toast(html, cls, ms = 3800) { const el = $('#msg'); el.innerHTML = '<div class="toast ' + (cls || '') + '">' + html + '</div>'; clearTimeout(toastT); toastT = setTimeout(() => el.innerHTML = '', ms); }
+
+// ================= questions =================
+function pickQs(topic, n, exclude) {
+  const pool = BANK.filter(q => q.t === topic && !(exclude || []).includes(q.id));
+  return shuffle(pool).sort((a, b) => ((SAVE.missed[b.id] ? 2 : 0) + (SAVE.facts[b.id] ? 0 : 1)) - ((SAVE.missed[a.id] ? 2 : 0) + (SAVE.facts[a.id] ? 0 : 1))).slice(0, n);
+}
+function ask(q, o, cb) {
+  const ov = $('#ov'); ov.classList.remove('hide'); let mist = 0, finished = false;
+  const head = '<div class="badge ' + (o.lab ? 'lab' : '') + '">' + o.badge + '</div><div class="q">' + esc(q.q) + '</div>';
+  const wrong = () => { mist++; SFX.bad(); const w = $('#qwr'); if (w) w.innerHTML = '<div class="fb bad"><b>Not quite!</b> Think again and try another answer.' + (P && !o.practice ? ' <b>(\u2212' + P.L.wrong + '% battery)</b>' : '') + '</div>'; if (P && !o.practice) { P.wrong++; P.r.bat = Math.max(0, P.r.bat - P.L.wrong); } if (!o.practice) { SAVE.missed[q.id] = (SAVE.missed[q.id] || 0) + 1; persist(); } };
+  const finish = () => {
+    if (finished) return; finished = true; SFX.ok(); { const w = $('#qwr'); if (w) w.innerHTML = ''; }
+    if (!mist && SAVE.missed[q.id]) { SAVE.missed[q.id]--; if (SAVE.missed[q.id] <= 0) delete SAVE.missed[q.id]; }
+    SAVE.facts[q.id] = 1; persist();
+    const fb = document.createElement('div'); fb.className = 'fb'; fb.innerHTML = '<b>' + (mist ? '✅ Got it! ' : '🌟 Perfect! ') + '</b>' + esc(q.why) + (P && !o.practice ? '<br><b>⚡ +12% battery</b>' : '');
+    $('#qb').appendChild(fb);
+    const row = document.createElement('div'); row.className = 'row end'; row.innerHTML = '<button class="btn" id="qgo">' + (o.next || 'Continue ▶') + '</button>'; $('#qb').appendChild(row);
+    $('#qgo').onclick = () => { SFX.click(); ov.classList.add('hide'); ov.innerHTML = ''; cb(mist); };
+    const m = $('#qb').querySelector('.modal'); if (m) m.scrollTop = 9999;
+  };
+  ov.innerHTML = '<div class="panel modal" id="qb">' + head + '<div id="qa"></div><div id="qwr"></div></div>';
+  const qa = $('#qa');
+  if (q.type === 'mc') {
+    const wr = shuffle(q.w).slice(0, LEVELS[SAVE.level].opts - 1), list = shuffle([{ t: q.a, ok: 1 }, ...wr.map(t => ({ t }))]);
+    qa.className = 'opts'; qa.innerHTML = list.map((it, i) => '<button class="opt" data-ok="' + (it.ok ? 1 : 0) + '"><span class="k">' + 'ABCD'[i] + '</span><span>' + esc(it.t) + '</span></button>').join('');
+    qa.onclick = e => { const b = e.target.closest('.opt'); if (!b || finished) return; if (b.dataset.ok === '1') { b.classList.add('ok'); qa.querySelectorAll('.opt').forEach(x => { if (x !== b) x.style.pointerEvents = 'none'; }); finish(); } else { b.classList.add('bad'); wrong(); } };
+  } else if (q.type === 'order') {
+    const items = q.items, order = shuffle(items.map((t, i) => ({ t, i }))); let next = 0;
+    qa.innerHTML = '<div class="slots">' + items.map(() => '<i></i>').join('') + '</div><div class="ord">' + order.map(it => '<button class="tile" data-i="' + it.i + '">' + esc(it.t) + '</button>').join('') + '</div>';
+    qa.onclick = e => { const b = e.target.closest('.tile'); if (!b || finished || b.classList.contains('done')) return; if (+b.dataset.i === next) { b.classList.add('done'); b.dataset.n = next + 1; qa.querySelectorAll('.slots i')[next].classList.add('on'); SFX.pick(); next++; if (next === items.length) finish(); } else { b.classList.add('shake'); setTimeout(() => b.classList.remove('shake'), 400); wrong(); } };
+  } else { // pairs
+    const L = shuffle(q.items.map((p, i) => ({ t: p[0], i }))), R = shuffle(q.items.map((p, i) => ({ t: p[1], i }))); let sel = null, got = 0;
+    qa.innerHTML = '<div class="pairs"><div style="display:grid;gap:10px">' + L.map(it => '<button class="tile" data-s="L" data-i="' + it.i + '">' + esc(it.t) + '</button>').join('') + '</div><div style="display:grid;gap:10px">' + R.map(it => '<button class="tile" data-s="R" data-i="' + it.i + '">' + esc(it.t) + '</button>').join('') + '</div></div>';
+    qa.onclick = e => {
+      const b = e.target.closest('.tile'); if (!b || finished || b.classList.contains('lk')) return;
+      if (b.dataset.s === 'L') { qa.querySelectorAll('.tile.sel').forEach(x => x.classList.remove('sel')); sel = b; b.classList.add('sel'); SFX.click(); return; }
+      if (!sel) { b.classList.add('shake'); setTimeout(() => b.classList.remove('shake'), 400); return; }
+      if (sel.dataset.i === b.dataset.i) { got++; const c = 'm' + got; sel.classList.remove('sel'); sel.classList.add('lk', c); b.classList.add('lk', c); sel = null; SFX.pick(); if (got === q.items.length) finish(); }
+      else { sel.classList.add('shake'); b.classList.add('shake'); const s2 = sel; setTimeout(() => { s2.classList.remove('shake'); b.classList.remove('shake'); }, 400); wrong(); }
+    };
+  }
+}
+
+// ================= mission start =================
+function pickDeck(mi) {
+  const m = MISSIONS[mi], n = m.samples + m.stations; let deck = pickQs(m.topic, n);
+  if (deck.length < n) deck = deck.concat(pickQs('mars', n - deck.length, deck.map(q => q.id)));
+  return deck;
+}
+function startMission(mi) {
+  audio(); const lvKey = SAVE.level, Wd = genWorld(mi, lvKey);
+  BIO = Wd.m.biome; BSEED = Wd.m.seed; BW = Wd.w; BH = Wd.h; TILES.clear();
+  const tr = document.createElement('canvas'); tr.width = Math.ceil(Wd.w / 2); tr.height = Math.ceil(Wd.h / 2);
+  const deck = pickDeck(mi), objs = shuffle([...Wd.samples, ...Wd.stations]); objs.forEach((o, i) => o.q = deck[i]);
+  P = { mi, Wd, m: Wd.m, L: LEVELS[lvKey], r: { x: Wd.lander.x + 100, y: Wd.lander.y, a: 0, vx: 0, vy: 0, hull: 100, bat: 100, wheel: 0, mast: 0, armOut: 0 }, cam: { x: 0, y: 0 }, t: 0, wrong: 0, repairs: 0, all: false, parts: [], shake: 0, check: { x: Wd.lander.x + 100, y: Wd.lander.y }, act: null, seen: {}, tr, paused: true, over: false, god: false, auto: false, ts: 1, wind: { x: 0, y: 0 }, storm: Array.from({ length: 90 }, () => ({ x: Math.random(), y: Math.random(), l: 18 + Math.random() * 30, s: .6 + Math.random() }))  };
+  P.cam.x = clamp(P.r.x - VW / 2, 0, Math.max(0, Wd.w - VW)); P.cam.y = clamp(P.r.y - VH / 2, 0, Math.max(0, Wd.h - VH));
+  scr = 'play'; $('#ui').innerHTML = ''; $('#hud').classList.remove('hide'); mini.classList.remove('hide'); $('#boost').classList.toggle('hide', !TOUCH);
+  $('#hud').classList.remove('hide'); updateObjChips(true);
+  briefing();
+}
+function briefing() {
+  const m = P.m, ov = $('#ov'); ov.classList.remove('hide');
+  ov.innerHTML = '<div class="panel modal"><div class="badge lab">Mission ' + m.id + ' of 7 · ' + esc(m.tag) + '</div><h2>' + m.emoji + ' ' + esc(m.name) + '</h2>' +
+    '<p style="font-weight:700;line-height:1.5;margin:6px 0 12px">' + m.story + '</p>' +
+    '<div class="fcard">🎯 <b>Goal:</b> ' + esc(m.goal) + '</div>' +
+    '<div class="fcard" style="margin-top:8px">🪨 <b>Drill rings</b> and 🔬 <b>science stations</b>: drive into the glowing ring, <b>stop</b> and hold still. A science question pops up. Right answers give battery power!</div>' +
+    '<div class="fcard" style="margin-top:8px">🎮 ' + (TOUCH ? '<b>Drag</b> anywhere to drive. The BOOST button costs extra battery.' : '<kbd>←</kbd><kbd>→</kbd> steer · <kbd>↑</kbd><kbd>↓</kbd> drive (or <kbd>W A S D</kbd>) · <kbd>Space</kbd> boost · <kbd>Esc</kbd> pause') + '</div>' +
+    '<div class="row end"><button class="btn ghost" data-act="map">Back</button><button class="btn" id="go">Launch! 🚀</button></div></div>';
+  $('#go').onclick = () => { SFX.click(); ov.classList.add('hide'); ov.innerHTML = ''; P.paused = false; };
+  ov.querySelector('[data-act=map]').onclick = () => { ov.classList.add('hide'); ov.innerHTML = ''; toMap(); };
+}
+
+// ================= update =================
+const HAZ = {
+  sand: '🏜️ <b>Soft sand!</b> Wheels sink and slow down. Real rover Spirit got stuck in soft sand for months.',
+  ice: '🧊 <b>Slippery ice!</b> Steer gently and brake early. Mars\'s poles are covered in water ice and dry ice.',
+  rough: '🌋 <b>Lava rock field!</b> Bumpy ground slows the rover. Take it easy.',
+  devil: '🌪️ <b>Dust devil!</b> A spinning wind pushes you around. On Mars they can be taller than a skyscraper.',
+  rock: '💥 <b>Bonk!</b> Hitting rocks hurts the hull. Curiosity\'s wheels got dents from sharp rocks.',
+  cliff: '⚠️ <b>Cliff edge!</b> Rovers must never drive over a canyon edge.',
+  low: '🪫 <b>Battery empty.</b> The rover rests to recharge. Answer questions or grab ⚡ cells to refill faster.'
+};
+function once(k, cls) { if (!P.seen[k]) { P.seen[k] = 1; toast(HAZ[k], cls); } }
+function zoneAt(x, y) { for (const z of P.Wd.zones) if (dist(x, y, z.x, z.y) < z.r * .8) return z.k; return null; }
+function spawn(x, y, vx, vy, life, r, col) { if (P.parts.length < 260) P.parts.push({ x, y, vx, vy, life, max: life, r, col }); }
+
+function update(dt) {
+  const W = P.Wd, r = P.r, L = P.L; P.t += dt;
+  // ---- input ----
+  let thr = (keys.ArrowUp || keys.w ? 1 : 0) - (keys.ArrowDown || keys.s ? 1 : 0), str = (keys.ArrowRight || keys.d ? 1 : 0) - (keys.ArrowLeft || keys.a ? 1 : 0), boost = !!(keys[' '] || keys.Shift || P.boostBtn);
+  if (stick.on) {
+    const len = Math.hypot(stick.dx, stick.dy), mag = clamp(len / 50, 0, 1);
+    if (mag > .12) { const diff = angDiff(r.a, Math.atan2(stick.dy, stick.dx)); str = clamp(diff * 2.4, -1, 1); thr = mag * (Math.abs(diff) < 1.3 ? 1 : .15); } else { thr = 0; str = 0; }
+  }
+  if (P.auto) { // test autopilot: straight line to next target
+    const t = autoTarget(); if (t) { const diff = angDiff(r.a, Math.atan2(t.y - r.y, t.x - r.x)); str = clamp(diff * 3, -1, 1); thr = Math.abs(diff) < .6 ? 1 : .1; if (dist(r.x, r.y, t.x, t.y) < 36) thr = 0; }
+  }
+  if (r.bat <= 0 && !P.empty) { P.empty = true; once('low'); }
+  if (P.empty && r.bat >= 15) P.empty = false;
+  if (P.empty) { thr = 0; str = 0; boost = false; }
+  const zk = zoneAt(r.x, r.y);
+  let maxSp = 165 * L.speed * (boost && r.bat > 0 ? 1.55 : 1), accel = 330, grip = 14, drainMul = 1;
+  if (zk === 'sand') { maxSp *= .5; accel *= .7; drainMul = 1.7; once('sand'); }
+  if (zk === 'ice') { grip = .9; accel *= .55; once('ice'); }
+  if (zk === 'rough') { maxSp *= .7; drainMul = 1.3; once('rough'); }
+  // physics
+  const fx = Math.cos(r.a), fy = Math.sin(r.a); let vf = r.vx * fx + r.vy * fy, vl = -r.vx * fy + r.vy * fx;
+  const tgt = thr * maxSp * (thr < 0 ? .5 : 1), rate = Math.abs(tgt) > Math.abs(vf) || (tgt * vf < 0) ? accel : 170;
+  vf += clamp(tgt - vf, -rate * dt * 1.6, rate * dt);
+  vl *= Math.exp(-grip * dt);
+  const turn = 2.0 * (.3 + .7 * Math.min(1, Math.abs(vf) / 90)); r.a += str * turn * dt * (vf < -8 ? -1 : 1);
+  const fx2 = Math.cos(r.a), fy2 = Math.sin(r.a);
+  r.vx = vf * fx2 - vl * fy2; r.vy = vf * fy2 + vl * fx2;
+  if (W.m.storm) { P.wind.x = Math.cos(P.t * .2) * 26; P.wind.y = Math.sin(P.t * .13) * 14; r.vx += P.wind.x * dt; r.vy += P.wind.y * dt; }
+  r.x += r.vx * dt; r.y += r.vy * dt;
+  const sp = Math.hypot(r.vx, r.vy);
+  // world edge
+  const m0 = 26; if (r.x < m0) { r.x = m0; r.vx = Math.abs(r.vx) * .3; } if (r.y < m0) { r.y = m0; r.vy = Math.abs(r.vy) * .3; } if (r.x > W.w - m0) { r.x = W.w - m0; r.vx = -Math.abs(r.vx) * .3; } if (r.y > W.h - m0) { r.y = W.h - m0; r.vy = -Math.abs(r.vy) * .3; }
+  // collisions
+  if (!P.god) for (const s of W.solids) {
+    const dx = r.x - s.x, dy = r.y - s.y; if (Math.abs(dx) > s.r + 40 || Math.abs(dy) > s.r + 40) continue;
+    const d = Math.hypot(dx, dy), min = s.r + RADIUS; if (d < min && d > .01) {
+      const nx = dx / d, ny = dy / d; r.x = s.x + nx * min; r.y = s.y + ny * min;
+      const vn = r.vx * nx + r.vy * ny; if (vn < 0) {
+        r.vx -= (1.35) * vn * nx; r.vy -= (1.35) * vn * ny; const imp = -vn;
+        if (imp > 60 && (!P.hitCool || P.hitCool <= 0)) {
+          P.hitCool = .35; const dmg = (imp - 40) * .09 * L.dmg * (s.k === 'cliff' ? 1.2 : 1); r.hull -= dmg; P.shake = Math.min(10, imp * .06); SFX.hit();
+          for (let i = 0; i < 8; i++) spawn(r.x - nx * 18, r.y - ny * 18, (Math.random() - .5) * 90 + nx * 40, (Math.random() - .5) * 90 + ny * 40, .6, 3 + Math.random() * 3, W.m.biome.dust);
+          once(s.k === 'cliff' ? 'cliff' : 'rock');
+        }
+      }
+    }
+  }
+  P.hitCool = (P.hitCool || 0) - dt; P.shake = Math.max(0, P.shake - dt * 22);
+  if (r.hull <= 0) respawn();
+  // devils
+  for (const d of W.devils) {
+    d.ph += dt * 7; if (dist(d.x, d.y, d.tx, d.ty) < 24) { d.tx = 160 + Math.random() * (W.w - 320); d.ty = 160 + Math.random() * (W.h - 320); }
+    const a = Math.atan2(d.ty - d.y, d.tx - d.x); d.x += Math.cos(a) * d.sp * dt; d.y += Math.sin(a) * d.sp * dt;
+    const dd = dist(r.x, r.y, d.x, d.y); if (dd < d.r + 30) { once('devil'); const nx = (r.x - d.x) / (dd || 1), ny = (r.y - d.y) / (dd || 1); r.vx += nx * 520 * dt; r.vy += ny * 520 * dt; r.a += dt * 4.5; r.bat = Math.max(0, r.bat - 7 * dt); P.shake = Math.max(P.shake, 3); }
+    if (Math.random() < dt * 30 && VWcheck(d.x, d.y, 80)) spawn(d.x + (Math.random() - .5) * 50, d.y + (Math.random() - .5) * 50, -(d.y - r.y) * 0, 0, 1, 3 + Math.random() * 3, W.m.biome.dust);
+  }
+  // battery
+  const moving = Math.abs(vf) > 6;
+  if (moving) r.bat -= (.55 + (boost ? 1.8 : 0)) * drainMul * L.drain * dt; else r.bat += (W.m.night ? 1.4 : 2.6) * dt;
+  r.bat = clamp(r.bat, 0, 100);
+  for (const b of W.batts) if (!b.got && dist(r.x, r.y, b.x, b.y) < 32) { b.got = true; r.bat = Math.min(100, r.bat + 30); SFX.pick(); for (let i = 0; i < 12; i++) spawn(b.x, b.y, (Math.random() - .5) * 140, (Math.random() - .5) * 140, .7, 3, '255,220,100'); toast('⚡ <b>Power cell!</b> +30% battery', ''); }
+  // wheels / tracks / dust
+  r.wheel = (r.wheel + vf * dt * .9) % 14.4;
+  r.mast += (angDiff(r.mast, clamp(angDiff(r.a, P.targetAng || r.a), -1.2, 1.2)) * 3) * dt;
+  if (moving) {
+    const tg = P.tr.getContext('2d'); tg.fillStyle = W.m.feat === 'polar' ? 'rgba(60,70,100,.1)' : 'rgba(40,18,10,.09)';
+    const c = Math.cos(r.a), s = Math.sin(r.a);
+    for (const [lx, ly] of [[-16, -17], [0, -17], [16, -17], [-16, 17], [0, 17], [16, 17]]) tg.fillRect((r.x + lx * c - ly * s) / 2 - 1.4, (r.y + lx * s + ly * c) / 2 - 1.4, 2.8, 2.8);
+    if (Math.random() < dt * 40 * Math.min(1, sp / 100)) spawn(r.x - c * 30 + (Math.random() - .5) * 20, r.y - s * 30 + (Math.random() - .5) * 20, -r.vx * .15 + (Math.random() - .5) * 20, -r.vy * .15 + (Math.random() - .5) * 20, .9, 3 + Math.random() * 3, W.m.biome.dust);
+    engineSound(true, sp);
+  } else engineSound(false, 0);
+  for (let i = P.parts.length - 1; i >= 0; i--) { const p = P.parts[i]; p.life -= dt; if (p.life <= 0) { P.parts.splice(i, 1); continue; } p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= .97; p.vy *= .97; }
+  // objectives
+  P.act = null; const slow = sp < 48;
+  for (const o of [...W.samples, ...W.stations]) {
+    if (o.done) continue; const rad = o.kind === 'sample' ? 46 : 52, d = dist(r.x, r.y, o.x, o.y);
+    if (d < rad + 8) {
+      if (!slow) { if (!P.seen.ring) { P.seen.ring = 1; toast('🛑 <b>Stop inside the ring</b> and hold still to scan.', 'sci'); } o.prog = Math.max(0, o.prog - dt * .5); continue; }
+      o.prog += dt / (o.kind === 'sample' ? 1.15 : .95); P.act = o; P.targetAng = Math.atan2(o.y - r.y, o.x - r.x); r.armOut = 5 + Math.sin(P.t * 30) * 1.5;
+      if (o.kind === 'sample' && Math.random() < dt * 40) { spawn(o.x, o.y, (Math.random() - .5) * 90, (Math.random() - .5) * 90, .5, 2.5, '255,230,150'); SFX.drill(); }
+      if (o.prog >= 1) { openObj(o); return; }
+    } else o.prog = Math.max(0, o.prog - dt * 1.2);
+  }
+  if (!P.act) { r.armOut = 0; P.targetAng = null; }
+  // goal
+  if (dist(r.x, r.y, W.lander.x, W.lander.y) < 64 && sp < 70) { if (P.all) { finishMission(); return; } else if (!P.seen.home) { P.seen.home = 1; toast('🏠 The lander is waiting. <b>Finish all drills and stations first!</b>', 'sci'); setTimeout(() => P && (P.seen.home = 0), 9000); } }
+  // camera
+  const tx = clamp(r.x + r.vx * .25 - VW / 2, 0, Math.max(0, W.w - VW)), ty = clamp(r.y + r.vy * .25 - VH / 2, 0, Math.max(0, W.h - VH));
+  const k = 1 - Math.exp(-dt * 5); P.cam.x += (tx - P.cam.x) * k; P.cam.y += (ty - P.cam.y) * k;
+  if (W.w < VW) P.cam.x = (W.w - VW) / 2; if (W.h < VH) P.cam.y = (W.h - VH) / 2;
+}
+function VWcheck(x, y, m) { return x > P.cam.x - m && x < P.cam.x + VW + m && y > P.cam.y - m && y < P.cam.y + VH + m; }
+function respawn() {
+  const r = P.r; P.repairs++; r.x = P.check.x; r.y = P.check.y; r.vx = r.vy = 0; r.hull = 100; r.bat = Math.max(r.bat, 45); SFX.boom(); P.shake = 8;
+  toast('🔧 <b>Rover tipped over!</b> Mission Control repaired it. Drive more carefully. (Repairs: ' + P.repairs + ')', '', 4500);
+}
+function autoTarget() { const W = P.Wd; const o = [...W.samples, ...W.stations].find(o => !o.done); return o || (P.all ? W.lander : null); }
+
+function openObj(o) {
+  P.paused = true; engineSound(false, 0); P.r.vx = P.r.vy = 0; P.act = null;
+  const lab = o.kind === 'sample';
+  ask(o.q, { lab, badge: lab ? '🪨 Lab analysis' : '🔬 Science station' }, () => {
+    o.done = true; o.prog = 1; P.r.bat = Math.min(100, P.r.bat + 12); P.check = { x: o.x, y: o.y };
+    for (let i = 0; i < 24; i++) spawn(o.x, o.y, (Math.random() - .5) * 200, (Math.random() - .5) * 200, 1, 3 + Math.random() * 3, lab ? '255,230,150' : '150,255,240');
+    const W = P.Wd, s = W.samples.filter(x => x.done).length, st = W.stations.filter(x => x.done).length;
+    if (s === W.samples.length && st === W.stations.length) { P.all = true; toast('🎉 <b>All done!</b> Follow the green arrow back to the lander.', 'sci', 5000); SFX.done(); }
+    else toast(lab ? '🧪 <b>Sample ' + s + '/' + W.samples.length + ' stored!</b> Next target: follow the arrow.' : '📡 <b>Data sent to Earth!</b> (' + st + '/' + W.stations.length + ' stations)', 'sci');
+    updateObjChips(true); P.paused = false;
+  });
+}
+
+function factHTML(q) { return '<b>' + TOPICS[q.t].emoji + ' ' + esc(q.q) + '</b>' + (q.type === 'mc' ? '<div style="color:var(--ok)">\u2714 ' + esc(q.a) + '</div>' : '') + '<div>' + esc(q.why) + '</div>'; }
+// ================= finish =================
+function calcStars() { return (P.wrong <= 1 && P.repairs === 0) ? 3 : (P.wrong <= 4 && P.repairs <= 1) ? 2 : 1; }
+function finishMission() {
+  P.paused = true; engineSound(false, 0);
+  if (P.m.id === 7) return launchCheck();
+  debrief(false);
+}
+function debrief(final) {
+  const m = P.m, st = calcStars(), ov = $('#ov'); ov.classList.remove('hide'); SFX.fanfare();
+  SAVE.stars[m.id] = Math.max(SAVE.stars[m.id] || 0, st); persist();
+  const learned = [...P.Wd.samples, ...P.Wd.stations].map(o => o.q).filter(Boolean);
+  const mins = Math.floor(P.t / 60), secs = Math.floor(P.t % 60);
+  const certOK = final && MISSIONS.every(x => (SAVE.stars[x.id] || 0) > 0);
+  ov.innerHTML = '<div class="panel modal" style="text-align:center"><div class="big">' + (final ? '🚀' : '🏁') + '</div><h2>' + (final ? 'Launch successful!' : 'Mission complete!') + '</h2>' +
+    '<div class="sub">' + m.emoji + ' ' + esc(m.name) + '</div><div class="stars">' + [1, 2, 3].map(i => '<span class="star ' + (i > st ? 'off' : '') + '">★</span>').join('') + '</div>' +
+    '<div class="kv" style="justify-content:center"><div>⏱ ' + mins + ':' + String(secs).padStart(2, '0') + '</div><div>❌ Mistakes: ' + P.wrong + '</div><div>🔧 Repairs: ' + P.repairs + '</div></div>' +
+    '<p style="font-weight:700;color:var(--mute);margin:6px 0">' + (st === 3 ? 'Brilliant! Mission Control is cheering.' : st === 2 ? 'Great job! Fewer mistakes and repairs earn 3 stars.' : 'Mission done. Try again for more stars!') + '</p>' +
+    '<div style="text-align:left"><h3 style="margin:10px 0 6px">What you learned</h3><ul class="facts">' + learned.map(q => '<li>' + factHTML(q) + '</li>').join('') + '</ul></div>' +
+    (certOK ? '<div class="cert" style="margin-top:14px"><div class="big">🏅</div><h2>Mars Explorer Certificate</h2><p style="font-weight:700">You finished all 7 missions and learned <b>' + Object.keys(SAVE.facts).length + '</b> Mars facts. Mission Control is proud of you!</p></div>' : '') +
+    '<div class="row" style="justify-content:center"><button class="btn ghost" data-act="again">↻ Play again</button>' + (!final ? '<button class="btn" data-act="next">Next mission ▶</button>' : '') + '<button class="btn alt" data-act="map">Mission map</button></div></div>';
+  ov.onclick = e => { const a = e.target.closest('[data-act]'); if (!a) return; SFX.click(); ov.classList.add('hide'); ov.innerHTML = ''; ov.onclick = null; const act = a.dataset.act; if (act === 'again') startMission(P.mi); else if (act === 'next') startMission(P.mi + 1); else toMap(); };
+}
+function launchCheck() {
+  const pool = shuffle(BANK.filter(q => q.type !== 'pairs')), missed = pool.filter(q => SAVE.missed[q.id]), picks = [];
+  for (const q of [...missed, ...pool]) if (picks.length < 3 && !picks.some(p => p.t === q.t)) picks.push(q);
+  let i = 0; const ov = $('#ov');
+  const next = () => {
+    if (i >= picks.length) { liftoff(); return; }
+    const q = picks[i++]; ask(q, { badge: '🚀 Launch check ' + i + ' of ' + picks.length, next: i === picks.length ? 'Ignite! 🔥' : 'Next check ▶' }, next);
+  };
+  ov.classList.remove('hide'); ov.innerHTML = '<div class="panel modal" style="text-align:center"><div class="big">🚀</div><h2>Rocket Launch Check</h2><p style="font-weight:700;line-height:1.5">The sample tubes are loaded! Mission Control needs <b>3 final checks</b> before liftoff. These come from everything you learned on Mars.</p><div class="row" style="justify-content:center"><button class="btn" id="chk">Start checks</button></div></div>';
+  $('#chk').onclick = () => { SFX.click(); next(); };
+}
+function liftoff() {
+  const ov = $('#ov'); ov.classList.remove('hide'); SFX.boom();
+  ov.innerHTML = '<div style="text-align:center;color:#fff"><div class="rocket">🚀</div><h2 style="text-shadow:0 2px 10px #000">3… 2… 1… Liftoff!</h2></div>';
+  setTimeout(() => debrief(true), 3300);
+}
+
+// ================= HUD =================
+let lastHud = '';
+function updateObjChips(force) {
+  if (!P) return; const W = P.Wd, s = W.samples.filter(x => x.done).length, st = W.stations.filter(x => x.done).length;
+  const h = '<span class="chip ' + (s === W.samples.length ? 'ok' : '') + '">🪨 ' + s + '/' + W.samples.length + '</span><span class="chip ' + (st === W.stations.length ? 'ok' : '') + '">🔬 ' + st + '/' + W.stations.length + '</span><span class="chip ' + (P.all ? 'ok' : '') + '">' + (W.m.id === 7 ? '🚀 Rocket' : '🏠 Lander') + '</span>';
+  if (h !== lastHud || force) { $('#objs').innerHTML = h; lastHud = h; }
+}
+function hudTick() {
+  const r = P.r, b = Math.round(r.bat), hl = Math.round(clamp(r.hull, 0, 100));
+  $('#gbat').style.width = b + '%'; $('#tbat').textContent = b + '%'; $('#ghull').style.width = hl + '%'; $('#thull').textContent = hl + '%';
+  $('.g.bat').classList.toggle('low', b < 18); $('.g.hull').classList.toggle('low', hl < 28);
+  updateObjChips();
+  const sc = $('#scan'); if (P.act) { const o = P.act; sc.classList.remove('hide'); sc.style.left = ((r.x - P.cam.x) * Z) + 'px'; sc.style.top = ((r.y - P.cam.y) * Z - 80) + 'px'; sc.style.transform = 'translate(-50%,-50%)'; sc.firstChild.style.setProperty('--p', Math.round(clamp(o.prog, 0, 1) * 100) + '%'); $('#scani').textContent = o.kind === 'sample' ? '🪨' : '🔬'; $('#scant').textContent = o.kind === 'sample' ? 'Drilling… hold still' : 'Scanning… hold still'; } else sc.classList.add('hide');
+}
+
+// ================= render play =================
+function drawObjective(g, o, t, glowOnly) {
+  const rad = o.kind === 'sample' ? 46 : 52, pulse = 1 + Math.sin(t * 4 + o.x) * .06, col = o.kind === 'sample' ? '63,224,207' : '200,140,255';
+  if (o.done) { if (glowOnly) return; g.fillStyle = 'rgba(30,12,8,.35)'; g.beginPath(); g.arc(o.x, o.y, 11, 0, 7); g.fill(); g.fillStyle = '#52e08a'; g.font = '800 22px Baloo 2,sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('✔', o.x, o.y); return; }
+  const gr = g.createRadialGradient(o.x, o.y, 4, o.x, o.y, rad * pulse); gr.addColorStop(0, 'rgba(' + col + ',.05)'); gr.addColorStop(.8, 'rgba(' + col + ',.22)'); gr.addColorStop(1, 'rgba(' + col + ',.55)');
+  g.fillStyle = gr; g.beginPath(); g.arc(o.x, o.y, rad * pulse, 0, 7); g.fill(); g.lineWidth = 2.5; g.strokeStyle = 'rgba(' + col + ',.95)'; g.setLineDash([9, 7]); g.lineDashOffset = -t * 18; g.stroke(); g.setLineDash([]);
+  if (o.prog > 0) { g.lineWidth = 6; g.strokeStyle = '#fff'; g.beginPath(); g.arc(o.x, o.y, rad * pulse + 6, -Math.PI / 2, -Math.PI / 2 + o.prog * Math.PI * 2); g.stroke(); }
+  if (glowOnly) return;
+  if (o.kind === 'sample') { // interesting rock
+    g.fillStyle = 'rgba(20,6,4,.35)'; g.beginPath(); g.ellipse(o.x + 3, o.y + 4, 15, 10, 0, 0, 7); g.fill();
+    g.fillStyle = '#d9b48f'; g.beginPath(); g.moveTo(o.x - 13, o.y + 3); g.lineTo(o.x - 6, o.y - 10); g.lineTo(o.x + 8, o.y - 8); g.lineTo(o.x + 14, o.y + 4); g.lineTo(o.x, o.y + 10); g.closePath(); g.fill(); g.lineWidth = 1.5; g.strokeStyle = '#7a5640'; g.stroke();
+    g.fillStyle = '#8be6dc'; g.beginPath(); g.arc(o.x - 2, o.y - 1, 3, 0, 7); g.arc(o.x + 6, o.y + 2, 2, 0, 7); g.fill();
+  } else {
+    g.fillStyle = 'rgba(20,6,4,.35)'; g.beginPath(); g.ellipse(o.x + 3, o.y + 5, 17, 12, 0, 0, 7); g.fill();
+    g.fillStyle = '#5a3a8a'; g.beginPath(); g.moveTo(o.x, o.y - 17); for (let k = 1; k < 6; k++) g.lineTo(o.x + Math.sin(k * 1.047) * 17, o.y - Math.cos(k * 1.047) * 17); g.closePath(); g.fill(); g.lineWidth = 2; g.strokeStyle = '#d6b5ff'; g.stroke();
+    g.fillStyle = '#fff'; g.font = '800 22px Baloo 2,sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('?', o.x, o.y + 1);
+  }
+}
+function drawGoal(g, t, glowOnly) {
+  const W = P.Wd, L = W.lander, on = P.all, col = on ? '82,224,138' : '180,170,160', pulse = 1 + Math.sin(t * 5) * (on ? .06 : .02);
+  if (!glowOnly) {
+    g.fillStyle = 'rgba(25,8,6,.3)'; g.beginPath(); g.arc(L.x + 6, L.y + 8, 52, 0, 7); g.fill();
+    const gr = g.createRadialGradient(L.x, L.y, 8, L.x, L.y, 52); gr.addColorStop(0, '#6e6a68'); gr.addColorStop(1, '#4a4644'); g.fillStyle = gr; g.beginPath(); g.arc(L.x, L.y, 50, 0, 7); g.fill();
+    g.strokeStyle = '#f2c14e'; g.lineWidth = 3; g.setLineDash([12, 10]); g.beginPath(); g.arc(L.x, L.y, 42, 0, 7); g.stroke(); g.setLineDash([]);
+    g.strokeStyle = '#8a8582'; g.lineWidth = 1.5; for (let k = 0; k < 4; k++) { g.beginPath(); g.moveTo(L.x + Math.cos(k * 1.57) * 20, L.y + Math.sin(k * 1.57) * 20); g.lineTo(L.x + Math.cos(k * 1.57) * 48, L.y + Math.sin(k * 1.57) * 48); g.stroke(); }
+    g.fillStyle = '#ddd'; g.beginPath(); g.arc(L.x, L.y, 15, 0, 7); g.fill(); g.fillStyle = '#2d6cdf'; g.fillRect(L.x - 15, L.y - 3, 30, 6);
+    g.font = '28px sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(W.m.id === 7 ? '🚀' : '🏠', L.x, L.y - 1);
+  }
+  g.lineWidth = 3; g.strokeStyle = 'rgba(' + col + ',.95)'; g.setLineDash([10, 8]); g.lineDashOffset = -t * 16; g.beginPath(); g.arc(L.x, L.y, 64 * pulse, 0, 7); g.stroke(); g.setLineDash([]);
+  if (on) { const gr = g.createRadialGradient(L.x, L.y, 20, L.x, L.y, 70); gr.addColorStop(0, 'rgba(82,224,138,0)'); gr.addColorStop(1, 'rgba(82,224,138,.4)'); g.fillStyle = gr; g.beginPath(); g.arc(L.x, L.y, 70, 0, 7); g.fill(); }
+}
+function drawDevil(g, d, t) {
+  const dc = P.m.biome.dust; const gr = g.createRadialGradient(d.x, d.y, 4, d.x, d.y, d.r * 1.5); gr.addColorStop(0, 'rgba(' + dc + ',.15)'); gr.addColorStop(.6, 'rgba(' + dc + ',.5)'); gr.addColorStop(1, 'rgba(' + dc + ',0)');
+  g.fillStyle = gr; g.beginPath(); g.arc(d.x, d.y, d.r * 1.5, 0, 7); g.fill();
+  g.lineCap = 'round'; for (let k = 0; k < 4; k++) { const rr = d.r * (.3 + k * .22), a0 = d.ph * (1 + k * .15) + k * 1.7; g.strokeStyle = 'rgba(255,240,220,' + (.55 - k * .1) + ')'; g.lineWidth = 3 - k * .4; g.beginPath(); g.arc(d.x, d.y, rr, a0, a0 + 2.4); g.stroke(); }
+  g.strokeStyle = 'rgba(60,25,15,.4)'; g.lineWidth = 2; g.beginPath(); g.arc(d.x, d.y, 8, d.ph, d.ph + 4.5); g.stroke();
+}
+function renderPlay(t) {
+  const W = P.Wd, r = P.r, cx = P.cam.x + (P.shake ? (Math.random() - .5) * P.shake : 0), cy = P.cam.y + (P.shake ? (Math.random() - .5) * P.shake : 0);
+  ctx.setTransform(DPR * Z, 0, 0, DPR * Z, 0, 0); ctx.fillStyle = '#1b0d0c'; ctx.fillRect(0, 0, VW, VH);
+  ctx.save(); ctx.translate(-cx, -cy);
+  for (let ty = Math.floor(cy / TS); ty <= Math.floor((cy + VH) / TS); ty++) for (let tx = Math.floor(cx / TS); tx <= Math.floor((cx + VW) / TS); tx++) { if (tx < 0 || ty < 0 || tx * TS > W.w || ty * TS > W.h) continue; ctx.drawImage(getTile(tx, ty), tx * TS, ty * TS); }
+  const sx = Math.max(0, cx), sy = Math.max(0, cy), sw = Math.min(W.w - sx, VW), sh = Math.min(W.h - sy, VH);
+  if (sw > 0 && sh > 0) ctx.drawImage(P.tr, sx / 2, sy / 2, sw / 2, sh / 2, sx, sy, sw, sh);
+  const vis = (x, y, m) => x > cx - m && x < cx + VW + m && y > cy - m && y < cy + VH + m;
+  for (const z of W.zones) if (vis(z.x, z.y, z.r + 20)) ctx.drawImage(z.spr, z.x - z.spr.width / 2, z.y - z.spr.height / 2);
+  // cliffs
+  const cl = W.obs.filter(o => o.k === 'cliff' && vis(o.x, o.y, 90));
+  if (cl.length) {
+    ctx.fillStyle = 'rgba(25,8,6,.4)'; cl.forEach(o => { ctx.beginPath(); ctx.arc(o.x + 8, o.y + 10, o.r + 8, 0, 7); ctx.fill(); });
+    ctx.fillStyle = '#d98b5e'; cl.forEach(o => { ctx.beginPath(); ctx.arc(o.x, o.y, o.r + 4, 0, 7); ctx.fill(); });
+    cl.forEach(o => { const g = ctx.createRadialGradient(o.x - 8, o.y - 8, 4, o.x, o.y, o.r); g.addColorStop(0, '#3a1612'); g.addColorStop(1, '#0d0505'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(o.x, o.y, o.r - 3, 0, 7); ctx.fill(); });
+  }
+  for (const b of W.batts) if (!b.got && vis(b.x, b.y, 30)) { const s = 1 + Math.sin(t * 5 + b.x) * .12; ctx.fillStyle = 'rgba(255,220,90,.3)'; ctx.beginPath(); ctx.arc(b.x, b.y, 22 * s, 0, 7); ctx.fill(); ctx.font = '26px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('⚡', b.x, b.y + 1); }
+  drawGoal(ctx, t, false);
+  for (const o of [...W.samples, ...W.stations]) if (vis(o.x, o.y, 70)) drawObjective(ctx, o, t, false);
+  for (const o of W.obs) if (o.k === 'rock' && vis(o.x, o.y, o.r + 20)) ctx.drawImage(o.spr, o.x - o.spr.width / 2, o.y - o.spr.height / 2);
+  // rover
+  drawRover(ctx, r.x, r.y, r.a, { wheel: r.wheel, mast: r.mast, armOut: r.armOut, lights: W.m.night });
+  // compass arrow
+  const tg = autoTarget(); if (tg && !P.paused) { const d = dist(r.x, r.y, tg.x, tg.y); if (d > 170) { const a = Math.atan2(tg.y - r.y, tg.x - r.x), px = r.x + Math.cos(a) * 62, py = r.y + Math.sin(a) * 62; ctx.save(); ctx.translate(px, py); ctx.rotate(a); ctx.fillStyle = P.all || !('kind' in tg) ? '#52e08a' : (tg.kind === 'sample' ? '#3fe0cf' : '#d6a8ff'); ctx.strokeStyle = 'rgba(0,0,0,.6)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(14, 0); ctx.lineTo(-8, -10); ctx.lineTo(-3, 0); ctx.lineTo(-8, 10); ctx.closePath(); ctx.stroke(); ctx.fill(); ctx.restore(); } }
+  for (const d of W.devils) if (vis(d.x, d.y, 120)) drawDevil(ctx, d, t);
+  for (const p of P.parts) { const a = clamp(p.life / p.max, 0, 1); ctx.fillStyle = 'rgba(' + p.col + ',' + (a * .55) + ')'; ctx.beginPath(); ctx.arc(p.x, p.y, p.r * (1.4 - a * .4), 0, 7); ctx.fill(); }
+  ctx.restore();
+  // ---- night ----
+  if (W.m.night) {
+    dkg.setTransform(1, 0, 0, 1, 0, 0); dkg.globalCompositeOperation = 'source-over'; dkg.fillStyle = 'rgba(3,3,20,.93)'; dkg.fillRect(0, 0, dk.width, dk.height);
+    dkg.setTransform(DPR * Z, 0, 0, DPR * Z, 0, 0); dkg.globalCompositeOperation = 'destination-out';
+    const rx = r.x - cx, ry = r.y - cy; let g = dkg.createRadialGradient(rx, ry, 10, rx, ry, 130); g.addColorStop(0, 'rgba(0,0,0,.9)'); g.addColorStop(1, 'rgba(0,0,0,0)'); dkg.fillStyle = g; dkg.beginPath(); dkg.arc(rx, ry, 130, 0, 7); dkg.fill();
+    dkg.save(); dkg.translate(rx, ry); dkg.rotate(r.a); g = dkg.createRadialGradient(20, 0, 10, 20, 0, 400); g.addColorStop(0, 'rgba(0,0,0,.95)'); g.addColorStop(1, 'rgba(0,0,0,0)'); dkg.fillStyle = g; dkg.beginPath(); dkg.moveTo(20, -8); dkg.lineTo(400, -150); dkg.lineTo(400, 150); dkg.lineTo(20, 8); dkg.closePath(); dkg.fill(); dkg.restore();
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(dk, 0, 0);
+    ctx.setTransform(DPR * Z, 0, 0, DPR * Z, 0, 0); ctx.save(); ctx.translate(-cx, -cy); ctx.globalAlpha = .9; drawGoal(ctx, t, true); for (const o of [...W.samples, ...W.stations]) if (vis(o.x, o.y, 70)) drawObjective(ctx, o, t, true); ctx.restore(); ctx.globalAlpha = 1;
+  }
+  if (W.m.storm) { ctx.fillStyle = 'rgba(150,70,30,.16)'; ctx.fillRect(0, 0, VW, VH); ctx.strokeStyle = 'rgba(255,200,150,.28)'; ctx.lineWidth = 1.5; ctx.beginPath(); for (const s of P.storm) { s.x = (s.x + (P.paused ? 0 : .0045 * s.s)) % 1.2; s.y = (s.y + (P.paused ? 0 : .0014 * s.s)) % 1; const x = s.x * VW - 40, y = s.y * VH; ctx.moveTo(x, y); ctx.lineTo(x + s.l, y + s.l * .25); } ctx.stroke(); }
+  // minimap
+  const sc = Math.min(336 / W.w, 224 / W.h), ox = (336 - W.w * sc) / 2, oy = (224 - W.h * sc) / 2, b = W.m.biome;
+  mg.setTransform(1, 0, 0, 1, 0, 0); mg.fillStyle = 'rgb(' + b.c2.join(',') + ')'; mg.fillRect(0, 0, 336, 224); mg.fillStyle = 'rgba(0,0,0,.28)'; mg.fillRect(0, 0, 336, 224);
+  mg.fillStyle = 'rgb(' + b.c2.map(v => v * .8 | 0).join(',') + ')'; mg.fillRect(ox, oy, W.w * sc, W.h * sc);
+  for (const z of W.zones) { mg.fillStyle = z.k === 'sand' ? 'rgba(240,200,130,.8)' : z.k === 'ice' ? 'rgba(200,235,255,.9)' : 'rgba(40,25,25,.8)'; mg.beginPath(); mg.arc(ox + z.x * sc, oy + z.y * sc, z.r * sc * .85, 0, 7); mg.fill(); }
+  mg.fillStyle = 'rgba(40,20,15,.9)'; for (const o of W.obs) { mg.beginPath(); mg.arc(ox + o.x * sc, oy + o.y * sc, Math.max(1.5, o.r * sc), 0, 7); mg.fill(); }
+  for (const o of [...W.samples, ...W.stations]) { mg.fillStyle = o.done ? 'rgba(82,224,138,.9)' : o.kind === 'sample' ? '#3fe0cf' : '#d6a8ff'; mg.beginPath(); mg.arc(ox + o.x * sc, oy + o.y * sc, 5, 0, 7); mg.fill(); mg.strokeStyle = '#000'; mg.lineWidth = 1; mg.stroke(); }
+  mg.fillStyle = P.all ? '#52e08a' : '#fff'; mg.fillRect(ox + W.lander.x * sc - 5, oy + W.lander.y * sc - 5, 10, 10);
+  mg.fillStyle = '#ff4d4d'; for (const d of W.devils) { mg.beginPath(); mg.arc(ox + d.x * sc, oy + d.y * sc, 4, 0, 7); mg.fill(); }
+  mg.strokeStyle = 'rgba(255,255,255,.7)'; mg.lineWidth = 1.5; mg.strokeRect(ox + cx * sc, oy + cy * sc, VW * sc, VH * sc);
+  mg.save(); mg.translate(ox + r.x * sc, oy + r.y * sc); mg.rotate(r.a); mg.fillStyle = '#fff'; mg.strokeStyle = '#000'; mg.lineWidth = 1.5; mg.beginPath(); mg.moveTo(9, 0); mg.lineTo(-6, -6); mg.lineTo(-6, 6); mg.closePath(); mg.fill(); mg.stroke(); mg.restore();
+}
+
+// ================= attract (title / map background) =================
+function drawAttract(t) {
+  const W = SW, H = SH; ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  const sk = ctx.createLinearGradient(0, 0, 0, H * .78); sk.addColorStop(0, '#0d0720'); sk.addColorStop(.55, '#3b1b32'); sk.addColorStop(1, '#d4703e'); ctx.fillStyle = sk; ctx.fillRect(0, 0, W, H);
+  for (const s of STARS) { ctx.fillStyle = 'rgba(255,255,255,' + (.35 + .5 * Math.sin(t * 1.5 + s.p)) * (1 - s.y * 1.05) + ')'; ctx.beginPath(); ctx.arc(s.x * W, s.y * H, s.s, 0, 7); ctx.fill(); }
+  // Earth (pale blue dot) + sun glow + moons
+  ctx.fillStyle = 'rgba(160,210,255,.9)'; ctx.beginPath(); ctx.arc(W * .82, H * .2, 3.4, 0, 7); ctx.fill(); ctx.fillStyle = 'rgba(160,210,255,.18)'; ctx.beginPath(); ctx.arc(W * .82, H * .2, 14, 0, 7); ctx.fill();
+  const hy = H * .74, sg = ctx.createRadialGradient(W * .2, hy, 5, W * .2, hy, W * .4); sg.addColorStop(0, 'rgba(255,230,190,.95)'); sg.addColorStop(.1, 'rgba(255,170,100,.5)'); sg.addColorStop(1, 'rgba(255,120,60,0)'); ctx.fillStyle = sg; ctx.fillRect(0, 0, W, hy);
+  const mx = ((t * 7) % (W + 120)) - 60; ctx.fillStyle = '#c9b9ad'; ctx.beginPath(); ctx.ellipse(mx, H * .3 + Math.sin(t * .3) * 6, 16, 12, .4, 0, 7); ctx.fill(); ctx.fillStyle = 'rgba(60,40,40,.35)'; ctx.beginPath(); ctx.arc(mx - 4, H * .3 - 2, 3.5, 0, 7); ctx.fill();
+  const mx2 = W - ((t * 3.5) % (W + 80)) + 10; ctx.fillStyle = '#b9a99d'; ctx.beginPath(); ctx.ellipse(mx2, H * .43, 8, 6, 0, 0, 7); ctx.fill();
+  // dunes
+  const layers = [[hy - 18, 14, .0045, 8, '#9c4a2a'], [hy + 4, 18, .0035, 16, '#7a3721'], [hy + 36, 22, .0028, 30, '#582616']];
+  layers.forEach(([base, amp, f, spd, col], li) => { ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(0, H); for (let x = 0; x <= W; x += 10) ctx.lineTo(x, base + Math.sin((x + t * spd) * f * 6) * amp + Math.sin((x + t * spd) * f * 15 + li) * amp * .35); ctx.lineTo(W, H); ctx.closePath(); ctx.fill(); });
+  const gy = hy + 78; const gg = ctx.createLinearGradient(0, gy, 0, H); gg.addColorStop(0, '#3e1b11'); gg.addColorStop(1, '#1c0c08'); ctx.fillStyle = gg; ctx.fillRect(0, gy, W, H - gy);
+  const s = clamp(W / 900, .75, 1.7), ry = Math.min(H - 14, gy + 52 * s) - 2 + Math.sin(t * 9) * 1.2;
+  // dust behind the rover
+  if (Math.random() < .5) ATT.dust.push({ x: W * .5 - 72 * s, y: ry - 6, vx: -40 - Math.random() * 40, vy: -10 - Math.random() * 20, l: 1 });
+  for (let i = ATT.dust.length - 1; i >= 0; i--) { const d = ATT.dust[i]; d.l -= .02; d.x += d.vx * .016; d.y += d.vy * .016; if (d.l <= 0) { ATT.dust.splice(i, 1); continue; } ctx.fillStyle = 'rgba(214,140,98,' + d.l * .4 + ')'; ctx.beginPath(); ctx.arc(d.x, d.y, 4 + (1 - d.l) * 12, 0, 7); ctx.fill(); }
+  drawRoverSide(ctx, W * .5, ry, s * 1.05, t * 5);
+}
+
+// ================= screens =================
+function showTitle() {
+  scr = 'title'; P = null; $('#hud').classList.add('hide'); mini.classList.add('hide'); $('#boost').classList.add('hide'); $('#scan').classList.add('hide'); $('#stick').classList.add('hide'); engineSound(false, 0);
+  const lv = SAVE.level;
+  $('#ui').innerHTML = '<div class="title"><h1><small>RED PLANET MISSION</small>MARS ROVER<br>EXPLORER</h1><p>Drive across seven Mars sites, drill rocks and answer science questions to power your rover.</p>' +
+    '<div class="menu"><div class="row"><button class="btn" data-act="map" style="font-size:24px;padding:14px 34px">▶ Start exploring</button></div>' +
+    '<div class="row"><button class="btn alt small" data-act="log">📖 Mission log</button><button class="btn alt small" data-act="quiz">🧠 Quiz lab</button><button class="btn ghost small" data-act="how">❓ How to play</button><button class="btn ghost small" data-act="snd">' + (SAVE.sound ? '🔊 Sound on' : '🔇 Sound off') + '</button></div>' +
+    '<div class="seg" id="lvseg">' + Object.entries(LEVELS).map(([k, v]) => '<button data-lv="' + k + '" class="' + (k === lv ? 'on' : '') + '">' + v.name + '</button>').join('') + '</div>' +
+    '<div style="color:#ffe2c8;font-weight:800;text-shadow:0 2px 8px #000">⭐ ' + totalStars() + ' / 21 stars · 💡 ' + Object.keys(SAVE.facts).length + ' / ' + BANK.length + ' facts</div></div></div>';
+}
+function toMap() {
+  scr = 'map'; P = null; $('#hud').classList.add('hide'); mini.classList.add('hide'); $('#boost').classList.add('hide'); $('#scan').classList.add('hide'); $('#stick').classList.add('hide'); engineSound(false, 0);
+  $('#ui').innerHTML = '<div class="panel scr"><div class="top"><div><h2>🗺️ Mission map</h2><div class="sub">Pick a site. Finish one to unlock the next. Level: <b>' + LEVELS[SAVE.level].name + '</b></div></div><button class="btn ghost small" data-act="title">⌂ Home</button></div><div class="mgrid">' +
+    MISSIONS.map((m, i) => { const s = SAVE.stars[m.id] || 0, un = isUnlocked(i); return '<button class="mc ' + (un ? '' : 'lock') + '" data-mi="' + i + '"><span class="n">#' + m.id + '</span><span class="e">' + m.emoji + '</span><span class="nm">' + esc(m.name) + '</span><span class="tg">' + TOPICS[m.topic].emoji + ' ' + esc(m.tag) + '</span><span class="st">' + [1, 2, 3].map(k => '<span class="star ' + (k > s ? 'off' : '') + '">★</span>').join('') + '</span></button>'; }).join('') + '</div></div>';
+}
+let logTab = 'all';
+function showLog() {
+  scr = 'log'; $('#hud').classList.add('hide');
+  const list = BANK.filter(q => logTab === 'all' || q.t === logTab);
+  $('#ui').innerHTML = '<div class="panel scr"><div class="top"><div><h2>📖 Mission log</h2><div class="sub">Every question you answer unlocks a Mars fact. ' + Object.keys(SAVE.facts).length + ' of ' + BANK.length + ' collected.</div></div><button class="btn ghost small" data-act="title">⌂ Home</button></div>' +
+    '<div class="tabs"><button data-tab="all" class="' + (logTab === 'all' ? 'on' : '') + '">All</button>' + Object.entries(TOPICS).map(([k, v]) => '<button data-tab="' + k + '" class="' + (logTab === k ? 'on' : '') + '">' + v.emoji + ' ' + v.name + '</button>').join('') + '</div>' +
+    '<div class="fgrid">' + list.map(q => SAVE.facts[q.id] ? '<div class="fcard">' + factHTML(q) + '</div>' : '<div class="fcard lk">🔒 ' + TOPICS[q.t].emoji + ' Answer this question in a mission to unlock the fact.</div>').join('') + '</div></div>';
+}
+function startQuiz() {
+  const pool = shuffle(BANK), pr = q => (SAVE.missed[q.id] ? 2 : 0) + (SAVE.facts[q.id] ? 0 : 1), qs = pool.sort((a, b) => pr(b) - pr(a)).slice(0, 8); let i = 0, mist = 0;
+  $('#ui').innerHTML = ''; scr = 'quiz';
+  const next = () => {
+    if (i >= qs.length) { const ov = $('#ov'); ov.classList.remove('hide'); ov.innerHTML = '<div class="panel modal" style="text-align:center"><div class="big">🧠</div><h2>Quiz lab done!</h2><p style="font-weight:700">' + (mist ? 'You made ' + mist + ' mistake' + (mist > 1 ? 's' : '') + '. Those questions will come back first next time.' : 'No mistakes at all. Fantastic!') + '</p><div class="row" style="justify-content:center"><button class="btn" data-act="quiz">Another round</button><button class="btn ghost" data-act="title">Home</button></div></div>'; ov.onclick = e => { const a = e.target.closest('[data-act]'); if (!a) return; ov.classList.add('hide'); ov.onclick = null; act(a.dataset.act); }; return; }
+    const q = qs[i++]; ask(q, { practice: true, badge: '🧠 Quiz lab ' + i + ' of ' + qs.length, next: i === qs.length ? 'Finish ▶' : 'Next ▶' }, m => { mist += m; if (m) { SAVE.missed[q.id] = (SAVE.missed[q.id] || 0) + 1; persist(); } next(); });
+  };
+  next();
+}
+function howTo() {
+  const ov = $('#ov'); ov.classList.remove('hide');
+  ov.innerHTML = '<div class="panel modal"><h2>❓ How to play</h2><div class="fcard">🚙 <b>Drive</b> your rover with ' + (TOUCH ? 'one finger: drag anywhere on the screen.' : '<kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><kbd>↓</kbd> or <kbd>W A S D</kbd>. Hold <kbd>Space</kbd> to boost (uses more battery).') + '</div>' +
+    '<div class="fcard" style="margin-top:8px">🪨 <b>Drill rings</b> (teal) and 🔬 <b>science stations</b> (purple): stop inside the ring and hold still. A question appears. Right answers refill your battery!</div>' +
+    '<div class="fcard" style="margin-top:8px">⚡ <b>Battery</b> drains when you drive and recharges when you rest. 🛡️ <b>Hull</b> drops when you bump into rocks. If it hits zero Mission Control repairs you at your last checkpoint.</div>' +
+    '<div class="fcard" style="margin-top:8px">🌪️🧊🏜️ <b>Hazards:</b> dust devils push you, ice makes you slide, sand slows you down, cliffs block you.</div>' +
+    '<div class="fcard" style="margin-top:8px">⭐ <b>Stars:</b> 3 stars for 0–1 wrong answers and no repairs. Then drive back to the lander to finish!</div>' +
+    '<div class="row end"><button class="btn" id="hgo">Got it!</button></div></div>';
+  $('#hgo').onclick = () => { ov.classList.add('hide'); ov.innerHTML = ''; SAVE.seen = true; persist(); };
+}
+function act(a) {
+  SFX.click();
+  if (a === 'map') { audio(); toMap(); if (!SAVE.seen) howTo(); } else if (a === 'title') showTitle(); else if (a === 'log') showLog(); else if (a === 'quiz') startQuiz(); else if (a === 'how') howTo();
+  else if (a === 'snd') { SAVE.sound = !SAVE.sound; persist(); showTitle(); } else if (a === 'resume') resume();
+}
+$('#ui').addEventListener('click', e => {
+  const lv = e.target.closest('[data-lv]'); if (lv) { SAVE.level = lv.dataset.lv; persist(); SFX.click(); $('#lvseg').querySelectorAll('button').forEach(b => b.classList.toggle('on', b === lv)); return; }
+  const tab = e.target.closest('[data-tab]'); if (tab) { logTab = tab.dataset.tab; showLog(); return; }
+  const mi = e.target.closest('[data-mi]'); if (mi) { SFX.click(); startMission(+mi.dataset.mi); return; }
+  const a = e.target.closest('[data-act]'); if (a) act(a.dataset.act);
+});
+
+// pause
+function pause() {
+  if (!P || P.paused || scr !== 'play') return; P.paused = true; engineSound(false, 0); const ov = $('#ov'); ov.classList.remove('hide');
+  ov.innerHTML = '<div class="panel modal" style="text-align:center"><div class="big">⏸</div><h2>Paused</h2><div class="row" style="justify-content:center"><button class="btn" data-act="resume">▶ Resume</button><button class="btn ghost" data-act="restart">↻ Restart mission</button><button class="btn alt" data-act="map">🗺️ Mission map</button></div></div>';
+  ov.onclick = e => { const a = e.target.closest('[data-act]'); if (!a) return; ov.classList.add('hide'); ov.innerHTML = ''; ov.onclick = null; if (a.dataset.act === 'resume') P.paused = false; else if (a.dataset.act === 'restart') startMission(P.mi); else toMap(); };
+}
+function resume() { }
+$('#bpause').onclick = pause;
+$('#bmute').onclick = () => { SAVE.sound = !SAVE.sound; persist(); $('#bmute').textContent = SAVE.sound ? '🔊' : '🔇'; if (!SAVE.sound) engineSound(false, 0); };
+
+// ================= input =================
+addEventListener('keydown', e => {
+  const k = e.key.length === 1 ? e.key.toLowerCase() : e.key; if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(k)) e.preventDefault();
+  keys[k] = true; if ((k === 'Escape' || k === 'p') && scr === 'play') { P && P.paused ? 0 : pause(); } audio();
+});
+addEventListener('keyup', e => { const k = e.key.length === 1 ? e.key.toLowerCase() : e.key; keys[k] = false; if (k === 'Shift') keys.Shift = false; });
+addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
+cv.addEventListener('pointerdown', e => { if (scr !== 'play' || !P || P.paused) return; audio(); stick.on = true; stick.id = e.pointerId; stick.ox = e.clientX; stick.oy = e.clientY; stick.dx = stick.dy = 0; const s = $('#stick'); s.classList.remove('hide'); s.style.left = e.clientX + 'px'; s.style.top = e.clientY + 'px'; s.firstChild.style.transform = 'none'; cv.setPointerCapture(e.pointerId); });
+cv.addEventListener('pointermove', e => { if (!stick.on || e.pointerId !== stick.id) return; stick.dx = e.clientX - stick.ox; stick.dy = e.clientY - stick.oy; const l = Math.hypot(stick.dx, stick.dy), m = Math.min(l, 50); $('#stick').firstChild.style.transform = 'translate(' + (l ? stick.dx / l * m : 0) + 'px,' + (l ? stick.dy / l * m : 0) + 'px)'; });
+const endStick = e => { if (e.pointerId !== stick.id) return; stick.on = false; stick.dx = stick.dy = 0; $('#stick').classList.add('hide'); };
+cv.addEventListener('pointerup', endStick); cv.addEventListener('pointercancel', endStick);
+const bb = $('#boost'); bb.addEventListener('pointerdown', e => { e.stopPropagation(); if (P) P.boostBtn = true; }); bb.addEventListener('pointerup', () => { if (P) P.boostBtn = false; }); bb.addEventListener('pointerleave', () => { if (P) P.boostBtn = false; });
+document.addEventListener('visibilitychange', () => { if (document.hidden && scr === 'play') pause(); });
+
+// ================= main loop =================
+function frame(ts) {
+  const dt = Math.min(.05, (ts - wallT) / 1000); wallT = ts; const t = ts / 1000;
+  if (scr === 'play' && P) {
+    if (!P.paused) { const n = P.ts > 1 ? P.ts : 1; for (let i = 0; i < n && !P.paused && scr === 'play'; i++) update(dt * (P.ts < 1 ? P.ts : 1)); }
+    if (P) { renderPlay(t); hudTick(); }
+  } else if (scr !== 'play') { drawAttract(t); }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(ts => { wallT = ts; frame(ts); });
+$('#bmute').textContent = SAVE.sound ? '🔊' : '🔇';
+showTitle();
+
+// debug hook (used by the automated tests)
+window.__m = { get P() { return P; }, start: startMission, save: SAVE, BANK, MISSIONS, genWorld, reachable, ask, title: showTitle, map: toMap, quiz: startQuiz, log: showLog, fin: () => { if (P) finishMission(); } };
+</script></body></html>
