@@ -130,18 +130,26 @@ ${sector}
 
 function bookCard(b) {
   const initials = b.title.split(/\s+/).slice(0, 2).map(w => w[0]).join("");
+  const cover = b.cover
+    ? `<img src="${esc(b.cover)}" alt="" loading="lazy">`
+    : esc(initials);
   const tags = (b.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join("");
   const rating = b.rating ? `<span class="book-rating">${"★".repeat(b.rating)}${"☆".repeat(5 - b.rating)}</span>` : "";
-  return `<article class="book-card" data-title="${esc(b.title.toLowerCase())}" data-author="${esc((b.author || "").toLowerCase())}" data-desc="${esc((b.desc || "").toLowerCase())}" data-status="${esc(b.status)}" data-tags="${esc((b.tags || []).join(" ").toLowerCase())}">
-<div class="book-cover">${esc(initials)}</div>
+  const cta = b.url ? `<span class="book-cta">${esc(b.cta || "Open book")} &rarr;</span>` : "";
+  const tag = b.url ? "a" : "article";
+  const href = b.url ? ` href="${esc(b.url)}"` : "";
+  const cls = b.url ? "book-card is-link" : "book-card";
+  return `<${tag} class="${cls}"${href} data-title="${esc(b.title.toLowerCase())}" data-author="${esc((b.author || "").toLowerCase())}" data-desc="${esc((b.desc || "").toLowerCase())}" data-status="${esc(b.status)}" data-tags="${esc((b.tags || []).join(" ").toLowerCase())}">
+<div class="book-cover">${cover}</div>
 <div class="book-main">
 <h3 class="book-title">${esc(b.title)}</h3>
 <p class="book-author">${esc(b.author)} · ${esc(b.year)}</p>
 <p class="book-desc">${esc(b.desc)}</p>
 <div class="tags">${tags}</div>
+${cta}
 </div>
 <div class="book-side"><span class="book-status" data-status="${esc(b.status)}">${esc(b.status)}</span>${rating}</div>
-</article>`;
+</${tag}>`;
 }
 
 /* Blog listing card on /blogs/. Reuses the highlight-card styles; paths in

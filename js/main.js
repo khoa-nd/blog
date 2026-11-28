@@ -279,15 +279,20 @@
   /* ---------- Book card (used by home + books page) ---------- */
   function bookCard(b) {
     const initials = b.title.split(/\s+/).slice(0, 2).map(function (w) { return w[0]; }).join("");
-    return el("article", {
-      class: "book-card",
+    const coverEl = b.cover
+      ? el("div", { class: "book-cover" }, [el("img", { src: b.cover, alt: "", loading: "lazy" })])
+      : el("div", { class: "book-cover", text: initials });
+    const attrs = {
+      class: b.url ? "book-card is-link" : "book-card",
       "data-title": b.title.toLowerCase(),
       "data-author": (b.author || "").toLowerCase(),
       "data-desc": (b.desc || "").toLowerCase(),
       "data-status": b.status,
       "data-tags": (b.tags || []).join(" ").toLowerCase(),
-    }, [
-      el("div", { class: "book-cover", text: initials }),
+    };
+    if (b.url) attrs.href = b.url;
+    return el(b.url ? "a" : "article", attrs, [
+      coverEl,
       el("div", { class: "book-main" }, [
         el("h3", { class: "book-title", text: b.title }),
         el("p", { class: "book-author", text: b.author + " \u00b7 " + b.year }),
@@ -295,6 +300,7 @@
         el("div", { class: "tags" }, (b.tags || []).map(function (t) {
           return el("span", { class: "tag", text: t });
         })),
+        b.url ? el("span", { class: "book-cta", text: (b.cta || "Open book") + " \u2192" }) : null,
       ]),
       el("div", { class: "book-side" }, [
         el("span", { class: "book-status", "data-status": b.status, text: b.status }),

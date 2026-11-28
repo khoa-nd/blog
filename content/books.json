@@ -1,96 +1,63 @@
 [
   {
-    "title": "Designing Data-Intensive Applications",
-    "author": "Martin Kleppmann",
-    "year": 2017,
-    "status": "finished",
-    "rating": 5,
-    "tags": [
-      "Systems",
-      "Distributed"
-    ],
-    "desc": "The reference I keep returning to. The chapter on consistency models finally made replication lag feel intuitive rather than terrifying."
-  },
-  {
-    "title": "The Pragmatic Programmer",
-    "author": "Andrew Hunt & David Thomas",
-    "year": 1999,
-    "status": "finished",
-    "rating": 4,
-    "tags": [
-      "Craft"
-    ],
-    "desc": "Dated in its examples, durable in its advice. Worth rereading every few years to see which parts you have quietly stopped doing."
-  },
-  {
-    "title": "Thinking, Fast and Slow",
-    "author": "Daniel Kahneman",
-    "year": 2011,
-    "status": "reading",
-    "rating": 4,
-    "tags": [
-      "Psychology",
-      "Decisions"
-    ],
-    "desc": "Slow going but rewarding. Changed how I write postmortems — most of what looks like a bad decision was a decision made under a bad frame."
-  },
-  {
-    "title": "A Philosophy of Software Design",
-    "author": "John Ousterhout",
-    "year": 2018,
-    "status": "finished",
-    "rating": 5,
-    "tags": [
-      "Craft",
-      "Architecture"
-    ],
-    "desc": "Short, opinionated, and the clearest argument I have read for deep modules over thin ones. Disagree with parts of it and you will still think better."
-  },
-  {
-    "title": "Shape Up",
-    "author": "Ryan Singer",
-    "year": 2019,
-    "status": "finished",
-    "rating": 4,
-    "tags": [
-      "Process",
-      "Product"
-    ],
-    "desc": "Free online and worth more than most paid books on process. The appetite-over-estimate framing stuck with me."
-  },
-  {
-    "title": "Crafting Interpreters",
-    "author": "Robert Nystrom",
-    "year": 2021,
+    "title": "Mathematics in Deep Learning",
+    "author": "Yin Yang",
+    "year": 2026,
     "status": "reading",
     "rating": 5,
+    "url": "books/math-dl-yinyang/",
+    "cta": "Open visual index (3/60 live)",
+    "cover": "books/math-dl-yinyang/day-03-dot-products-and-projections.jpg",
     "tags": [
-      "Languages",
-      "Compilers"
+      "Deep Learning",
+      "Mathematics",
+      "Visual Guides"
     ],
-    "desc": "Working through the second half slowly. Writing a bytecode VM by hand demystifies a lot of things you otherwise take on faith."
+    "desc": "60-day progressive visual companion to Yin Yang's textbook — daily Gemma-style interactive HTML guides and clean editorial infographic posters, from foundational functions to modern generative theory."
   },
   {
-    "title": "The Design of Everyday Things",
-    "author": "Don Norman",
-    "year": 1988,
-    "status": "finished",
-    "rating": 4,
-    "tags": [
-      "Design"
-    ],
-    "desc": "Affordances and signifiers, applied to doors and then to everything else. I think about this book every time an error message says only 'invalid input'."
-  },
-  {
-    "title": "Staff Engineer",
-    "author": "Will Larson",
-    "year": 2021,
+    "title": "The Mighty Thor",
+    "author": "Stan Lee, Jack Kirby, Larry Lieber",
+    "year": 2026,
     "status": "queued",
     "rating": 0,
+    "url": "books/picks/2026-11-20-the-mighty-thor.html",
+    "cta": "Read Alexandria note",
     "tags": [
-      "Career",
-      "Leadership"
+      "Alexandria Pick",
+      "Comics",
+      "Classics"
     ],
-    "desc": "On the shelf. Picked it up after a conversation about what the next step looks like when it is no longer about writing more code."
+    "desc": "Part of the Penguin Classics Marvel Collection gathering the origin stories and seminal tales of key Marvel Universe characters, curated by Alexandria."
+  },
+  {
+    "title": "Hotel Du Lac; Family and Friends",
+    "author": "Anita Brookner",
+    "year": 2026,
+    "status": "queued",
+    "rating": 0,
+    "url": "books/picks/2026-11-03-hotel-du-lac-family-and-friends.html",
+    "cta": "Read Alexandria note",
+    "tags": [
+      "Alexandria Pick",
+      "Fiction",
+      "Literary"
+    ],
+    "desc": "Omnibus collecting two of Booker Prize–winning author Anita Brookner's poignant, character-driven novels in one volume, curated by Alexandria."
+  },
+  {
+    "title": "Magic Tree House Through Time and Space Boxed Set: Graphic Novels 5-8",
+    "author": "Mary Pope Osborne",
+    "year": 2026,
+    "status": "queued",
+    "rating": 0,
+    "url": "books/picks/2026-11-02-magic-tree-house-through-time-and-space-boxed-set-graphic-no.html",
+    "cta": "Read Alexandria note",
+    "tags": [
+      "Alexandria Pick",
+      "Graphic Novels",
+      "Adventure"
+    ],
+    "desc": "Graphic novels 5 through 8 following Jack and Annie on magical time-travel adventures, curated by Alexandria."
   }
 ]
