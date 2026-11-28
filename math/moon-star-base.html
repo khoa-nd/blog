@@ -97,6 +97,9 @@ body.touch #msg{bottom:112px!important}
 #tl{left:14px}#tr{left:98px}#tact{right:14px;width:92px;height:92px;background:rgba(255,120,60,.6);font-size:15px}
 .tb{background:rgba(120,170,255,.45);font-size:28px}
 #tact{background:rgba(255,150,60,.6);font-size:15px}
+#autob{position:fixed;left:50%;top:174px;transform:translateX(-50%);z-index:6;border:2px solid rgba(160,200,255,.5);background:rgba(10,20,42,.82);color:#e8f0ff;font:800 15px var(--h);border-radius:999px;padding:8px 18px;white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+@media(max-width:640px){#autob{top:214px;font-size:14px;padding:7px 14px}}
+#autob.on{background:linear-gradient(180deg,#8cf3b4,#34c47a);color:#05301a;border-color:#c6ffe0}
 
 /* modal */
 #ov{position:fixed;inset:0;background:rgba(2,5,14,.62);display:flex;align-items:center;justify-content:center;z-index:20;padding:10px}
@@ -172,6 +175,7 @@ kbd{background:rgba(255,255,255,.14);padding:2px 8px;border-radius:7px;font:800 
 <div id="stick" class="hide"><i></i></div>
 <button id="boost" class="hide">BOOST</button>
 <button class="tb hide" id="tl">◀</button><button class="tb hide" id="tr">▶</button><button class="tb hide" id="tact">BOOST</button>
+<button id="autob" class="hide">🤖 Auto-land</button>
 <div id="ui"></div>
 <div id="ov" class="hide"></div>
 <script>
@@ -865,7 +869,7 @@ function drawParts(g, k) { for (const p of P.parts) { const a = clamp(p.life / p
 // ================= input =================
 addEventListener('keydown', e => {
   const k = e.key.length === 1 ? e.key.toLowerCase() : e.key; if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(k)) e.preventDefault();
-  keys[k] = true; if ((k === 'Escape' || k === 'p') && scr === 'play') { P && P.paused ? 0 : pause(); } audio();
+  keys[k] = true; if (k === 'g' && scr === 'play' && P && !P.paused && !e.repeat) toggleAuto(); if ((k === 'Escape' || k === 'p') && scr === 'play') { P && P.paused ? 0 : pause(); } audio();
 });
 addEventListener('keyup', e => { const k = e.key.length === 1 ? e.key.toLowerCase() : e.key; keys[k] = false; if (k === 'Shift') keys.Shift = false; });
 addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
@@ -1117,9 +1121,10 @@ function updateLand(dt) {
   let rot = (keys.ArrowRight || keys.d ? 1 : 0) - (keys.ArrowLeft || keys.a ? 1 : 0) + (P.pad.r ? 1 : 0) - (P.pad.l ? 1 : 0), thrust = !!(keys.ArrowUp || keys.w || keys[' '] || P.pad.a || P.boostBtn);
   if (stick.on) { rot = clamp(stick.dx / 40, -1, 1); if (stick.dy < -22) thrust = true; }
   if (P.auto) { // test autopilot
-    const dx = P.padX - ln.x, desVx = agl < 160 ? clamp(dx * .25, -14, 14) : clamp(dx * .4, -75, 75), desA = clamp((desVx - ln.vx) * .02, -.45, .45);
+    const dx = P.padX - ln.x, cap = agl < 80 ? 9 : agl < 160 ? 14 : 75, desVx = Math.sign(dx) * Math.min(cap, Math.sqrt(12 * Math.abs(dx)), Math.abs(dx) * .4), desA = clamp((desVx - ln.vx) * .03, -.45, .45);
     rot = clamp(angDiff(ln.a, desA) * 3, -1, 1); const desVy = agl > 300 ? 52 : clamp(agl * .14, 8, 52); thrust = ln.vy > desVy && Math.abs(ln.a) < .5;
   }
+  if (P.auto) r.bat = Math.max(r.bat, 10); // the autopilot has reserve tanks
   if (r.bat <= 0.01) { thrust = false; once('lowfuel'); }
   const th = thrust ? 1 : 0;
   ln.a = clamp(ln.a + rot * 1.9 * dt, -1.15, 1.15); if (L.assist && !rot) ln.a *= Math.exp(-2.8 * dt);
@@ -1139,7 +1144,7 @@ function updateLand(dt) {
     if (P.god || (onPad && okV && okH && okA)) {
       ln.y = P.padY - FOOT; ln.a = 0; ln.vx = ln.vy = 0; ln.flame = 0; engineSound(false, 0); SFX.done();
       for (let i = 0; i < 40; i++) spawn(ln.x + (Math.random() - .5) * 50, P.padY - 3, (Math.random() - .5) * 340, -Math.random() * 40, 1.4, 4 + Math.random() * 6, '200,200,210');
-      P.cine = { k: 'land', t: 0, st: 0 }; P.landed = true; toast('🌕 <b>Touchdown!</b> "The Eagle has landed" … er, <b>Selene</b> has landed!', 'sci', 5000);
+      P.cine = { k: 'land', t: 0, st: 0 }; P.landed = true; $('#autob').classList.add('hide'); toast('🌕 <b>Touchdown!</b> "The Eagle has landed" … er, <b>Selene</b> has landed!', 'sci', 5000);
     } else {
       const why = !onPad ? 'You missed the landing pad.' : !okV ? 'You came down too fast.' : !okH ? 'You were drifting sideways.' : 'The lander was tilted.';
       ln.crash = 2; P.repairs++; engineSound(false, 0); SFX.boom(); P.shake = 10;
@@ -1424,9 +1429,12 @@ function setControls(mode) {
   const arc = mode !== 'surf';
   $('#boost').classList.toggle('hide', !(TOUCH && !arc));
   for (const id of ['#tl', '#tr', '#tact']) $(id).classList.toggle('hide', !(TOUCH && arc));
-  $('#tact').textContent = mode === 'land' ? 'THRUST' : 'BOOST'; $('#tl').textContent = '◀'; $('#tr').textContent = '▶';
+  $('#tact').textContent = mode === 'land' ? 'THRUST' : 'BOOST'; $('#autob').classList.toggle('hide', mode !== 'land'); syncAuto(); $('#tl').textContent = '◀'; $('#tr').textContent = '▶';
 }
-function hideControls() { for (const id of ['#boost', '#tl', '#tr', '#tact', '#stick', '#scan']) $(id).classList.add('hide'); }
+function syncAuto() { const b = $('#autob'); if (!b) return; const on = !!(P && P.auto && P.mode === 'land'); b.classList.toggle('on', on); b.textContent = on ? '🤖 Autopilot ON · tap to fly yourself' : '🤖 Auto-land for me'; }
+function toggleAuto() { if (!P || P.mode !== 'land' || scr !== 'play') return; P.auto = !P.auto; SFX.click(); syncAuto(); toast(P.auto ? '🤖 <b>Autopilot is flying.</b> Sit back, answer Mission Control, and watch it land.' : '🕹️ <b>You have the controls!</b>', 'sci', 3200); }
+$('#autob').addEventListener('pointerdown', e => { e.stopPropagation(); e.preventDefault(); audio(); toggleAuto(); });
+function hideControls() { for (const id of ['#boost', '#tl', '#tr', '#tact', '#stick', '#scan', '#autob']) $(id).classList.add('hide'); }
 function startMission(mi) {
   audio(); clearToast(); const m = MISSIONS[mi], lvKey = SAVE.level;
   const deck = m.mode === 'launch' ? mkDeck([['launch', 5], ['earthmoon', 2]]) : m.mode === 'land' ? mkDeck([['landing', 4]]) : mkDeck([[m.topic, 6]]);
@@ -1444,14 +1452,16 @@ function briefing() {
     m.mode === 'land' ?
       '<div class="fcard" style="margin-top:8px">🛬 <b>Land on the green pad.</b> Gravity pulls you down. Fire the engine to slow down (the engine pushes the way the lander points). Touch down <b>slowly (under ' + (L.vmax / 10).toFixed(1) + ' m/s down, ' + (L.hmax / 10).toFixed(1) + ' m/s sideways)</b> and <b>upright</b>.' + (L.assist ? ' Rookie mode helps level the lander for you.' : '') + '</div>' +
       '<div class="fcard" style="margin-top:8px">📡 Mission Control will call you 3 times with a question while you descend. Right answers give extra fuel.</div>' +
+      '<div class="fcard" style="margin-top:8px">🤖 <b>Too tricky?</b> Choose <b>Auto-land</b>: the computer flies the lander for you. You still answer the Mission Control questions. You can switch it on or off any time with the button' + (TOUCH ? '' : ' or the <kbd>G</kbd> key') + '.</div>' +
       '<div class="fcard" style="margin-top:8px">🎮 ' + (TOUCH ? '<b>◀ ▶</b> tilt · hold <b>THRUST</b> to fire the engine.' : '<kbd>←</kbd><kbd>→</kbd> tilt · hold <kbd>↑</kbd> or <kbd>Space</kbd> to fire the engine · <kbd>Esc</kbd> pause') + '</div>' :
       '<div class="fcard" style="margin-top:8px">📦 <b>Cargo crates</b> (teal rings) and 🔬 the <b>survey</b> (purple ring): drive in, <b>stop</b> and hold still. A question pops up. Right answers load the cargo and recharge the battery.</div>' +
       '<div class="fcard" style="margin-top:8px">🏗️ <b>Build site</b> (gold ring beside the lander): when all crates and the survey are done, stop in the ring, answer <b>2 engineering questions</b>, and watch your module get built!</div>' +
       '<div class="fcard" style="margin-top:8px">🎮 ' + (TOUCH ? '<b>Drag</b> anywhere to drive. The BOOST button costs extra battery.' : '<kbd>←</kbd><kbd>→</kbd> steer · <kbd>↑</kbd><kbd>↓</kbd> drive (or <kbd>W A S D</kbd>) · <kbd>Space</kbd> boost · <kbd>Esc</kbd> pause') + '</div>';
   ov.innerHTML = '<div class="panel modal"><div class="badge lab">Mission ' + m.id + ' of 8 · ' + esc(m.tag) + '</div><h2>' + m.emoji + ' ' + esc(m.name) + '</h2>' +
     '<p style="font-weight:700;line-height:1.5;margin:6px 0 12px">' + m.story + '</p><div class="fcard">🎯 <b>Goal:</b> ' + esc(m.goal) + '</div>' + how +
-    '<div class="row end"><button class="btn ghost" data-act="map">Back</button><button class="btn" id="go">' + (m.mode === 'surf' ? 'Roll out! 🚙' : m.mode === 'launch' ? 'To the pad! 🚀' : 'Start descent 🛬') + '</button></div></div>';
+    '<div class="row end"><button class="btn ghost" data-act="map">Back</button>' + (m.mode === 'land' ? '<button class="btn alt" id="goauto">🤖 Auto-land for me</button>' : '') + '<button class="btn" id="go">' + (m.mode === 'surf' ? 'Roll out! 🚙' : m.mode === 'launch' ? 'To the pad! 🚀' : 'I will fly it! 🛬') + '</button></div></div>';
   $('#go').onclick = () => { SFX.click(); ov.classList.add('hide'); ov.innerHTML = ''; if (P.mode === 'launch') launchGo(); else P.paused = false; };
+  const ga = $('#goauto'); if (ga) ga.onclick = () => { P.auto = true; syncAuto(); $('#go').click(); toast('🤖 <b>Autopilot is flying.</b> Answer Mission Control and watch it land. Tap the button any time to take over.', 'sci', 5000); };
   ov.querySelector('[data-act=map]').onclick = () => { ov.classList.add('hide'); ov.innerHTML = ''; toMap(); };
 }
 
