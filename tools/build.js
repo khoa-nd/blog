@@ -233,8 +233,8 @@ function headFor(page) {
       url: SITE_URL + "/blogs/",
     },
     "books.html": {
-      title: `Reading — ${SITE.name}`,
-      desc: `Books I've read, am reading, and have queued up — ${BOOKS.length} titles with notes.`,
+      title: `Books — ${SITE.name}`,
+      desc: `Books, visual study companions, and curated notes hosted under /books — ${BOOKS.length} titles.`,
       url: SITE_URL + "/books.html",
     },
   }[page];

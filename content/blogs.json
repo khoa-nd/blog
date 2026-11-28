@@ -1,5 +1,15 @@
 [
   {
+    "title": "A Visual Guide to Model Specs & Math Knobs",
+    "kicker": "Visual guide",
+    "date": "2026-11-28",
+    "desc": "The 80/20 visual guide to picking, serving, and fine-tuning LLMs: Dense vs. MoE parameters, BF16/FP8/INT4 quantization with a live VRAM estimator, Sliding Window & GQA attention grids, LoRA low-rank adapters, the KL-divergence leash, and an interactive Temperature/Top-p visualizer.",
+    "file": "visual-guide-model-specs-and-math-knobs.html",
+    "image": "thumbs/visual-guide-model-specs-and-math-knobs.jpg",
+    "imageAlt": "A Visual Guide to Model Specs and Math Knobs: Dense vs MoE, Quantization, GQA, LoRA and Softmax Temperature diagrams",
+    "cta": "Explore the guide"
+  },
+  {
     "title": "Breaking Into Frontier AI, Distilled: A Visual Playbook",
     "kicker": "Reading notes",
     "date": "2026-11-18",
