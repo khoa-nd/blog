@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Don't Panic! Galaxy Hitchhikers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070a1c;--card:#101a3a;--card2:#16224a;--line:#2f3f84;--ink:#eaf0ff;--dim:#9db0e0;--gold:#ffc24d;--green:#5df2a0;--pink:#ff6fb1;--red:#ff6b6b;--h:'Baloo 2',system-ui,sans-serif;--b:'Nunito',system-ui,sans-serif}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:var(--b);overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+.hide{display:none!important}
+button{font-family:inherit;cursor:pointer}
+.btn{border:0;border-radius:14px;padding:12px 22px;font:800 18px var(--h);color:#2b1a02;background:linear-gradient(180deg,#ffe9a8,#ffb93d);box-shadow:0 4px 0 #a8700f,0 8px 18px rgba(0,0,0,.4);transition:transform .08s}
+.btn:hover{filter:brightness(1.07)}.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #a8700f}
+.btn.alt{background:linear-gradient(180deg,#b6ffd9,#35c98a);box-shadow:0 4px 0 #17724d,0 8px 18px rgba(0,0,0,.4);color:#04301d}
+.btn.ghost{background:rgba(255,255,255,.08);color:var(--ink);box-shadow:0 0 0 1.5px var(--line) inset}
+.btn.small{padding:7px 14px;font-size:15px;border-radius:11px}
+#ov{position:fixed;inset:0;display:flex;overflow:auto;padding:12px;background:rgba(3,5,16,.55);z-index:20;touch-action:pan-y}
+.panel{margin:auto;width:min(760px,100%);background:linear-gradient(180deg,var(--card2),var(--card));border:2px solid var(--line);border-radius:22px;padding:20px 22px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.panel.wide{width:min(960px,100%)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}.row.end{justify-content:flex-end}.row.mid{justify-content:center}.row.between{justify-content:space-between}
+h1,h2,h3{font-family:var(--h);margin:0}
+h2{font-size:28px;line-height:1.1}
+p{line-height:1.5;font-weight:700;margin:8px 0}
+.badge{display:inline-block;background:rgba(255,194,77,.15);color:var(--gold);border:1px solid rgba(255,194,77,.4);border-radius:999px;padding:3px 12px;font:800 13px var(--h);letter-spacing:.06em;text-transform:uppercase}
+.fcard{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin-top:10px;font-weight:700;line-height:1.45}
+.fcard.guide{background:rgba(93,242,160,.08);border-color:rgba(93,242,160,.4)}
+kbd{background:#0b1230;border:1px solid var(--line);border-bottom-width:3px;border-radius:7px;padding:1px 7px;font:800 13px var(--h);margin:0 2px}
+.title{text-align:center}
+.dp{font:800 clamp(58px,13vw,118px)/.9 var(--h);color:#ffe05a;letter-spacing:.03em;text-shadow:0 0 30px rgba(255,224,90,.45),0 6px 0 #9a6a00;margin:6px 0 10px}
+.title h1{font-size:clamp(26px,5vw,40px);color:var(--green)}
+.fan{font-size:12px;color:var(--dim);font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-top:14px}
+.mc{display:flex;flex-direction:column;gap:3px;text-align:left;color:var(--ink);background:linear-gradient(180deg,#1a2a5e,#121d44);border:2px solid var(--line);border-radius:16px;padding:12px 14px;min-height:120px}
+.mc:hover:not(:disabled){border-color:var(--gold)}
+.mc:disabled{opacity:.45;cursor:default}
+.mc .em{font-size:34px}.mc b{font:800 17px/1.15 var(--h)}.mc small{color:var(--dim);font-weight:700}.mc .st{margin-top:auto;font-size:18px;letter-spacing:2px}
+.q{font:800 clamp(20px,4vw,28px)/1.25 var(--h);margin:10px 0 12px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:560px){.opts{grid-template-columns:1fr}}
+.opt{border:2px solid var(--line);background:#0e1738;color:var(--ink);border-radius:14px;padding:13px 14px;font:800 19px var(--h);text-align:center}
+.opt:hover:not(:disabled){border-color:var(--gold);background:#16224a}
+.opt.good{background:#14633f;border-color:var(--green)}.opt.bad{background:#6b1f2c;border-color:var(--red)}
+.opt:disabled{cursor:default}
+.shake{animation:sh .3s}@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.chips{display:flex;gap:8px;flex-wrap:wrap;min-height:44px;margin:10px 0;padding:8px;border:2px dashed var(--line);border-radius:14px}
+.chip{background:#14633f;border-radius:10px;padding:6px 12px;font:800 17px var(--h)}
+#hud{position:fixed;left:0;right:0;top:0;padding:max(10px,env(safe-area-inset-top)) 12px 0;display:flex;gap:8px;align-items:center;z-index:5;pointer-events:none}
+#hud>*{pointer-events:auto}
+.hb{background:rgba(7,13,40,.78);border:1.5px solid var(--line);border-radius:12px;padding:5px 11px;font:800 17px var(--h);color:var(--ink)}
+.hb:empty{display:none}
+button.hb{cursor:pointer}
+button.hb.on{background:linear-gradient(180deg,#8cf3b4,#34c47a);color:#05301a;border-color:#c6ffe0}
+#msg{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:8;max-width:min(560px,92vw);text-align:center;background:rgba(7,13,40,.9);border:1.5px solid var(--green);border-radius:14px;padding:10px 16px;font-weight:800;opacity:0;transition:opacity .25s;pointer-events:none}
+#msg.on{opacity:1}
+.cert{border:6px double var(--gold);border-radius:18px;padding:22px 18px;text-align:center;background:radial-gradient(circle at 50% 0%,#24336f,#0d1536)}
+.cert input{font:800 22px var(--h);text-align:center;background:transparent;border:0;border-bottom:2px solid var(--gold);color:var(--ink);width:min(320px,80%);outline:0}
+.stars{font-size:44px;letter-spacing:6px;text-align:center}
+</style></head><body>
+<canvas id="cv"></canvas>
+<div id="hud" class="hide"><div class="hb" id="hhull"></div><div class="hb" id="hprog"></div><div class="hb" id="hsh"></div><span style="flex:1"></span><button class="hb" id="bauto">🤖 Cruise control</button><button class="hb" id="bpause">⏸</button></div>
+<div id="msg"></div>
+<div id="ov" class="hide"></div>
+<script>
+'use strict';
+// ====================================================================
+//  helpers, save, audio
+// ====================================================================
+const $=s=>document.querySelector(s),clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),rnd=(a,b)=>a+Math.random()*(b-a),pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const UNLOCK=/[?&]unlock/.test(location.search);
+const SKEY='galaxy-hitchhikers-save';
+let SAVE=(()=>{const d={stars:{},facts:{},relaxed:false,sound:true,name:''};try{return Object.assign(d,JSON.parse(localStorage.getItem(SKEY)||'{}'))}catch(e){return d}})();
+const persist=()=>{try{localStorage.setItem(SKEY,JSON.stringify(SAVE))}catch(e){}};
+let AC=null;
+function audio(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume()}
+function beep(f,d=.12,type='sine',v=.07,slide=0){if(!SAVE.sound||!AC)return;try{const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime;o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.linearRampToValueAtTime(Math.max(30,f+slide),t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d)}catch(e){}}
+const SFX={ok(){beep(660,.1,'triangle');setTimeout(()=>beep(990,.16,'triangle'),90)},bad(){beep(190,.3,'sawtooth',.06,-80)},hit(){beep(130,.25,'square',.08,-70)},pick(){beep(880,.09,'triangle')},click(){beep(520,.05,'sine',.05)},win(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.22,'triangle'),i*120))},zap(){beep(900,.4,'sawtooth',.04,-600)}};
+
+// ====================================================================
+//  question bank  (maths + science, ~Grade 2-3)
+// ====================================================================
+const mc=(q,a,w,f)=>({t:'mc',q,a:String(a),w:w.map(String),f});
+const ord=(q,items,f)=>({t:'ord',q,items,f});
+const BANK={
+earth:[
+ mc('Ford counts 12 Vogon ships over one city and 9 over another. How many ships altogether?',21,[20,19,22],'Counting in tens first makes adding quick: 12 + 9 is 12 + 10 − 1.'),
+ mc('Arthur packs 3 towels into each of 4 bags. How many towels is that?',12,[7,9,16],'4 groups of 3 is 3 + 3 + 3 + 3 = 12.'),
+ mc('There are 30 people in a queue and 8 run off to find a spaceship. How many are left?',22,[21,23,38],'30 − 8: take away 10 and give 2 back.'),
+ mc('Which number is the BIGGEST?',784,[478,487,748],'Compare the hundreds first: 7 hundreds beats 4 hundreds. Then the tens.'),
+ ord('Put the numbers in order, smallest first.',['12','34','56','99'],'Smallest to biggest is called ascending order.'),
+ mc('Each Vogon ship has 5 flashing lights. How many lights on 4 ships?',20,[9,15,25],'Skip count by 5: 5, 10, 15, 20.'),
+ mc('Arthur gives half of his 16 sandwiches to Ford. How many does Ford get?',8,[6,4,10],'Half means split into 2 equal groups: 16 ÷ 2 = 8.'),
+ mc('The escape countdown shows 100 and drops by 40. What does it show now?',60,[40,50,140],'100 − 40 = 60.'),
+ mc('Which of these is an EVEN number?',24,[17,31,49],'Even numbers end in 0, 2, 4, 6 or 8.'),
+ mc('How many tens are in 70?',7,[1,10,17],'70 is 7 tens and 0 ones.')],
+travel:[
+ mc('A hover-bus sign has 4 equal sides and 4 square corners. What shape is it?','square',['triangle','circle','pentagon'],'A square has 4 equal sides and 4 right angles.'),
+ mc('The next hover-bus leaves at 3 o’clock. It is 2 o’clock now. How many hours must you wait?',1,[2,3,5],'From 2 o’clock to 3 o’clock is 1 hour.'),
+ mc('A taxi ride takes 30 minutes. That is …','half an hour',['one hour','two hours','one minute'],'60 minutes make an hour, so 30 minutes is half.'),
+ mc('How many sides does a triangle road sign have?',3,[4,5,6],'Tri- means three.'),
+ mc('Which is the LONGEST?','1 metre',['50 cm','10 cm','1 cm'],'1 metre is 100 centimetres.'),
+ mc('A towel is 100 cm long. How many metres is that?',1,[10,100,2],'100 cm = 1 m.'),
+ mc('A sandwich costs 5 coins and a drink costs 3 coins. How much altogether?',8,[2,7,15],'5 + 3 = 8.'),
+ mc('How many minutes are in one hour?',60,[30,100,24],'An hour is 60 minutes.'),
+ ord('Put the day in order, from earliest to latest.',['Sunrise','Lunch time','Sunset','Midnight'],'A day goes round and round, 24 hours long.'),
+ mc('A cube (like a dice) has how many flat faces?',6,[4,8,12],'A cube has 6 square faces.')],
+patterns:[
+ mc('What comes next?  2, 4, 6, 8, ?',10,[9,12,11],'This pattern counts up in 2s.'),
+ mc('What comes next?  5, 10, 15, 20, ?',25,[22,30,21],'Skip counting by 5s.'),
+ mc('What is missing?  10, 20, 30, ?, 50',40,[35,45,25],'Counting in tens.'),
+ mc('What comes next?  3, 6, 9, 12, ?',15,[14,16,18],'Counting up in 3s.'),
+ mc('What comes next?  ▲ ● ▲ ● ▲ ?','●',['▲','■','★'],'The pattern repeats: triangle, circle, triangle, circle…'),
+ mc('Count backwards:  20, 18, 16, ?',14,[15,12,13],'Counting back in 2s.'),
+ ord('Put the numbers in order, smallest first.',['1','3','7','10'],'1 < 3 < 7 < 10.'),
+ mc('A Vogon poem has 4 lines in each verse. How many lines in 3 verses?',12,[7,10,16],'4 + 4 + 4 = 12.'),
+ mc('What is the rule?  1, 3, 5, 7, 9','add 2 each time',['add 1 each time','add 3 each time','double each time'],'The gap between the numbers is always 2.'),
+ mc('Which is the ODD one out?  2, 4, 7, 8',7,[2,4,8],'7 is odd. The others are even.')],
+chance:[
+ mc('You flip a fair coin. Which is true?','Heads and tails are equally likely',['Heads always wins','Tails always wins','It must land on its edge'],'A fair coin has two sides and no favourite.'),
+ mc('A bag has 5 red marbles and 1 blue marble. Which colour will you MOST LIKELY pull out?','red',['blue','green','They are equal'],'There are more reds, so red is more likely.'),
+ mc('A bag has ONLY red marbles. Pulling out a blue one is …','impossible',['certain','likely','unlikely'],'If there are no blue marbles, it cannot happen.'),
+ mc('The Sun will rise tomorrow. That is …','certain',['impossible','unlikely','a coin flip'],'Certain means it will definitely happen.'),
+ mc('Which is the MOST unlikely thing to happen today?','A whale appears in the sky',['It rains','You eat lunch','You see a bird'],'Very, very unlikely! (Unless you own an Improbability Drive.)'),
+ mc('A spinner has 4 equal parts: 1 red and 3 yellow. Which colour is it likely to land on?','yellow',['red','blue','neither'],'3 out of 4 parts are yellow.'),
+ mc('Can you roll a 7 on a normal 6-sided dice?','No, it is impossible',['Yes, easily','Yes, sometimes','Only on Tuesdays'],'A normal dice only shows 1 to 6.'),
+ mc('You flip a coin twice. How many different results are possible (HH, HT, …)?',4,[2,3,6],'HH, HT, TH, TT. That is 4.'),
+ ord('Put these in order from LEAST to MOST likely.',['Impossible','Unlikely','Likely','Certain'],'Chance words run from impossible to certain.'),
+ mc('1 of 10 raffle tickets wins. Are you more likely to win or to lose?','lose',['win','both the same','neither'],'9 tickets lose and only 1 wins.')],
+times:[
+ mc('2 × 5 = ?',10,[7,12,25],'2 groups of 5 is 10.'),
+ mc('5 × 3 = ?',15,[8,10,35],'5, 10, 15.'),
+ mc('10 × 4 = ?',40,[14,44,104],'Four tens make forty.'),
+ mc('Double 14 is …',28,[24,18,26],'14 + 14 = 28.'),
+ mc('Half of 30 is …',15,[10,20,13],'30 ÷ 2 = 15.'),
+ mc('Marvin counts 6 asteroids in each group. There are 3 groups. How many in all?',18,[9,12,24],'6 + 6 + 6 = 18.'),
+ mc('20 ÷ 4 = ?',5,[4,6,16],'4 × 5 = 20, so 20 ÷ 4 = 5.'),
+ mc('2 × 8 = ?',16,[10,14,18],'Double 8 is 16.'),
+ mc('How many 2s make 12?',6,[5,7,10],'12 ÷ 2 = 6.'),
+ mc('4 × 5 = ?',20,[9,25,45],'4 fives: 5, 10, 15, 20.')],
+fortytwo:[
+ mc('Deep Thought says 42. How many tens and ones is that?','4 tens and 2 ones',['2 tens and 4 ones','42 tens','4 tens and 4 ones'],'42 = 40 + 2.'),
+ mc('6 × 7 = ?',42,[36,48,13],'6 sevens make 42. This is the famous one!'),
+ mc('What number is 2 more than 40?',42,[38,44,402],'40 + 2.'),
+ mc('50 − 8 = ?',42,[41,43,58],'50 − 10 + 2 = 42.'),
+ mc('Which sum makes 42?','20 + 22',['20 + 12','30 + 10','25 + 27'],'20 + 20 = 40, plus 2 more.'),
+ mc('Is 42 odd or even?','even',['odd','neither','both'],'It ends in 2, so it is even.'),
+ mc('7 + 7 + 7 + 7 + 7 + 7 = ?',42,[35,49,40],'Six sevens.'),
+ mc('Double 21 is …',42,[24,32,43],'21 + 21 = 42.'),
+ mc('42 rounded to the nearest ten is …',40,[50,30,42],'The 2 is less than 5, so round down.'),
+ ord('Put these in order, smallest first.',['4','24','42','240'],'Check how many digits each has, then compare.')],
+space:[
+ mc('What kind of object is the Sun?','a star',['a planet','a moon','a comet'],'The Sun is a star, a giant ball of hot gas.'),
+ mc('What do we call the path a planet takes around the Sun?','orbit',['tunnel','runway','spiral drain'],'An orbit is a curved path around something.'),
+ mc('About how long does Earth take to go once around the Sun?','1 year',['1 day','1 month','1 hour'],'That is exactly what a year is.'),
+ mc('What makes day and night on Earth?','Earth spinning',['The Moon blinking','The Sun switching off','Clouds'],'Earth turns once every 24 hours. Your side faces the Sun, then turns away.'),
+ mc('What pulls things down towards the ground?','gravity',['magnets','wind','light'],'Gravity pulls things toward the middle of a planet.'),
+ mc('Which planet is called the Red Planet?','Mars',['Venus','Jupiter','Neptune'],'Mars is rusty red from iron in its dust.'),
+ mc('Which planet is famous for its big rings?','Saturn',['Mercury','Earth','Mars'],'Saturn’s rings are made of ice and rock.'),
+ ord('Put the planets in order, starting nearest the Sun.',['Mercury','Venus','Earth','Mars'],'My Very Easy Method… Mercury, Venus, Earth, Mars!'),
+ mc('How many planets orbit our Sun?',8,[7,9,10],'Mercury to Neptune: eight planets.'),
+ mc('What does the Moon orbit?','Earth',['the Sun','Mars','nothing'],'The Moon circles Earth about once a month.'),
+ mc('Most of Earth’s surface is covered by …','water',['sand','ice','forest'],'About 7 tenths of Earth is ocean. That is why it looks so blue.'),
+ mc('A fjord is a …','long narrow sea inlet with steep sides',['type of spaceship','kind of fish','desert plant'],'Fjords are carved by glaciers. The planet-builders of Magrathea loved them.')]
+};
+for(const k in BANK)BANK[k].forEach((q,i)=>q.id=k+i);
+
+// ====================================================================
+//  missions
+// ====================================================================
+const MIS=[
+{id:1,name:"Don't Panic! Escape Earth",emoji:'🌍',tag:'Counting & adding',topic:'earth',mode:'fly',goal:5,speed:150,hazEvery:1.25,haz:['☄️','🛸','🚀'],beams:true,beamEvery:7,pal:['#26124d','#050a1d'],planet:{x:.22,y0:.95,r:.5,type:'earth',drift:.05},
+ story:'Huge yellow Vogon ships have arrived over Earth. Their plan? Knock the planet down to build a space road. Your friend Ford grabs your arm: <i>“Grab your towel and run!”</i> Dodge debris and Vogon laser beams, and collect the 📖 Guide pages. Each page asks one counting question.',
+ entry:'EARTH. The Guide’s old entry said “Harmless”. After a lot more research it says “Mostly harmless”. Rule number one for every hitchhiker: always know where your towel is.'},
+{id:2,name:'Hitch a Ride on the Highway',emoji:'🚕',tag:'Shapes, time & measures',topic:'travel',mode:'fly',goal:5,speed:170,hazEvery:1.1,haz:['🚌','🚕','🚚','🛰️'],beams:false,pal:['#102a4a','#04101f'],planet:{x:.8,y0:.2,r:.3,type:'ice',drift:.03},
+ story:'You made it off Earth, but now you are stuck on the galactic highway, where every kind of space-traffic zooms past. Weave between the buses and taxis, and collect 📖 Guide pages to learn how to read the road signs.',
+ entry:'HITCHHIKING. A real hitchhiker never needs to pay for a ride. They need a smile, a very good towel, and good timing. Always know what time the next bus leaves.'},
+{id:3,name:'Vogon Poetry Panic',emoji:'📜',tag:'Number patterns',topic:'patterns',mode:'fly',goal:6,speed:165,hazEvery:1.2,haz:['🛸','📜','💢'],beams:true,beamEvery:4.5,pal:['#1c3a1a','#06120a'],planet:{x:.75,y0:.15,r:.28,type:'green',drift:.03},
+ story:'Oh no, you were caught by a Vogon captain! He is about to read his poetry (very, very bad poetry!) out loud. You escape the ship, but guards are firing red beams. Dodge them and collect 📖 pages. The poems are full of number patterns.',
+ entry:'VOGONS. The Guide warns that Vogon poetry is some of the worst in the galaxy. Vogons are not evil. They are just very grumpy and love paperwork.'},
+{id:4,name:'Infinite Improbability Drive',emoji:'🌀',tag:'Chance & probability',topic:'chance',mode:'fly',goal:6,speed:160,hazEvery:.95,haz:['🐋','🪴','🎻','🐠','🍰'],beams:false,swirl:true,pal:['#3b0f4f','#0b0420'],planet:null,
+ story:'The starship <b>Heart of Gold</b> has a strange engine: the Infinite Improbability Drive. It makes very unlikely things happen, like whales and flowerpots appearing in space! Steer through the improbable and collect 📖 pages. Every page is about chance.',
+ entry:'IMPROBABILITY. An unlikely event is one with a very small chance. Small chances do sometimes happen, which is why a sky full of flowerpots is possible (but very, very unlikely).'},
+{id:5,name:'Marvin’s Asteroid Slalom',emoji:'🤖',tag:'Times tables & halves',topic:'times',mode:'fly',goal:6,speed:200,hazEvery:.85,haz:['☄️','🪨','🌑'],beams:false,pal:['#33211a','#0a0608'],planet:{x:.2,y0:.3,r:.35,type:'ring',drift:.04},
+ story:'Marvin, the very clever and very gloomy robot, is flying the ship through an asteroid field. <i>“I suppose you want me to dodge them all,”</i> he sighs. Take over and steer! Collect 📖 pages with times-table questions.',
+ entry:'MARVIN. A robot with a brain as big as a planet and a mood as small as a puddle. The best way to cheer him up is to dodge an asteroid.'},
+{id:6,name:'Deep Thought Thinks',emoji:'💻',tag:'The number 42',topic:'fortytwo',mode:'deep',goal:7,speed:0,haz:[],pal:['#0a1f2e','#02070d'],planet:null,
+ story:'Long ago, a gigantic computer called <b>Deep Thought</b> was built to answer the Great Question of Life, the Universe and Everything. After thinking for 7½ million years it answered: <b>42</b>. Now it needs YOUR help to work out what the question could be. Answer 7 questions about 42.',
+ entry:'DEEP THOUGHT. The great computer calculated for 7½ million years and said: “42”. Everybody agreed the answer was fine. The only problem was that nobody had checked the question.'},
+{id:7,name:'Magrathea: Planet Factory',emoji:'🪐',tag:'Space & Earth science',topic:'space',mode:'fly',goal:7,speed:175,hazEvery:1,haz:['🪐','🌕','🌍','⭐'],beams:true,beamEvery:6,pal:['#3a1330','#08040f'],planet:{x:.5,y0:.12,r:.3,type:'ring',drift:.03},
+ story:'You have found the legendary planet <b>Magrathea</b>, where the planet-builders once made new worlds to order. Their floating factory is full of half-finished planets. Fly through, collect 📖 pages, and prove you know your space science.',
+ entry:'MAGRATHEA. Long ago the planet-builders made brand-new worlds on request, including a very blue one called Earth. They were especially proud of the fjords.'}
+];
+
+// ====================================================================
+//  canvas, state
+// ====================================================================
+const cv=$('#cv'),ctx=cv.getContext('2d');let VW=innerWidth,VH=innerHeight,DPR=1;
+function resize(){VW=innerWidth;VH=innerHeight;DPR=Math.min(2,devicePixelRatio||1);cv.width=VW*DPR;cv.height=VH*DPR;if(G){G.x=clamp(G.x,30,VW-30);G.y=clamp(G.y,VH*.3,VH-40)}}
+addEventListener('resize',resize);
+const STARS=Array.from({length:150},()=>({x:Math.random(),y:Math.random(),z:rnd(.25,1)}));
+let G=null,scr='title';const keys={},PT={on:false,x:0,y:0,touch:false};
+const ov=$('#ov'),SCORE=()=>Object.values(SAVE.stars).reduce((a,b)=>a+b,0);
+let toastT=0;function toast(h,ms=2600){const m=$('#msg');m.innerHTML=h;m.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>m.classList.remove('on'),ms)}
+const showOv=h=>{ov.innerHTML=h;ov.classList.remove('hide');ov.scrollTop=0};const hideOv=()=>{ov.classList.add('hide');ov.innerHTML=''};
+const starStr=n=>'⭐'.repeat(n)+'☆'.repeat(3-n);
+
+// ====================================================================
+//  drawing
+// ====================================================================
+const EMO='"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+function emo(g,e,x,y,s,rot){g.save();g.translate(x,y);if(rot)g.rotate(rot);g.font=s+'px '+EMO;g.textAlign='center';g.textBaseline='middle';g.fillText(e,0,0);g.restore()}
+function drawShip(g,x,y,s,fl){g.save();g.translate(x,y);g.scale(s,s);
+ const f=18+fl*14+Math.random()*6;const fg=g.createLinearGradient(0,18,0,18+f);fg.addColorStop(0,'rgba(255,240,170,.95)');fg.addColorStop(1,'rgba(255,120,40,0)');g.fillStyle=fg;g.beginPath();g.moveTo(-8,18);g.lineTo(0,18+f);g.lineTo(8,18);g.fill();
+ g.fillStyle='#c4d4f2';for(const sx of[-1,1]){g.beginPath();g.moveTo(sx*13,4);g.lineTo(sx*31,26);g.lineTo(sx*12,21);g.closePath();g.fill()}
+ g.fillStyle='#f2f7ff';g.beginPath();g.moveTo(0,-34);g.bezierCurveTo(17,-19,19,6,12,22);g.lineTo(-12,22);g.bezierCurveTo(-19,6,-17,-19,0,-34);g.fill();
+ g.fillStyle='#38d6c4';g.beginPath();g.ellipse(0,-12,6.5,10,0,0,7);g.fill();g.fillStyle='rgba(255,255,255,.55)';g.beginPath();g.ellipse(-2,-16,2,4,0,0,7);g.fill();
+ g.fillStyle='#ffc24d';g.beginPath();g.arc(-3.4,8,3.6,0,7);g.arc(3.4,8,3.6,0,7);g.fill();g.beginPath();g.moveTo(-6.8,9);g.lineTo(6.8,9);g.lineTo(0,17);g.fill();
+ g.restore()}
+function drawTowel(g,x,y,s,rot){g.save();g.translate(x,y);g.rotate(rot||0);g.scale(s,s);g.fillStyle='#fff';g.fillRect(-20,-13,40,26);for(let i=0;i<4;i++){g.fillStyle=i%2?'#ffc24d':'#38c6e8';g.fillRect(-20+i*10,-13,5,26)}g.fillStyle='rgba(255,255,255,.85)';for(let i=-5;i<=5;i++)g.fillRect(i*3.6-.8,13,1.6,5);g.restore()}
+function drawEarth(g,x,y,r,t){g.save();g.beginPath();g.arc(x,y,r,0,7);g.clip();const gr=g.createRadialGradient(x-r*.4,y-r*.4,r*.1,x,y,r);gr.addColorStop(0,'#6cc4ff');gr.addColorStop(1,'#12409a');g.fillStyle=gr;g.fillRect(x-r,y-r,2*r,2*r);g.fillStyle='#3fae5c';const o=(t||0)*.02;for(const[a,b,c]of[[-.3,-.1,.38],[.35,.25,.3],[-.1,.5,.24],[.5,-.4,.2]]){const px=x+((a+o+3)%2-1)*r*1.2;g.beginPath();g.ellipse(px,y+b*r,c*r,c*r*.7,.4,0,7);g.fill()}g.fillStyle='rgba(255,255,255,.35)';g.beginPath();g.ellipse(x-r*.2,y-r*.5,r*.5,r*.1,.2,0,7);g.fill();g.fillStyle='rgba(0,0,20,.35)';g.beginPath();g.arc(x+r*.5,y+r*.4,r*1.05,0,7);g.fill();g.restore();g.strokeStyle='rgba(120,190,255,.4)';g.lineWidth=3;g.beginPath();g.arc(x,y,r+2,0,7);g.stroke()}
+function drawPlanet(g,p,t){const R=Math.min(VW,VH)*p.r,x=p.x*VW,y=p.y;if(y-R>VH||y+R<-R)return;if(p.type==='earth')return drawEarth(g,x,y,R,t);
+ const cols={ice:['#bfe6ff','#2a5a8a'],green:['#9be37a','#1b5a2b'],ring:['#f4c27a','#7a3d1c']}[p.type];
+ const gr=g.createRadialGradient(x-R*.4,y-R*.4,R*.1,x,y,R);gr.addColorStop(0,cols[0]);gr.addColorStop(1,cols[1]);
+ if(p.type==='ring'){g.strokeStyle='rgba(255,226,170,.55)';g.lineWidth=R*.12;g.beginPath();g.ellipse(x,y,R*1.7,R*.4,-.35,Math.PI,0);g.stroke()}
+ g.fillStyle=gr;g.beginPath();g.arc(x,y,R,0,7);g.fill();
+ if(p.type==='ring'){g.strokeStyle='rgba(255,226,170,.7)';g.lineWidth=R*.12;g.beginPath();g.ellipse(x,y,R*1.7,R*.4,-.35,0,Math.PI);g.stroke()}}
+function drawBg(g,m,t,off){const gr=g.createLinearGradient(0,0,0,VH);gr.addColorStop(0,m.pal[0]);gr.addColorStop(1,m.pal[1]);g.fillStyle=gr;g.fillRect(0,0,VW,VH);
+ if(m.swirl){g.fillStyle='hsla('+((t*45)%360)+',85%,55%,.1)';g.fillRect(0,0,VW,VH)}
+ for(const s of STARS){const y=(s.y*VH+off*s.z*.6)%VH;g.fillStyle='rgba(255,255,255,'+(.25+s.z*.6)+')';const r=s.z*1.7;g.fillRect(s.x*VW,y,r,r*(1+(off?s.z*1.2:0)))}
+ if(m.planet){const p=Object.assign({},m.planet);p.y=p.y0*VH+off*p.drift;drawPlanet(g,p,t)}}
+
+// ====================================================================
+//  asking questions
+// ====================================================================
+function nextQ(){if(!G.deck.length)G.deck=shuffle(BANK[G.m.topic]);return G.deck.shift()}
+function openQ(){G.asking=true;G.paused=true;PT.on=false;const q=nextQ();G.cur=q;
+ const done=G.prog+1;let body='';
+ if(q.t==='mc'){G.opts=shuffle([q.a].concat(q.w));body='<div class="opts">'+G.opts.map((o,i)=>'<button class="opt" data-o="'+i+'">'+esc(o)+'</button>').join('')+'</div>'}
+ else{let sh=shuffle(q.items);for(let i=0;i<9&&sh.join()===q.items.join();i++)sh=shuffle(q.items);G.sh=sh;G.idx=0;G.tapWrong=false;body='<div class="chips" id="chips"><span style="color:var(--dim);font-weight:700">Tap the cards in the right order…</span></div><div class="opts">'+sh.map((o,i)=>'<button class="opt" data-r="'+i+'">'+esc(o)+'</button>').join('')+'</div>'}
+ showOv('<div class="panel"><span class="badge">📖 Guide page '+done+' of '+G.m.goal+' · '+esc(G.m.tag)+'</span><div class="q">'+esc(q.q)+'</div>'+body+'<div id="fb"></div></div>')}
+function answered(ok){const q=G.cur;const fb=$('#fb');
+ if(ok){G.prog++;SAVE.facts[q.id]=1;persist();SFX.ok()}else{G.wrong++;G.deck.push(q);SFX.bad()}
+ const msg=ok?pick(['Brilliant!','Spot on!','Marvellous!','Correct!','Excellent!']):(q.t==='mc'?'Not quite. The answer is <b>'+esc(q.a)+'</b>.':'Nearly! The right order is <b>'+q.items.map(esc).join(' → ')+'</b>.');
+ fb.innerHTML='<div class="fcard guide"><b>'+(ok?'✅ ':'💡 ')+msg+'</b><br>📖 <i>The Guide says:</i> '+esc(q.f)+'</div><div class="row end"><button class="btn" data-act="qdone">'+(ok&&G.prog>=G.m.goal?'Finish! 🎉':G.m.mode==='deep'?'Next question ▶':'Back to flying ▶')+'</button></div>'}
+function questionDone(){hideOv();G.asking=false;G.gate=null;G.gt=1.8;G.dt2=1.4;G.paused=false;if(G.prog>=G.m.goal&&!G.endT)G.endT=G.m.mode==='deep'?3.6:1.4}
+
+// ====================================================================
+//  game flow
+// ====================================================================
+function startMission(mi){audio();const m=MIS[mi];scr='play';hideOv();const hp=SAVE.relaxed?5:3;
+ G={mi,m,t:0,at:0,x:VW/2,y:VH*.78,hull:hp,maxHull:hp,inv:0,shield:0,objs:[],parts:[],prog:0,wrong:0,repairs:0,scroll:0,paused:false,auto:false,sp:SAVE.relaxed?.72:1,hz:1.4,gt:2.2,gate:null,bm:5,tw:11,deck:shuffle(BANK[m.topic]),asking:false,shake:0,endT:0,dt2:1.3,cur:null};
+ $('#hud').classList.remove('hide');$('#bauto').classList.toggle('hide',m.mode==='deep');$('#bauto').classList.remove('on');
+ toast(m.mode==='deep'?'💻 Deep Thought is warming up…':PT.touch?'👆 Drag anywhere to fly. Grab the 📖!':'⌨️ Arrow keys / WASD to fly. Grab the 📖!',3500)}
+function stopPlay(){G=null;scr='map';$('#hud').classList.add('hide');$('#msg').classList.remove('on')}
+function pause(){if(!G||G.asking||G.paused||scr!=='play')return;G.paused=true;showOv('<div class="panel title" style="width:min(420px,100%)"><h2>⏸ Paused</h2><div class="row mid"><button class="btn" data-act="resume">Resume ▶</button><button class="btn ghost" data-act="map">Map</button></div></div>')}
+function finish(){if(!G||G.finished)return;G.finished=true;G.paused=true;SFX.win();const st=(G.wrong<=1&&G.repairs===0)?3:(G.wrong<=3&&G.repairs<=1)?2:1;
+ SAVE.stars[G.mi]=Math.max(SAVE.stars[G.mi]||0,st);persist();const m=G.m,mi=G.mi,last=mi===MIS.length-1;
+ showOv('<div class="panel"><span class="badge">Mission '+m.id+' complete</span><h2>'+m.emoji+' '+esc(m.name)+'</h2><div class="stars">'+starStr(st)+'</div>'+
+ '<div class="fcard">📖 Questions you missed: <b>'+G.wrong+'</b> · 🔧 Rescues: <b>'+G.repairs+'</b>'+(st<3?'<br>Try again for 3 stars: miss 1 question or fewer and never get rescued.':'<br>Perfect flight! 🎉')+'</div>'+
+ '<div class="fcard guide">📚 <b>New Guide entry</b><br>'+esc(m.entry)+'</div>'+
+ '<div class="row end"><button class="btn ghost" data-act="map">Map</button><button class="btn ghost" data-act="mis" data-i="'+mi+'">Replay</button>'+(last?'<button class="btn" data-act="cert">🏆 Get your certificate</button>':'<button class="btn" data-act="mis" data-i="'+(mi+1)+'">Next mission ▶</button>')+'</div></div>')}
+function hit(){G.hull--;G.inv=1.7;G.shake=9;SFX.hit();for(let i=0;i<14;i++)G.parts.push({x:G.x,y:G.y,vx:rnd(-160,160),vy:rnd(-160,160),life:.7,c:'255,170,70',r:rnd(2,5)});
+ if(G.hull<=0){G.repairs++;G.hull=G.maxHull;G.inv=3;G.objs=G.objs.filter(o=>o.k!=='haz'&&o.k!=='beam');toast('🌀 The Improbability Drive rescued you! New hull, same mission.',3000)}}
+
+// ====================================================================
+//  update (fly)
+// ====================================================================
+function spawnHaz(){const m=G.m,sz=rnd(44,70);const vy=rnd(110,190)*G.sp*(m.speed/150)*(1+G.prog*.04);G.objs.push({k:'haz',e:pick(m.haz),x:rnd(30,VW-30),y:-50,vx:rnd(-35,35),vy,r:sz*.36,s:sz,rot:rnd(0,6),sp:rnd(-1.5,1.5)})}
+function autoX(){let best=G.x,bc=1e9;for(let cx=40;cx<=VW-40;cx+=16){let c=Math.abs(cx-G.x)*.012+Math.abs(cx-(G.ax||cx))*.004;
+  for(const o of G.objs){if(o.k==='haz'&&o.y<G.y+50&&o.y>G.y-440){const tt=Math.max(0,(G.y-o.y)/Math.max(60,o.vy)),px=o.x+o.vx*tt,d=Math.abs(px-cx),need=o.r+40;if(d<need)c+=(need-d)*3+40}
+   else if(o.k==='beam'&&Math.abs(o.x-cx)<o.w/2+50)c+=300}
+  if(G.gate&&G.gate.y<G.y)c+=Math.abs(cx-G.gate.x)*.05;if(c<bc){bc=c;best=cx}}G.ax=best;return best}
+function update(dt){const m=G.m;G.t+=dt;G.shake=Math.max(0,G.shake-dt*26);G.inv=Math.max(0,G.inv-dt);G.shield=Math.max(0,G.shield-dt);
+ for(let i=G.parts.length-1;i>=0;i--){const p=G.parts[i];p.life-=dt;if(p.life<=0){G.parts.splice(i,1);continue}p.x+=p.vx*dt;p.y+=p.vy*dt}
+ if(G.endT){G.endT-=dt;if(G.endT<=0){G.endT=0;finish()}if(m.mode==='deep')return}
+ if(m.mode==='deep'){if(!G.asking&&G.prog<m.goal){G.dt2-=dt;if(G.dt2<=0)openQ()}return}
+ G.scroll+=dt*m.speed*G.sp;
+ // movement
+ const SP=440;
+ if(G.auto){G.x+=clamp(autoX()-G.x,-SP*1.15*dt,SP*1.15*dt);G.y+=clamp(VH*.78-G.y,-SP*dt,SP*dt)}
+ else if(PT.on){const tx=PT.x,ty=PT.y-(PT.touch?80:0),k=Math.min(1,dt*11);G.x+=(tx-G.x)*k;G.y+=(ty-G.y)*k}
+ else{G.x+=((keys.ArrowRight||keys.d?1:0)-(keys.ArrowLeft||keys.a?1:0))*SP*dt;G.y+=((keys.ArrowDown||keys.s?1:0)-(keys.ArrowUp||keys.w?1:0))*SP*dt}
+ G.x=clamp(G.x,30,VW-30);G.y=clamp(G.y,VH*.3,VH-40);
+ if(!G.endT){
+ G.hz-=dt;if(G.hz<=0){G.hz=m.hazEvery/G.sp*rnd(.75,1.3);spawnHaz()}
+ if(m.beams){G.bm-=dt;if(G.bm<=0){G.bm=m.beamEvery/G.sp*rnd(.8,1.2);G.objs.push({k:'beam',x:rnd(70,VW-70),t:0,warn:1.3,on:.7,w:50})}}
+ G.tw-=dt;if(G.tw<=0){G.tw=rnd(16,22);if(G.shield<=0)G.objs.push({k:'towel',x:rnd(60,VW-60),y:-30,vy:120*G.sp,r:26,rot:0})}
+ if(!G.gate&&G.prog<m.goal&&!G.asking){G.gt-=dt;if(G.gt<=0){G.gate={k:'gate',x:rnd(70,VW-70),y:-40,vy:105*G.sp,r:32};G.objs.push(G.gate)}}}
+ for(let i=G.objs.length-1;i>=0;i--){const o=G.objs[i];
+  if(o.k==='beam'){o.t+=dt;if(o.t>o.warn+o.on){G.objs.splice(i,1);continue}
+   if(o.t>=o.warn&&Math.abs(G.x-o.x)<o.w/2+10&&G.inv<=0&&G.shield<=0&&!G.endT){hit()}continue}
+  o.y+=o.vy*dt;if(o.vx)o.x+=o.vx*dt;if(o.sp)o.rot+=o.sp*dt;
+  if(o.y>VH+80||o.x<-100||o.x>VW+100){if(o===G.gate){G.gate=null;G.gt=1.2}G.objs.splice(i,1);continue}
+  const d=Math.hypot(o.x-G.x,o.y-G.y);
+  if(o.k==='gate'&&d<o.r+24&&!G.asking&&!G.endT){G.objs.splice(i,1);SFX.pick();openQ();return}
+  if(o.k==='towel'&&d<o.r+22){G.objs.splice(i,1);G.shield=7;SFX.pick();toast('🧣 <b>Towel shield!</b> Nothing can hurt you for 7 seconds.',2600)}
+  if(o.k==='haz'&&d<o.r+16){if(G.shield>0){SFX.zap();for(let j=0;j<10;j++)G.parts.push({x:o.x,y:o.y,vx:rnd(-140,140),vy:rnd(-140,140),life:.6,c:'255,255,200',r:rnd(2,4)});G.objs.splice(i,1)}else if(G.inv<=0&&!G.endT){G.objs.splice(i,1);hit()}}}
+ if(m.id===5&&!G.mar&&G.t>5){G.mar=1;toast('🤖 Marvin sighs: “I have a brain the size of a planet, and you use it to dodge rocks.”',4200)}
+ if(m.id===4&&!G.imp&&G.t>4){G.imp=1;toast('🌀 Improbability level: <b>very high</b>. Expect whales.',3200)}
+}
+
+// ====================================================================
+//  render
+// ====================================================================
+function renderDeep(g,t){const w=Math.min(VW*.86,640),h=Math.min(VH*.5,330),x=(VW-w)/2,y=VH*.2;
+ const gr=g.createLinearGradient(0,y,0,y+h);gr.addColorStop(0,'#27455e');gr.addColorStop(1,'#122436');g.fillStyle=gr;g.beginPath();g.roundRect(x,y,w,h,22);g.fill();g.strokeStyle='#4f7ea3';g.lineWidth=4;g.stroke();
+ const sx=x+w*.12,sy=y+h*.1,sw=w*.76,sh=h*.4;g.fillStyle='#020c10';g.fillRect(sx,sy,sw,sh);g.strokeStyle='#1f6b52';g.lineWidth=2;g.strokeRect(sx,sy,sw,sh);
+ g.textAlign='center';g.textBaseline='middle';const done=G.prog>=G.m.goal;
+ if(done){const k=1-Math.max(0,G.endT)/3.6;g.fillStyle='rgba(93,242,160,'+(.5+.5*Math.sin(t*6))+')';g.font='800 '+Math.round(sh*.8)+'px "Baloo 2",sans-serif';g.shadowColor='#5df2a0';g.shadowBlur=26;g.fillText('42',sx+sw/2,sy+sh/2+4);g.shadowBlur=0}
+ else{g.fillStyle='#5df2a0';g.font='800 '+Math.round(sh*.28)+'px "Baloo 2",sans-serif';g.fillText('THINKING'+'.'.repeat(1+Math.floor(t*2)%3),sx+sw/2,sy+sh/2)}
+ const cols=14,rows=3,lw=w*.8/cols;for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){const i=r*cols+c,lit=i<G.prog*(cols*rows/G.m.goal)||done;const on=lit||Math.sin(t*3+i*1.7)>.85;g.fillStyle=lit?(i%2?'#ffd84d':'#5df2a0'):on?'#3d7a9a':'#1a3347';g.beginPath();g.arc(x+w*.1+lw*(c+.5),y+h*.62+r*(h*.1),Math.min(6,lw*.28),0,7);g.fill()}
+ g.fillStyle='#0d1b28';g.fillRect(VW*.3,y+h,VW*.4,18);emo(g,'🐭',VW*.5+Math.sin(t*.7)*VW*.3,y+h+34,34);
+ g.fillStyle='#cfe3ff';g.font='700 17px Nunito,sans-serif';g.fillText(done?'The answer is 42, but what was the question?':'Help Deep Thought find the question! ('+G.prog+' of '+G.m.goal+')',VW/2,y+h+86)}
+function render(t){const g=ctx;g.setTransform(DPR,0,0,DPR,0,0);const m=G.m;g.save();if(G.shake)g.translate(rnd(-G.shake,G.shake),rnd(-G.shake,G.shake));
+ drawBg(g,m,t,m.mode==='deep'?t*10:G.scroll);
+ if(m.mode==='deep'){renderDeep(g,t)}else{
+ for(const o of G.objs){
+  if(o.k==='beam'){const act=o.t>=o.warn;if(!act){const a=.35+.35*Math.sin(t*22);g.strokeStyle='rgba(255,90,90,'+a+')';g.setLineDash([14,12]);g.lineWidth=3;g.beginPath();g.moveTo(o.x,0);g.lineTo(o.x,VH);g.stroke();g.setLineDash([]);emo(g,'⚠️',o.x,34,30)}
+   else{const gr=g.createLinearGradient(o.x-o.w/2,0,o.x+o.w/2,0);gr.addColorStop(0,'rgba(255,60,60,0)');gr.addColorStop(.5,'rgba(255,230,230,.95)');gr.addColorStop(1,'rgba(255,60,60,0)');g.fillStyle=gr;g.fillRect(o.x-o.w/2,0,o.w,VH)}}
+  else if(o.k==='haz')emo(g,o.e,o.x,o.y,o.s,o.rot);
+  else if(o.k==='towel'){g.fillStyle='rgba(56,198,232,'+(.15+.1*Math.sin(t*6))+')';g.beginPath();g.arc(o.x,o.y,34,0,7);g.fill();drawTowel(g,o.x,o.y,1.2,Math.sin(t*3)*.3)}
+  else if(o.k==='gate'){const p=1+.12*Math.sin(t*6);const gr=g.createRadialGradient(o.x,o.y,4,o.x,o.y,48*p);gr.addColorStop(0,'rgba(255,224,90,.85)');gr.addColorStop(1,'rgba(255,224,90,0)');g.fillStyle=gr;g.beginPath();g.arc(o.x,o.y,48*p,0,7);g.fill();emo(g,'📖',o.x,o.y,40)}}
+ for(const p of G.parts){g.fillStyle='rgba('+p.c+','+clamp(p.life*1.6,0,1)+')';g.beginPath();g.arc(p.x,p.y,p.r,0,7);g.fill()}
+ if(!(G.inv>0&&Math.floor(t*14)%2)){drawShip(g,G.x,G.y,.95,.6+.4*Math.sin(t*30))}
+ if(G.shield>0){g.lineWidth=6;g.strokeStyle='#fff';g.setLineDash([12,10]);g.lineDashOffset=-t*40;g.globalAlpha=G.shield<2?.5+.5*Math.sin(t*20):1;g.beginPath();g.arc(G.x,G.y,44,0,7);g.stroke();g.strokeStyle='#38c6e8';g.lineDashOffset=-t*40+11;g.beginPath();g.arc(G.x,G.y,44,0,7);g.stroke();g.setLineDash([]);g.globalAlpha=1}
+ if(G.auto){g.fillStyle='rgba(93,242,160,.9)';g.font='800 14px "Baloo 2",sans-serif';g.textAlign='center';g.fillText('🤖 CRUISE CONTROL',G.x,G.y+52)}}
+ g.restore();
+ if(G.endT&&G.m.mode==='fly'){g.fillStyle='rgba(255,224,90,'+clamp(.9-G.endT,0,.9)+')';g.font='800 '+Math.min(70,VW/8)+'px "Baloo 2",sans-serif';g.textAlign='center';g.fillText('DON’T PANIC! You did it!',VW/2,VH*.4)}
+ hud()}
+function hud(){const set=(s,v)=>{const e=$(s);if(e.textContent!==v)e.textContent=v};
+ set('#hhull',G.m.mode==='deep'?'':'❤️'.repeat(G.hull)+'🖤'.repeat(Math.max(0,G.maxHull-G.hull)));set('#hprog','📖 '+G.prog+' / '+G.m.goal);set('#hsh',G.shield>0?'🧣 '+Math.ceil(G.shield)+'s':'')}
+function attract(t){const g=ctx;g.setTransform(DPR,0,0,DPR,0,0);const m=MIS[0];drawBg(g,{pal:['#1c1250','#050a1d'],planet:null},t,t*30);
+ drawEarth(g,VW*.82,VH*.78,Math.min(VW,VH)*.22,t);drawShip(g,VW*.5+Math.sin(t*.8)*VW*.25,VH*.85-Math.abs(Math.sin(t*.5))*30,1.1,.7);
+ emo(g,'🛸',(VW*.2+t*30)%(VW+160)-80,VH*.12,60,Math.sin(t)*.1)}
+
+// ====================================================================
+//  screens
+// ====================================================================
+function showTitle(){scr='title';showOv('<div class="panel title"><div class="dp">DON’T<br>PANIC</div><h1>Galaxy Hitchhikers</h1><p>Hop aboard a starship, dodge whales and Vogon lasers, and answer questions from the <b>Guide</b>. A space adventure full of maths and science!</p><div class="row mid"><button class="btn" data-act="map">🚀 Play</button><button class="btn alt" data-act="how">How to play</button></div><p class="fan">An unofficial fan game, inspired by <i>The Hitchhiker’s Guide to the Galaxy</i> by Douglas Adams. Not affiliated with the author or publishers.</p></div>')}
+function showHow(){showOv('<div class="panel"><h2>🧣 How to play</h2><div class="fcard">🚀 <b>Fly</b> your starship: arrow keys or <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>, or just <b>drag</b> with your finger or mouse.</div><div class="fcard">📖 <b>Fly into the glowing Guide pages</b> to get a question. Right answers fill your page counter. Wrong answers come back later.</div><div class="fcard">⚠️ <b>Dodge</b> flying junk and red laser beams. You have hearts ❤️. If they run out, the Improbability Drive rescues you (but you lose a star).</div><div class="fcard">🧣 <b>Grab a towel</b> for 7 seconds of super-shield. A hitchhiker always knows where their towel is.</div><div class="fcard">🤖 <b>Too tricky?</b> Press <kbd>G</kbd> or tap <b>Cruise control</b> and the ship will fly itself. You still answer the questions. In the menu you can also switch on <b>Relaxed mode</b> (slower, more hearts).</div><div class="row end"><button class="btn" data-act="map">Let’s go! 🚀</button></div></div>')}
+const unlocked=i=>UNLOCK||i===0||!!SAVE.stars[i-1];
+function showMap(){scr='map';G=null;$('#hud').classList.add('hide');
+ showOv('<div class="panel wide"><div class="row between" style="margin-top:0"><h2>🌌 Your Galactic Journey</h2><span class="badge">⭐ '+SCORE()+' / '+MIS.length*3+'</span></div><div class="grid">'+MIS.map((m,i)=>{const u=unlocked(i);return '<button class="mc" data-act="brief" data-i="'+i+'"'+(u?'':' disabled')+'><span class="em">'+(u?m.emoji:'🔒')+'</span><b>'+m.id+'. '+esc(m.name)+'</b><small>'+esc(m.tag)+'</small><span class="st">'+(SAVE.stars[i]?starStr(SAVE.stars[i]):u?'☆☆☆':'')+'</span></button>'}).join('')+'</div>'+
+ '<div class="row"><button class="btn small ghost" data-act="guide">📚 My Guide ('+Object.keys(SAVE.facts).length+')</button><button class="btn small ghost" data-act="relax">'+(SAVE.relaxed?'😌 Relaxed mode: ON':'😌 Relaxed mode: off')+'</button><button class="btn small ghost" data-act="sound">'+(SAVE.sound?'🔊 Sound on':'🔇 Sound off')+'</button><button class="btn small ghost" data-act="title">Title</button><span style="flex:1"></span><button class="btn small ghost" data-act="reset">Reset</button></div></div>')}
+function showBrief(i){const m=MIS[i];showOv('<div class="panel"><span class="badge">Mission '+m.id+' of '+MIS.length+' · '+esc(m.tag)+'</span><h2 style="margin-top:8px">'+m.emoji+' '+esc(m.name)+'</h2><p>'+m.story+'</p><div class="fcard">🎯 <b>Goal:</b> answer <b>'+m.goal+'</b> Guide questions correctly'+(m.mode==='fly'?' while flying.':'.')+'</div>'+(m.mode==='fly'?'<div class="fcard">🎮 Drag or use <kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd>. Press <kbd>G</kbd> for 🤖 cruise control. <kbd>Esc</kbd> pauses.</div>':'')+'<div class="row end"><button class="btn ghost" data-act="map">Back</button>'+(m.mode==='fly'?'<button class="btn alt" data-act="go" data-i="'+i+'" data-auto="1">🤖 Cruise for me</button>':'')+'<button class="btn" data-act="go" data-i="'+i+'">'+(m.mode==='fly'?'I will fly! 🚀':'Start 💻')+'</button></div></div>')}
+function showGuide(){const list=[];for(const k in BANK)for(const q of BANK[k])if(SAVE.facts[q.id])list.push(q);
+ showOv('<div class="panel"><h2>📚 My Guide</h2><p style="color:var(--dim)">Every question you answer correctly adds an entry here.</p>'+(list.length?list.map(q=>'<div class="fcard guide"><b>'+esc(q.q)+'</b><br>'+esc(q.f)+'</div>').join(''):'<div class="fcard">No entries yet. Go and fly!</div>')+'<div class="row end"><button class="btn" data-act="map">Back</button></div></div>')}
+function showCert(){const n=SCORE();showOv('<div class="panel"><div class="cert"><div style="font-size:44px">🏆🧣🌌</div><h2 style="color:var(--gold)">Certificate of Galactic Hitchhiking</h2><p>This certifies that</p><input id="nm" maxlength="24" placeholder="type your name" value="'+esc(SAVE.name)+'"><p>has escaped Earth, outflown the Vogons, survived the Improbability Drive, helped Deep Thought find a question, and always knew where their towel was.</p><div class="stars">'+(n>=MIS.length*3?'🌟🌟🌟':'⭐⭐⭐')+'</div><p style="color:var(--dim)">Stars collected: '+n+' of '+MIS.length*3+'</p><p><b>Don’t Panic!</b></p></div><div class="row end"><button class="btn ghost" data-act="map">Map</button></div></div>');$('#nm').oninput=e=>{SAVE.name=e.target.value;persist()}}
+ov.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;audio();
+ if(b.dataset.o!==undefined&&G&&G.cur){const i=+b.dataset.o,ok=G.opts[i]===G.cur.a;for(const x of ov.querySelectorAll('.opt')){x.disabled=true;if(G.opts[+x.dataset.o]===G.cur.a)x.classList.add('good')}if(!ok)b.classList.add('bad');answered(ok);return}
+ if(b.dataset.r!==undefined&&G&&G.cur){const w=G.sh[+b.dataset.r];if(w===G.cur.items[G.idx]){if(G.idx===0)$('#chips').innerHTML='';G.idx++;b.disabled=true;b.classList.add('good');SFX.click();$('#chips').insertAdjacentHTML('beforeend','<span class="chip">'+esc(w)+'</span>');if(G.idx===G.cur.items.length){for(const x of ov.querySelectorAll('.opt'))x.disabled=true;answered(!G.tapWrong)}}else{G.tapWrong=true;b.classList.add('shake');SFX.bad();setTimeout(()=>b.classList.remove('shake'),320)}return}
+ const a=b.dataset.act;if(!a)return;SFX.click();const i=+b.dataset.i;
+ ({map:showMap,how:showHow,title:showTitle,guide:showGuide,cert:showCert,brief:()=>showBrief(i),go:()=>{startMission(i);if(b.dataset.auto){G.auto=true;setAuto()}},qdone:questionDone,
+  resume:()=>{hideOv();if(G)G.paused=false},relax:()=>{SAVE.relaxed=!SAVE.relaxed;persist();showMap()},sound:()=>{SAVE.sound=!SAVE.sound;persist();showMap()},
+  reset:()=>{if(confirm('Erase all your stars and Guide entries?')){SAVE.stars={};SAVE.facts={};persist();showMap()}}}[a]||(()=>{}))();
+ if(a==='map'&&G){stopPlay();showMap()}});
+function setAuto(){const b=$('#bauto');b.classList.toggle('on',!!(G&&G.auto));b.textContent=G&&G.auto?'🤖 Cruise: ON':'🤖 Cruise control'}
+function toggleAuto(){if(!G||G.m.mode!=='fly'||G.asking||scr!=='play')return;G.auto=!G.auto;setAuto();SFX.click();toast(G.auto?'🤖 <b>Cruise control on.</b> The ship flies itself. Tap again to take over.':'🕹️ <b>You have the controls!</b>',2400)}
+$('#bauto').addEventListener('click',e=>{e.stopPropagation();audio();toggleAuto()});$('#bpause').addEventListener('click',e=>{e.stopPropagation();audio();pause()});
+
+// ====================================================================
+//  input + main loop
+// ====================================================================
+addEventListener('keydown',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(k))e.preventDefault();keys[k]=true;audio();if(scr!=='play')return;if(k==='Escape'||k==='p')pause();if(k==='g'&&!e.repeat)toggleAuto()});
+addEventListener('keyup',e=>{keys[e.key.length===1?e.key.toLowerCase():e.key]=false});addEventListener('blur',()=>{for(const k in keys)keys[k]=false});
+cv.addEventListener('pointerdown',e=>{audio();PT.touch=e.pointerType==='touch';PT.on=true;PT.x=e.clientX;PT.y=e.clientY;if(G&&!G.auto&&G.m.mode==='fly'&&!G.paused){G.ax=0}});
+addEventListener('pointermove',e=>{if(PT.on){PT.x=e.clientX;PT.y=e.clientY}});addEventListener('pointerup',()=>{PT.on=false});addEventListener('pointercancel',()=>{PT.on=false});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)pause()});
+let last=performance.now();
+function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;const t=now/1000;
+ if(G&&scr==='play'){if(!G.paused||G.endT){const n=window.__ts||1;for(let i=0;i<n&&G&&(!G.paused||G.endT);i++)update(dt)}if(G)render(t)}else attract(t);requestAnimationFrame(frame)}
+resize();showTitle();requestAnimationFrame(frame);
+window.__g={get G(){return G},start:startMission,MIS,BANK,toggleAuto};
+</script></body></html>
