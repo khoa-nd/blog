@@ -1,0 +1,1640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Moon Starbase Builder</title>
+<meta name="description" content="Launch from Earth, land on the Moon and build a starbase from scratch. Answer science questions to power every mission.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23c9ccd6'/%3E%3Ccircle cx='22' cy='24' r='7' fill='%23959aa8'/%3E%3Ccircle cx='42' cy='38' r='9' fill='%23959aa8'/%3E%3Ccircle cx='38' cy='18' r='4' fill='%23959aa8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050912; --ink:#eef4ff; --mute:#9fb3d1; --card:rgba(12,19,36,.88); --line:rgba(160,200,255,.24);
+  --gold:#ffc24d; --gold2:#ffe08a; --sci:#3fe0cf; --ok:#52e08a; --bad:#ff5d6c; --warn:#ffd166; --ice:#8fd0ff;
+  --h:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --b:'Nunito','Trebuchet MS',system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:var(--b);overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+canvas#cv{position:fixed;inset:0;width:100%;height:100%;display:block}
+.hide{display:none!important}
+button{font-family:inherit;cursor:pointer}
+.btn{border:0;border-radius:14px;padding:12px 22px;font:800 18px var(--h);color:#2b1a02;background:linear-gradient(180deg,#ffe9a8,#ffb93d);box-shadow:0 4px 0 #a8700f,0 8px 18px rgba(0,0,0,.4);transition:transform .08s,box-shadow .08s}
+.btn:hover{filter:brightness(1.07)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #a8700f}
+.btn.alt{background:linear-gradient(180deg,#a9ecff,#4aa8e8);box-shadow:0 4px 0 #1c5e92,0 8px 18px rgba(0,0,0,.4);color:#04243d}
+.btn.ghost{background:rgba(255,255,255,.08);color:var(--ink);box-shadow:0 0 0 1.5px var(--line) inset}
+.btn.small{padding:7px 14px;font-size:15px;border-radius:11px}
+.btn:disabled{opacity:.45;pointer-events:none}
+
+/* screens */
+#ui{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+#ui>*{pointer-events:auto}
+.panel{background:var(--card);border:1.5px solid var(--line);border-radius:22px;box-shadow:0 20px 60px rgba(0,0,0,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.scr{width:min(1040px,96vw);max-height:96vh;overflow:auto;padding:22px 24px;touch-action:pan-y}
+.title{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;position:fixed;inset:0;justify-content:flex-start;padding-top:6vh;pointer-events:none}
+.title>*{pointer-events:auto}
+.title h1{font:800 clamp(40px,8vw,82px)/0.95 var(--h);margin:0;letter-spacing:.5px;color:#f6faff;text-shadow:0 3px 0 #4a6aa6,0 6px 0 #1f3258,0 14px 28px rgba(0,0,0,.6)}
+.title h1 small{display:block;font:800 clamp(14px,2.4vw,24px) var(--h);letter-spacing:7px;color:var(--gold2);text-shadow:0 2px 8px #000;margin-bottom:4px}
+.title p{margin:6px 0 10px;color:#dce9ff;font-weight:700;text-shadow:0 2px 8px #000;max-width:580px;padding:0 14px}
+.menu{display:flex;flex-direction:column;gap:12px;align-items:center;margin-top:8px}
+.menu .row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.seg{display:inline-flex;background:rgba(0,0,0,.45);border-radius:14px;padding:4px;gap:4px;border:1.5px solid var(--line)}
+.seg button{border:0;background:transparent;color:var(--mute);font:800 15px var(--h);padding:7px 15px;border-radius:10px}
+.seg button.on{background:linear-gradient(180deg,#ffe9a8,#ffb93d);color:#2b1a02}
+h2{font:800 clamp(24px,4vw,36px) var(--h);margin:0 0 4px}
+h3{font:800 20px var(--h);margin:0}
+.sub{color:var(--mute);font-weight:700;margin:0 0 14px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+
+/* map */
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.mc{position:relative;border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(120,170,255,.18),rgba(255,255,255,.04));border:1.5px solid var(--line);text-align:left;color:var(--ink);transition:transform .12s,border-color .12s;min-height:150px;display:flex;flex-direction:column;gap:4px}
+.mc:hover{transform:translateY(-3px);border-color:var(--gold2)}
+.mc .n{position:absolute;top:10px;right:12px;font:800 15px var(--h);color:var(--gold2)}
+.mc .e{font-size:38px;line-height:1}
+.mc .nm{font:800 20px var(--h)}
+.mc .tg{font-size:13px;color:var(--mute);font-weight:700}
+.mc .bd{font-size:12px;color:var(--sci);font-weight:800}
+.mc .st{margin-top:auto;font-size:22px;letter-spacing:2px}
+.mc.lock{opacity:.5;filter:grayscale(.7);pointer-events:none}
+.mc.lock::after{content:'🔒';position:absolute;right:12px;bottom:10px;font-size:22px}
+.star{color:#ffd24a;text-shadow:0 0 8px rgba(255,200,60,.5)}
+.star.off{color:#47506a;text-shadow:none}
+#bcv{display:block;width:100%;border-radius:16px;border:1.5px solid var(--line);background:#06101f;margin:0 0 14px}
+
+/* HUD */
+#hud{position:fixed;left:0;right:0;top:0;padding:max(10px,env(safe-area-inset-top)) 12px 0;display:flex;gap:10px;align-items:flex-start;pointer-events:none;z-index:5}
+#hud>*{pointer-events:auto}
+.hbox{background:rgba(7,13,28,.74);border:1.5px solid var(--line);border-radius:14px;padding:7px 11px;backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+.gauges{display:flex;flex-direction:column;gap:5px;min-width:170px}
+.g{display:flex;align-items:center;gap:7px;font:800 13px var(--h)}
+.g .bar{flex:1;height:11px;border-radius:7px;background:rgba(255,255,255,.12);overflow:hidden;min-width:100px}
+.g .bar i{display:block;height:100%;width:100%;border-radius:7px;background:linear-gradient(90deg,#ffd166,#52e08a);transition:width .15s}
+.g.hull .bar i{background:linear-gradient(90deg,#ff5d6c,#ffb067)}
+.g.low .bar i{background:#ff5d6c;animation:blink .5s infinite alternate}
+@keyframes blink{to{opacity:.35}}
+.objs{display:flex;gap:7px;flex-wrap:wrap;align-items:center;font:800 15px var(--h);margin:0 auto}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.1)}
+.chip.ok{background:rgba(82,224,138,.28)}
+.chip.go{background:rgba(255,194,77,.34);animation:pulse 1s infinite alternate}
+@keyframes pulse{to{box-shadow:0 0 0 4px rgba(255,194,77,.25)}}
+.hb{display:flex;gap:6px;margin-left:auto}
+.ib{width:42px;height:42px;border-radius:12px;border:1.5px solid var(--line);background:rgba(7,13,28,.74);color:var(--ink);font-size:20px;line-height:1}
+#mini{position:fixed;right:10px;bottom:max(10px,env(safe-area-inset-bottom));width:168px;height:112px;border-radius:12px;border:1.5px solid var(--line);background:rgba(7,13,28,.7);z-index:5;pointer-events:none}
+body.touch #msg{bottom:112px!important}
+#msg{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:6;max-width:min(560px,92vw);pointer-events:none}
+.toast{background:rgba(7,13,28,.92);border:1.5px solid var(--gold2);padding:10px 16px;border-radius:14px;font-weight:800;font-size:15px;line-height:1.35;text-align:center;animation:pop .25s ease-out;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.toast.sci{border-color:var(--sci)}
+@keyframes pop{from{transform:translateY(14px) scale(.96);opacity:0}}
+#scan{position:fixed;left:50%;top:44%;transform:translate(-50%,-50%);z-index:6;pointer-events:none;text-align:center;font:800 16px var(--h);text-shadow:0 2px 6px #000}
+#scan .ring{width:74px;height:74px;border-radius:50%;margin:0 auto 4px;background:conic-gradient(var(--sci) var(--p,0%),rgba(255,255,255,.15) 0);display:flex;align-items:center;justify-content:center}
+#scan .ring i{width:58px;height:58px;border-radius:50%;background:rgba(5,9,20,.88);display:flex;align-items:center;justify-content:center;font-style:normal;font-size:26px}
+#stick{position:fixed;width:120px;height:120px;border-radius:50%;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.07);z-index:6;pointer-events:none;transform:translate(-50%,-50%)}
+#stick i{position:absolute;left:50%;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;background:rgba(150,200,255,.55);border:2px solid rgba(255,255,255,.6)}
+#boost,.tb{position:fixed;bottom:max(18px,env(safe-area-inset-bottom));z-index:6;width:74px;height:74px;border-radius:50%;border:2px solid var(--line);background:rgba(255,194,77,.5);color:#fff;font:800 14px var(--h);touch-action:none}
+#boost{left:14px}
+#tl{left:14px}#tr{left:98px}#tact{right:14px;width:92px;height:92px;background:rgba(255,120,60,.6);font-size:15px}
+.tb{background:rgba(120,170,255,.45);font-size:28px}
+#tact{background:rgba(255,150,60,.6);font-size:15px}
+
+/* modal */
+#ov{position:fixed;inset:0;background:rgba(2,5,14,.62);display:flex;align-items:center;justify-content:center;z-index:20;padding:10px}
+.modal{width:min(720px,100%);max-height:96vh;overflow:auto;padding:20px 22px;touch-action:pan-y}
+.badge{display:inline-flex;align-items:center;gap:6px;font:800 13px var(--h);letter-spacing:1px;text-transform:uppercase;padding:4px 11px;border-radius:999px;background:rgba(63,224,207,.18);color:var(--sci);margin-bottom:8px}
+.badge.lab{background:rgba(255,194,77,.18);color:var(--gold2)}
+.q{font:800 clamp(19px,3.4vw,26px)/1.25 var(--h);margin:2px 0 14px}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;padding:13px 16px;border-radius:14px;border:2px solid var(--line);background:rgba(255,255,255,.06);color:var(--ink);font:800 clamp(15px,2.6vw,19px)/1.25 var(--b);display:flex;gap:11px;align-items:center;transition:transform .08s,background .12s,border-color .12s}
+.opt:hover{border-color:var(--gold2);background:rgba(255,194,77,.14)}
+.opt:active{transform:scale(.985)}
+.opt .k{flex:none;width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font:800 15px var(--h)}
+.opt.ok{border-color:var(--ok);background:rgba(82,224,138,.22)}
+.opt.bad{border-color:var(--bad);background:rgba(255,93,108,.16);opacity:.55;pointer-events:none;animation:shake .35s}
+@keyframes shake{20%{transform:translateX(-8px)}50%{transform:translateX(8px)}80%{transform:translateX(-4px)}}
+.shake{animation:shake .35s}
+.fb{margin-top:14px;padding:12px 14px;border-radius:14px;font-weight:700;line-height:1.4;background:rgba(82,224,138,.14);border:1.5px solid rgba(82,224,138,.5)}
+.fb.bad{background:rgba(255,93,108,.12);border-color:rgba(255,93,108,.5)}
+.fb b{font-family:var(--h)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.row.end{justify-content:flex-end}
+.ord{display:flex;flex-wrap:wrap;gap:10px}
+.tile{padding:12px 15px;border-radius:14px;border:2px solid var(--line);background:rgba(255,255,255,.07);color:var(--ink);font:800 clamp(15px,2.6vw,18px) var(--b);position:relative;text-align:left}
+.tile.done{border-color:var(--ok);background:rgba(82,224,138,.2);pointer-events:none}
+.tile.done::before{content:attr(data-n);position:absolute;left:-8px;top:-10px;width:24px;height:24px;border-radius:50%;background:var(--ok);color:#06240f;font:800 14px/24px var(--h);text-align:center}
+.slots{display:flex;gap:6px;margin-bottom:12px}
+.slots i{flex:1;height:8px;border-radius:5px;background:rgba(255,255,255,.14)}
+.slots i.on{background:var(--ok)}
+.pairs{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px}
+.pairs .tile.sel{border-color:var(--gold2);background:rgba(255,194,77,.22)}
+.pairs .tile.m1{border-color:#52e08a;background:rgba(82,224,138,.2)}
+.pairs .tile.m2{border-color:#3fb6ff;background:rgba(63,182,255,.2)}
+.pairs .tile.m3{border-color:#ffd166;background:rgba(255,209,102,.2)}
+.pairs .tile.m4{border-color:#e79bff;background:rgba(231,155,255,.2)}
+.pairs .tile.lk{pointer-events:none}
+.big{font-size:54px;line-height:1;margin-bottom:6px}
+.stars{font-size:46px;letter-spacing:6px;margin:6px 0}
+.stars span{display:inline-block;animation:starIn .5s both}
+.stars span:nth-child(2){animation-delay:.25s}.stars span:nth-child(3){animation-delay:.5s}
+@keyframes starIn{from{transform:scale(3) rotate(-40deg);opacity:0}}
+.facts{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:7px;font-weight:700;font-size:15px;line-height:1.35}
+.facts li{padding:8px 11px;border-radius:11px;background:rgba(255,255,255,.07)}
+.kv{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0}
+.kv div{background:rgba(255,255,255,.08);border-radius:12px;padding:6px 12px;font:800 15px var(--h)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tabs button{border:1.5px solid var(--line);background:rgba(255,255,255,.06);color:var(--ink);padding:6px 12px;border-radius:999px;font:800 14px var(--h)}
+.tabs button.on{background:var(--gold);color:#2b1a02;border-color:transparent}
+.fcard{padding:11px 13px;border-radius:14px;background:rgba(255,255,255,.07);border:1.5px solid var(--line);font-weight:700;font-size:15px;line-height:1.4}
+.fcard.lk{opacity:.5;font-style:italic}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px}
+kbd{background:rgba(255,255,255,.14);padding:2px 8px;border-radius:7px;font:800 14px var(--h);border:1px solid var(--line)}
+.rocket{font-size:90px;animation:lift 3.2s ease-in forwards}
+@keyframes lift{0%{transform:translateY(0) scale(1)}15%{transform:translateY(6px) scale(1.02)}100%{transform:translateY(-120vh) scale(.6)}}
+.cert{border:3px double var(--gold2);border-radius:18px;padding:22px;text-align:center;background:linear-gradient(160deg,rgba(255,194,77,.15),rgba(255,255,255,.03))}
+.cert h2{color:var(--gold2)}
+@media(max-width:640px){#hud{flex-wrap:wrap;gap:6px}.objs{order:3;flex-basis:100%;justify-content:center;margin:0}.hb{margin-left:auto}.scr{padding:16px 14px}.pairs{grid-template-columns:1fr}.hbox{padding:5px 8px}.gauges{min-width:130px}.g .bar{min-width:60px}#mini{width:120px;height:80px}.objs{font-size:13px}}
+@media(max-height:520px){.title{padding-top:3vh}.title p{display:none}}
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<div id="hud" class="hide">
+  <div class="hbox gauges">
+    <div class="g bat"><span id="gi1">⚡</span><div class="bar"><i id="gbat"></i></div><span id="tbat">100%</span></div>
+    <div class="g hull"><span>🛡️</span><div class="bar"><i id="ghull"></i></div><span id="thull">100%</span></div>
+  </div>
+  <div class="hbox objs" id="objs"></div>
+  <div class="hb"><button class="ib" id="bmute" title="Sound">🔊</button><button class="ib" id="bpause" title="Pause">⏸</button></div>
+</div>
+<canvas id="mini" class="hide" width="336" height="224"></canvas>
+<div id="scan" class="hide"><div class="ring"><i id="scani">🔬</i></div><span id="scant">Hold still…</span></div>
+<div id="msg"></div>
+<div id="stick" class="hide"><i></i></div>
+<button id="boost" class="hide">BOOST</button>
+<button class="tb hide" id="tl">◀</button><button class="tb hide" id="tr">▶</button><button class="tb hide" id="tact">BOOST</button>
+<div id="ui"></div>
+<div id="ov" class="hide"></div>
+<script>
+// ============ QUESTION BANK ============
+// mc(topic, question, correct, [wrong...], why)
+const BANK = [];
+function mc(t, q, a, w, why) { BANK.push({ id: BANK.length, t, type: 'mc', q, a, w, why }); }
+function ord(t, q, items, why) { BANK.push({ id: BANK.length, t, type: 'order', q, items, why }); }
+function pairs(t, q, items, why) { BANK.push({ id: BANK.length, t, type: 'pairs', q, items, why }); }
+
+const TOPICS = {
+  launch:    { name: 'Rockets & launch',     emoji: '🚀' },
+  earthmoon: { name: 'Earth & Moon',         emoji: '🌍' },
+  landing:   { name: 'Landing & gravity',    emoji: '🛬' },
+  solar:     { name: 'Sun & solar power',    emoji: '☀️' },
+  habitat:   { name: 'Habitat & suits',      emoji: '🏠' },
+  ice:       { name: 'Water ice & oxygen',   emoji: '🧊' },
+  garden:    { name: 'Moon garden',          emoji: '🌱' },
+  comms:     { name: 'Radio & signals',      emoji: '📡' },
+  moonfacts: { name: 'Craters & Moon facts', emoji: '🌑' }
+};
+
+// ---- launch ----
+mc('launch', `Why does a rocket blast hot gas downward?`, `The gas pushes back, and that pushes the rocket up`, [`To keep the launch pad warm`, `To make the rocket look pretty`, `To paint the sky orange`], `Push down on the gas and the gas pushes back on the rocket. It is like letting go of a balloon: the air rushes out one way and the balloon zooms the other way.`);
+ord('launch', `Put the countdown steps in order.`, [`Check the rocket and fill the tanks`, `Astronauts climb aboard`, `Count down: 3, 2, 1…`, `Engines ignite: liftoff!`], `Every launch follows a careful checklist. Teams check everything long before the countdown ends.`);
+mc('launch', `What do rocket engines burn to make their powerful push?`, `Fuel mixed with oxygen`, [`Only water`, `Wood and paper`, `Sunshine`], `Fire needs oxygen. Space has no air, so rockets carry their own oxygen along with the fuel. Burning them together makes a huge push.`);
+mc('launch', `A big rocket has "stages". Why does it drop empty stages on the way up?`, `To get lighter, so the rest can go faster`, [`Because they are broken`, `To make room for snacks`, `To scare away birds`], `An empty fuel tank is just heavy metal. Dropping it makes the rocket lighter, so the engines can push it faster and farther.`);
+mc('launch', `About how high does space begin (the Kármán line)?`, `100 km`, [`10 km`, `1 km`, `1,000,000 km`], `Most scientists say space starts about 100 km above the ground. Airplanes fly at about 10 km, so space is ten times higher than a jet.`);
+mc('launch', `The sky turns black high above Earth. Why?`, `There is hardly any air left to scatter the sunlight`, [`The Sun switches off`, `Clouds cover the rocket`, `Space is always night`], `On Earth, air scatters blue light all over the sky. Up high the air is very thin, so there is nothing to scatter it and the sky looks black.`);
+mc('launch', `Why do astronauts float inside a spaceship that orbits Earth?`, `They and the ship are both falling around Earth together`, [`There is no gravity at all up there`, `Magnets hold them up`, `The ship spins upside-down`], `Gravity is still pulling, but astronauts and ship fall around the Earth together, so they feel weightless.`);
+mc('launch', `How fast must a spaceship go to leave Earth's orbit and head for the Moon?`, `About 11 km every second`, [`As fast as a bicycle`, `About 11 km every hour`, `As fast as a running dog`], `That is about 40,000 km an hour! Only a very big rocket engine can reach that speed.`);
+mc('launch', `Which rocket carried the Apollo astronauts to the Moon?`, `Saturn V`, [`Falcon Rover`, `Mars Express`, `Space Bus`], `Saturn V was 111 metres tall, taller than a 30-storey building. It flew Apollo crews to the Moon between 1968 and 1972.`);
+
+// ---- earth & moon ----
+mc('earthmoon', `How long did the Apollo trip from Earth to the Moon take?`, `About 3 days`, [`About 3 minutes`, `About 3 years`, `One hour`], `The Moon is far away, about 384,400 km. Apollo spaceships took roughly three days to get there.`);
+mc('earthmoon', `About how far away is the Moon?`, `384,400 km`, [`38 km`, `3,844 km`, `384,400,000 km`], `If you could drive a car there at 100 km an hour, the trip would take about 160 days!`);
+mc('earthmoon', `Does the Moon make its own light?`, `No, it reflects sunlight`, [`Yes, it is a small sun`, `Yes, it glows by itself`, `Only on Fridays`], `The Moon is a ball of rock. We see the sunny part of it, and the shape we see changes through the month. These changes are called phases.`);
+ord('earthmoon', `Put the Moon's phases in order, starting with the New Moon.`, [`New Moon (dark)`, `Thin crescent`, `Half Moon`, `Full Moon`], `The Moon takes about 29½ days to go through all its phases and start again.`);
+mc('earthmoon', `Which is bigger, the Moon or the Earth?`, `Earth. The Moon is about a quarter as wide`, [`The Moon`, `They are exactly the same`, `The Moon is ten times wider`], `Earth is about 12,700 km wide and the Moon about 3,500 km. Almost four Moons side by side would stretch across Earth.`);
+mc('earthmoon', `The Moon travels around the Earth. What do we call a path around a planet?`, `An orbit`, [`A tunnel`, `A bridge`, `A runway`], `The Moon orbits Earth about once a month. The word "month" comes from the word "Moon"!`);
+mc('earthmoon', `True or false: we always see the same side of the Moon from Earth.`, `True`, [`False`], `The Moon turns exactly once each time it goes around Earth, so the same face always looks at us. The other side is called the far side.`);
+mc('earthmoon', `What does the Moon's pull do to the oceans on Earth?`, `It makes the tides: the sea level goes up and down`, [`It makes the sea freeze`, `It turns the sea purple`, `Nothing at all`], `The Moon's gravity pulls on the water. That is why most beaches have high tide and low tide every day.`);
+mc('earthmoon', `Between Earth and the Moon the spaceship "coasts". What does that mean?`, `It flies along with its engines off, saving fuel`, [`It is parked on the Moon`, `It is dropping a stage`, `It is landing`], `After the big engine burn, nothing slows the ship down in space, so it glides on its own for days.`);
+mc('earthmoon', `The Moon is slowly drifting away from Earth. How fast?`, `A few centimetres a year, about as fast as fingernails grow`, [`As fast as a jet plane`, `10 metres every day`, `It is moving closer instead`], `The Moon moves away about 3.8 cm each year. That is a very slow journey!`);
+
+// ---- landing ----
+mc('landing', `How strong is gravity on the Moon compared with Earth?`, `About 6 times weaker`, [`The same`, `About 6 times stronger`, `There is none`], `Moon gravity is about one-sixth of Earth's. A kid who weighs 30 kg on Earth would feel like 5 kg on the Moon, so astronauts can jump very high!`);
+mc('landing', `Why can't a parachute help a lander on the Moon?`, `There is no air to push against`, [`Parachutes are too heavy`, `The Moon is too warm`, `Parachutes only work at night`], `A parachute works by catching air. The Moon has almost no air, so landers slow down with rocket engines instead.`);
+mc('landing', `Which way does a lander fire its engine to slow its fall?`, `Downward, so the push goes upward`, [`Upward, toward the sky`, `Sideways only`, `It keeps the engine off`], `Just like a rocket on the launch pad, the engine pushes gas one way and the lander gets pushed the other way.`);
+mc('landing', `Why do landers have wide legs with flat feet?`, `To land softly and stay balanced on bumpy ground`, [`To run across the Moon`, `To swim in craters`, `To hold the flag`], `Wide legs spread the weight so the lander does not sink into dust or tip over.`);
+mc('landing', `What was the name of the Apollo 11 lander?`, `Eagle`, [`Falcon`, `Sparrow`, `Moonbird`], `Neil Armstrong and Buzz Aldrin landed Eagle on 20 July 1969. Armstrong radioed: "The Eagle has landed."`);
+mc('landing', `What is the best place to land a spaceship?`, `A flat, smooth spot with few rocks`, [`The steep wall of a crater`, `The top of a big boulder`, `The edge of a deep crack`], `Engineers study photos from orbit to find flat, safe places. Steep slopes and boulders could tip a lander over.`);
+mc('landing', `Your fuel is getting low during landing. What is a smart move?`, `Use the engine in short bursts, only when needed`, [`Keep the engine on full power`, `Turn off all the lights and hope`, `Throw out the astronauts`], `Fuel is precious. Pilots tap the engine only when they need it and let the Moon's gentle gravity do the rest.`);
+mc('landing', `Who stayed in orbit around the Moon during the Apollo 11 landing?`, `Michael Collins`, [`Neil Armstrong`, `Buzz Aldrin`, `Nobody`], `Michael Collins flew the ship Columbia around the Moon, waiting to take his friends home.`);
+
+// ---- solar ----
+mc('solar', `What does a solar panel do?`, `It turns sunlight into electricity`, [`It turns electricity into sunlight`, `It makes rain`, `It cools the air`], `Solar panels catch sunlight and make electricity to run lights, computers and machines.`);
+mc('solar', `How long does daytime last on the Moon?`, `About 2 weeks (14 Earth days)`, [`12 hours`, `1 hour`, `1 year`], `One Moon day plus night lasts about 29½ Earth days. That means about two weeks of sunshine, then two weeks of darkness!`);
+mc('solar', `What can the base use at night when the panels get no sun?`, `Batteries that were charged in the day`, [`Candles`, `Wind turbines`, `Rain water`], `Batteries store energy. A Moon base needs big batteries to last through the long, dark night.`);
+mc('solar', `Why do some bases choose a place near the Moon's poles?`, `Some high places there get sunlight almost all the time`, [`It is as warm as a beach`, `It rains there`, `Earth is closer there`], `At the poles the Sun stays low on the horizon, so some mountain tops are nearly always lit. People call them "peaks of eternal light".`);
+mc('solar', `Solar panels work best when they…`, `Face the Sun and have no shade`, [`Face the ground`, `Are covered with dust`, `Sit inside a dark cave`], `Shadows and dust block the light, so panels must face the Sun and stay clean.`);
+mc('solar', `Each row has 5 solar panels. How many panels are in 2 rows?`, `10`, [`7`, `12`, `8`], `5 + 5 = 10. Counting by fives is a fast way: 5, 10!`);
+mc('solar', `True or false: there is no wind on the Moon, so nothing blows dust off the panels.`, `True`, [`False`], `No air means no wind. Dust stays where it lands, so a base needs a robot with a soft brush to clean the panels.`);
+ord('solar', `Put the energy path in order, from sky to lamp.`, [`Sunlight hits the solar panel`, `The panel makes electricity`, `A battery stores it`, `The base lights shine`], `This is how a solar-powered base works: catch the light, make power, store it, then use it.`);
+pairs('solar', `Match each part to its job.`, [[`Solar panel`, `Makes electricity`], [`Battery`, `Stores energy`], [`Cable`, `Carries power`], [`Lamp`, `Gives light`]], `A power system needs all four parts working together.`);
+
+// ---- habitat ----
+mc('habitat', `Why do astronauts on the Moon need a sealed habitat or a spacesuit?`, `There is no air to breathe`, [`The Moon is full of water`, `Gravity is too strong`, `The ground is made of jelly`], `The Moon has almost no air and no air pressure. Inside a habitat or suit, astronauts carry their own air.`);
+mc('habitat', `How hot and cold does the Moon get?`, `About 120 °C in the day and −170 °C at night`, [`Always 20 °C like a classroom`, `Always freezing, never hot`, `Always 500 °C`], `With no thick air to hold the heat, the sunny side gets hotter than boiling water and the night side gets colder than any freezer.`);
+mc('habitat', `What is regolith?`, `Loose dust and broken rock that covers the Moon`, [`A Moon plant`, `Water from a crater`, `A kind of spacesuit`], `Space rocks smashed the Moon's surface into dust over billions of years. Builders can press regolith into bricks!`);
+mc('habitat', `Why bury a habitat under a thick layer of regolith?`, `To block harmful space radiation and keep the temperature steady`, [`To hide from Martians`, `To make it heavier`, `To grow carrots on the roof`], `Radiation from the Sun and stars can hurt people. A few metres of regolith make a strong shield.`);
+mc('habitat', `What is an airlock?`, `A small room with two doors, so the base keeps its air`, [`A lock made of air`, `A kind of space food`, `A tool for digging`], `Astronauts go in, close one door, then open the other. The base never loses all its air.`);
+mc('habitat', `Why are habitats shaped like domes or round tubes?`, `Round shapes hold the air pressure evenly`, [`They look like igloos`, `Corners cost extra`, `Squares are not allowed`], `Air inside pushes out in every direction. A round shape spreads that push evenly, like a balloon.`);
+mc('habitat', `A crew of 4 astronauts needs 1 bed each. The base has 3 beds. How many more beds are needed?`, `1`, [`2`, `3`, `4`], `4 − 3 = 1. One more bed and everyone can sleep!`);
+pairs('habitat', `Match each spacesuit part to its job.`, [[`Helmet visor`, `Shades the bright Sun`], [`Backpack`, `Supplies oxygen`], [`Gloves`, `Protect hands`], [`Boots`, `Grip the dusty ground`]], `A spacesuit is like a tiny spaceship you wear.`);
+mc('habitat', `Moon dust is sharp and sticks to everything. What should a crew do?`, `Brush the suits before going inside`, [`Roll in the dust`, `Eat the dust`, `Never wear gloves`], `Apollo astronauts found dust clinging to their suits. It can scratch machines and get in lungs, so crews clean it off.`);
+
+// ---- ice ----
+mc('ice', `Where on the Moon is water ice found?`, `In deep, dark craters near the poles`, [`In the middle of the sunny plains`, `In the clouds`, `In rivers`], `Some craters near the poles never see sunlight, so they stay colder than −200 °C. Ice can hide there for billions of years.`);
+mc('ice', `Can you drink Moon ice straight away?`, `No, it must be melted and cleaned first`, [`Yes, just lick it`, `Yes, it is already warm`, `It is made of juice`], `The ice is mixed with dust. A base melts it, then filters it to take out the dirt.`);
+mc('ice', `What happens to ice when you warm it up?`, `It melts into liquid water`, [`It turns into rock`, `It disappears forever`, `It turns into sand`], `Solid ice plus heat gives liquid water. Heat it even more and it turns into steam, a gas.`);
+mc('ice', `Water is made of hydrogen and oxygen. What do we get if we split water with electricity?`, `Hydrogen gas and oxygen gas`, [`Salt and sugar`, `Sand and dust`, `Helium and neon`], `Splitting water is called electrolysis. Oxygen is for breathing, and hydrogen with oxygen makes rocket fuel.`);
+mc('ice', `Why is making rocket fuel on the Moon a great idea?`, `Carrying fuel from Earth is very heavy and costly`, [`Moon fuel smells nicer`, `Earth has no fuel`, `Rockets do not need fuel`], `Every kilogram launched from Earth costs a lot. A base that makes fuel from ice lets rockets refuel and fly farther, maybe to Mars!`);
+mc('ice', `Why do some craters near the poles stay dark and cold forever?`, `The Sun stays so low that light never reaches the crater floor`, [`They are underwater`, `They are covered with a roof`, `The Moon has no Sun there`], `At the poles the Sun skims the horizon. The deep floors of some craters have been in shadow for billions of years.`);
+mc('ice', `A crew of 4 drinks 2 litres each every day. How many litres is that in one day?`, `8 litres`, [`6 litres`, `4 litres`, `10 litres`], `2 + 2 + 2 + 2 = 8. The base has to make plenty of water every day!`);
+ord('ice', `Put the water-making steps in order.`, [`Dig up icy dirt`, `Heat it to melt the ice`, `Filter out the dust`, `Store clean water in a tank`], `Dig, melt, filter, store: the same ideas you use to separate mixtures in science class.`);
+mc('ice', `In 2009 NASA crashed a probe into a crater near the Moon's south pole. What did the dust cloud show?`, `Water`, [`Gold`, `Plants`, `Fish`], `The LCROSS mission found water in the cloud. That is one reason scientists are so excited about Moon ice.`);
+
+// ---- garden ----
+mc('garden', `What do plants need to grow?`, `Light, water, air and nutrients`, [`Only sand`, `Only music`, `Only candy`], `Plants use light, water and air to make their food, and nutrients (plant food) from the soil to grow strong.`);
+mc('garden', `Which plant part takes in water from the soil?`, `Roots`, [`Leaves`, `Flowers`, `Seeds`], `Roots drink water and hold the plant in place. The stem carries the water up, and leaves make food from sunlight.`);
+pairs('garden', `Match each plant part to its job.`, [[`Roots`, `Take in water`], [`Stem`, `Carries water up`], [`Leaves`, `Make food from sunlight`], [`Flower`, `Makes seeds`]], `Every part of a plant has a job, like the people in a base crew.`);
+ord('garden', `Put the life of a plant in order.`, [`Seed`, `Sprout`, `Young plant`, `Flower and new seeds`], `Then the new seeds can start the cycle again.`);
+mc('garden', `Moon dust has no plant food in it. What must a Moon farmer add?`, `Water and nutrients`, [`More dust`, `Sharp rocks`, `Nothing at all`], `Regolith has minerals, but plants also need water and nutrients. Some space farms grow plants in water with no soil at all.`);
+mc('garden', `What was special about the cotton seed on China's Chang'e 4 lander in 2019?`, `It was the first plant to sprout on the Moon`, [`It grew into a giant tree`, `It made cotton shirts`, `It was a robot plant`], `The seed sprouted in a small sealed box on the far side of the Moon. It did not survive the freezing night, but it was a great first step.`);
+mc('garden', `Why does a Moon greenhouse need grow lights?`, `A Moon night lasts two weeks and plants need light every day`, [`Plants like disco`, `To scare insects away`, `Earth is too bright`], `Lamps keep the plants growing when the Sun is gone. Many grow lights are pink because plants use red and blue light best.`);
+mc('garden', `You plant 3 seeds in each pot. You have 4 pots. How many seeds?`, `12`, [`7`, `10`, `9`], `3 + 3 + 3 + 3 = 12 seeds.`);
+mc('garden', `How can you test fairly if plants need light?`, `Grow two same plants: one in light and one in the dark`, [`Grow two different plants in different pots`, `Give one plant water and the other juice`, `Look at just one plant`], `A fair test changes only one thing (light) and keeps everything else the same.`);
+mc('garden', `Astronauts on the space station grew and ate red lettuce in 2015. What does it show?`, `People can grow food in space`, [`Lettuce is a kind of rock`, `Space food is only pills`, `Plants cannot live in space`], `Growing fresh food helps long missions. One day the Moon base garden could feed the crew.`);
+
+// ---- comms ----
+mc('comms', `How do the base and Earth talk to each other?`, `With radio waves`, [`With paper planes`, `By shouting`, `With very long ropes`], `Radio waves travel through empty space at the speed of light, so messages and pictures can fly from the Moon to Earth.`);
+mc('comms', `How long does a radio message take to travel from the Moon to Earth?`, `About 1 second`, [`About 1 hour`, `About 1 day`, `No time at all`], `Radio travels 300,000 km every second. The Moon is 384,400 km away, so a message takes about 1.3 seconds. A message from Mars takes minutes!`);
+mc('comms', `Astronauts say "Over" at the end of a radio message. Why?`, `To tell the other person it is their turn to talk`, [`To say goodbye forever`, `To start a game`, `It is a space spell`], `Radios usually work one person at a time, so "over" means "your turn".`);
+mc('comms', `Why does a communications dish have a curved bowl shape?`, `To collect weak signals and focus them on one spot`, [`To hold rain water`, `To look like a flower`, `To keep birds away`], `The curved dish gathers faint radio waves and bounces them to a receiver in the middle.`);
+mc('comms', `The far side of the Moon never faces Earth. How can a base there talk to Earth?`, `Through a relay satellite orbiting the Moon`, [`It cannot`, `By waving`, `By digging a tunnel through the Moon`], `Radio waves travel in straight lines. In 2018 China launched the Queqiao satellite to relay signals from the far side.`);
+mc('comms', `Sound cannot travel in empty space. How do astronauts hear each other outside?`, `Their suits have radios`, [`They shout very loudly`, `They use string telephones`, `Moon rocks carry the sound`], `Sound needs air to travel through. Radios send messages as radio waves, which do not need air.`);
+mc('comms', `Why is the antenna on top of a tall mast?`, `So it can see Earth over hills and rocks`, [`To hold lights`, `To catch Moon rain`, `To hide from meteoroids`], `Radio needs a clear line of sight. A tall mast lifts the antenna above rocks and crater rims.`);
+mc('comms', `A message takes 1 second to reach Earth and 1 second for the answer to come back. How many seconds before you hear the reply?`, `At least 2 seconds`, [`1 second`, `4 seconds`, `0 seconds`], `1 + 1 = 2. So there is always a small pause when you chat with Earth.`);
+pairs('comms', `Match each tool to its job.`, [[`Dish`, `Sends and catches signals`], [`Camera`, `Takes pictures`], [`Microphone`, `Picks up voices`], [`Speaker`, `Plays sound`]], `A communication station needs ears, eyes, a mouth and a big radio antenna.`);
+
+// ---- moon facts ----
+mc('moonfacts', `How were most Moon craters made?`, `Space rocks (meteoroids) crashed into the Moon`, [`Giant animals dug them`, `Ice cream volcanoes`, `Rain drops`], `The Moon has almost no air, so even small space rocks hit the ground at super speed and dig bowls called craters.`);
+mc('moonfacts', `Why does Earth have fewer craters than the Moon?`, `Air burns up many space rocks, and weather wears craters away`, [`Earth is magnetic`, `Earth is too small`, `Nobody counts them`], `Earth's thick air burns up most small meteoroids, and rain, wind and plants hide old craters. The Moon keeps its craters for billions of years.`);
+mc('moonfacts', `What are the dark patches on the Moon called "maria" (seas)?`, `Huge flat plains of old, hardened lava`, [`Seas of water`, `Forests`, `Shadows of clouds`], `Long ago lava flooded big craters and cooled into dark rock. Early astronomers thought they were seas, so they named them maria, Latin for seas.`);
+mc('moonfacts', `Why do footprints on the Moon last so long?`, `There is no wind or rain to blow them away`, [`The ground is made of glue`, `Robots repaint them`, `The Moon is cold jelly`], `The Apollo boot prints from 1969 are probably still there, and may last for millions of years.`);
+mc('moonfacts', `If you drop a hammer and a feather on the Moon, which lands first?`, `They land at the same time`, [`The hammer`, `The feather`, `Neither one falls`], `With no air to slow the feather, both fall the same way. Astronaut David Scott tried it in 1971 and it worked!`);
+mc('moonfacts', `Could you hear a meteoroid crash on the Moon?`, `No, sound cannot travel without air`, [`Yes, it would be very loud`, `Only with a trumpet`, `Only at night`], `Sound needs air (or something else) to travel through. The Moon is silent.`);
+mc('moonfacts', `How many people have walked on the Moon so far?`, `12`, [`2`, `100`, `1,000`], `Twelve astronauts walked on the Moon between 1969 and 1972, during the Apollo missions.`);
+mc('moonfacts', `What is a meteoroid?`, `A small rock flying through space`, [`A baby Moon`, `A kind of rocket`, `A star`], `When a meteoroid burns up in Earth's air we see a shooting star. On the airless Moon, meteoroids reach the ground!`);
+mc('moonfacts', `Seen from the Moon's near side, where is Earth in the sky?`, `It hangs in almost the same spot all the time`, [`It rises and sets every day`, `It is too small to see`, `It is hidden behind the Sun`], `The same side of the Moon always faces Earth, so Earth does not rise or set there. It just hangs in the sky and shows phases, like our Moon.`);
+mc('moonfacts', `In what year did Neil Armstrong become the first person to step on the Moon?`, `1969`, [`1869`, `1999`, `1769`], `It happened on 20 July 1969. Armstrong said: "That's one small step for man, one giant leap for mankind."`);
+
+// ============ MODULES (the starbase) ============
+const MODULES = {
+  solar:   { name: 'Solar Farm',             e: '☀️', r: 62, ang: -90, note: 'Six solar panels turn sunlight into electricity for the whole base.' },
+  habitat: { name: 'Habitat Dome',           e: '🏠', r: 56, ang: -30, note: 'A sealed dome with air, beds and a kitchen where the crew lives.' },
+  mine:    { name: 'Ice Mine & Oxygen Plant', e: '🧊', r: 54, ang: 30,  note: 'Digs up ice and splits water into drinking water, oxygen and rocket fuel.' },
+  garden:  { name: 'Moon Greenhouse',        e: '🌱', r: 62, ang: 90,  note: 'Grow lights and water help plants make fresh food for the crew.' },
+  comms:   { name: 'Comms Tower',            e: '📡', r: 44, ang: 150, note: 'A dish that sends radio messages and pictures to Earth.' },
+  pad:     { name: 'Launch Pad',             e: '🚀', r: 64, ang: 210, note: 'A pad for landing and launching rockets. Next stop: Mars!' }
+};
+
+// ============ MISSIONS ============
+const MISSIONS = [
+  { id: 1, mode: 'launch', name: 'Lift-off from Earth', emoji: '🚀', topic: 'launch', topic2: 'earthmoon', tag: 'Rockets & launch', nq: 7,
+    story: 'Mission Control is ready. The spaceship <b>Selene</b> is on the launch pad with the starbase crew, tools and supplies inside. Blast through the sky, dodge storms, then glide to the Moon!',
+    goal: 'Answer 5 launch checks, steer through the sky, then coast to the Moon.' },
+  { id: 2, mode: 'land', name: 'Touchdown on the Moon', emoji: '🌕', topic: 'landing', tag: 'Landing & gravity', nq: 4,
+    story: 'Selene is above the <b>Sea of Tranquility</b>. There is no air, so no parachute. You must slow the lander with your engine and touch down on the glowing landing pad.',
+    goal: 'Land softly on the pad: slow, upright and on target.' },
+  { id: 3, mode: 'surf', module: 'solar', name: 'Solar Farm', emoji: '☀️', topic: 'solar', tag: 'Sun & solar power', w: 2400, h: 1500, seed: 13,
+    biome: { c1: [84, 86, 92], c2: [118, 121, 128], c3: [62, 64, 72], c3w: .6, rock: ['#a2a4aa', '#55575f'], dust: '175,177,184', feat: 'mare' },
+    craters: 3, ice: 0, rough: 0, pits: 0, rocks: 46, strike: 0, dark: 0, cold: 0, batt: 4,
+    res: [{ e: '🔩', n: 'Metal frames' }, { e: '🔆', n: 'Solar cells' }, { e: '🔌', n: 'Cables' }], survey: { e: '🔭', n: 'Sun survey' },
+    story: 'Selene has landed and the crew is safe. First the base needs <b>power</b>. A cargo pod landed nearby with parts. Fetch them and build the Solar Farm. The Sun shines for two weeks at a time here!',
+    goal: 'Collect 3 cargo crates, run the Sun survey, then build the Solar Farm.' },
+  { id: 4, mode: 'surf', module: 'habitat', name: 'Habitat Dome', emoji: '🏠', topic: 'habitat', tag: 'Habitat & suits', w: 2600, h: 1600, seed: 29,
+    biome: { c1: [128, 128, 130], c2: [172, 172, 175], c3: [104, 104, 110], c3w: .5, rock: ['#c0c1c6', '#6a6c74'], dust: '200,200,205', feat: 'highland' },
+    craters: 8, ice: 0, rough: 3, pits: 0, rocks: 60, strike: 0, dark: 0, cold: 0, batt: 5,
+    res: [{ e: '🧱', n: 'Regolith bricks' }, { e: '🪟', n: 'Window panels' }, { e: '🚪', n: 'Airlock door' }], survey: { e: '☢️', n: 'Radiation check' },
+    story: 'Solar power is on! Now the crew needs a safe home. The bright <b>highlands</b> are covered with craters, so drive carefully. Bring building supplies back to build the Habitat Dome.',
+    goal: 'Collect 3 cargo crates, check the radiation, then build the Habitat.' },
+  { id: 5, mode: 'surf', module: 'mine', name: 'Ice Mine & Oxygen Plant', emoji: '🧊', topic: 'ice', tag: 'Water ice & oxygen', w: 2600, h: 1700, seed: 41,
+    biome: { c1: [88, 98, 120], c2: [124, 138, 162], c3: [200, 218, 238], c3w: .42, rock: ['#8c97ab', '#464f60'], dust: '190,205,225', feat: 'polar' },
+    craters: 4, ice: 7, rough: 0, pits: 0, rocks: 52, strike: 0, dark: .35, cold: 1, batt: 6,
+    res: [{ e: '⛏️', n: 'Drill bits' }, { e: '🛢️', n: 'Storage tanks' }, { e: '🔧', n: 'Pipes' }], survey: { e: '🧊', n: 'Ice scan' },
+    story: 'A base needs <b>water and oxygen</b>. Near the pole there is a crater that never sees the Sun, with frozen water hiding inside. It is dark, freezing and the ice is slippery. Use your headlights!',
+    goal: 'Collect 3 cargo crates, scan the ice, then build the Ice Mine.' },
+  { id: 6, mode: 'surf', module: 'garden', name: 'Moon Greenhouse', emoji: '🌱', topic: 'garden', tag: 'Moon garden', w: 2600, h: 1700, seed: 53,
+    biome: { c1: [92, 86, 82], c2: [130, 122, 114], c3: [58, 54, 54], c3w: .7, rock: ['#a79d95', '#5a524d'], dust: '170,162,154', feat: 'lava' },
+    craters: 3, ice: 0, rough: 4, pits: 9, rocks: 50, strike: 0, dark: 0, cold: 0, batt: 5,
+    res: [{ e: '🌱', n: 'Seeds' }, { e: '💧', n: 'Water tank' }, { e: '💡', n: 'Grow lights' }], survey: { e: '🧪', n: 'Soil test' },
+    story: 'Time for fresh food! You are in a field with old <b>lava tubes</b>. Some roofs have collapsed and left deep round pits. Stay away from the edges while you gather greenhouse supplies.',
+    goal: 'Collect 3 cargo crates, test the soil, then build the Greenhouse.' },
+  { id: 7, mode: 'surf', module: 'comms', name: 'Comms Tower', emoji: '📡', topic: 'comms', tag: 'Radio & signals', w: 2700, h: 1700, seed: 67,
+    biome: { c1: [116, 114, 110], c2: [156, 153, 148], c3: [88, 86, 86], c3w: .55, rock: ['#b4b0aa', '#615e5c'], dust: '185,182,176', feat: 'highland' },
+    craters: 6, ice: 0, rough: 2, pits: 0, rocks: 58, strike: 5.5, dark: 0, cold: 0, batt: 6,
+    res: [{ e: '📡', n: 'Big dish' }, { e: '🗼', n: 'Steel mast' }, { e: '🔋', n: 'Power box' }], survey: { e: '📶', n: 'Signal test' },
+    story: 'The crew wants to call home. Build a <b>Comms Tower</b> to talk to Earth. Warning: <b>meteoroids</b> fall here! A red circle shows where a space rock is about to hit. Drive out of it!',
+    goal: 'Dodge the meteoroids. Collect 3 crates, test the signal, then build the tower.' },
+  { id: 8, mode: 'surf', module: 'pad', name: 'Lunar Night Launch Pad', emoji: '🌙', topic: 'moonfacts', tag: 'Craters & Moon facts', w: 2700, h: 1700, seed: 79,
+    biome: { c1: [68, 70, 80], c2: [100, 103, 114], c3: [48, 50, 60], c3w: .6, rock: ['#9296a4', '#4a4d58'], dust: '160,164,178', feat: 'mare' },
+    craters: 5, ice: 0, rough: 2, pits: 0, rocks: 62, strike: 3.6, dark: .93, cold: 0, batt: 7,
+    res: [{ e: '🧱', n: 'Pad slabs' }, { e: '⛽', n: 'Fuel tank' }, { e: '🔦', n: 'Light towers' }], survey: { e: '🌍', n: 'Earth-view check' },
+    story: 'The last build! Night has fallen and the Sun will not return for two weeks. The base is running on batteries, and meteoroids keep falling. Finish the <b>Launch Pad</b> so rockets can fly on to Mars!',
+    goal: 'Use your headlights. Collect 3 crates, check the view, then build the Launch Pad.' }
+];
+
+const LEVELS = {
+  rookie: { name: 'Rookie',   drain: .6,   dmg: .55, opts: 3, rocks: .8, wrong: 6,  speed: 1.05, strike: 1.6, fdrain: .75, obsGap: 1.5, vmax: 62, hmax: 46, amax: .34, assist: 1, padw: 300 },
+  pro:    { name: 'Pro',      drain: 1,    dmg: 1,   opts: 4, rocks: 1,  wrong: 10, speed: 1,    strike: 1,   fdrain: 1,   obsGap: 1.1, vmax: 44, hmax: 32, amax: .24, assist: 0, padw: 190 },
+  champ:  { name: 'Champion', drain: 1.35, dmg: 1.4, opts: 4, rocks: 1.2, wrong: 14, speed: 1,   strike: .7,  fdrain: 1.25, obsGap: .85, vmax: 34, hmax: 24, amax: .18, assist: 0, padw: 140 }
+};
+'use strict';
+// ================= helpers =================
+const $ = s => document.querySelector(s);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const dist = (a, b, c, d) => Math.hypot(c - a, d - b);
+const angDiff = (a, b) => { let d = (b - a) % (Math.PI * 2); if (d > Math.PI) d -= Math.PI * 2; if (d < -Math.PI) d += Math.PI * 2; return d; };
+const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+function rng(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+function shuffle(a, R) { R = R || Math.random; a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function hash2(x, y, s) { let h = Math.imul(x, 374761393) + Math.imul(y, 668265263) + Math.imul(s, 1442695041) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; }
+function vnoise(x, y, s) { const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf); const a = hash2(xi, yi, s), b = hash2(xi + 1, yi, s), c = hash2(xi, yi + 1, s), d = hash2(xi + 1, yi + 1, s); return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v; }
+function fbm(x, y, s) { return (vnoise(x, y, s) * .5 + vnoise(x * 2, y * 2, s + 1) * .25 + vnoise(x * 4, y * 4, s + 2) * .125 + vnoise(x * 8, y * 8, s + 3) * .0625) / .9375; }
+const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+const rr = (g, x, y, w, h, r) => { g.beginPath(); g.roundRect(x, y, w, h, r); };
+
+// ================= save =================
+const SKEY = 'moonstarbase-save';
+let SAVE = (() => { const d = { stars: {}, facts: {}, missed: {}, built: {}, level: 'pro', sound: true, seen: false }; try { const o = Object.assign(d, JSON.parse(localStorage.getItem(SKEY) || '{}')); o.built = o.built || {}; return o; } catch (e) { return d; } })();
+function persist() { try { localStorage.setItem(SKEY, JSON.stringify(SAVE)); } catch (e) { } }
+
+// ================= audio =================
+let AC = null, engineOsc = null, engineGain = null;
+function audio() { if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { } } if (AC && AC.state === 'suspended') AC.resume(); return AC; }
+function tone(f, d, type = 'sine', vol = .12, when = 0, slide = 0) {
+  if (!SAVE.sound) return; const a = audio(); if (!a) return;
+  const o = a.createOscillator(), g = a.createGain(), t = a.currentTime + when;
+  o.type = type; o.frequency.setValueAtTime(f, t); if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(30, f + slide), t + d);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + .015); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+  o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + d + .02);
+}
+const SFX = {
+  ok() { [523, 659, 784, 1047].forEach((f, i) => tone(f, .22, 'triangle', .13, i * .08)); },
+  bad() { tone(180, .28, 'sawtooth', .1, 0, -60); tone(140, .3, 'sawtooth', .1, .12, -50); },
+  pick() { tone(880, .12, 'square', .07); tone(1320, .16, 'square', .07, .08); },
+  hit() { tone(110, .18, 'square', .14, 0, -50); },
+  drill() { tone(240 + Math.random() * 40, .08, 'sawtooth', .035); },
+  done() { [392, 523, 659, 784, 1047].forEach((f, i) => tone(f, .26, 'triangle', .13, i * .09)); },
+  click() { tone(660, .06, 'square', .05); },
+  boom() { tone(90, .8, 'sawtooth', .16, 0, -50); tone(60, 1.4, 'square', .1, .1, -20); },
+  beep() { tone(520, .16, 'square', .08); },
+  go() { tone(1040, .5, 'square', .09); },
+  sep() { tone(160, .12, 'square', .12, 0, -40); tone(300, .2, 'triangle', .08, .1, 200); },
+  zap() { tone(900, .18, 'sawtooth', .07, 0, -700); },
+  fanfare() { [523, 659, 784, 1047, 784, 1047, 1318].forEach((f, i) => tone(f, .3, 'triangle', .14, i * .13)); }
+};
+function engineSound(on, sp) {
+  if (!SAVE.sound) on = false; if (!on && !engineOsc) return; const a = audio(); if (!a) return;
+  if (!engineOsc) { engineOsc = a.createOscillator(); engineGain = a.createGain(); engineOsc.type = 'triangle'; engineOsc.frequency.value = 55; engineGain.gain.value = 0; engineOsc.connect(engineGain); engineGain.connect(a.destination); engineOsc.start(); }
+  engineGain.gain.setTargetAtTime(on ? clamp(sp / 170, 0, 1.3) * .035 : 0, a.currentTime, .08); engineOsc.frequency.setTargetAtTime(48 + sp * .22, a.currentTime, .1);
+}
+
+// ================= stars =================
+const STARS = Array.from({ length: 200 }, (_, i) => ({ x: hash2(i, 1, 9), y: hash2(i, 2, 9), s: .4 + hash2(i, 3, 9) * 1.5, p: hash2(i, 4, 9) * 6 }));
+function drawStars(g, W, H, t, a, ymax) {
+  if (a <= 0) return; g.fillStyle = '#fff';
+  for (const s of STARS) { if (s.y > ymax) continue; g.globalAlpha = a * (.4 + .6 * Math.abs(Math.sin(t * 1.3 + s.p))); g.beginPath(); g.arc(s.x * W, s.y * H, s.s, 0, 7); g.fill(); }
+  g.globalAlpha = 1;
+}
+
+// ================= ground (biome) =================
+let BIO = null, BSEED = 1, BW = 2000, BH = 1500;
+function groundColor(x, y) {
+  const b = BIO, n = fbm(x * .0035, y * .0035, BSEED), m = fbm(x * .018 + 40, y * .018, BSEED + 7);
+  let r = lerp(b.c1[0], b.c2[0], n), g = lerp(b.c1[1], b.c2[1], n), bl = lerp(b.c1[2], b.c2[2], n);
+  const w3 = smooth(.52, .78, m) * b.c3w; r = lerp(r, b.c3[0], w3); g = lerp(g, b.c3[1], w3); bl = lerp(bl, b.c3[2], w3);
+  if (b.feat === 'highland') { const sp = (fbm(x * .06, y * .06, BSEED + 11) - .5) * 22; r += sp; g += sp; bl += sp; }
+  if (b.feat === 'mare') { const f = fbm(x * .0012, y * .0012, BSEED + 4); const d = smooth(.45, .62, f) * 14; r -= d; g -= d; bl -= d; }
+  if (b.feat === 'lava') { const ln = Math.abs(fbm(x * .005, y * .005, BSEED + 5) - .5); if (ln < .022) { const k = 1 - ln / .022; r -= 34 * k; g -= 34 * k; bl -= 32 * k; } }
+  if (b.feat === 'polar') { const f = fbm(x * .004 + 9, y * .004, BSEED + 5); if (f > .6) { const k = smooth(.6, .75, f) * .25; r = lerp(r, 215, k); g = lerp(g, 228, k); bl = lerp(bl, 245, k); } }
+  return [r, g, bl];
+}
+function craterDecal(g, x, y, r) {
+  const gr = g.createRadialGradient(x + r * .12, y + r * .12, r * .1, x, y, r); gr.addColorStop(0, 'rgba(8,10,18,.34)'); gr.addColorStop(.72, 'rgba(8,10,18,.2)'); gr.addColorStop(1, 'rgba(8,10,18,0)');
+  g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill();
+  g.lineWidth = Math.max(1, r * .13); g.lineCap = 'round';
+  g.strokeStyle = 'rgba(255,255,255,.3)'; g.beginPath(); g.arc(x, y, r * .86, Math.PI * .8, Math.PI * 1.7); g.stroke();
+  g.strokeStyle = 'rgba(0,0,0,.3)'; g.beginPath(); g.arc(x, y, r * .86, -Math.PI * .2, Math.PI * .7); g.stroke();
+}
+const TILES = new Map(), TS = 256;
+function getTile(tx, ty) {
+  const key = tx + ',' + ty; let c = TILES.get(key); if (c) return c;
+  c = document.createElement('canvas'); c.width = c.height = TS; const g = c.getContext('2d'), id = g.createImageData(TS, TS), d = id.data;
+  for (let py = 0; py < TS; py += 2) for (let px = 0; px < TS; px += 2) {
+    const col = groundColor(tx * TS + px, ty * TS + py);
+    for (let j = 0; j < 2; j++) for (let i = 0; i < 2; i++) {
+      const o = ((py + j) * TS + px + i) * 4, sp = (hash2(tx * TS + px + i, ty * TS + py + j, 5) - .5) * 15;
+      d[o] = col[0] + sp; d[o + 1] = col[1] + sp; d[o + 2] = col[2] + sp * 1.05; d[o + 3] = 255;
+    }
+  }
+  g.putImageData(id, 0, 0);
+  const R = rng(hash2(tx, ty, BSEED) * 1e9 | 0);
+  for (let i = 0, n = 3 + (R() * 3 | 0); i < n; i++) { const r = 5 + R() * R() * 40, x = r + 3 + R() * (TS - 2 * r - 6), y = r + 3 + R() * (TS - 2 * r - 6); craterDecal(g, x, y, r); }
+  for (let i = 0; i < 12; i++) { // pebbles
+    const x = R() * TS, y = R() * TS, r = 1 + R() * 2.4;
+    g.fillStyle = 'rgba(10,10,20,.3)'; g.beginPath(); g.ellipse(x + 1.2, y + 1.4, r, r * .75, 0, 0, 7); g.fill();
+    g.fillStyle = BIO.rock[0]; g.globalAlpha = .7; g.beginPath(); g.ellipse(x, y, r, r * .8, R() * 3, 0, 7); g.fill(); g.globalAlpha = 1;
+  }
+  TILES.set(key, c); if (TILES.size > 160) TILES.delete(TILES.keys().next().value);
+  return c;
+}
+
+// ================= sprites =================
+function rockSprite(r, R, biome) {
+  const pad = 10, S = Math.ceil(r * 2 + pad * 2), c = document.createElement('canvas'); c.width = c.height = S; const g = c.getContext('2d'), cx = S / 2, cy = S / 2;
+  const n = 9, pts = []; for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2, q = r * (.8 + R() * .26); pts.push([cx + Math.cos(a) * q, cy + Math.sin(a) * q]); }
+  const path = (ox, oy) => { g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0] + ox, p[1] + oy) : g.moveTo(p[0] + ox, p[1] + oy)); g.closePath(); };
+  g.fillStyle = 'rgba(0,0,10,.4)'; path(r * .3, r * .36); g.fill();
+  const gr = g.createLinearGradient(cx - r, cy - r, cx + r, cy + r); gr.addColorStop(0, biome.rock[0]); gr.addColorStop(1, biome.rock[1]);
+  g.fillStyle = gr; path(0, 0); g.fill(); g.lineWidth = 1.5; g.strokeStyle = 'rgba(10,10,20,.5)'; g.stroke();
+  g.fillStyle = 'rgba(255,255,255,.24)'; g.beginPath(); g.ellipse(cx - r * .25, cy - r * .3, r * .42, r * .26, -.6, 0, 7); g.fill();
+  g.strokeStyle = 'rgba(10,10,20,.32)'; g.lineWidth = 1; for (let i = 0; i < 2; i++) { g.beginPath(); g.moveTo(cx + (R() - .5) * r, cy + (R() - .3) * r); g.lineTo(cx + (R() - .5) * r * 1.2, cy + (R() + .1) * r * .8); g.stroke(); }
+  return c;
+}
+function pitSprite(r, R) {
+  const S = Math.ceil(r * 2 + 24), c = document.createElement('canvas'); c.width = c.height = S; const g = c.getContext('2d'), cx = S / 2, cy = S / 2;
+  const n = 18, pts = []; for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2, q = r * (.9 + R() * .16); pts.push([cx + Math.cos(a) * q, cy + Math.sin(a) * q]); }
+  const path = k => { g.beginPath(); pts.forEach((p, i) => { const x = cx + (p[0] - cx) * k, y = cy + (p[1] - cy) * k; i ? g.lineTo(x, y) : g.moveTo(x, y); }); g.closePath(); };
+  g.fillStyle = 'rgba(0,0,10,.35)'; path(1.18); g.fill();
+  g.fillStyle = '#8d8a86'; path(1.1); g.fill(); g.lineWidth = 2; g.strokeStyle = 'rgba(10,10,20,.5)'; g.stroke();
+  const gr = g.createRadialGradient(cx - r * .2, cy - r * .2, r * .1, cx, cy, r); gr.addColorStop(0, '#16141a'); gr.addColorStop(.8, '#050407'); gr.addColorStop(1, '#2a2830'); g.fillStyle = gr; path(.88); g.fill();
+  g.strokeStyle = 'rgba(255,255,255,.3)'; g.lineWidth = 2.5; g.beginPath(); g.arc(cx, cy, r * 1.0, Math.PI * .85, Math.PI * 1.6); g.stroke();
+  return c;
+}
+function zoneSprite(z, R, biome) {
+  const S = Math.ceil(z.r * 2 + 8), c = document.createElement('canvas'); c.width = c.height = S; const g = c.getContext('2d'), cx = S / 2, cy = S / 2;
+  const n = 28, pts = []; const ph = R() * 9; for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2, q = z.r * (.82 + .16 * Math.sin(a * 3 + ph) + .05 * R()); pts.push([cx + Math.cos(a) * q * .95, cy + Math.sin(a) * q * .95]); }
+  const outline = () => { g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); };
+  if (z.k === 'crater') {
+    outline(); g.save(); g.clip();
+    const gr = g.createRadialGradient(cx - z.r * .1, cy - z.r * .1, z.r * .1, cx, cy, z.r); gr.addColorStop(0, 'rgba(8,10,20,.46)'); gr.addColorStop(.7, 'rgba(8,10,20,.3)'); gr.addColorStop(1, 'rgba(8,10,20,.06)'); g.fillStyle = gr; g.fillRect(0, 0, S, S);
+    g.lineWidth = z.r * .1; g.lineCap = 'round'; g.strokeStyle = 'rgba(255,255,255,.28)'; g.beginPath(); g.arc(cx, cy, z.r * .72, .1, 1.5); g.stroke();
+    g.strokeStyle = 'rgba(0,0,0,.3)'; g.beginPath(); g.arc(cx, cy, z.r * .72, Math.PI * 1.1, Math.PI * 1.85); g.stroke();
+    g.fillStyle = 'rgba(0,0,0,.2)'; for (let i = 0; i < 9; i++) { g.beginPath(); g.arc(cx + (R() - .5) * z.r, cy + (R() - .5) * z.r, 2 + R() * 4, 0, 7); g.fill(); }
+    g.restore(); g.lineWidth = 3; g.strokeStyle = 'rgba(255,255,255,.2)'; outline(); g.stroke();
+    return c;
+  }
+  outline(); g.save(); g.clip();
+  if (z.k === 'ice') {
+    const gr = g.createRadialGradient(cx, cy, 0, cx, cy, z.r); gr.addColorStop(0, 'rgba(215,240,255,.85)'); gr.addColorStop(1, 'rgba(150,205,240,.6)'); g.fillStyle = gr; g.fillRect(0, 0, S, S);
+    g.strokeStyle = 'rgba(255,255,255,.85)'; g.lineWidth = 2; for (let i = 0; i < 7; i++) { g.beginPath(); let x = cx + (R() - .5) * z.r, y = cy + (R() - .5) * z.r; g.moveTo(x, y); for (let k = 0; k < 4; k++) { x += (R() - .5) * 60; y += (R() - .5) * 60; g.lineTo(x, y); } g.stroke(); }
+    g.strokeStyle = 'rgba(90,150,200,.5)'; g.lineWidth = 1; for (let i = 0; i < 5; i++) { g.beginPath(); g.arc(cx + (R() - .5) * z.r, cy + (R() - .5) * z.r, 10 + R() * 30, 0, 3); g.stroke(); }
+  } else { // rough boulder field
+    g.fillStyle = 'rgba(30,30,40,.5)'; g.fillRect(0, 0, S, S);
+    for (let i = 0; i < z.r * .75; i++) { const x = R() * S, y = R() * S, q = 2 + R() * 6; g.fillStyle = R() < .5 ? 'rgba(20,20,28,.8)' : 'rgba(160,160,170,.7)'; g.beginPath(); for (let k = 0; k < 5; k++) { const a = k / 5 * 6.28; g.lineTo(x + Math.cos(a) * q * (.7 + R() * .5), y + Math.sin(a) * q * (.7 + R() * .5)); } g.fill(); }
+  }
+  g.restore(); g.lineWidth = 3; g.strokeStyle = z.k === 'ice' ? 'rgba(255,255,255,.7)' : 'rgba(0,0,0,.4)'; outline(); g.stroke();
+  return c;
+}
+
+// ================= planets (decor) =================
+function drawEarth(g, x, y, r, t) {
+  const glow = g.createRadialGradient(x, y, r * .9, x, y, r * 1.35); glow.addColorStop(0, 'rgba(120,190,255,.5)'); glow.addColorStop(1, 'rgba(120,190,255,0)'); g.fillStyle = glow; g.beginPath(); g.arc(x, y, r * 1.35, 0, 7); g.fill();
+  g.save(); g.beginPath(); g.arc(x, y, r, 0, 7); g.clip();
+  const oc = g.createRadialGradient(x - r * .35, y - r * .35, r * .1, x, y, r); oc.addColorStop(0, '#5db0ff'); oc.addColorStop(.6, '#1f6ad0'); oc.addColorStop(1, '#0a2f78'); g.fillStyle = oc; g.fillRect(x - r, y - r, r * 2, r * 2);
+  const rot = (t || 0) * .012;
+  const land = [[.12, -.2, .42, '#3f9a4d'], [.34, .22, .3, '#a58a52'], [.62, -.38, .36, '#3f9a4d'], [.8, .26, .28, '#4aa45a'], [.95, -.1, .2, '#a58a52']];
+  for (const [px, py, s, col] of land) { const lx = ((px + rot) % 1) * 2.4 - 1.2; g.fillStyle = col; g.beginPath(); for (let k = 0; k < 8; k++) { const a = k / 8 * 6.283, q = r * s * (.7 + .5 * hash2(k, Math.round(px * 10), 3)); g.lineTo(x + lx * r + Math.cos(a) * q, y + py * r + Math.sin(a) * q * .8); } g.closePath(); g.fill(); }
+  g.fillStyle = 'rgba(255,255,255,.9)'; g.beginPath(); g.ellipse(x, y - r * .93, r * .5, r * .12, 0, 0, 7); g.ellipse(x, y + r * .95, r * .4, r * .1, 0, 0, 7); g.fill();
+  g.strokeStyle = 'rgba(255,255,255,.38)'; g.lineWidth = Math.max(1.5, r * .045); g.lineCap = 'round'; for (let i = 0; i < 6; i++) { const a = i * 1.3 + rot * 6; g.beginPath(); g.arc(x + Math.cos(a) * r * .42, y + Math.sin(a * 1.3) * r * .5, r * (.18 + .05 * (i % 3)), 1 + i, 2.5 + i); g.stroke(); }
+  const sh = g.createRadialGradient(x + r * .55, y + r * .45, r * .3, x + r * .55, y + r * .45, r * 1.5); sh.addColorStop(0, 'rgba(0,0,20,0)'); sh.addColorStop(1, 'rgba(0,0,20,.62)'); g.fillStyle = sh; g.fillRect(x - r, y - r, r * 2, r * 2);
+  g.restore();
+}
+const MOON_CR = [[-.3, -.25, .2], [.28, -.4, .14], [.35, .15, .24], [-.35, .3, .16], [0, .05, .11], [.1, -.6, .1], [-.6, 0, .12], [.55, -.1, .09], [-.1, .62, .13], [.6, .5, .1]];
+function drawMoon(g, x, y, r) {
+  g.save(); g.beginPath(); g.arc(x, y, r, 0, 7); g.clip();
+  const gr = g.createRadialGradient(x - r * .35, y - r * .35, r * .1, x, y, r * 1.05); gr.addColorStop(0, '#f1f2f6'); gr.addColorStop(.65, '#b5b9c4'); gr.addColorStop(1, '#6e7380'); g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2);
+  g.fillStyle = 'rgba(70,76,96,.38)'; for (const [a, b, s] of [[-.15, -.2, .34], [.3, .05, .26], [-.35, .28, .2]]) { g.beginPath(); g.ellipse(x + a * r, y + b * r, s * r, s * r * .8, .4, 0, 7); g.fill(); }
+  for (const [a, b, s] of MOON_CR) { const cx = x + a * r, cy = y + b * r, q = s * r; g.fillStyle = 'rgba(60,66,84,.34)'; g.beginPath(); g.arc(cx, cy, q, 0, 7); g.fill(); g.strokeStyle = 'rgba(255,255,255,.35)'; g.lineWidth = Math.max(1, q * .15); g.beginPath(); g.arc(cx, cy, q, Math.PI * .8, Math.PI * 1.7); g.stroke(); }
+  const sh = g.createRadialGradient(x - r * .5, y - r * .4, r * .5, x - r * .5, y - r * .4, r * 1.7); sh.addColorStop(0, 'rgba(0,0,15,0)'); sh.addColorStop(1, 'rgba(0,0,15,.55)'); g.fillStyle = sh; g.fillRect(x - r, y - r, r * 2, r * 2);
+  g.restore();
+}
+
+// ================= vehicles =================
+function drawRocket(g, x, y, s, o) { // origin = engine base, rocket points up
+  o = o || {}; const stage = o.stage || 1, fl = o.flame == null ? 1 : o.flame;
+  g.save(); g.translate(x, y); g.rotate(o.tilt || 0); g.scale(s, s);
+  const sh = stage === 1 ? 0 : 86, cx = 0;
+  g.translate(0, sh);
+  const flameY = stage === 1 ? 8 : -86 + 8; // nozzle bottom
+  if (fl > 0) {
+    const L0 = (30 + 70 * fl) * (.85 + Math.random() * .3), W0 = stage === 1 ? 15 : 10;
+    for (const [k, col] of [[1, 'rgba(255,120,30,.85)'], [.66, 'rgba(255,200,60,.95)'], [.34, '#fffbe0']]) { g.fillStyle = col; g.beginPath(); g.moveTo(-W0 * k, flameY); g.quadraticCurveTo(-W0 * k * .6, flameY + L0 * k * .6, 0, flameY + L0 * k); g.quadraticCurveTo(W0 * k * .6, flameY + L0 * k * .6, W0 * k, flameY); g.closePath(); g.fill(); }
+  }
+  const body = (x0, y0, w, h, col) => { const gr = g.createLinearGradient(x0, 0, x0 + w, 0); gr.addColorStop(0, '#c7ced9'); gr.addColorStop(.35, '#ffffff'); gr.addColorStop(1, '#a9b2c0'); g.fillStyle = gr; g.fillRect(x0, y0, w, h); g.lineWidth = 1.2; g.strokeStyle = 'rgba(40,50,70,.5)'; g.strokeRect(x0, y0, w, h); };
+  if (stage === 1) {
+    g.fillStyle = '#d2332f'; g.beginPath(); g.moveTo(-13, 0); g.lineTo(-27, 8); g.lineTo(-13, -30); g.closePath(); g.fill(); g.beginPath(); g.moveTo(13, 0); g.lineTo(27, 8); g.lineTo(13, -30); g.closePath(); g.fill();
+    g.fillStyle = '#2b2f38'; g.beginPath(); g.moveTo(-8, 0); g.lineTo(8, 0); g.lineTo(11, 10); g.lineTo(-11, 10); g.closePath(); g.fill();
+    body(-13, -80, 26, 80); g.fillStyle = '#222'; g.fillRect(-13, -50, 26, 8); g.fillStyle = '#fff'; g.fillRect(-13, -66, 26, 2);
+    g.fillStyle = '#4b505c'; g.fillRect(-11, -86, 22, 6);
+  } else {
+    g.fillStyle = '#2b2f38'; g.beginPath(); g.moveTo(-6, -86); g.lineTo(6, -86); g.lineTo(9, -76); g.lineTo(-9, -76); g.closePath(); g.fill();
+  }
+  body(-11, -136, 22, 50); g.fillStyle = '#d2332f'; g.fillRect(-11, -122, 22, 6);
+  const ng = g.createLinearGradient(-11, 0, 11, 0); ng.addColorStop(0, '#e3e8f0'); ng.addColorStop(.4, '#fff'); ng.addColorStop(1, '#a3adbd'); g.fillStyle = ng;
+  g.beginPath(); g.moveTo(-11, -136); g.quadraticCurveTo(-8, -158, 0, -172); g.quadraticCurveTo(8, -158, 11, -136); g.closePath(); g.fill(); g.lineWidth = 1.2; g.strokeStyle = 'rgba(40,50,70,.5)'; g.stroke();
+  g.fillStyle = '#2a6fe0'; g.beginPath(); g.arc(0, -144, 4.2, 0, 7); g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 1.2; g.stroke();
+  g.restore();
+}
+function drawLanderSide(g, x, y, s, o) { // origin = centre of body; feet at y+30, x±32
+  o = o || {}; g.save(); g.translate(x, y); g.rotate(o.a || 0); g.scale(s, s);
+  if (o.flame > 0) { const L0 = (14 + 46 * o.flame) * (.85 + Math.random() * .3); for (const [k, col] of [[1, 'rgba(255,150,50,.85)'], [.6, 'rgba(255,230,120,.95)'], [.3, '#fff']]) { g.fillStyle = col; g.beginPath(); g.moveTo(-7 * k, 27); g.quadraticCurveTo(-4 * k, 27 + L0 * k * .6, 0, 27 + L0 * k); g.quadraticCurveTo(4 * k, 27 + L0 * k * .6, 7 * k, 27); g.closePath(); g.fill(); } }
+  // legs
+  g.strokeStyle = '#9ea4b0'; g.lineWidth = 3; g.lineCap = 'round'; for (const sx of [-1, 1]) { g.beginPath(); g.moveTo(sx * 16, 10); g.lineTo(sx * 31, 29); g.stroke(); g.beginPath(); g.moveTo(sx * 8, 20); g.lineTo(sx * 28, 24); g.stroke(); g.fillStyle = '#c8ccd6'; g.beginPath(); g.ellipse(sx * 32, 30, 8, 2.4, 0, 0, 7); g.fill(); }
+  // engine bell
+  g.fillStyle = '#3a3e48'; g.beginPath(); g.moveTo(-5, 23); g.lineTo(5, 23); g.lineTo(8, 28); g.lineTo(-8, 28); g.closePath(); g.fill();
+  // descent stage (gold foil)
+  const gd = g.createLinearGradient(0, 2, 0, 24); gd.addColorStop(0, '#f8dc86'); gd.addColorStop(.5, '#d9a63c'); gd.addColorStop(1, '#8e6416'); g.fillStyle = gd; rr(g, -22, 2, 44, 22, 5); g.fill(); g.lineWidth = 1.3; g.strokeStyle = '#6b4a0c'; g.stroke();
+  g.strokeStyle = 'rgba(255,255,255,.35)'; g.lineWidth = 1; g.beginPath(); g.moveTo(-14, 4); g.lineTo(-10, 22); g.moveTo(2, 4); g.lineTo(6, 22); g.moveTo(14, 4); g.lineTo(11, 22); g.stroke();
+  // ascent stage
+  const ag = g.createLinearGradient(0, -24, 0, 2); ag.addColorStop(0, '#f2f4f8'); ag.addColorStop(1, '#b4bbc8'); g.fillStyle = ag; g.beginPath(); g.moveTo(-15, 2); g.lineTo(-15, -14); g.lineTo(-8, -23); g.lineTo(8, -23); g.lineTo(15, -14); g.lineTo(15, 2); g.closePath(); g.fill(); g.strokeStyle = '#6e7684'; g.lineWidth = 1.3; g.stroke();
+  g.fillStyle = '#26364f'; g.beginPath(); g.moveTo(-9, -14); g.lineTo(-3, -14); g.lineTo(-4, -8); g.lineTo(-8, -8); g.closePath(); g.moveTo(9, -14); g.lineTo(3, -14); g.lineTo(4, -8); g.lineTo(8, -8); g.closePath(); g.fill();
+  g.strokeStyle = '#9ea4b0'; g.lineWidth = 1.6; g.beginPath(); g.moveTo(0, -23); g.lineTo(0, -33); g.stroke(); g.fillStyle = '#e7ebf2'; g.beginPath(); g.arc(0, -34, 3.5, 0, 7); g.fill();
+  g.fillStyle = '#2d6cdf'; g.fillRect(-15, -4, 30, 3);
+  g.restore();
+}
+function drawBuggy(g, x, y, a, o) { // top-down moon buggy
+  o = o || {}; const ph = o.wheel || 0, cargo = o.cargo || 0;
+  g.save(); g.translate(x, y); g.rotate(a);
+  g.fillStyle = 'rgba(0,0,12,.38)'; g.beginPath(); g.ellipse(5, 7, 32, 22, 0, 0, 7); g.fill();
+  for (const wx of [-18, 16]) for (const wy of [-18, 18]) {
+    g.fillStyle = '#2a2b31'; rr(g, wx - 8, wy - 5.5, 16, 11, 3); g.fill();
+    g.strokeStyle = '#9094a0'; g.lineWidth = 1.3; for (let k = 0; k < 5; k++) { const tx = wx - 7 + ((k * 3.6 + ph) % 14.4); g.beginPath(); g.moveTo(tx, wy - 5); g.lineTo(tx, wy + 5); g.stroke(); }
+  }
+  g.strokeStyle = '#8e939f'; g.lineWidth = 3; for (const s of [-1, 1]) { g.beginPath(); g.moveTo(-18, s * 18); g.lineTo(-2, s * 12); g.lineTo(16, s * 18); g.stroke(); }
+  // cargo bed
+  g.fillStyle = '#3a3e4a'; rr(g, -38, -12, 24, 24, 4); g.fill(); g.strokeStyle = '#7f8594'; g.lineWidth = 1.3; g.stroke();
+  const slots = [[-35, -10], [-35, 1], [-25, -10], [-25, 1]];
+  for (let i = 0; i < Math.min(cargo, 4); i++) { const [cx, cy] = slots[i]; g.fillStyle = '#e0aa45'; g.fillRect(cx, cy, 9.5, 9.5); g.strokeStyle = '#7a5412'; g.lineWidth = 1.2; g.strokeRect(cx, cy, 9.5, 9.5); g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + 9.5, cy + 9.5); g.moveTo(cx + 9.5, cy); g.lineTo(cx, cy + 9.5); g.stroke(); }
+  // chassis
+  const bg = g.createLinearGradient(0, -14, 0, 14); bg.addColorStop(0, '#fbfdff'); bg.addColorStop(1, '#bcc4d0');
+  g.fillStyle = bg; rr(g, -14, -13, 38, 26, 6); g.fill(); g.lineWidth = 1.5; g.strokeStyle = '#6a7280'; g.stroke();
+  g.fillStyle = '#ffc24d'; g.fillRect(-14, -2.5, 38, 5);
+  g.fillStyle = '#2d6cdf'; rr(g, 6, -9, 13, 18, 3); g.fill(); g.fillStyle = 'rgba(255,255,255,.4)'; g.fillRect(8, -8, 3, 16);
+  // antenna dish
+  g.fillStyle = '#e3e8ee'; g.strokeStyle = '#6a7280'; g.lineWidth = 1; g.beginPath(); g.arc(-6, 8, 4.5, 0, 7); g.fill(); g.stroke();
+  // arm
+  g.strokeStyle = '#4a4f57'; g.lineWidth = 3; g.lineCap = 'round'; g.beginPath(); g.moveTo(22, -9); g.lineTo(31, -13); g.lineTo(36 + (o.armOut || 0), -9); g.stroke();
+  g.fillStyle = o.armOut ? '#3fe0cf' : '#2a2d33'; g.beginPath(); g.arc(36 + (o.armOut || 0), -9, 3, 0, 7); g.fill();
+  g.fillStyle = o.lights ? '#fff6c0' : '#d8d6c0'; g.beginPath(); g.arc(24, -8, 2, 0, 7); g.arc(24, 8, 2, 0, 7); g.fill();
+  g.restore();
+}
+function drawBuggySide(g, x, y, s, ph) {
+  g.save(); g.translate(x, y); g.scale(s, s);
+  g.fillStyle = 'rgba(0,0,0,.3)'; g.beginPath(); g.ellipse(0, 0, 72, 7, 0, 0, 7); g.fill();
+  const wh = cx => { g.fillStyle = '#2a2b31'; g.beginPath(); g.arc(cx, -13, 14, 0, 7); g.fill(); g.strokeStyle = '#9094a0'; g.lineWidth = 2.4; for (let k = 0; k < 8; k++) { const a = ph + k * Math.PI / 4; g.beginPath(); g.moveTo(cx + Math.cos(a) * 5, -13 + Math.sin(a) * 5); g.lineTo(cx + Math.cos(a) * 13, -13 + Math.sin(a) * 13); g.stroke(); } g.fillStyle = '#c4c8d2'; g.beginPath(); g.arc(cx, -13, 4, 0, 7); g.fill(); };
+  wh(-46); wh(40);
+  g.strokeStyle = '#8e939f'; g.lineWidth = 5; g.beginPath(); g.moveTo(-46, -17); g.lineTo(-4, -28); g.lineTo(40, -17); g.stroke();
+  g.fillStyle = '#3a3e4a'; rr(g, -78, -40, 40, 14, 3); g.fill(); g.fillStyle = '#e0aa45'; g.fillRect(-74, -54, 14, 14); g.fillRect(-58, -50, 12, 10); g.strokeStyle = '#7a5412'; g.lineWidth = 1.5; g.strokeRect(-74, -54, 14, 14); g.strokeRect(-58, -50, 12, 10);
+  const bg = g.createLinearGradient(0, -58, 0, -28); bg.addColorStop(0, '#fff'); bg.addColorStop(1, '#bcc4d0'); g.fillStyle = bg; rr(g, -40, -56, 86, 28, 8); g.fill(); g.strokeStyle = '#6a7280'; g.lineWidth = 2; g.stroke();
+  g.fillStyle = '#ffc24d'; g.fillRect(-40, -44, 86, 5); g.fillStyle = '#2d6cdf'; rr(g, 12, -52, 26, 18, 5); g.fill();
+  g.strokeStyle = '#9ea4b0'; g.lineWidth = 3; g.beginPath(); g.moveTo(-14, -56); g.lineTo(-14, -78); g.stroke(); g.fillStyle = '#e7ebf2'; g.beginPath(); g.ellipse(-14, -82, 12, 6, -.4, 0, 7); g.fill(); g.strokeStyle = '#6a7280'; g.lineWidth = 1.5; g.stroke();
+  g.restore();
+}
+
+// ================= base modules (top view) =================
+const shadowE = (g, rx, ry) => { g.fillStyle = 'rgba(0,0,12,.34)'; g.beginPath(); g.ellipse(9, 11, rx, ry, 0, 0, 7); g.fill(); };
+function mSolar(g, t, lit) {
+  g.fillStyle = 'rgba(0,0,12,.3)'; g.fillRect(-56, -22, 126, 66);
+  for (let row = 0; row < 2; row++) for (let col = 0; col < 3; col++) {
+    const px = -63 + col * 44, py = -34 + row * 35;
+    g.fillStyle = '#5b616c'; g.fillRect(px - 2, py - 2, 42, 33);
+    const gr = g.createLinearGradient(px, py, px + 38, py + 29); gr.addColorStop(0, '#1b3a8c'); gr.addColorStop(1, '#4e8bee'); g.fillStyle = gr; g.fillRect(px, py, 38, 29);
+    g.strokeStyle = 'rgba(255,255,255,.3)'; g.lineWidth = 1; g.beginPath(); for (let i = 1; i < 4; i++) { g.moveTo(px + i * 9.5, py); g.lineTo(px + i * 9.5, py + 29); } for (let i = 1; i < 3; i++) { g.moveTo(px, py + i * 9.7); g.lineTo(px + 38, py + i * 9.7); } g.stroke();
+    if (lit) { g.fillStyle = 'rgba(255,255,255,' + (.1 + .12 * Math.max(0, Math.sin(t * 2 - col * .9 - row * .5))) + ')'; g.beginPath(); g.moveTo(px, py + 29); g.lineTo(px + 18, py); g.lineTo(px + 30, py); g.lineTo(px + 10, py + 29); g.closePath(); g.fill(); }
+  }
+}
+function mHab(g, t, lit, ha) {
+  shadowE(g, 58, 56);
+  const br = g.createRadialGradient(0, 0, 40, 0, 0, 58); br.addColorStop(0, '#8f9097'); br.addColorStop(1, '#6a6b73'); g.fillStyle = br; g.beginPath(); g.arc(0, 0, 56, 0, 7); g.fill();
+  g.fillStyle = 'rgba(0,0,0,.18)'; for (let i = 0; i < 26; i++) { const a = i * 2.4, q = 46 + (i % 4) * 2.6; g.beginPath(); g.arc(Math.cos(a) * q, Math.sin(a) * q, 2.4, 0, 7); g.fill(); }
+  g.save(); g.rotate(ha); g.fillStyle = '#cfd6e2'; rr(g, 38, -8, 26, 16, 4); g.fill(); g.strokeStyle = '#7b879b'; g.lineWidth = 1.5; g.stroke(); g.fillStyle = '#7f8a9c'; g.fillRect(58, -6, 4, 12); g.restore();
+  const dm = g.createRadialGradient(-14, -14, 4, 0, 0, 44); dm.addColorStop(0, '#ffffff'); dm.addColorStop(1, '#aab6c9'); g.fillStyle = dm; g.beginPath(); g.arc(0, 0, 44, 0, 7); g.fill(); g.strokeStyle = '#6f7d92'; g.lineWidth = 2; g.stroke();
+  g.strokeStyle = 'rgba(70,90,125,.38)'; g.lineWidth = 1.5; g.beginPath(); for (let i = 0; i < 8; i++) { g.moveTo(Math.cos(i * .785) * 12, Math.sin(i * .785) * 12); g.lineTo(Math.cos(i * .785) * 44, Math.sin(i * .785) * 44); } g.stroke(); g.beginPath(); g.arc(0, 0, 27, 0, 7); g.stroke();
+  g.fillStyle = lit ? '#ffe9a3' : '#6c7a92'; g.beginPath(); g.arc(0, 0, 9, 0, 7); g.fill();
+  for (let i = 0; i < 6; i++) { const a = i * 1.047 + .3; g.save(); g.translate(Math.cos(a) * 35, Math.sin(a) * 35); g.rotate(a); g.fillStyle = lit ? '#ffd978' : '#4f5d78'; rr(g, -3, -5, 6, 10, 2); g.fill(); g.restore(); }
+}
+function mMine(g, t, lit) {
+  shadowE(g, 50, 44);
+  g.fillStyle = '#565a66'; rr(g, -48, -42, 96, 84, 10); g.fill(); g.strokeStyle = '#8b909c'; g.lineWidth = 2; g.stroke();
+  g.fillStyle = '#10121a'; g.beginPath(); g.arc(-24, 16, 19, 0, 7); g.fill(); g.strokeStyle = '#b7c0d0'; g.lineWidth = 2.5; g.stroke(); g.fillStyle = 'rgba(160,215,255,.7)'; for (let i = 0; i < 5; i++) { g.beginPath(); g.arc(-24 + Math.cos(i * 1.7) * 9, 16 + Math.sin(i * 2.3) * 8, 2.4, 0, 7); g.fill(); }
+  g.strokeStyle = '#b4bac6'; g.lineWidth = 4; g.beginPath(); g.moveTo(-24, 16); g.lineTo(12, -6); g.moveTo(12, -6); g.lineTo(-24, -20); g.moveTo(12, -6); g.lineTo(30, 22); g.stroke();
+  if (lit) { g.fillStyle = '#ffd166'; for (let i = 0; i < 3; i++) { const p = (t * .6 + i / 3) % 1; g.beginPath(); g.arc(lerp(-24, 12, p), lerp(16, -6, p), 2.8, 0, 7); g.fill(); } }
+  const tank = (x, y, r, c1, c2) => { const gr = g.createRadialGradient(x - r * .3, y - r * .3, 1, x, y, r); gr.addColorStop(0, c1); gr.addColorStop(1, c2); g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); g.strokeStyle = 'rgba(20,30,50,.6)'; g.lineWidth = 1.5; g.stroke(); };
+  tank(-24, -20, 14, '#e6f6ff', '#5aa8e6'); tank(30, 22, 12, '#ffffff', '#aebdd2');
+  g.save(); g.translate(12, -6); g.fillStyle = '#7a8190'; g.beginPath(); for (let k = 0; k < 6; k++) g.lineTo(Math.cos(k * 1.047) * 17, Math.sin(k * 1.047) * 17); g.closePath(); g.fill(); g.strokeStyle = '#3b4150'; g.lineWidth = 1.5; g.stroke();
+  g.rotate(lit ? t * 4 : 0); g.strokeStyle = '#d8dde8'; g.lineWidth = 3; g.beginPath(); g.moveTo(-11, 0); g.lineTo(11, 0); g.moveTo(0, -11); g.lineTo(0, 11); g.stroke(); g.restore();
+  if (lit) { for (let i = 0; i < 3; i++) { const p = (t * .5 + i / 3) % 1; g.fillStyle = 'rgba(255,255,255,' + (.5 * (1 - p)) + ')'; g.beginPath(); g.arc(-24 + p * 8, -20 - p * 20, 4 + p * 8, 0, 7); g.fill(); } }
+}
+function mGarden(g, t, lit) {
+  g.fillStyle = 'rgba(0,0,12,.32)'; rr(g, -52, -26, 124, 74, 14); g.fill();
+  g.fillStyle = '#394150'; rr(g, -62, -37, 124, 74, 14); g.fill();
+  for (let row = 0; row < 3; row++) { const y = -27 + row * 20; g.fillStyle = '#3b2f2a'; g.fillRect(-54, y, 108, 12); for (let i = 0; i < 8; i++) { const px = -48 + i * 13.6; g.fillStyle = (i + row) % 2 ? '#4ccd6a' : '#2fa855'; g.beginPath(); g.ellipse(px, y + 6, 6.5, 4.6, (i * 1.3 + row), 0, 7); g.fill(); g.beginPath(); g.ellipse(px + 2, y + 6, 4, 6, i, 0, 7); g.fill(); if ((i * 3 + row) % 4 === 0) { g.fillStyle = '#ff7a9a'; g.beginPath(); g.arc(px, y + 6, 2.2, 0, 7); g.fill(); } } }
+  g.fillStyle = 'rgba(190,240,232,.2)'; rr(g, -62, -37, 124, 74, 14); g.fill(); g.strokeStyle = '#e3ebf3'; g.lineWidth = 2.5; g.stroke();
+  g.lineWidth = 1.5; g.beginPath(); for (let i = -2; i <= 2; i++) { g.moveTo(i * 24, -37); g.lineTo(i * 24, 37); } g.stroke();
+  g.fillStyle = 'rgba(255,255,255,.18)'; g.beginPath(); g.moveTo(-58, 30); g.lineTo(-20, -35); g.lineTo(-4, -35); g.lineTo(-42, 30); g.closePath(); g.fill();
+  if (lit) { g.fillStyle = 'rgba(255,90,200,' + (.16 + .05 * Math.sin(t * 2)) + ')'; rr(g, -62, -37, 124, 74, 14); g.fill(); }
+}
+function mComms(g, t, lit) {
+  shadowE(g, 40, 38);
+  g.fillStyle = '#6b707c'; g.beginPath(); g.arc(0, 0, 38, 0, 7); g.fill(); g.strokeStyle = '#9aa0ac'; g.lineWidth = 2; g.stroke();
+  g.save(); g.rotate(-.6); const dg = g.createRadialGradient(-6, -6, 2, 0, 0, 32); dg.addColorStop(0, '#ffffff'); dg.addColorStop(1, '#9aa6b8'); g.fillStyle = dg; g.beginPath(); g.ellipse(0, 0, 32, 25, 0, 0, 7); g.fill(); g.strokeStyle = '#5f6a7d'; g.lineWidth = 2; g.stroke();
+  g.strokeStyle = 'rgba(80,95,120,.4)'; g.lineWidth = 1.2; for (const q of [.35, .65]) { g.beginPath(); g.ellipse(0, 0, 32 * q, 25 * q, 0, 0, 7); g.stroke(); } g.restore();
+  g.strokeStyle = '#3a3f4a'; g.lineWidth = 2.5; g.beginPath(); g.moveTo(0, 0); g.lineTo(18, -14); g.stroke(); g.fillStyle = '#272a31'; g.beginPath(); g.arc(18, -14, 4, 0, 7); g.fill();
+  g.fillStyle = '#d6d9e0'; g.beginPath(); g.arc(0, 0, 5, 0, 7); g.fill();
+  if (Math.floor(t * 2) % 2) { g.fillStyle = '#ff4d4d'; g.beginPath(); g.arc(0, 0, 3, 0, 7); g.fill(); g.fillStyle = 'rgba(255,77,77,.3)'; g.beginPath(); g.arc(0, 0, 8, 0, 7); g.fill(); }
+  if (lit) for (let i = 0; i < 3; i++) { const p = (t * .8 + i / 3) % 1; g.strokeStyle = 'rgba(127,232,255,' + (.7 * (1 - p)) + ')'; g.lineWidth = 2.5; g.beginPath(); g.arc(0, 0, 30 + p * 42, -.6 - .5, -.6 + .5); g.stroke(); }
+}
+function mPad(g, t, lit) {
+  shadowE(g, 62, 60);
+  const sg = g.createRadialGradient(-10, -10, 10, 0, 0, 62); sg.addColorStop(0, '#9a9da6'); sg.addColorStop(1, '#666972'); g.fillStyle = sg; g.beginPath(); g.arc(0, 0, 60, 0, 7); g.fill(); g.strokeStyle = '#43464f'; g.lineWidth = 2; g.stroke();
+  g.strokeStyle = '#f2c14e'; g.lineWidth = 3; g.setLineDash([12, 9]); g.beginPath(); g.arc(0, 0, 50, 0, 7); g.stroke(); g.setLineDash([]); g.strokeStyle = 'rgba(255,255,255,.85)'; g.lineWidth = 2; g.beginPath(); g.arc(0, 0, 36, 0, 7); g.stroke();
+  // gantry
+  g.fillStyle = '#4a4f5c'; g.fillRect(-60, -34, 12, 68); g.strokeStyle = '#a9afbd'; g.lineWidth = 1.5; g.beginPath(); for (let y = -34; y < 34; y += 12) { g.moveTo(-60, y); g.lineTo(-48, y + 12); g.moveTo(-48, y); g.lineTo(-60, y + 12); } g.stroke();
+  g.strokeStyle = '#8a90a0'; g.lineWidth = 4; g.beginPath(); g.moveTo(-48, 0); g.lineTo(-14, 0); g.stroke();
+  // rocket top view
+  g.fillStyle = '#d2332f'; for (let i = 0; i < 3; i++) { const a = i * 2.094 + 1.2; g.beginPath(); g.moveTo(Math.cos(a - .3) * 10, Math.sin(a - .3) * 10); g.lineTo(Math.cos(a) * 28, Math.sin(a) * 28); g.lineTo(Math.cos(a + .3) * 10, Math.sin(a + .3) * 10); g.closePath(); g.fill(); }
+  const rg = g.createRadialGradient(-4, -4, 2, 0, 0, 15); rg.addColorStop(0, '#fff'); rg.addColorStop(1, '#b4bccb'); g.fillStyle = rg; g.beginPath(); g.arc(0, 0, 15, 0, 7); g.fill(); g.strokeStyle = '#6a7280'; g.lineWidth = 1.5; g.stroke(); g.fillStyle = '#d2332f'; g.beginPath(); g.arc(0, 0, 6, 0, 7); g.fill();
+  for (let i = 0; i < 4; i++) { const a = i * 1.571 + .785; g.fillStyle = '#3a3d46'; g.beginPath(); g.arc(Math.cos(a) * 56, Math.sin(a) * 56, 4, 0, 7); g.fill(); g.fillStyle = lit && ((Math.floor(t * 2) + i) % 2) ? '#ffbe3c' : (lit ? '#a56a10' : '#5a5d66'); g.beginPath(); g.arc(Math.cos(a) * 56, Math.sin(a) * 56, 2.6, 0, 7); g.fill(); }
+}
+const MODFN = { solar: mSolar, habitat: mHab, mine: mMine, garden: mGarden, comms: mComms, pad: mPad };
+function drawModule(g, k, x, y, t, o) {
+  o = o || {}; const prog = o.prog == null ? 1 : o.prog, M = MODULES[k], R = M.r + 18, ha = (M.ang + 180) * Math.PI / 180;
+  g.save(); g.translate(x, y);
+  if (o.alpha != null) g.globalAlpha = o.alpha;
+  if (prog < 1) { g.beginPath(); g.rect(-R - 24, R + 24 - (2 * R + 48) * prog, 2 * R + 48, 2 * R + 48); g.clip(); }
+  MODFN[k](g, t, !!o.lit, ha); g.restore();
+  if (prog < 1 && prog > 0) { const ly = y + R + 24 - (2 * R + 48) * prog; g.save(); g.strokeStyle = 'rgba(120,255,240,.95)'; g.lineWidth = 3; g.shadowColor = '#5ff'; g.shadowBlur = 12; g.beginPath(); g.moveTo(x - R - 6, ly); g.lineTo(x + R + 6, ly); g.stroke(); g.restore(); }
+}
+function drawHub(g, x, y, t) {
+  g.save(); g.translate(x, y);
+  const sc = g.createRadialGradient(0, 0, 20, 0, 0, 78); sc.addColorStop(0, 'rgba(0,0,10,.34)'); sc.addColorStop(1, 'rgba(0,0,10,0)'); g.fillStyle = sc; g.beginPath(); g.arc(0, 0, 78, 0, 7); g.fill();
+  g.fillStyle = 'rgba(0,0,12,.34)'; g.beginPath(); g.ellipse(8, 10, 44, 38, 0, 0, 7); g.fill();
+  for (let i = 0; i < 4; i++) { const a = i * 1.571 + .785; g.strokeStyle = '#8f95a2'; g.lineWidth = 3; g.beginPath(); g.moveTo(0, 0); g.lineTo(Math.cos(a) * 38, Math.sin(a) * 38); g.stroke(); g.fillStyle = '#c8cbd3'; g.beginPath(); g.arc(Math.cos(a) * 40, Math.sin(a) * 40, 9, 0, 7); g.fill(); g.strokeStyle = '#6a6e7a'; g.lineWidth = 1.5; g.stroke(); }
+  const gd = g.createRadialGradient(-8, -8, 3, 0, 0, 30); gd.addColorStop(0, '#f8dc86'); gd.addColorStop(.6, '#d7a23a'); gd.addColorStop(1, '#8e6416'); g.fillStyle = gd; g.beginPath(); for (let k = 0; k < 8; k++) g.lineTo(Math.cos(k * .785 + .39) * 30, Math.sin(k * .785 + .39) * 30); g.closePath(); g.fill(); g.strokeStyle = '#6b4a0c'; g.lineWidth = 1.5; g.stroke();
+  g.strokeStyle = 'rgba(255,255,255,.3)'; g.lineWidth = 1; g.beginPath(); for (let k = 0; k < 8; k++) { g.moveTo(0, 0); g.lineTo(Math.cos(k * .785) * 28, Math.sin(k * .785) * 28); } g.stroke();
+  const ag = g.createRadialGradient(-3, -3, 1, 0, 0, 17); ag.addColorStop(0, '#f4f6fa'); ag.addColorStop(1, '#aab2c0'); g.fillStyle = ag; g.beginPath(); for (let k = 0; k < 8; k++) g.lineTo(Math.cos(k * .785 + .39) * 17, Math.sin(k * .785 + .39) * 17); g.closePath(); g.fill(); g.strokeStyle = '#6e7684'; g.stroke();
+  g.fillStyle = '#26364f'; g.beginPath(); g.arc(-4, 0, 3.5, 0, 7); g.arc(5, 0, 3.5, 0, 7); g.fill();
+  // flag
+  g.strokeStyle = '#d8dde8'; g.lineWidth = 2; g.beginPath(); g.moveTo(52, -34); g.lineTo(52, -4); g.stroke(); g.fillStyle = '#1f4fbf'; g.fillRect(52, -34, 22, 13); g.fillStyle = '#fff'; g.font = '800 10px sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('★', 63, -27);
+  g.restore();
+}
+function drawCables(g, hub, k, t, lit) {
+  const M = MODULES[k], a = M.ang * Math.PI / 180, ux = Math.cos(a), uy = Math.sin(a), x0 = hub.x + ux * 44, y0 = hub.y + uy * 44, x1 = hub.x + ux * (235 - M.r + 6), y1 = hub.y + uy * (235 - M.r + 6);
+  g.lineCap = 'round'; g.strokeStyle = 'rgba(0,0,10,.4)'; g.lineWidth = 8; g.beginPath(); g.moveTo(x0 + 3, y0 + 4); g.lineTo(x1 + 3, y1 + 4); g.stroke();
+  g.strokeStyle = '#3a3e49'; g.lineWidth = 7; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke();
+  g.strokeStyle = lit ? '#e8b948' : '#6b6f7a'; g.lineWidth = 2; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke();
+  if (lit) { g.fillStyle = '#fff6c0'; for (let i = 0; i < 3; i++) { const p = (t * .5 + i / 3) % 1; g.beginPath(); g.arc(lerp(x0, x1, p), lerp(y0, y1, p), 3, 0, 7); g.fill(); } }
+}
+// small picture of the whole base (map screen, debrief)
+function drawBaseScene(g, W, H, t, o) {
+  o = o || {}; g.setTransform(1, 0, 0, 1, 0, 0);
+  const sg = g.createLinearGradient(0, 0, 0, H); sg.addColorStop(0, o.night ? '#0a0e1c' : '#7a7d86'); sg.addColorStop(1, o.night ? '#05070f' : '#55585f'); g.fillStyle = sg; g.fillRect(0, 0, W, H);
+  const R = rng(77); for (let i = 0; i < 26; i++) { const x = R() * W, y = R() * H, r = 6 + R() * R() * 34; craterDecal(g, x, y, r); }
+  const s = Math.min(H / 640, W / 760), cx = W / 2, cy = H / 2 + 6, hub = { x: 0, y: 0 };
+  g.save(); g.translate(cx, cy); g.scale(s, s);
+  const built = Object.keys(MODULES).filter(k => SAVE.built[k] || (o.also && o.also.includes(k)));
+  const lit = !!SAVE.built.solar || (o.also && o.also.includes('solar'));
+  for (const k of built) drawCables(g, hub, k, t, lit);
+  drawHub(g, 0, 0, t);
+  for (const k of Object.keys(MODULES)) { const M = MODULES[k], a = M.ang * Math.PI / 180, x = Math.cos(a) * 235, y = Math.sin(a) * 235; if (built.includes(k)) drawModule(g, k, x, y, t, { lit }); else { g.strokeStyle = 'rgba(160,220,255,.35)'; g.lineWidth = 2; g.setLineDash([8, 7]); g.beginPath(); g.arc(x, y, M.r, 0, 7); g.stroke(); g.setLineDash([]); g.font = '700 22px sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.globalAlpha = .5; g.fillText(M.e, x, y); g.globalAlpha = 1; } }
+  g.restore();
+  if (o.night) { // lights glow
+    g.save(); g.translate(cx, cy); g.scale(s, s); g.globalCompositeOperation = 'lighter';
+    for (const k of built) { const M = MODULES[k], a = M.ang * Math.PI / 180, x = Math.cos(a) * 235, y = Math.sin(a) * 235, gr = g.createRadialGradient(x, y, 4, x, y, 110); gr.addColorStop(0, 'rgba(255,220,140,.4)'); gr.addColorStop(1, 'rgba(255,220,140,0)'); g.fillStyle = gr; g.beginPath(); g.arc(x, y, 110, 0, 7); g.fill(); }
+    g.restore();
+  }
+}
+
+// ================= world generation (surface missions) =================
+const RADIUS = 20; // buggy collision radius
+function slotPos(hub, k) { const M = MODULES[k], a = M.ang * Math.PI / 180; return { x: hub.x + Math.cos(a) * 235, y: hub.y + Math.sin(a) * 235, r: M.r, k }; }
+function genWorld(mi, lvKey) {
+  const m = MISSIONS[mi], L = LEVELS[lvKey], R = rng(9000 + mi * 7919), w = m.w, h = m.h, hub = { x: 380, y: Math.round(h / 2) };
+  const Wd = { m, mi, w, h, hub, obs: [], zones: [], res: [], survey: [], batts: [], solids: [], mods: [], site: null, start: { x: hub.x + 120, y: hub.y } };
+  for (const k in MODULES) { if (k === m.module || !SAVE.built[k]) continue; const s = slotPos(hub, k); Wd.mods.push(s); Wd.solids.push({ x: s.x, y: s.y, r: s.r, k: 'mod' }); }
+  Wd.solids.push({ x: hub.x, y: hub.y, r: 46, k: 'hub' });
+  const ss = slotPos(hub, m.module); Wd.site = Object.assign(ss, { kind: 'site', done: false, prog: 0, ring: ss.r + 54 });
+  const free = (x, y, r, gap) => Wd.solids.every(c => dist(c.x, c.y, x, y) > c.r + r + gap) && dist(x, y, hub.x, hub.y) > r + 340;
+  const addSolid = o => { Wd.solids.push(o); Wd.obs.push(o); };
+  const objs = [], spaced = (x, y) => objs.every(o => dist(o.x, o.y, x, y) > 380) && dist(x, y, hub.x, hub.y) > 560;
+  function placeObj() { for (let t = 0; t < 1500; t++) { const x = 260 + R() * (w - 440), y = 150 + R() * (h - 300); if (free(x, y, 52, 26) && spaced(x, y)) { const o = { x, y }; objs.push(o); return o; } } return null; }
+  for (let i = 0; i < m.res.length; i++) { const o = placeObj(); if (o) { o.kind = 'res'; o.res = m.res[i]; o.done = false; o.prog = 0; Wd.res.push(o); } }
+  { const o = placeObj(); if (o) { o.kind = 'survey'; o.res = m.survey; o.done = false; o.prog = 0; Wd.survey.push(o); } }
+  objs.forEach(o => Wd.solids.push({ x: o.x, y: o.y, r: 40, k: 'pad' }));
+  const nr = Math.round(m.rocks * L.rocks);
+  for (let i = 0, t = 0; i < nr && t < 6000; t++) {
+    const big = R() < .18, r = big ? 30 + R() * 22 : 12 + R() * 18, x = 60 + R() * (w - 120), y = 60 + R() * (h - 120);
+    if (free(x, y, r, 62)) { const o = { x, y, r, k: 'rock' }; o.spr = rockSprite(r, R, m.biome); addSolid(o); i++; }
+  }
+  for (let i = 0, t = 0; i < m.pits && t < 4000; t++) { const r = 30 + R() * 14, x = 90 + R() * (w - 180), y = 90 + R() * (h - 180); if (free(x, y, r, 70)) { const o = { x, y, r, k: 'pit' }; o.spr = pitSprite(r, R); addSolid(o); i++; } }
+  Wd.solids = Wd.solids.filter(s => s.k !== 'pad');
+  const mkZone = (k, rmin, rmax) => { for (let t = 0; t < 300; t++) { const r = rmin + R() * (rmax - rmin), x = 120 + R() * (w - 240), y = 120 + R() * (h - 240); if (dist(x, y, hub.x, hub.y) > r + 380) { const z = { x, y, r, k }; z.spr = zoneSprite(z, R, m.biome); Wd.zones.push(z); return; } } };
+  for (let i = 0; i < m.craters; i++) mkZone('crater', 90, 160);
+  for (let i = 0; i < m.ice; i++) mkZone('ice', 130, 240);
+  for (let i = 0; i < m.rough; i++) mkZone('rough', 110, 190);
+  for (let i = 0; i < m.batt; i++) for (let t = 0; t < 300; t++) { const x = 120 + R() * (w - 240), y = 120 + R() * (h - 240); if (free(x, y, 16, 40) && objs.every(o => dist(o.x, o.y, x, y) > 90)) { Wd.batts.push({ x, y, got: false }); break; } }
+  return Wd;
+}
+// BFS reachability (buggy radius) from the start to every objective and the site ring
+function reachable(Wd) {
+  const cell = 16, gw = Math.ceil(Wd.w / cell), gh = Math.ceil(Wd.h / cell), blk = new Uint8Array(gw * gh);
+  for (const s of Wd.solids) { const q = s.r + RADIUS - 2; for (let gy = Math.max(0, Math.floor((s.y - q) / cell)); gy <= Math.min(gh - 1, Math.floor((s.y + q) / cell)); gy++) for (let gx = Math.max(0, Math.floor((s.x - q) / cell)); gx <= Math.min(gw - 1, Math.floor((s.x + q) / cell)); gx++) if (dist(gx * cell + cell / 2, gy * cell + cell / 2, s.x, s.y) < q) blk[gy * gw + gx] = 1; }
+  const seen = new Uint8Array(gw * gh), q = [], sx = Math.floor(Wd.start.x / cell), sy = Math.floor(Wd.start.y / cell); q.push(sy * gw + sx); seen[sy * gw + sx] = 1;
+  for (let i = 0; i < q.length; i++) { const c = q[i], x = c % gw, y = (c / gw) | 0; for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const nx = x + dx, ny = y + dy; if (nx < 1 || ny < 1 || nx >= gw - 1 || ny >= gh - 1) continue; const k = ny * gw + nx; if (!seen[k] && !blk[k]) { seen[k] = 1; q.push(k); } } }
+  const bad = [], a = MODULES[Wd.m.module].ang * Math.PI / 180, sp = { x: Wd.site.x + Math.cos(a) * (Wd.site.ring - 8), y: Wd.site.y + Math.sin(a) * (Wd.site.ring - 8), kind: 'site' };
+  for (const o of [...Wd.res, ...Wd.survey, sp]) if (!seen[Math.floor(o.y / cell) * gw + Math.floor(o.x / cell)]) bad.push(o.kind + '@' + Math.round(o.x) + ',' + Math.round(o.y));
+  return bad;
+}
+// ================= canvas / view =================
+const cv = $('#cv'), ctx = cv.getContext('2d'), mini = $('#mini'), mg = mini.getContext('2d');
+let DPR = 1, Z = 1, VW = 1000, VH = 600, SW = 1000, SH = 600, dk = null, dkg = null;
+function resize() {
+  DPR = Math.min(2, window.devicePixelRatio || 1); SW = innerWidth; SH = innerHeight;
+  cv.width = Math.round(SW * DPR); cv.height = Math.round(SH * DPR);
+  Z = clamp(Math.min(SW / 1000, SH / 620), .62, 1.25); VW = SW / Z; VH = SH / Z;
+  dk = document.createElement('canvas'); dk.width = cv.width; dk.height = cv.height; dkg = dk.getContext('2d');
+}
+addEventListener('resize', resize); resize();
+const TOUCH = (matchMedia && matchMedia('(pointer:coarse)').matches) || 'ontouchstart' in window || /touch/.test(location.search);
+if (TOUCH) document.body.classList.add('touch');
+
+// ================= state =================
+let scr = 'title', P = null; const keys = {}; let wallT = performance.now();
+const stick = { on: false, id: -1, ox: 0, oy: 0, dx: 0, dy: 0 };
+const ATT = { dust: [], shoot: [] };
+const UNLOCK_ALL = /unlock/.test(location.search);
+const isUnlocked = i => UNLOCK_ALL || i === 0 || (SAVE.stars[MISSIONS[i - 1].id] || 0) > 0;
+const totalStars = () => MISSIONS.reduce((s, m) => s + (SAVE.stars[m.id] || 0), 0);
+const builtCount = () => Object.keys(MODULES).filter(k => SAVE.built[k]).length;
+
+// ================= toast =================
+let toastT = 0;
+function toast(html, cls, ms = 3800) { const el = $('#msg'); el.innerHTML = '<div class="toast ' + (cls || '') + '">' + html + '</div>'; clearTimeout(toastT); toastT = setTimeout(() => el.innerHTML = '', ms); }
+
+// ================= questions =================
+function pickQs(topic, n, exclude) {
+  const pool = BANK.filter(q => q.t === topic && !(exclude || []).includes(q.id));
+  return shuffle(pool).sort((a, b) => ((SAVE.missed[b.id] ? 2 : 0) + (SAVE.facts[b.id] ? 0 : 1)) - ((SAVE.missed[a.id] ? 2 : 0) + (SAVE.facts[a.id] ? 0 : 1))).slice(0, n);
+}
+function mkDeck(parts) { // parts: [[topic, n], ...] -> flat unique list, topped up from other topics if short
+  const out = []; for (const [t, n] of parts) { const got = pickQs(t, n, out.map(q => q.id)); out.push(...got); if (got.length < n) { const more = shuffle(BANK).filter(q => !out.includes(q)).slice(0, n - got.length); out.push(...more); } }
+  return out;
+}
+function ask(q, o, cb) {
+  const ov = $('#ov'); ov.classList.remove('hide'); let mist = 0, finished = false;
+  const unit = P && P.res === 'fuel' ? 'fuel' : 'battery';
+  const head = '<div class="badge ' + (o.lab ? 'lab' : '') + '">' + o.badge + '</div><div class="q">' + esc(q.q) + '</div>';
+  const wrong = () => { mist++; SFX.bad(); const w = $('#qwr'); if (w) w.innerHTML = '<div class="fb bad"><b>Not quite!</b> Think again and try another answer.' + (P && !o.practice ? ' <b>(−' + P.L.wrong + '% ' + unit + ')</b>' : '') + '</div>'; if (P && !o.practice) { P.wrong++; P.r.bat = Math.max(0, P.r.bat - P.L.wrong); } if (!o.practice) { SAVE.missed[q.id] = (SAVE.missed[q.id] || 0) + 1; persist(); } };
+  const finish = () => {
+    if (finished) return; finished = true; SFX.ok(); { const w = $('#qwr'); if (w) w.innerHTML = ''; }
+    if (!mist && SAVE.missed[q.id]) { SAVE.missed[q.id]--; if (SAVE.missed[q.id] <= 0) delete SAVE.missed[q.id]; }
+    SAVE.facts[q.id] = 1; persist(); if (P && !o.practice && !P.asked.includes(q)) P.asked.push(q);
+    const fb = document.createElement('div'); fb.className = 'fb'; fb.innerHTML = '<b>' + (mist ? '✅ Got it! ' : '🌟 Perfect! ') + '</b>' + esc(q.why) + (P && !o.practice && !o.noBonus ? '<br><b>' + (unit === 'fuel' ? '⛽' : '⚡') + ' +12% ' + unit + '</b>' : '');
+    $('#qb').appendChild(fb);
+    const row = document.createElement('div'); row.className = 'row end'; row.innerHTML = '<button class="btn" id="qgo">' + (o.next || 'Continue ▶') + '</button>'; $('#qb').appendChild(row);
+    $('#qgo').onclick = () => { SFX.click(); ov.classList.add('hide'); ov.innerHTML = ''; cb(mist); };
+    const m = $('#qb'); if (m) m.scrollTop = 9999;
+  };
+  ov.innerHTML = '<div class="panel modal" id="qb">' + head + '<div id="qa"></div><div id="qwr"></div></div>';
+  const qa = $('#qa');
+  if (q.type === 'mc') {
+    const wr = shuffle(q.w).slice(0, LEVELS[SAVE.level].opts - 1), list = shuffle([{ t: q.a, ok: 1 }, ...wr.map(t => ({ t }))]);
+    qa.className = 'opts'; qa.innerHTML = list.map((it, i) => '<button class="opt" data-ok="' + (it.ok ? 1 : 0) + '"><span class="k">' + 'ABCD'[i] + '</span><span>' + esc(it.t) + '</span></button>').join('');
+    qa.onclick = e => { const b = e.target.closest('.opt'); if (!b || finished) return; if (b.dataset.ok === '1') { b.classList.add('ok'); qa.querySelectorAll('.opt').forEach(x => { if (x !== b) x.style.pointerEvents = 'none'; }); finish(); } else { b.classList.add('bad'); wrong(); } };
+  } else if (q.type === 'order') {
+    const items = q.items, order = shuffle(items.map((t, i) => ({ t, i }))); let next = 0;
+    qa.innerHTML = '<div class="slots">' + items.map(() => '<i></i>').join('') + '</div><div class="ord">' + order.map(it => '<button class="tile" data-i="' + it.i + '">' + esc(it.t) + '</button>').join('') + '</div>';
+    qa.onclick = e => { const b = e.target.closest('.tile'); if (!b || finished || b.classList.contains('done')) return; if (+b.dataset.i === next) { b.classList.add('done'); b.dataset.n = next + 1; qa.querySelectorAll('.slots i')[next].classList.add('on'); SFX.pick(); next++; if (next === items.length) finish(); } else { b.classList.add('shake'); setTimeout(() => b.classList.remove('shake'), 400); wrong(); } };
+  } else { // pairs
+    const L = shuffle(q.items.map((p, i) => ({ t: p[0], i }))), R = shuffle(q.items.map((p, i) => ({ t: p[1], i }))); let sel = null, got = 0;
+    qa.innerHTML = '<div class="pairs"><div style="display:grid;gap:10px">' + L.map(it => '<button class="tile" data-s="L" data-i="' + it.i + '">' + esc(it.t) + '</button>').join('') + '</div><div style="display:grid;gap:10px">' + R.map(it => '<button class="tile" data-s="R" data-i="' + it.i + '">' + esc(it.t) + '</button>').join('') + '</div></div>';
+    qa.onclick = e => {
+      const b = e.target.closest('.tile'); if (!b || finished || b.classList.contains('lk')) return;
+      if (b.dataset.s === 'L') { qa.querySelectorAll('.tile.sel').forEach(x => x.classList.remove('sel')); sel = b; b.classList.add('sel'); SFX.click(); return; }
+      if (!sel) { b.classList.add('shake'); setTimeout(() => b.classList.remove('shake'), 400); return; }
+      if (sel.dataset.i === b.dataset.i) { got++; const c = 'm' + got; sel.classList.remove('sel'); sel.classList.add('lk', c); b.classList.add('lk', c); sel = null; SFX.pick(); if (got === q.items.length) finish(); }
+      else { sel.classList.add('shake'); b.classList.add('shake'); const s2 = sel; setTimeout(() => { s2.classList.remove('shake'); b.classList.remove('shake'); }, 400); wrong(); }
+    };
+  }
+}
+function factHTML(q) { return '<b>' + TOPICS[q.t].emoji + ' ' + esc(q.q) + '</b>' + (q.type === 'mc' ? '<div style="color:var(--ok)">✔ ' + esc(q.a) + '</div>' : '') + '<div>' + esc(q.why) + '</div>'; }
+
+// ================= hazards (shared message list) =================
+const HAZ = {
+  crater: '🌑 <b>Crater slope!</b> Loose dust makes the buggy slow down. Drive around the big craters when you can.',
+  ice: '🧊 <b>Slippery ice!</b> Frost in a shadowed crater is slick. Steer gently and brake early.',
+  rough: '🪨 <b>Boulder field!</b> Bumpy ground slows you down. Take it easy.',
+  strike: '☄️ <b>Meteoroid!</b> With no air to slow them, space rocks hit the Moon at super speed. Leave the red circle fast!',
+  rock: '💥 <b>Bonk!</b> Hitting rocks hurts the hull. Slow down near boulders.',
+  pit: '🕳️ <b>Pit!</b> Lava-tube skylights are deep holes. Keep away from the edge.',
+  cold: '🥶 <b>Brrr!</b> This crater is colder than −200 °C. The cold makes your battery drain faster.',
+  low: '🪫 <b>Battery empty.</b> The buggy rests to recharge. Answer questions or grab ⚡ cells to refill faster.',
+  lowfuel: '⛽ <b>Fuel is very low.</b> Mission Control gives you a small reserve. Answer questions and grab ⛽ orbs to refuel!',
+  storm: '⛈️ <b>Thunder cloud!</b> Real rockets wait for good weather, because lightning and strong winds are dangerous.',
+  balloon: '🎈 <b>Weather balloon!</b> Scientists send balloons up to measure the sky.',
+  gust: '💨 <b>Jet stream!</b> Very strong winds high up push the rocket sideways. Steer against them.',
+  meteor: '☄️ <b>Shooting star!</b> A meteor burns bright as it falls through the thin air.',
+  junk: '🛰️ <b>Space junk!</b> Old satellite pieces fly around Earth. Steer clear!',
+  ast: '🪨 <b>Space rock!</b> Tiny asteroids drift between Earth and the Moon. Dodge them.'
+};
+function once(k, cls) { if (P && !P.seen[k]) { P.seen[k] = 1; toast(HAZ[k], cls); } }
+function spawn(x, y, vx, vy, life, r, col) { if (P.parts.length < 300) P.parts.push({ x, y, vx, vy, life, max: life, r, col }); }
+function stepParts(dt) { for (let i = P.parts.length - 1; i >= 0; i--) { const p = P.parts[i]; p.life -= dt; if (p.life <= 0) { P.parts.splice(i, 1); continue; } p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= .97; p.vy *= .97; } }
+function drawParts(g, k) { for (const p of P.parts) { const a = clamp(p.life / p.max, 0, 1); g.fillStyle = 'rgba(' + p.col + ',' + (a * (k || .55)) + ')'; g.beginPath(); g.arc(p.x, p.y, p.r * (1.4 - a * .4), 0, 7); g.fill(); } }
+
+// ================= input =================
+addEventListener('keydown', e => {
+  const k = e.key.length === 1 ? e.key.toLowerCase() : e.key; if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(k)) e.preventDefault();
+  keys[k] = true; if ((k === 'Escape' || k === 'p') && scr === 'play') { P && P.paused ? 0 : pause(); } audio();
+});
+addEventListener('keyup', e => { const k = e.key.length === 1 ? e.key.toLowerCase() : e.key; keys[k] = false; if (k === 'Shift') keys.Shift = false; });
+addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
+cv.addEventListener('pointerdown', e => { if (scr !== 'play' || !P || P.paused) return; audio(); stick.on = true; stick.id = e.pointerId; stick.ox = e.clientX; stick.oy = e.clientY; stick.dx = stick.dy = 0; const s = $('#stick'); s.classList.remove('hide'); s.style.left = e.clientX + 'px'; s.style.top = e.clientY + 'px'; s.firstChild.style.transform = 'none'; cv.setPointerCapture(e.pointerId); });
+cv.addEventListener('pointermove', e => { if (!stick.on || e.pointerId !== stick.id) return; stick.dx = e.clientX - stick.ox; stick.dy = e.clientY - stick.oy; const l = Math.hypot(stick.dx, stick.dy), m = Math.min(l, 50); $('#stick').firstChild.style.transform = 'translate(' + (l ? stick.dx / l * m : 0) + 'px,' + (l ? stick.dy / l * m : 0) + 'px)'; });
+const endStick = e => { if (e.pointerId !== stick.id) return; stick.on = false; stick.dx = stick.dy = 0; $('#stick').classList.add('hide'); };
+cv.addEventListener('pointerup', endStick); cv.addEventListener('pointercancel', endStick);
+const bb = $('#boost'); bb.addEventListener('pointerdown', e => { e.stopPropagation(); if (P) P.boostBtn = true; }); bb.addEventListener('pointerup', () => { if (P) P.boostBtn = false; }); bb.addEventListener('pointerleave', () => { if (P) P.boostBtn = false; });
+for (const [id, k] of [['#tl', 'l'], ['#tr', 'r'], ['#tact', 'a']]) { const b = $(id); b.addEventListener('pointerdown', e => { e.stopPropagation(); e.preventDefault(); audio(); if (P) P.pad[k] = true; }); const up = () => { if (P) P.pad[k] = false; }; b.addEventListener('pointerup', up); b.addEventListener('pointerleave', up); b.addEventListener('pointercancel', up); }
+document.addEventListener('visibilitychange', () => { if (document.hidden && scr === 'play') pause(); });
+// ====================================================================
+//  MISSION 1: LAUNCH + COAST   (mode 'launch')
+// ====================================================================
+const KM = 140; // world px per km of altitude
+const GATES = [
+  { km: 12, name: 'Max-Q', emoji: '💨', msg: 'The rocket is shaking the most right now.' },
+  { km: 40, name: 'Stage separation', emoji: '🔗', msg: 'The empty first stage drops away.' },
+  { km: 80, name: 'Fairing jettison', emoji: '🛡️', msg: 'The nose shell splits open and falls off.' },
+  { km: 120, name: 'Trans-lunar burn', emoji: '🌙', msg: 'Fire the engine to leave Earth orbit!' }
+];
+const COAST_T = 26; // seconds of coasting
+const RY = () => VH * .7; // rocket y on screen
+const rockX = () => VW / 2 + P.rx;
+
+function initLaunch() {
+  Object.assign(P, { phase: 'pad', dist: 0, rx: 0, rvx: 0, v: 0, stage: 1, obs: [], pk: [], deb: [], nextObs: 1000, nextPk: 800, cd: 4, cdN: 0, gi: 0, cp: 0, karman: false, hullFlash: 0, empty: false, sp: [] });
+  P.coast = { prog: 0, sy: VH / 2, vy: 0, obj: [], next: 1, asked: 0, inv: 0 };
+  P.clouds = Array.from({ length: 50 }, (_, i) => ({ x: hash2(i, 1, 4) * 2 - 1, yw: 160 + hash2(i, 2, 4) * KM * 24, s: 46 + hash2(i, 3, 4) * 90, f: .7 + hash2(i, 4, 4) * .3 }));
+}
+function launchGo() { // after the briefing: pre-launch checklist question, then countdown
+  P.paused = true;
+  ask(P.qs[0], { badge: '📋 Pre-launch checklist · check 1 of 5', next: 'Start countdown 🔥' }, () => { P.r.bat = Math.min(100, P.r.bat + 12); P.phase = 'count'; P.cd = 4; P.paused = false; });
+}
+function updateLaunch(dt) {
+  P.t += dt; stepScreenParts(dt); P.hullFlash = Math.max(0, P.hullFlash - dt); P.shake = Math.max(0, P.shake - dt * 22);
+  if (P.phase === 'pad') return;
+  if (P.phase === 'count') {
+    P.cd -= dt; const n = Math.ceil(P.cd); if (n !== P.cdN) { P.cdN = n; if (n > 0 && n <= 3) SFX.beep(); }
+    if (P.cd < 1.2) { engineSound(true, 110 + (1.2 - P.cd) * 60); P.shake = Math.max(P.shake, 2.5); exhaust(dt, .5); }
+    if (P.cd <= 0) { P.phase = 'ascent'; SFX.go(); SFX.boom(); toast('🚀 <b>Liftoff!</b> Steer with <kbd>←</kbd><kbd>→</kbd>. Dodge storms and grab ⛽ orbs.', 'sci', 5000); }
+    return;
+  }
+  if (P.phase === 'ascent') return updateAscent(dt);
+  if (P.phase === 'coast') return updateCoast(dt);
+}
+function exhaust(dt, k) { const x = rockX(), y = RY() + 10; for (let i = 0; i < 3; i++) { P.sp.push({ x: x + (Math.random() - .5) * 14, y: y + Math.random() * 8, vx: (Math.random() - .5) * 70, vy: 160 + Math.random() * 140, life: .5 + Math.random() * .4, max: .9, r: 4 + Math.random() * 6 * k, col: Math.random() < .5 ? '255,190,90' : '230,230,240' }); } }
+function stepScreenParts(dt) { P.sp = P.sp || []; for (let i = P.sp.length - 1; i >= 0; i--) { const p = P.sp[i]; p.life -= dt; if (p.life <= 0) { P.sp.splice(i, 1); continue; } p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= .98; } if (P.sp.length > 260) P.sp.splice(0, P.sp.length - 260); }
+function updateAscent(dt) {
+  const r = P.r, L = P.L, RYv = RY();
+  let str = (keys.ArrowRight || keys.d ? 1 : 0) - (keys.ArrowLeft || keys.a ? 1 : 0) + (P.pad.r ? 1 : 0) - (P.pad.l ? 1 : 0);
+  if (stick.on) str = clamp(stick.dx / 40, -1, 1);
+  let boost = !!(keys[' '] || keys.Shift || keys.ArrowUp || keys.w || P.pad.a || P.boostBtn);
+  const km = P.dist / KM;
+  if (P.auto) { str = 0; let best = null; for (const o of P.obs) { if (o.k === 'gust') continue; const sy = RYv - (o.yw - P.dist); if (sy > RYv - 330 && sy < RYv + 20) { const dx = o.x - P.rx; if (Math.abs(dx) < o.r + 50 && (!best || sy > best.sy)) best = { o, sy, dx }; } } if (best) str = best.dx >= 0 ? -1 : 1; else str = clamp(-P.rx / 120, -1, 1); for (const k of P.pk) { const sy = RYv - (k.yw - P.dist); if (!best && sy > RYv - 300 && sy < RYv && Math.abs(k.x - P.rx) < 150) str = clamp((k.x - P.rx) / 30, -1, 1); } boost = false; }
+  if (r.bat <= 0 && !P.empty) { P.empty = true; once('lowfuel'); }
+  if (P.empty && r.bat >= 10) P.empty = false;
+  const target = 250 * (P.empty ? .45 : 1) * (boost && !P.empty ? 1.45 : 1) * (km > 60 ? 1.08 : 1);
+  P.v += (target - P.v) * Math.min(1, dt * 1.3); P.dist += P.v * dt;
+  if (P.empty) r.bat += 2.2 * dt; else r.bat -= (1.1 + (boost ? 2.6 : 0)) * L.fdrain * dt; r.bat = clamp(r.bat, 0, 100);
+  P.rvx += (str * 240 - P.rvx) * Math.min(1, dt * 6);
+  // gusts
+  for (const o of P.obs) if (o.k === 'gust') { const sy = RYv - (o.yw - P.dist); if (Math.abs(sy - RYv + 40) < o.h / 2) { P.rvx += o.dir * 520 * dt; once('gust'); } }
+  P.rx = clamp(P.rx + P.rvx * dt, -(VW / 2 - 60), VW / 2 - 60);
+  engineSound(true, 120 + P.v * .4);
+  exhaust(dt, boost ? 1.4 : 1);
+  // spawn
+  while (P.dist + RYv + 120 >= P.nextObs) { spawnObs(P.nextObs); P.nextObs += (360 + Math.random() * 260) * L.obsGap; }
+  while (P.dist + RYv + 120 >= P.nextPk) { P.pk.push({ x: (Math.random() * 2 - 1) * (VW / 2 - 80), yw: P.nextPk, got: false }); P.nextPk += 900 + Math.random() * 500; }
+  // collisions
+  const cx = rockX(), cy = RYv - 50;
+  for (let i = P.obs.length - 1; i >= 0; i--) {
+    const o = P.obs[i]; if (o.vx) o.x += o.vx * dt; if (o.vy) o.yw -= o.vy * dt; o.rot = (o.rot || 0) + dt * (o.vr || 0);
+    const sy = RYv - (o.yw - P.dist); if (sy > VH + 160) { P.obs.splice(i, 1); continue; }
+    if (o.k === 'gust' || o.hit || P.god) continue;
+    if (dist(cx, cy, VW / 2 + o.x, sy) < o.r + 15) { o.hit = true; r.hull -= o.dmg * L.dmg; P.shake = 8; P.hullFlash = .3; SFX.hit(); if (o.k === 'storm') SFX.zap(); once(o.k); for (let j = 0; j < 10; j++) P.sp.push({ x: cx, y: cy, vx: (Math.random() - .5) * 220, vy: (Math.random() - .5) * 220, life: .6, max: .6, r: 3 + Math.random() * 3, col: o.k === 'storm' ? '255,240,120' : '255,170,80' }); }
+  }
+  for (const k of P.pk) { if (k.got) continue; const sy = RYv - (k.yw - P.dist); if (dist(cx, cy, VW / 2 + k.x, sy) < 34) { k.got = true; r.bat = Math.min(100, r.bat + 12); SFX.pick(); toast('⛽ <b>Fuel orb!</b> +12% fuel', ''); for (let j = 0; j < 12; j++) P.sp.push({ x: VW / 2 + k.x, y: sy, vx: (Math.random() - .5) * 200, vy: (Math.random() - .5) * 200, life: .7, max: .7, r: 3, col: '120,220,255' }); } }
+  P.pk = P.pk.filter(k => !k.got && RYv - (k.yw - P.dist) < VH + 100);
+  if (km >= 100 && !P.karman) { P.karman = true; SFX.done(); toast('🌌 <b>You crossed the Kármán line!</b> 100 km up is the edge of space.', 'sci', 5000); }
+  if (r.hull <= 0) { // abort -> back to last checkpoint
+    P.repairs++; r.hull = 100; r.bat = Math.max(r.bat, 55); P.dist = Math.max(0, P.cp - 500); P.obs = []; P.pk = []; P.nextObs = P.dist + 900; P.nextPk = P.dist + 700; P.v = 100; SFX.boom(); P.shake = 8;
+    toast('🛟 <b>Launch escape!</b> Mission Control reset the rocket to the last checkpoint. (Repairs: ' + P.repairs + ')', '', 4500);
+  }
+  // gates
+  const g = GATES[P.gi]; if (g && km >= g.km) { P.cp = P.dist; launchGate(g); }
+}
+function spawnObs(yw) {
+  const km = yw / KM, x = (Math.random() * 2 - 1) * (VW / 2 - 80), R = Math.random(); let o;
+  if (km < 14) o = R < .7 ? { k: 'storm', r: 48, dmg: 14 } : { k: 'balloon', r: 17, dmg: 8, vx: (Math.random() - .5) * 40 };
+  else if (km < 32) o = R < .5 ? { k: 'gust', h: 170, dir: Math.random() < .5 ? -1 : 1, r: 0 } : R < .8 ? { k: 'balloon', r: 17, dmg: 8, vx: (Math.random() - .5) * 40 } : { k: 'storm', r: 48, dmg: 14 };
+  else if (km < 60) o = R < .55 ? { k: 'gust', h: 170, dir: Math.random() < .5 ? -1 : 1, r: 0 } : { k: 'meteor', r: 12, dmg: 8, vx: (Math.random() < .5 ? -1 : 1) * 110, vy: 160 };
+  else if (km < 100) o = { k: 'meteor', r: 12, dmg: 8, vx: (Math.random() < .5 ? -1 : 1) * 110, vy: 160 };
+  else o = { k: 'junk', r: 18, dmg: 10, vr: (Math.random() - .5) * 4, vx: (Math.random() - .5) * 50 };
+  o.x = x; o.yw = yw; P.obs.push(o);
+}
+function launchGate(g) {
+  const idx = P.gi, last = idx === GATES.length - 1; P.paused = true; engineSound(false, 0); P.gi++;
+  ask(P.qs[1 + idx], { badge: g.emoji + ' ' + g.name + ' · check ' + (idx + 2) + ' of 5', next: last ? 'Fire the engine! 🔥' : 'Continue ▶' }, () => {
+    P.r.bat = Math.min(100, P.r.bat + 12); SFX.done();
+    if (idx === 1) { P.stage = 2; SFX.sep(); P.deb.push({ k: 'boost', x: rockX(), y: RY() - 4, vx: -30, vy: 120, rot: 0, vr: .8 }); toast('🔗 <b>Stage separation!</b> The empty first stage falls away, so the rocket is lighter.', 'sci', 4200); }
+    else if (idx === 2) { SFX.sep(); P.deb.push({ k: 'fair', x: rockX() - 6, y: RY() - 90, vx: -90, vy: 80, rot: 0, vr: -1.4, s: -1 }, { k: 'fair', x: rockX() + 6, y: RY() - 90, vx: 90, vy: 80, rot: 0, vr: 1.4, s: 1 }); toast('🛡️ <b>Fairing jettison!</b> The nose shell is not needed in space.', 'sci', 4200); }
+    else if (idx === 3) { startCoast(); }
+    else toast('💨 <b>Max-Q!</b> The rocket feels the strongest air push here. Hold on tight!', 'sci', 3800);
+    P.paused = false;
+  });
+}
+function startCoast() {
+  P.phase = 'coast'; P.stage = 2; const C = P.coast; C.prog = 0; C.sy = VH / 2; C.vy = 0; C.obj = []; C.next = 1.2; C.asked = 0; C.inv = 0; P.sp = [];
+  SFX.go(); toast('🌌 <b>Engine burn complete!</b> Now coast to the Moon. Steer <kbd>↑</kbd><kbd>↓</kbd> to dodge rocks and grab ⛽ orbs.', 'sci', 6000);
+}
+function updateCoast(dt) {
+  const C = P.coast, r = P.r, L = P.L; engineSound(false, 0);
+  let vi = (keys.ArrowDown || keys.s ? 1 : 0) - (keys.ArrowUp || keys.w ? 1 : 0) + (P.pad.r ? 1 : 0) - (P.pad.l ? 1 : 0);
+  if (stick.on) vi = clamp(stick.dy / 40, -1, 1);
+  const fast = !!(keys[' '] || keys.Shift || P.boostBtn || P.pad.a);
+  const shipX = VW * .46;
+  if (P.auto) { vi = clamp((VH / 2 - C.sy) / 120, -1, 1); for (const o of C.obj) if (o.k === 'ast' && o.x > shipX - 20 && o.x < shipX + 260 && Math.abs(o.y - C.sy) < o.r + 46) vi = o.y >= C.sy ? -1 : 1; }
+  C.vy += (vi * 280 - C.vy) * Math.min(1, dt * 6); C.sy = clamp(C.sy + C.vy * dt, 70, VH - 70);
+  const sp = fast && r.bat > 3 ? 1.7 : 1; if (fast && r.bat > 3) r.bat = Math.max(0, r.bat - 1.5 * dt);
+  C.prog += dt / COAST_T * sp; C.inv = Math.max(0, C.inv - dt);
+  C.next -= dt * sp; if (C.next <= 0) { C.next = (.75 + Math.random() * .6) * L.obsGap * .75; const orb = Math.random() < .32; C.obj.push(orb ? { k: 'orb', x: VW + 50, y: 80 + Math.random() * (VH - 160), r: 20 } : { k: 'ast', x: VW + 50, y: 80 + Math.random() * (VH - 160), r: 16 + Math.random() * 14, rot: Math.random() * 6, vr: (Math.random() - .5) * 2, dmg: 10 }); }
+  for (let i = C.obj.length - 1; i >= 0; i--) {
+    const o = C.obj[i]; o.x -= 250 * sp * dt; o.rot = (o.rot || 0) + (o.vr || 0) * dt; if (o.x < -80) { C.obj.splice(i, 1); continue; }
+    if (dist(shipX, C.sy, o.x, o.y) < o.r + 20) {
+      if (o.k === 'orb') { r.bat = Math.min(100, r.bat + 12); SFX.pick(); toast('⛽ <b>Fuel orb!</b> +12% fuel', ''); C.obj.splice(i, 1); }
+      else if (!C.inv && !P.god) { r.hull -= o.dmg * L.dmg; C.inv = 1.2; P.shake = 8; SFX.hit(); once('ast'); o.hit = true; if (r.hull <= 0) { P.repairs++; r.hull = 100; toast('🛠️ <b>Hull patched!</b> Mission Control repaired the ship. (Repairs: ' + P.repairs + ')', '', 4200); } }
+    }
+  }
+  if (C.asked < 2 && C.prog >= (C.asked + 1) / 3) {
+    const n = C.asked++; P.paused = true;
+    ask(P.qs[5 + n], { badge: '📻 Space radio · question ' + (n + 1) + ' of 2', next: 'Continue ▶' }, () => { r.bat = Math.min(100, r.bat + 12); P.paused = false; });
+    return;
+  }
+  if (C.prog >= 1) { C.prog = 1; P.paused = true; toast('🌕 <b>The Moon is right ahead!</b>', 'sci', 3000); finishMission(); }
+}
+
+// ---------- render launch ----------
+const SKY = [[0, [96, 186, 255], [206, 236, 255]], [12, [52, 122, 220], [150, 204, 246]], [40, [16, 36, 104], [60, 92, 176]], [80, [3, 7, 28], [20, 30, 76]], [112, [0, 0, 8], [4, 6, 26]]];
+function skyAt(km) { let i = 0; while (i < SKY.length - 2 && km > SKY[i + 1][0]) i++; const a = SKY[i], b = SKY[i + 1], t = clamp((km - a[0]) / (b[0] - a[0]), 0, 1); const mix = (c1, c2) => 'rgb(' + c1.map((v, k) => Math.round(lerp(v, c2[k], t))).join(',') + ')'; return [mix(a[1], b[1]), mix(a[2], b[2])]; }
+function renderLaunch(t) {
+  if (P.phase === 'coast') return renderCoast(t);
+  const km = P.dist / KM, RYv = RY(), cx = rockX(), sx = P.shake ? (Math.random() - .5) * P.shake : 0, sy2 = P.shake ? (Math.random() - .5) * P.shake : 0;
+  ctx.setTransform(DPR * Z, 0, 0, DPR * Z, sx * DPR * Z, sy2 * DPR * Z);
+  const [c1, c2] = skyAt(km); const sg = ctx.createLinearGradient(0, 0, 0, VH); sg.addColorStop(0, c1); sg.addColorStop(1, c2); ctx.fillStyle = sg; ctx.fillRect(-20, -20, VW + 40, VH + 40);
+  drawStars(ctx, VW, VH, t, smooth(24, 75, km), 1);
+  // Earth limb
+  if (km > 18) { const top = VH + 36 - smooth(18, 100, km) * 140, R = 3400, eg = ctx.createRadialGradient(VW / 2, top + R, R * .97, VW / 2, top + R, R + 40); eg.addColorStop(0, '#1d58b8'); eg.addColorStop(.85, '#4b95e6'); eg.addColorStop(1, 'rgba(140,200,255,0)'); ctx.fillStyle = eg; ctx.beginPath(); ctx.arc(VW / 2, top + R, R + 40, 0, 7); ctx.fill(); ctx.strokeStyle = 'rgba(150,210,255,.7)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(VW / 2, top + R, R, Math.PI * 1.2, Math.PI * 1.8); ctx.stroke(); }
+  // clouds
+  if (km < 26) for (const c of P.clouds) { const y = RYv - (c.yw - P.dist * c.f); if (y < -120 || y > VH + 120) continue; const x = VW / 2 + c.x * VW * .6; ctx.fillStyle = 'rgba(255,255,255,' + (.8 * (1 - smooth(14, 26, km))) + ')'; ctx.beginPath(); ctx.arc(x, y, c.s * .5, 0, 7); ctx.arc(x + c.s * .45, y + 6, c.s * .38, 0, 7); ctx.arc(x - c.s * .45, y + 8, c.s * .36, 0, 7); ctx.arc(x + c.s * .1, y - c.s * .25, c.s * .36, 0, 7); ctx.fill(); }
+  // gusts
+  for (const o of P.obs) if (o.k === 'gust') { const y = RYv - (o.yw - P.dist) + 40; ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2.5; ctx.beginPath(); for (let i = 0; i < 9; i++) { const yy = y - o.h / 2 + (i + .5) * o.h / 9, ph = (t * 380 * o.dir + i * 97) % (VW + 200); const x0 = o.dir > 0 ? ph - 100 : VW - ph + 100; ctx.moveTo(x0, yy); ctx.lineTo(x0 + o.dir * 80, yy); } ctx.stroke(); ctx.fillStyle = 'rgba(255,255,255,.08)'; ctx.fillRect(0, y - o.h / 2, VW, o.h); ctx.fillStyle = 'rgba(255,255,255,.9)'; ctx.font = '800 22px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(o.dir > 0 ? '💨 ▶▶' : '◀◀ 💨', VW / 2, y + 7); }
+  // launch site
+  const gy = RYv + 44 + P.dist; if (gy < VH + 40) { drawPad(ctx, gy, t); }
+  // pickups
+  for (const k of P.pk) { const y = RYv - (k.yw - P.dist), x = VW / 2 + k.x, s = 1 + Math.sin(t * 5 + k.x) * .1; const gr = ctx.createRadialGradient(x, y, 2, x, y, 28 * s); gr.addColorStop(0, 'rgba(180,240,255,.95)'); gr.addColorStop(1, 'rgba(80,190,255,0)'); ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(x, y, 28 * s, 0, 7); ctx.fill(); ctx.font = '22px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('⛽', x, y + 1); }
+  // obstacles
+  for (const o of P.obs) { if (o.k === 'gust') continue; const y = RYv - (o.yw - P.dist), x = VW / 2 + o.x; if (y < -100 || y > VH + 100) continue; drawObstacle(ctx, o, x, y, t); }
+  // particles (behind rocket)
+  for (const p of P.sp) { const a = clamp(p.life / p.max, 0, 1); ctx.fillStyle = 'rgba(' + p.col + ',' + (a * .6) + ')'; ctx.beginPath(); ctx.arc(p.x, p.y, p.r * (1.5 - a * .5), 0, 7); ctx.fill(); }
+  // debris
+  for (const d of P.deb) { d.x += d.vx * .016; d.y += d.vy * .016; d.vy += 3; d.rot += d.vr * .016; ctx.save(); ctx.translate(d.x, d.y); ctx.rotate(d.rot); if (d.k === 'boost') { ctx.fillStyle = '#e8ecf3'; ctx.fillRect(-8, -44, 16, 52); ctx.fillStyle = '#d2332f'; ctx.fillRect(-8, -30, 16, 6); ctx.fillStyle = '#222'; ctx.fillRect(-8, -12, 16, 5); } else { ctx.fillStyle = '#e8ecf3'; ctx.beginPath(); ctx.moveTo(0, -40); ctx.quadraticCurveTo(d.s * 16, -20, d.s * 8, 0); ctx.lineTo(0, 0); ctx.closePath(); ctx.fill(); ctx.strokeStyle = '#6a7280'; ctx.stroke(); } ctx.restore(); }
+  P.deb = P.deb.filter(d => d.y < VH + 120);
+  // rocket
+  const fl = P.phase === 'ascent' ? ((keys[' '] || keys.ArrowUp || keys.w || P.pad.a || P.boostBtn) && !P.empty ? 1 : .6) * (P.empty ? .3 : 1) : P.phase === 'count' ? (P.cd < 1.2 ? .5 : 0) : 0;
+  if (P.hullFlash > 0 && Math.floor(t * 20) % 2) ctx.globalAlpha = .45;
+  drawRocket(ctx, cx, RYv, .74, { flame: fl, stage: P.stage, tilt: P.rvx / 1500 }); ctx.globalAlpha = 1;
+  // altitude track
+  const tx = VW - 26, y0 = 100, y1 = VH - 60; ctx.fillStyle = 'rgba(0,0,0,.35)'; rr(ctx, tx - 5, y0, 10, y1 - y0, 5); ctx.fill();
+  const f = clamp(km / 120, 0, 1); ctx.fillStyle = '#ffd166'; rr(ctx, tx - 5, y1 - (y1 - y0) * f, 10, (y1 - y0) * f, 5); ctx.fill();
+  ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.font = '800 13px "Baloo 2",sans-serif';
+  for (const g of [{ km: 12, e: '💨' }, { km: 40, e: '🔗' }, { km: 80, e: '🛡️' }, { km: 100, e: '🌌' }, { km: 120, e: '🌙' }]) { const yy = y1 - (y1 - y0) * g.km / 120; ctx.fillStyle = km >= g.km ? '#52e08a' : 'rgba(255,255,255,.85)'; ctx.fillText(g.e + ' ' + g.km, tx - 12, yy); ctx.fillRect(tx - 7, yy - 1, 14, 2); }
+  ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(tx, y1 - (y1 - y0) * f, 7, 0, 7); ctx.fill(); ctx.strokeStyle = '#000'; ctx.lineWidth = 2; ctx.stroke();
+  // countdown
+  if (P.phase === 'count') { const n = Math.ceil(P.cd - 1); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '800 130px "Baloo 2",sans-serif'; ctx.fillStyle = '#fff'; ctx.strokeStyle = 'rgba(0,0,0,.5)'; ctx.lineWidth = 8; const txt = n > 0 ? String(n) : '🔥'; ctx.strokeText(txt, VW / 2, VH * .3); ctx.fillText(txt, VW / 2, VH * .3); }
+  if (P.phase === 'pad') { ctx.textAlign = 'center'; ctx.font = '800 26px "Baloo 2",sans-serif'; ctx.fillStyle = '#fff'; ctx.fillText('Selene is on the pad…', VW / 2, VH * .25); }
+}
+function drawPad(g, gy, t) {
+  g.fillStyle = '#6d9a58'; g.fillRect(-10, gy, VW + 20, VH + 60); g.fillStyle = '#5a8447'; g.fillRect(-10, gy, VW + 20, 8);
+  g.fillStyle = '#777c88'; g.fillRect(VW / 2 - 110, gy - 36, 220, 36); g.fillStyle = '#4a4f5c'; g.fillRect(VW / 2 - 110, gy - 36, 220, 6);
+  // gantry tower
+  const tx = VW / 2 - 100; g.fillStyle = '#c44a3a'; g.fillRect(tx - 14, gy - 330, 28, 294); g.strokeStyle = '#7a2a20'; g.lineWidth = 2; g.beginPath(); for (let y = gy - 330; y < gy - 40; y += 34) { g.moveTo(tx - 14, y); g.lineTo(tx + 14, y + 34); g.moveTo(tx + 14, y); g.lineTo(tx - 14, y + 34); } g.stroke(); g.strokeStyle = '#c44a3a'; g.lineWidth = 6; for (const yy of [gy - 250, gy - 170]) { g.beginPath(); g.moveTo(tx + 14, yy); g.lineTo(tx + 70, yy); g.stroke(); }
+  // lightning rods + small buildings
+  g.fillStyle = '#ddd'; g.fillRect(VW / 2 + 190, gy - 70, 110, 70); g.fillStyle = '#9aa'; g.fillRect(VW / 2 + 190, gy - 76, 110, 8); g.fillStyle = '#2a6fe0'; for (let i = 0; i < 4; i++) g.fillRect(VW / 2 + 200 + i * 25, gy - 50, 16, 18);
+  g.fillStyle = '#4a7bd8'; g.fillRect(-10, gy - 12, VW * .3, 12);
+}
+function drawObstacle(g, o, x, y, t) {
+  if (o.k === 'storm') {
+    g.fillStyle = 'rgba(60,66,88,.96)'; g.beginPath(); g.arc(x, y, 30, 0, 7); g.arc(x + 28, y + 6, 24, 0, 7); g.arc(x - 28, y + 8, 22, 0, 7); g.arc(x + 6, y - 16, 24, 0, 7); g.fill();
+    g.fillStyle = 'rgba(110,118,146,.7)'; g.beginPath(); g.arc(x - 6, y - 14, 14, 0, 7); g.arc(x + 20, y - 2, 12, 0, 7); g.fill();
+    if (Math.floor(t * 6 + x) % 5 < 2) { g.strokeStyle = '#ffee66'; g.lineWidth = 4; g.lineJoin = 'round'; g.beginPath(); g.moveTo(x + 4, y + 8); g.lineTo(x - 6, y + 28); g.lineTo(x + 6, y + 28); g.lineTo(x - 4, y + 50); g.stroke(); }
+  } else if (o.k === 'balloon') {
+    g.strokeStyle = 'rgba(40,40,50,.8)'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(x, y + 14); g.lineTo(x, y + 34); g.stroke(); g.fillStyle = '#7a4a2a'; g.fillRect(x - 5, y + 34, 10, 7);
+    const gr = g.createRadialGradient(x - 5, y - 5, 2, x, y, 18); gr.addColorStop(0, '#ff9a9a'); gr.addColorStop(1, '#d11f2f'); g.fillStyle = gr; g.beginPath(); g.ellipse(x, y, 15, 18, 0, 0, 7); g.fill();
+  } else if (o.k === 'meteor') {
+    const sc = 1 / 160; g.strokeStyle = 'rgba(255,190,100,.5)'; g.lineWidth = 8; g.lineCap = 'round'; g.beginPath(); g.moveTo(x, y); g.lineTo(x - o.vx * .4 * (-1), y - 70); g.stroke(); g.strokeStyle = 'rgba(255,240,200,.9)'; g.lineWidth = 3; g.beginPath(); g.moveTo(x, y); g.lineTo(x + o.vx * -.2, y - 50); g.stroke();
+    g.fillStyle = '#fff2cc'; g.beginPath(); g.arc(x, y, 9, 0, 7); g.fill(); g.fillStyle = 'rgba(255,160,60,.5)'; g.beginPath(); g.arc(x, y, 15, 0, 7); g.fill();
+  } else if (o.k === 'junk') {
+    g.save(); g.translate(x, y); g.rotate(o.rot || 0); g.fillStyle = '#9aa0ad'; g.fillRect(-12, -9, 24, 18); g.fillStyle = '#2d5bb8'; g.fillRect(-34, -5, 20, 10); g.fillRect(14, -5, 20, 10); g.strokeStyle = '#55596a'; g.lineWidth = 1.5; g.strokeRect(-12, -9, 24, 18); g.restore();
+  }
+}
+function renderCoast(t) {
+  const C = P.coast, sx = P.shake ? (Math.random() - .5) * P.shake : 0; ctx.setTransform(DPR * Z, 0, 0, DPR * Z, sx * DPR * Z, 0);
+  ctx.fillStyle = '#02030b'; ctx.fillRect(-20, -20, VW + 40, VH + 40); drawStars(ctx, VW, VH, t, 1, 1);
+  const p = C.prog;
+  drawEarth(ctx, lerp(150, 20, p), VH * .66, lerp(190, 52, p), t);
+  drawMoon(ctx, lerp(VW * .93, VW * .8, p), VH * .3, lerp(14, 190, Math.pow(p, 1.7)));
+  for (const o of C.obj) { if (o.k === 'orb') { const s = 1 + Math.sin(t * 5 + o.y) * .1, gr = ctx.createRadialGradient(o.x, o.y, 2, o.x, o.y, 30 * s); gr.addColorStop(0, 'rgba(180,240,255,.95)'); gr.addColorStop(1, 'rgba(80,190,255,0)'); ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(o.x, o.y, 30 * s, 0, 7); ctx.fill(); ctx.font = '22px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('⛽', o.x, o.y + 1); } else { ctx.save(); ctx.translate(o.x, o.y); ctx.rotate(o.rot || 0); const gr = ctx.createRadialGradient(-o.r * .3, -o.r * .3, 2, 0, 0, o.r); gr.addColorStop(0, '#b8b3ac'); gr.addColorStop(1, '#4f4b49'); ctx.fillStyle = gr; ctx.beginPath(); for (let k = 0; k < 9; k++) { const a = k / 9 * 6.283, q = o.r * (.8 + .25 * hash2(k, Math.round(o.r), 8)); ctx.lineTo(Math.cos(a) * q, Math.sin(a) * q); } ctx.closePath(); ctx.fill(); ctx.strokeStyle = 'rgba(0,0,0,.4)'; ctx.stroke(); ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.beginPath(); ctx.arc(o.r * .2, o.r * .1, o.r * .25, 0, 7); ctx.fill(); ctx.restore(); } }
+  // ship
+  const shipX = VW * .46; if (C.inv > 0 && Math.floor(t * 18) % 2) ctx.globalAlpha = .4; drawShipSide(ctx, shipX, C.sy, 1, (keys[' '] || keys.Shift || P.boostBtn || P.pad.a) ? 1 : .35); ctx.globalAlpha = 1;
+  // progress bar
+  const bx = VW * .12, bw = VW * .76, by = VH - 96; ctx.fillStyle = 'rgba(0,0,0,.45)'; rr(ctx, bx, by, bw, 10, 5); ctx.fill(); ctx.fillStyle = '#ffd166'; rr(ctx, bx, by, bw * p, 10, 5); ctx.fill();
+  ctx.font = '22px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('🌍', bx - 18, by + 5); ctx.fillText('🌕', bx + bw + 18, by + 5); ctx.fillText('🚀', bx + bw * p, by + 5);
+  ctx.font = '800 16px "Baloo 2",sans-serif'; ctx.fillStyle = '#fff'; ctx.fillText('Distance to the Moon: ' + Math.max(0, Math.round(384400 * (1 - p))).toLocaleString('en-US') + ' km', VW / 2, by - 16);
+}
+function drawShipSide(g, x, y, s, flame) {
+  g.save(); g.translate(x, y); g.scale(s, s);
+  if (flame > 0) { const L0 = 18 + 50 * flame * (.8 + Math.random() * .4); for (const [k, col] of [[1, 'rgba(255,140,50,.85)'], [.6, 'rgba(255,220,110,.95)'], [.3, '#fff']]) { g.fillStyle = col; g.beginPath(); g.moveTo(-36, -7 * k); g.quadraticCurveTo(-36 - L0 * k * .6, -4 * k, -36 - L0 * k, 0); g.quadraticCurveTo(-36 - L0 * k * .6, 4 * k, -36, 7 * k); g.closePath(); g.fill(); } }
+  g.fillStyle = '#2b2f38'; g.beginPath(); g.moveTo(-34, -5); g.lineTo(-34, 5); g.lineTo(-42, 9); g.lineTo(-42, -9); g.closePath(); g.fill();
+  const bg = g.createLinearGradient(0, -14, 0, 14); bg.addColorStop(0, '#ffffff'); bg.addColorStop(1, '#aab3c2'); g.fillStyle = bg; rr(g, -34, -13, 44, 26, 4); g.fill(); g.strokeStyle = '#59627a'; g.lineWidth = 1.5; g.stroke();
+  g.fillStyle = '#d9a63c'; g.fillRect(-34, -4, 44, 8);
+  g.fillStyle = '#e9edf4'; g.beginPath(); g.moveTo(10, -13); g.lineTo(38, -5); g.quadraticCurveTo(44, 0, 38, 5); g.lineTo(10, 13); g.closePath(); g.fill(); g.stroke();
+  g.fillStyle = '#2a6fe0'; g.beginPath(); g.arc(26, 0, 4, 0, 7); g.fill();
+  g.fillStyle = '#2d5bb8'; g.strokeStyle = '#8fb0ff'; g.lineWidth = 1; for (const sy of [-1, 1]) { g.fillRect(-28, sy * 15 - (sy < 0 ? 13 : 0), 30, 13); g.strokeRect(-28, sy * 15 - (sy < 0 ? 13 : 0), 30, 13); }
+  g.restore();
+}
+
+// ====================================================================
+//  MISSION 2: LUNAR LANDER   (mode 'land')
+// ====================================================================
+const LW = 3600, GYL = 1500, LG = 16.2, LT = 42, FOOT = 30, LEG = 32;
+const LAND_GATES = [1000, 640, 300];
+function initLand() {
+  const R = rng(3131), L = P.L; P.padX = 2250 + Math.round(R() * 200); P.padW = L.padw;
+  const step = 8, n = Math.ceil(LW / step) + 2, ter = new Float32Array(n);
+  const nat = x => GYL + (fbm(x * .0014, 3, 7) - .5) * 300 + (fbm(x * .011, 5, 7) - .5) * 34;
+  const py = nat(P.padX), half = P.padW / 2;
+  for (let i = 0; i < n; i++) { const x = i * step, d = Math.abs(x - P.padX); ter[i] = d <= half ? py : d < half + 170 ? lerp(py, nat(x), smooth(0, 1, (d - half) / 170)) : nat(x); }
+  P.ter = ter; P.padY = py; P.gd = [false, false, false];
+  P.ln = { x: 260, y: 150, vx: 58, vy: 0, a: 0, flame: 0, crash: 0 }; P.cam = { x: 0, y: 0 }; P.cine = null; P.landed = false; P.hintT = 0;
+  P.cam.x = clamp(P.ln.x - VW * .4, 0, LW - VW); P.cam.y = P.ln.y - VH * .4; P.sp = [];
+}
+const terrainY = x => { const T = P.ter, i = clamp(x / 8, 0, T.length - 2), i0 = Math.floor(i), f = i - i0; return T[i0] * (1 - f) + T[i0 + 1] * f; };
+function resetLander() { const ln = P.ln; Object.assign(ln, { x: 260, y: 150, vx: 58, vy: 0, a: 0, flame: 0, crash: 0 }); P.r.bat = Math.max(P.r.bat, 72); P.parts = []; }
+function updateLand(dt) {
+  const ln = P.ln, L = P.L, r = P.r; P.t += dt; stepParts(dt); P.shake = Math.max(0, P.shake - dt * 22);
+  if (P.cine) return updateLandCine(dt);
+  if (ln.crash > 0) { ln.crash -= dt; if (ln.crash <= 0) resetLander(); return; }
+  const agl = terrainY(ln.x) - (ln.y + FOOT);
+  let rot = (keys.ArrowRight || keys.d ? 1 : 0) - (keys.ArrowLeft || keys.a ? 1 : 0) + (P.pad.r ? 1 : 0) - (P.pad.l ? 1 : 0), thrust = !!(keys.ArrowUp || keys.w || keys[' '] || P.pad.a || P.boostBtn);
+  if (stick.on) { rot = clamp(stick.dx / 40, -1, 1); if (stick.dy < -22) thrust = true; }
+  if (P.auto) { // test autopilot
+    const dx = P.padX - ln.x, desVx = agl < 160 ? clamp(dx * .25, -14, 14) : clamp(dx * .4, -75, 75), desA = clamp((desVx - ln.vx) * .02, -.45, .45);
+    rot = clamp(angDiff(ln.a, desA) * 3, -1, 1); const desVy = agl > 300 ? 52 : clamp(agl * .14, 8, 52); thrust = ln.vy > desVy && Math.abs(ln.a) < .5;
+  }
+  if (r.bat <= 0.01) { thrust = false; once('lowfuel'); }
+  const th = thrust ? 1 : 0;
+  ln.a = clamp(ln.a + rot * 1.9 * dt, -1.15, 1.15); if (L.assist && !rot) ln.a *= Math.exp(-2.8 * dt);
+  ln.vx += Math.sin(ln.a) * LT * th * dt; ln.vy += (-Math.cos(ln.a) * LT * th + LG) * dt; ln.x += ln.vx * dt; ln.y += ln.vy * dt;
+  if (th) r.bat = Math.max(0, r.bat - 4.4 * L.fdrain * dt);
+  ln.flame += (th - ln.flame) * Math.min(1, dt * 12); engineSound(th > 0, 150);
+  if (ln.x < 40) { ln.x = 40; ln.vx = Math.abs(ln.vx) * .3; } if (ln.x > LW - 40) { ln.x = LW - 40; ln.vx = -Math.abs(ln.vx) * .3; } if (ln.y < -400) { ln.y = -400; ln.vy = Math.abs(ln.vy) * .3; }
+  if (th && agl < 160) for (let i = 0; i < 2; i++) spawn(ln.x + (Math.random() - .5) * 20, terrainY(ln.x) - 2, (Math.random() < .5 ? -1 : 1) * (60 + Math.random() * 120), -10 - Math.random() * 30, 1, 3 + Math.random() * 4, '190,190,200');
+  // question gates (altitude above the ground)
+  for (let i = 0; i < 3; i++) if (!P.gd[i] && agl <= LAND_GATES[i]) { P.gd[i] = true; P.paused = true; engineSound(false, 0); const q = P.qs[i]; ask(q, { badge: '📡 Mission Control · call ' + (i + 1) + ' of 4', next: 'Back to flying ▶' }, () => { r.bat = Math.min(100, r.bat + 12); P.paused = false; }); return; }
+  // touchdown
+  const ca = Math.cos(ln.a), sa = Math.sin(ln.a); let hit = false;
+  for (const sx of [-LEG, LEG]) { const fx = ln.x + sx * ca - FOOT * sa, fy = ln.y + sx * sa + FOOT * ca; if (fy >= terrainY(fx)) { hit = true; break; } }
+  if (hit) {
+    const lx = ln.x - LEG * ca, rx = ln.x + LEG * ca, onPad = Math.min(lx, rx) >= P.padX - P.padW / 2 - 6 && Math.max(lx, rx) <= P.padX + P.padW / 2 + 6;
+    const okV = ln.vy <= L.vmax, okH = Math.abs(ln.vx) <= L.hmax, okA = Math.abs(ln.a) <= L.amax;
+    if (P.god || (onPad && okV && okH && okA)) {
+      ln.y = P.padY - FOOT; ln.a = 0; ln.vx = ln.vy = 0; ln.flame = 0; engineSound(false, 0); SFX.done();
+      for (let i = 0; i < 40; i++) spawn(ln.x + (Math.random() - .5) * 50, P.padY - 3, (Math.random() - .5) * 340, -Math.random() * 40, 1.4, 4 + Math.random() * 6, '200,200,210');
+      P.cine = { k: 'land', t: 0, st: 0 }; P.landed = true; toast('🌕 <b>Touchdown!</b> "The Eagle has landed" … er, <b>Selene</b> has landed!', 'sci', 5000);
+    } else {
+      const why = !onPad ? 'You missed the landing pad.' : !okV ? 'You came down too fast.' : !okH ? 'You were drifting sideways.' : 'The lander was tilted.';
+      ln.crash = 2; P.repairs++; engineSound(false, 0); SFX.boom(); P.shake = 10;
+      for (let i = 0; i < 50; i++) spawn(ln.x, ln.y, (Math.random() - .5) * 420, (Math.random() - .8) * 300, 1.5, 3 + Math.random() * 7, Math.random() < .5 ? '255,160,60' : '230,230,240');
+      toast('💥 <b>Crash!</b> ' + why + ' Mission Control sends a new lander. (Repairs: ' + P.repairs + ')', '', 5000);
+    }
+  }
+  const tx = clamp(ln.x - VW * .42 + ln.vx * .5, 0, LW - VW), ty = clamp(ln.y - VH * .4 + ln.vy * .25, -420, GYL + 360 - VH);
+  const k = 1 - Math.exp(-dt * 4); P.cam.x += (tx - P.cam.x) * k; P.cam.y += (ty - P.cam.y) * k;
+}
+function updateLandCine(dt) {
+  const c = P.cine; c.t += dt; stepParts(dt);
+  if (c.st === 0 && c.t > 1.6) { c.st = 1; P.paused = true; ask(P.qs[3], { badge: '🌕 First step · call 4 of 4', next: 'Open the hatch 🚪' }, () => { P.r.bat = Math.min(100, P.r.bat + 12); c.st = 2; c.t = 0; P.paused = false; SFX.pick(); }); }
+  if (c.st === 2 && c.t > 4.4) { c.st = 3; finishMission(); }
+}
+function renderLand(t) {
+  const ln = P.ln, cam = P.cam, sx = P.shake ? (Math.random() - .5) * P.shake : 0;
+  ctx.setTransform(DPR * Z, 0, 0, DPR * Z, sx * DPR * Z, 0);
+  ctx.fillStyle = '#02030a'; ctx.fillRect(-20, -20, VW + 40, VH + 40); drawStars(ctx, VW, VH, t, 1, 1);
+  drawEarth(ctx, VW * .18, VH * .2 - cam.y * .02, 52, t);
+  ctx.save(); ctx.translate(-cam.x, -cam.y);
+  // far mountains (parallax)
+  ctx.save(); ctx.translate(cam.x * .6, cam.y * .6); ctx.fillStyle = '#2a2d38'; ctx.beginPath(); ctx.moveTo(-50, GYL + 700); for (let x = -50; x <= LW; x += 30) ctx.lineTo(x, GYL - 120 - fbm(x * .003, 9, 4) * 200); ctx.lineTo(LW, GYL + 700); ctx.closePath(); ctx.fill(); ctx.restore();
+  // beacon
+  const bx = P.padX, by = P.padY; const bg = ctx.createLinearGradient(0, by - 1100, 0, by); bg.addColorStop(0, 'rgba(120,255,180,0)'); bg.addColorStop(1, 'rgba(120,255,180,.32)'); ctx.fillStyle = bg; ctx.fillRect(bx - 34, by - 1100, 68, 1100);
+  // terrain
+  const x0 = Math.floor(cam.x / 8) * 8 - 8; const tg = ctx.createLinearGradient(0, GYL - 200, 0, GYL + 420); tg.addColorStop(0, '#9c9fa8'); tg.addColorStop(1, '#2e3039'); ctx.fillStyle = tg; ctx.beginPath(); ctx.moveTo(x0, GYL + 700); for (let x = x0; x <= cam.x + VW + 16; x += 8) ctx.lineTo(x, terrainY(x)); ctx.lineTo(cam.x + VW + 16, GYL + 700); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = 2; ctx.beginPath(); for (let x = x0; x <= cam.x + VW + 16; x += 8) { const y = terrainY(x); x === x0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); } ctx.stroke();
+  for (let x = Math.floor(cam.x / 36) * 36; x < cam.x + VW + 40; x += 36) { const h = hash2(x, 1, 3); if (h < .55) { const y = terrainY(x + 8), s = 2 + h * 9; ctx.fillStyle = 'rgba(30,30,40,.4)'; ctx.beginPath(); ctx.ellipse(x + 8, y + 2, s * 1.2, s * .5, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#b4b7c0'; ctx.beginPath(); ctx.ellipse(x + 8, y - s * .15, s, s * .7, 0, Math.PI, 0); ctx.fill(); } }
+  for (let x = Math.floor(cam.x / 260) * 260; x < cam.x + VW + 260; x += 260) { const h = hash2(x, 7, 3); if (h < .7 && Math.abs(x - P.padX) > 420) { const y = terrainY(x + 90), w = 30 + h * 70; ctx.fillStyle = 'rgba(15,15,25,.38)'; ctx.beginPath(); ctx.ellipse(x + 90, y + 14, w, 12, 0, 0, 7); ctx.fill(); ctx.strokeStyle = 'rgba(255,255,255,.3)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(x + 90, y + 14, w, 12, 0, Math.PI * 1.05, Math.PI * 1.7); ctx.stroke(); } }
+  // pad
+  ctx.fillStyle = '#d7dae4'; ctx.fillRect(bx - P.padW / 2, by - 4, P.padW, 8); ctx.fillStyle = '#4a4f5c'; ctx.fillRect(bx - P.padW / 2, by + 4, P.padW, 5);
+  for (let i = 0; i <= 6; i++) { const lx = bx - P.padW / 2 + i * P.padW / 6, on = Math.floor(t * 3 + i) % 2; ctx.fillStyle = on ? '#52e08a' : '#2a8a54'; ctx.beginPath(); ctx.arc(lx, by - 8, 4, 0, 7); ctx.fill(); ctx.fillStyle = 'rgba(82,224,138,.25)'; ctx.beginPath(); ctx.arc(lx, by - 8, 10, 0, 7); ctx.fill(); }
+  ctx.fillStyle = '#fff'; ctx.font = '800 16px "Baloo 2",sans-serif'; ctx.textAlign = 'center'; ctx.fillText('LANDING PAD', bx, by + 28);
+  // flag after landing
+  if (P.cine && P.cine.st >= 2) { const c = P.cine, k = clamp(c.t / 3.5, 0, 1), fx = bx + 70; const ax = lerp(ln.x + 36, fx - 14, clamp(c.t / 1.8, 0, 1)); // astronaut
+    ctx.strokeStyle = '#d8dde8'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(fx, by - 4); ctx.lineTo(fx, by - 4 - 52 * smooth(1.8, 2.6, c.t)); ctx.stroke(); if (c.t > 2.6) { ctx.fillStyle = '#1f4fbf'; ctx.fillRect(fx, by - 56, 24, 14); ctx.fillStyle = '#fff'; ctx.font = '800 11px sans-serif'; ctx.fillText('★', fx + 12, by - 45); }
+    ctx.save(); ctx.translate(ax, by - 4); const w = c.t < 1.8 ? Math.sin(c.t * 10) * 2 : 0; ctx.fillStyle = '#f2f4f8'; ctx.fillRect(-5, -26, 10, 16); ctx.beginPath(); ctx.arc(0, -32, 7, 0, 7); ctx.fill(); ctx.fillStyle = '#d9a63c'; ctx.beginPath(); ctx.arc(1, -32, 4.5, 0, 7); ctx.fill(); ctx.fillStyle = '#f2f4f8'; ctx.fillRect(-4 + w, -10, 4, 10); ctx.fillRect(1 - w, -10, 4, 10); ctx.restore(); }
+  drawParts(ctx, .7);
+  // lander
+  if (ln.crash <= 0 || ln.crash > 1.9) { if (!(ln.crash > 0)) drawLanderSide(ctx, ln.x, ln.y, 1, { a: ln.a, flame: ln.flame }); }
+  ctx.restore();
+  // pad pointer
+  const pxs = P.padX - cam.x; if (pxs < 40 || pxs > VW - 40) { const left = pxs < 40; ctx.fillStyle = '#52e08a'; ctx.strokeStyle = 'rgba(0,0,0,.6)'; ctx.lineWidth = 2; ctx.beginPath(); const ex = left ? 30 : VW - 30, ey = VH * .5; ctx.moveTo(ex + (left ? -16 : 16), ey); ctx.lineTo(ex + (left ? 10 : -10), ey - 14); ctx.lineTo(ex + (left ? 10 : -10), ey + 14); ctx.closePath(); ctx.stroke(); ctx.fill(); ctx.font = '800 13px "Baloo 2",sans-serif'; ctx.textAlign = 'center'; ctx.fillText('PAD', ex + (left ? 6 : -6), ey + 32); }
+  // instruments
+  const agl = Math.max(0, terrainY(ln.x) - (ln.y + FOOT)), vy = ln.vy / 10, vx = ln.vx / 10, L = P.L, okV = ln.vy <= L.vmax, okH = Math.abs(ln.vx) <= L.hmax, okA = Math.abs(ln.a) <= L.amax;
+  const px = VW / 2 - 190, py = 84, pw = 380, ph = 58; ctx.fillStyle = 'rgba(7,13,28,.72)'; rr(ctx, px, py, pw, ph, 12); ctx.fill(); ctx.strokeStyle = 'rgba(160,200,255,.3)'; ctx.lineWidth = 1.5; ctx.stroke();
+  const cell = (i, label, val, ok) => { const x = px + 10 + i * 92; ctx.textAlign = 'left'; ctx.fillStyle = '#9fb3d1'; ctx.font = '800 11px "Baloo 2",sans-serif'; ctx.fillText(label, x, py + 18); ctx.fillStyle = ok ? '#52e08a' : '#ff6b6b'; ctx.font = '800 20px "Baloo 2",sans-serif'; ctx.fillText(val, x, py + 42); };
+  cell(0, 'HEIGHT m', Math.round(agl), true); cell(1, 'DOWN m/s', vy.toFixed(1), okV); cell(2, 'SIDE m/s', vx.toFixed(1), okH); cell(3, 'TILT °', Math.round(ln.a * 57.3), okA);
+  ctx.textAlign = 'center'; ctx.fillStyle = '#ffd166'; ctx.font = '700 11px Nunito,sans-serif'; ctx.fillText('Land when all numbers are green · fuel ' + Math.round(P.r.bat) + '%', VW / 2, py + ph + 14);
+}
+// ====================================================================
+//  MISSIONS 3-8: BUILD THE BASE   (mode 'surf')
+// ====================================================================
+function initSurf() {
+  const Wd = genWorld(P.mi, SAVE.level); P.Wd = Wd; BIO = Wd.m.biome; BSEED = Wd.m.seed; BW = Wd.w; BH = Wd.h; TILES.clear();
+  const tr = document.createElement('canvas'); tr.width = Math.ceil(Wd.w / 2); tr.height = Math.ceil(Wd.h / 2); P.tr = tr;
+  const objs = shuffle([...Wd.res, ...Wd.survey]); objs.forEach((o, i) => o.q = P.qs[i]); Wd.site.qs = [P.qs[4], P.qs[5]];
+  Object.assign(P.r, { x: Wd.start.x, y: Wd.start.y, a: 0, vx: 0, vy: 0, wheel: 0, armOut: 0, cargo: 0 });
+  P.cam = { x: clamp(P.r.x - VW / 2, 0, Math.max(0, Wd.w - VW)), y: clamp(P.r.y - VH / 2, 0, Math.max(0, Wd.h - VH)) };
+  Object.assign(P, { check: { x: P.r.x, y: P.r.y }, strikes: [], strikeT: 4, act: null, ready: false, cine: null, hitCool: 0, targetAng: null });
+}
+const objList = () => [...P.Wd.res, ...P.Wd.survey];
+function zoneAt(x, y) { for (const z of P.Wd.zones) if (dist(x, y, z.x, z.y) < z.r * .8) return z.k; return null; }
+function VWcheck(x, y, m) { return x > P.cam.x - m && x < P.cam.x + VW + m && y > P.cam.y - m && y < P.cam.y + VH + m; }
+
+function updateSurf(dt) {
+  const W = P.Wd, r = P.r, L = P.L; P.t += dt;
+  if (P.cine) return updateBuild(dt);
+  let thr = (keys.ArrowUp || keys.w ? 1 : 0) - (keys.ArrowDown || keys.s ? 1 : 0), str = (keys.ArrowRight || keys.d ? 1 : 0) - (keys.ArrowLeft || keys.a ? 1 : 0), boost = !!(keys[' '] || keys.Shift || P.boostBtn);
+  if (stick.on) { const len = Math.hypot(stick.dx, stick.dy), mag = clamp(len / 50, 0, 1); if (mag > .12) { const diff = angDiff(r.a, Math.atan2(stick.dy, stick.dx)); str = clamp(diff * 2.4, -1, 1); thr = mag * (Math.abs(diff) < 1.3 ? 1 : .15); } else { thr = 0; str = 0; } }
+  if (P.auto) { const t = autoTarget(); if (t) { const diff = angDiff(r.a, Math.atan2(t.y - r.y, t.x - r.x)); str = clamp(diff * 3, -1, 1); thr = Math.abs(diff) < .6 ? 1 : .1; if (dist(r.x, r.y, t.x, t.y) < 36) thr = 0; } }
+  if (r.bat <= 0 && !P.empty) { P.empty = true; once('low'); }
+  if (P.empty && r.bat >= 15) P.empty = false;
+  if (P.empty) { thr = 0; str = 0; boost = false; }
+  const zk = zoneAt(r.x, r.y);
+  let maxSp = 165 * L.speed * (boost && r.bat > 0 ? 1.55 : 1), accel = 330, grip = 14, drainMul = W.m.cold ? 1.3 : 1;
+  if (W.m.cold) once('cold');
+  if (zk === 'crater') { maxSp *= .6; accel *= .8; drainMul *= 1.4; once('crater'); }
+  if (zk === 'ice') { grip = .9; accel *= .55; once('ice'); }
+  if (zk === 'rough') { maxSp *= .7; drainMul *= 1.3; once('rough'); }
+  const fx = Math.cos(r.a), fy = Math.sin(r.a); let vf = r.vx * fx + r.vy * fy, vl = -r.vx * fy + r.vy * fx;
+  const tgt = thr * maxSp * (thr < 0 ? .5 : 1), rate = Math.abs(tgt) > Math.abs(vf) || (tgt * vf < 0) ? accel : 170;
+  vf += clamp(tgt - vf, -rate * dt * 1.6, rate * dt); vl *= Math.exp(-grip * dt);
+  const turn = 2.0 * (.3 + .7 * Math.min(1, Math.abs(vf) / 90)); r.a += str * turn * dt * (vf < -8 ? -1 : 1);
+  const fx2 = Math.cos(r.a), fy2 = Math.sin(r.a); r.vx = vf * fx2 - vl * fy2; r.vy = vf * fy2 + vl * fx2;
+  r.x += r.vx * dt; r.y += r.vy * dt;
+  const sp = Math.hypot(r.vx, r.vy);
+  const m0 = 26; if (r.x < m0) { r.x = m0; r.vx = Math.abs(r.vx) * .3; } if (r.y < m0) { r.y = m0; r.vy = Math.abs(r.vy) * .3; } if (r.x > W.w - m0) { r.x = W.w - m0; r.vx = -Math.abs(r.vx) * .3; } if (r.y > W.h - m0) { r.y = W.h - m0; r.vy = -Math.abs(r.vy) * .3; }
+  if (!P.god) for (const s of W.solids) {
+    const dx = r.x - s.x, dy = r.y - s.y; if (Math.abs(dx) > s.r + 40 || Math.abs(dy) > s.r + 40) continue;
+    const d = Math.hypot(dx, dy), min = s.r + RADIUS; if (d < min && d > .01) {
+      const nx = dx / d, ny = dy / d; r.x = s.x + nx * min; r.y = s.y + ny * min;
+      const vn = r.vx * nx + r.vy * ny; if (vn < 0) {
+        r.vx -= 1.35 * vn * nx; r.vy -= 1.35 * vn * ny; const imp = -vn;
+        if (imp > 60 && P.hitCool <= 0) {
+          P.hitCool = .35; r.hull -= (imp - 40) * .09 * L.dmg * (s.k === 'pit' ? 1.25 : 1); P.shake = Math.min(10, imp * .06); SFX.hit();
+          for (let i = 0; i < 8; i++) spawn(r.x - nx * 18, r.y - ny * 18, (Math.random() - .5) * 90 + nx * 40, (Math.random() - .5) * 90 + ny * 40, .6, 3 + Math.random() * 3, W.m.biome.dust);
+          once(s.k === 'pit' ? 'pit' : 'rock');
+        }
+      }
+    }
+  }
+  P.hitCool -= dt; P.shake = Math.max(0, P.shake - dt * 22);
+  if (r.hull <= 0) respawn();
+  // meteoroid strikes
+  if (W.m.strike) {
+    P.strikeT -= dt; if (P.strikeT <= 0) { P.strikeT = W.m.strike * L.strike * (.7 + Math.random() * .6); const a = Math.random() * 6.28, d = 70 + Math.random() * 200; P.strikes.push({ x: clamp(r.x + Math.cos(a) * d + r.vx * .8, 70, W.w - 70), y: clamp(r.y + Math.sin(a) * d + r.vy * .8, 70, W.h - 70), t: 0, d: 1.8, r: 70, hit: false, boom: 0 }); once('strike', 'sci'); }
+    for (let i = P.strikes.length - 1; i >= 0; i--) {
+      const s = P.strikes[i]; s.t += dt;
+      if (!s.hit && s.t >= s.d) {
+        s.hit = true; s.boom = .55; tone(70, .5, 'sawtooth', .1, 0, -30);
+        const dd = dist(r.x, r.y, s.x, s.y); if (dd < s.r + RADIUS && !P.god) { const nx = (r.x - s.x) / (dd || 1), ny = (r.y - s.y) / (dd || 1); r.vx += nx * 300; r.vy += ny * 300; r.hull -= 13 * L.dmg; P.shake = 9; SFX.hit(); }
+        else if (dd < 320) P.shake = Math.max(P.shake, 3);
+        for (let k = 0; k < 22; k++) spawn(s.x, s.y, (Math.random() - .5) * 360, (Math.random() - .5) * 360, .9, 3 + Math.random() * 4, '210,210,220');
+        craterDecal(P.tr.getContext('2d'), s.x / 2, s.y / 2, 13);
+      }
+      if (s.hit) { s.boom -= dt; if (s.boom <= 0) P.strikes.splice(i, 1); }
+    }
+  }
+  if (r.hull <= 0) respawn();
+  // battery
+  const moving = Math.abs(vf) > 6;
+  if (moving) r.bat -= (.55 + (boost ? 1.8 : 0)) * drainMul * L.drain * dt; else r.bat += (W.m.dark > .9 ? 1.4 : 2.6) * dt;
+  r.bat = clamp(r.bat, 0, 100);
+  for (const b of W.batts) if (!b.got && dist(r.x, r.y, b.x, b.y) < 32) { b.got = true; r.bat = Math.min(100, r.bat + 30); SFX.pick(); for (let i = 0; i < 12; i++) spawn(b.x, b.y, (Math.random() - .5) * 140, (Math.random() - .5) * 140, .7, 3, '255,220,100'); toast('⚡ <b>Power cell!</b> +30% battery', ''); }
+  r.wheel = (r.wheel + vf * dt * .9) % 14.4;
+  if (moving) {
+    const tg = P.tr.getContext('2d'); tg.fillStyle = 'rgba(10,12,24,.1)'; const c = Math.cos(r.a), s = Math.sin(r.a);
+    for (const [lx, ly] of [[-18, -18], [16, -18], [-18, 18], [16, 18]]) tg.fillRect((r.x + lx * c - ly * s) / 2 - 1.4, (r.y + lx * s + ly * c) / 2 - 1.4, 2.8, 2.8);
+    if (Math.random() < dt * 40 * Math.min(1, sp / 100)) spawn(r.x - c * 32 + (Math.random() - .5) * 20, r.y - s * 32 + (Math.random() - .5) * 20, -r.vx * .15 + (Math.random() - .5) * 20, -r.vy * .15 + (Math.random() - .5) * 20, .9, 3 + Math.random() * 3, W.m.biome.dust);
+    engineSound(true, sp);
+  } else engineSound(false, 0);
+  stepParts(dt);
+  // objectives
+  P.act = null; const slow = sp < 48;
+  for (const o of objList()) {
+    if (o.done) continue; const rad = o.kind === 'res' ? 46 : 52, d = dist(r.x, r.y, o.x, o.y);
+    if (d < rad + 8) {
+      if (!slow) { if (!P.seen.ring) { P.seen.ring = 1; toast('🛑 <b>Stop inside the ring</b> and hold still.', 'sci'); } o.prog = Math.max(0, o.prog - dt * .5); continue; }
+      o.prog += dt / (o.kind === 'res' ? 1.15 : .95); P.act = o; P.targetAng = Math.atan2(o.y - r.y, o.x - r.x); r.armOut = 5 + Math.sin(P.t * 30) * 1.5;
+      if (o.kind === 'res' && Math.random() < dt * 40) { spawn(o.x, o.y, (Math.random() - .5) * 90, (Math.random() - .5) * 90, .5, 2.5, '255,230,150'); SFX.drill(); }
+      if (o.prog >= 1) { openObj(o); return; }
+    } else o.prog = Math.max(0, o.prog - dt * 1.2);
+  }
+  // build site
+  const S = W.site;
+  if (!S.done) {
+    const d = dist(r.x, r.y, S.x, S.y);
+    if (d < S.ring + 8) {
+      if (!P.ready) { if (!P.seen.notready) { P.seen.notready = 1; const left = objList().filter(o => !o.done).length; toast('🏗️ <b>Not ready yet.</b> Finish the ' + left + ' crate/survey ring' + (left > 1 ? 's' : '') + ' first, then come back here.', 'sci'); setTimeout(() => P && (P.seen.notready = 0), 9000); } S.prog = 0; }
+      else if (!slow) { if (!P.seen.ring2) { P.seen.ring2 = 1; toast('🛑 <b>Stop inside the gold ring</b> to start building.', 'sci'); } S.prog = Math.max(0, S.prog - dt * .5); }
+      else { S.prog += dt / 1.3; P.act = S; P.targetAng = Math.atan2(S.y - r.y, S.x - r.x); r.armOut = 5 + Math.sin(P.t * 30) * 1.5; if (Math.random() < dt * 30) SFX.drill(); if (S.prog >= 1) { openSite(); return; } }
+    } else S.prog = Math.max(0, S.prog - dt * 1.2);
+  }
+  if (!P.act) { r.armOut = 0; P.targetAng = null; }
+  const tx = clamp(r.x + r.vx * .25 - VW / 2, 0, Math.max(0, W.w - VW)), ty = clamp(r.y + r.vy * .25 - VH / 2, 0, Math.max(0, W.h - VH)), k = 1 - Math.exp(-dt * 5); P.cam.x += (tx - P.cam.x) * k; P.cam.y += (ty - P.cam.y) * k;
+  if (W.w < VW) P.cam.x = (W.w - VW) / 2; if (W.h < VH) P.cam.y = (W.h - VH) / 2;
+}
+function respawn() {
+  const r = P.r; P.repairs++; r.x = P.check.x; r.y = P.check.y; r.vx = r.vy = 0; r.hull = 100; r.bat = Math.max(r.bat, 45); SFX.boom(); P.shake = 8;
+  toast('🔧 <b>Buggy tipped over!</b> Mission Control repaired it. Drive more carefully. (Repairs: ' + P.repairs + ')', '', 4500);
+}
+function autoTarget() {
+  const W = P.Wd, r = P.r, rest = objList().filter(o => !o.done);
+  if (rest.length) return rest.sort((a, b) => dist(r.x, r.y, a.x, a.y) - dist(r.x, r.y, b.x, b.y))[0];
+  return W.site.done ? null : W.site;
+}
+function openObj(o) {
+  P.paused = true; engineSound(false, 0); P.r.vx = P.r.vy = 0; P.act = null;
+  const res = o.kind === 'res';
+  ask(o.q, { lab: res, badge: res ? '📦 Cargo crate · ' + o.res.e + ' ' + o.res.n : o.res.e + ' ' + o.res.n }, () => {
+    o.done = true; o.prog = 1; P.r.bat = Math.min(100, P.r.bat + 12); P.check = { x: o.x, y: o.y };
+    for (let i = 0; i < 24; i++) spawn(o.x, o.y, (Math.random() - .5) * 200, (Math.random() - .5) * 200, 1, 3 + Math.random() * 3, res ? '255,230,150' : '150,255,240');
+    if (res) P.r.cargo++;
+    const W = P.Wd, n = W.res.filter(x => x.done).length, all = objList().every(x => x.done);
+    if (all) { P.ready = true; toast('🏗️ <b>Ready to build!</b> Follow the gold arrow to the glowing build site.', 'sci', 5500); SFX.done(); }
+    else toast(res ? '📦 <b>' + o.res.e + ' ' + o.res.n + ' loaded!</b> (' + n + '/' + W.res.length + ' crates)' : o.res.e + ' <b>' + o.res.n + ' complete!</b> Data sent to the base.', 'sci');
+    updateObjChips(true); P.paused = false;
+  });
+}
+function openSite() {
+  const S = P.Wd.site, M = MODULES[P.m.module]; P.paused = true; engineSound(false, 0); P.r.vx = P.r.vy = 0; P.act = null; S.prog = 0;
+  ask(S.qs[0], { badge: '🏗️ Engineering check 1 of 2 · ' + M.e + ' ' + M.name }, () => {
+    P.r.bat = Math.min(100, P.r.bat + 12);
+    ask(S.qs[1], { badge: '🏗️ Engineering check 2 of 2 · ' + M.e + ' ' + M.name, next: 'Start building! 🔨' }, () => {
+      const r = P.r; r.bat = Math.min(100, r.bat + 12); r.cargo = 0; const a = M.ang * Math.PI / 180; r.x = S.x + Math.cos(a) * (M.r + RADIUS + 26); r.y = S.y + Math.sin(a) * (M.r + RADIUS + 26); r.a = a + Math.PI; r.vx = r.vy = 0;
+      P.cine = { k: 'build', t: 0, done: false, tick: 0 }; P.paused = false; updateObjChips(true);
+    });
+  });
+}
+function updateBuild(dt) {
+  const W = P.Wd, S = W.site, c = P.cine, M = MODULES[P.m.module]; c.t += dt; stepParts(dt); P.shake = Math.max(0, P.shake - dt * 22);
+  const prog = clamp(c.t / 3.4, 0, 1); S.build = prog; c.tick -= dt;
+  if (!c.done) {
+    if (c.tick <= 0) { c.tick = .09; SFX.drill(); }
+    for (let i = 0; i < 2; i++) { const a = Math.random() * 6.28, q = Math.random() * M.r; spawn(S.x + Math.cos(a) * q, S.y + M.r + 18 - (M.r * 2 + 36) * prog, (Math.random() - .5) * 120, -20 - Math.random() * 70, .5, 2 + Math.random() * 2, '150,255,240'); }
+    if (c.t >= 3.4) { c.done = true; S.done = true; SAVE.built[P.m.module] = 1; persist(); W.solids.push({ x: S.x, y: S.y, r: S.r, k: 'mod' }); SFX.done(); for (let i = 0; i < 40; i++) spawn(S.x, S.y, (Math.random() - .5) * 300, (Math.random() - .5) * 300, 1.1, 3 + Math.random() * 4, '255,240,160'); toast('🎉 <b>' + M.e + ' ' + M.name + ' built!</b> ' + M.note, 'sci', 6500); updateObjChips(true); }
+  }
+  const k = 1 - Math.exp(-dt * 3), tx = clamp(S.x - VW / 2, 0, Math.max(0, W.w - VW)), ty = clamp(S.y - VH / 2, 0, Math.max(0, W.h - VH)); P.cam.x += (tx - P.cam.x) * k; P.cam.y += (ty - P.cam.y) * k;
+  if (c.t >= 5.4) { P.cine = null; P.paused = true; finishMission(); }
+}
+
+// ---------- draw ----------
+function drawObjective(g, o, t, glowOnly) {
+  const res = o.kind === 'res', rad = res ? 46 : 52, pulse = 1 + Math.sin(t * 4 + o.x) * .06, col = res ? '63,224,207' : '200,140,255';
+  if (o.done) { if (glowOnly) return; g.fillStyle = 'rgba(10,12,24,.4)'; g.beginPath(); g.arc(o.x, o.y, 11, 0, 7); g.fill(); g.fillStyle = '#52e08a'; g.font = '800 22px "Baloo 2",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('✔', o.x, o.y); return; }
+  const gr = g.createRadialGradient(o.x, o.y, 4, o.x, o.y, rad * pulse); gr.addColorStop(0, 'rgba(' + col + ',.05)'); gr.addColorStop(.8, 'rgba(' + col + ',.22)'); gr.addColorStop(1, 'rgba(' + col + ',.55)');
+  g.fillStyle = gr; g.beginPath(); g.arc(o.x, o.y, rad * pulse, 0, 7); g.fill(); g.lineWidth = 2.5; g.strokeStyle = 'rgba(' + col + ',.95)'; g.setLineDash([9, 7]); g.lineDashOffset = -t * 18; g.stroke(); g.setLineDash([]);
+  if (o.prog > 0) { g.lineWidth = 6; g.strokeStyle = '#fff'; g.beginPath(); g.arc(o.x, o.y, rad * pulse + 6, -Math.PI / 2, -Math.PI / 2 + o.prog * Math.PI * 2); g.stroke(); }
+  if (glowOnly) return;
+  g.textAlign = 'center'; g.textBaseline = 'middle';
+  if (res) { g.fillStyle = 'rgba(0,0,12,.4)'; g.fillRect(o.x - 12, o.y - 7, 30, 26); g.fillStyle = '#d9a441'; g.fillRect(o.x - 15, o.y - 12, 30, 26); g.strokeStyle = '#7a5412'; g.lineWidth = 2; g.strokeRect(o.x - 15, o.y - 12, 30, 26); g.beginPath(); g.moveTo(o.x - 15, o.y - 12); g.lineTo(o.x + 15, o.y + 14); g.moveTo(o.x + 15, o.y - 12); g.lineTo(o.x - 15, o.y + 14); g.stroke(); g.fillStyle = 'rgba(255,255,255,.85)'; g.beginPath(); g.arc(o.x, o.y + 1, 11, 0, 7); g.fill(); g.font = '15px sans-serif'; g.fillText(o.res.e, o.x, o.y + 2); }
+  else { g.fillStyle = 'rgba(0,0,12,.35)'; g.beginPath(); g.ellipse(o.x + 3, o.y + 5, 18, 12, 0, 0, 7); g.fill(); g.fillStyle = '#5a3a8a'; g.beginPath(); g.moveTo(o.x, o.y - 18); for (let k = 1; k < 6; k++) g.lineTo(o.x + Math.sin(k * 1.047) * 18, o.y - Math.cos(k * 1.047) * 18); g.closePath(); g.fill(); g.lineWidth = 2; g.strokeStyle = '#d6b5ff'; g.stroke(); g.font = '18px sans-serif'; g.fillText(o.res.e, o.x, o.y + 1); }
+}
+function drawSite(g, t, glowOnly) {
+  const W = P.Wd, S = W.site, M = MODULES[P.m.module], lit = !!(SAVE.built.solar || (P.m.module === 'solar' && S.done)), c = P.cine;
+  if (S.done || (c && c.k === 'build')) { if (!glowOnly) { drawCables(g, W.hub, P.m.module, t, lit); drawModule(g, P.m.module, S.x, S.y, t, { lit: lit && S.done, prog: S.done ? 1 : S.build || 0 }); } return; }
+  const ready = P.ready, pulse = 1 + Math.sin(t * 4) * (ready ? .05 : .015), col = ready ? '255,194,77' : '150,170,200';
+  if (!glowOnly) { drawModule(g, P.m.module, S.x, S.y, t, { alpha: .26 }); g.strokeStyle = 'rgba(120,230,255,.7)'; g.lineWidth = 2; g.setLineDash([7, 7]); g.lineDashOffset = t * 10; g.beginPath(); g.arc(S.x, S.y, M.r, 0, 7); g.stroke(); g.setLineDash([]); }
+  g.lineWidth = 3.5; g.strokeStyle = 'rgba(' + col + ',.95)'; g.setLineDash([11, 8]); g.lineDashOffset = -t * 16; g.beginPath(); g.arc(S.x, S.y, S.ring * pulse, 0, 7); g.stroke(); g.setLineDash([]);
+  if (S.prog > 0) { g.lineWidth = 7; g.strokeStyle = '#fff'; g.beginPath(); g.arc(S.x, S.y, S.ring * pulse + 7, -Math.PI / 2, -Math.PI / 2 + S.prog * Math.PI * 2); g.stroke(); }
+  if (ready) { const gr = g.createRadialGradient(S.x, S.y, S.ring * .5, S.x, S.y, S.ring * pulse); gr.addColorStop(0, 'rgba(255,194,77,0)'); gr.addColorStop(1, 'rgba(255,194,77,.28)'); g.fillStyle = gr; g.beginPath(); g.arc(S.x, S.y, S.ring * pulse, 0, 7); g.fill(); }
+  if (!glowOnly) { g.fillStyle = 'rgba(0,0,0,.55)'; rr(g, S.x - 74, S.y - S.ring - 30, 148, 24, 9); g.fill(); g.fillStyle = '#fff'; g.font = '800 14px "Baloo 2",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(M.e + ' Build site' + (ready ? '' : ' 🔒'), S.x, S.y - S.ring - 17); }
+}
+function drawStrike(g, s, t) {
+  if (s.hit) { const k = 1 - clamp(s.boom / .55, 0, 1); g.fillStyle = 'rgba(255,255,255,' + (.7 * (1 - k)) + ')'; g.beginPath(); g.arc(s.x, s.y, s.r * (.4 + k * .9), 0, 7); g.fill(); g.strokeStyle = 'rgba(255,200,120,' + (1 - k) + ')'; g.lineWidth = 5; g.beginPath(); g.arc(s.x, s.y, s.r * (.6 + k * 1.3), 0, 7); g.stroke(); return; }
+  const p = s.t / s.d, blink = .5 + .5 * Math.sin(t * (10 + p * 18));
+  g.fillStyle = 'rgba(255,60,60,' + (.1 + .16 * blink) + ')'; g.beginPath(); g.arc(s.x, s.y, s.r, 0, 7); g.fill(); g.strokeStyle = 'rgba(255,90,90,.95)'; g.lineWidth = 3; g.setLineDash([8, 6]); g.beginPath(); g.arc(s.x, s.y, s.r, 0, 7); g.stroke(); g.setLineDash([]);
+  g.strokeStyle = 'rgba(255,230,230,.9)'; g.lineWidth = 2.5; g.beginPath(); g.arc(s.x, s.y, s.r * (1 - p), 0, 7); g.stroke(); g.beginPath(); g.moveTo(s.x - 14, s.y); g.lineTo(s.x + 14, s.y); g.moveTo(s.x, s.y - 14); g.lineTo(s.x, s.y + 14); g.stroke();
+  const yy = s.y - 900 * (1 - p) * (1 - p) - 6; g.fillStyle = '#fff3c4'; g.beginPath(); g.arc(s.x, yy, 7, 0, 7); g.fill(); g.strokeStyle = 'rgba(255,200,120,.7)'; g.lineWidth = 4; g.beginPath(); g.moveTo(s.x, yy); g.lineTo(s.x, yy - 40); g.stroke();
+}
+function renderSurf(t) {
+  const W = P.Wd, r = P.r, cx = P.cam.x + (P.shake ? (Math.random() - .5) * P.shake : 0), cy = P.cam.y + (P.shake ? (Math.random() - .5) * P.shake : 0), lit = !!SAVE.built.solar;
+  ctx.setTransform(DPR * Z, 0, 0, DPR * Z, 0, 0); ctx.fillStyle = '#16171d'; ctx.fillRect(0, 0, VW, VH);
+  ctx.save(); ctx.translate(-cx, -cy);
+  for (let ty = Math.floor(cy / TS); ty <= Math.floor((cy + VH) / TS); ty++) for (let tx = Math.floor(cx / TS); tx <= Math.floor((cx + VW) / TS); tx++) { if (tx < 0 || ty < 0 || tx * TS > W.w || ty * TS > W.h) continue; ctx.drawImage(getTile(tx, ty), tx * TS, ty * TS); }
+  const sx = Math.max(0, cx), sy = Math.max(0, cy), sw = Math.min(W.w - sx, VW), sh = Math.min(W.h - sy, VH);
+  if (sw > 0 && sh > 0) ctx.drawImage(P.tr, sx / 2, sy / 2, sw / 2, sh / 2, sx, sy, sw, sh);
+  const vis = (x, y, m) => x > cx - m && x < cx + VW + m && y > cy - m && y < cy + VH + m;
+  for (const z of W.zones) if (vis(z.x, z.y, z.r + 20)) ctx.drawImage(z.spr, z.x - z.spr.width / 2, z.y - z.spr.height / 2);
+  for (const b of W.batts) if (!b.got && vis(b.x, b.y, 30)) { const s = 1 + Math.sin(t * 5 + b.x) * .12; ctx.fillStyle = 'rgba(255,220,90,.3)'; ctx.beginPath(); ctx.arc(b.x, b.y, 22 * s, 0, 7); ctx.fill(); ctx.font = '26px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('⚡', b.x, b.y + 1); }
+  for (const m of W.mods) drawCables(ctx, W.hub, m.k, t, lit);
+  drawHub(ctx, W.hub.x, W.hub.y, t);
+  for (const m of W.mods) if (vis(m.x, m.y, 100)) drawModule(ctx, m.k, m.x, m.y, t, { lit });
+  drawSite(ctx, t, false);
+  for (const o of objList()) if (vis(o.x, o.y, 70)) drawObjective(ctx, o, t, false);
+  for (const o of W.obs) if ((o.k === 'rock' || o.k === 'pit') && vis(o.x, o.y, o.r + 20)) ctx.drawImage(o.spr, o.x - o.spr.width / 2, o.y - o.spr.height / 2);
+  for (const s of P.strikes) if (vis(s.x, s.y, 140)) drawStrike(ctx, s, t);
+  drawBuggy(ctx, r.x, r.y, r.a, { wheel: r.wheel, armOut: r.armOut, lights: W.m.dark > 0, cargo: r.cargo });
+  const tg = P.cine ? null : autoTarget(); if (tg && !P.paused) { const d = dist(r.x, r.y, tg.x, tg.y); if (d > 170) { const a = Math.atan2(tg.y - r.y, tg.x - r.x), px = r.x + Math.cos(a) * 64, py = r.y + Math.sin(a) * 64; ctx.save(); ctx.translate(px, py); ctx.rotate(a); ctx.fillStyle = tg.kind === 'site' ? '#ffc24d' : (tg.kind === 'res' ? '#3fe0cf' : '#d6a8ff'); ctx.strokeStyle = 'rgba(0,0,0,.6)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(14, 0); ctx.lineTo(-8, -10); ctx.lineTo(-3, 0); ctx.lineTo(-8, 10); ctx.closePath(); ctx.stroke(); ctx.fill(); ctx.restore(); } }
+  drawParts(ctx, .6);
+  ctx.restore();
+  // darkness (shadowed crater / lunar night)
+  if (W.m.dark) {
+    dkg.setTransform(1, 0, 0, 1, 0, 0); dkg.globalCompositeOperation = 'source-over'; dkg.fillStyle = 'rgba(3,4,18,' + W.m.dark + ')'; dkg.fillRect(0, 0, dk.width, dk.height);
+    dkg.setTransform(DPR * Z, 0, 0, DPR * Z, 0, 0); dkg.globalCompositeOperation = 'destination-out';
+    const rx = r.x - cx, ry = r.y - cy; let g = dkg.createRadialGradient(rx, ry, 10, rx, ry, 130); g.addColorStop(0, 'rgba(0,0,0,.9)'); g.addColorStop(1, 'rgba(0,0,0,0)'); dkg.fillStyle = g; dkg.beginPath(); dkg.arc(rx, ry, 130, 0, 7); dkg.fill();
+    dkg.save(); dkg.translate(rx, ry); dkg.rotate(r.a); g = dkg.createRadialGradient(20, 0, 10, 20, 0, 400); g.addColorStop(0, 'rgba(0,0,0,.95)'); g.addColorStop(1, 'rgba(0,0,0,0)'); dkg.fillStyle = g; dkg.beginPath(); dkg.moveTo(20, -8); dkg.lineTo(400, -150); dkg.lineTo(400, 150); dkg.lineTo(20, 8); dkg.closePath(); dkg.fill(); dkg.restore();
+    if (lit) for (const q of [{ x: W.hub.x, y: W.hub.y }, ...W.mods, ...(W.site.done ? [W.site] : [])]) { const qx = q.x - cx, qy = q.y - cy; if (qx < -200 || qx > VW + 200 || qy < -200 || qy > VH + 200) continue; g = dkg.createRadialGradient(qx, qy, 10, qx, qy, 150); g.addColorStop(0, 'rgba(0,0,0,.85)'); g.addColorStop(1, 'rgba(0,0,0,0)'); dkg.fillStyle = g; dkg.beginPath(); dkg.arc(qx, qy, 150, 0, 7); dkg.fill(); }
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(dk, 0, 0);
+    ctx.setTransform(DPR * Z, 0, 0, DPR * Z, 0, 0); ctx.save(); ctx.translate(-cx, -cy); ctx.globalAlpha = .9; drawSite(ctx, t, true); for (const o of objList()) if (vis(o.x, o.y, 70)) drawObjective(ctx, o, t, true); for (const s of P.strikes) if (vis(s.x, s.y, 140)) drawStrike(ctx, s, t); ctx.restore(); ctx.globalAlpha = 1;
+  }
+  // minimap
+  const sc = Math.min(336 / W.w, 224 / W.h), ox = (336 - W.w * sc) / 2, oy = (224 - W.h * sc) / 2, b = W.m.biome;
+  mg.setTransform(1, 0, 0, 1, 0, 0); mg.fillStyle = 'rgb(' + b.c2.join(',') + ')'; mg.fillRect(0, 0, 336, 224); mg.fillStyle = 'rgba(0,0,0,.3)'; mg.fillRect(0, 0, 336, 224);
+  mg.fillStyle = 'rgb(' + b.c2.map(v => v * .8 | 0).join(',') + ')'; mg.fillRect(ox, oy, W.w * sc, W.h * sc);
+  for (const z of W.zones) { mg.fillStyle = z.k === 'crater' ? 'rgba(20,22,36,.55)' : z.k === 'ice' ? 'rgba(200,235,255,.9)' : 'rgba(40,40,52,.8)'; mg.beginPath(); mg.arc(ox + z.x * sc, oy + z.y * sc, z.r * sc * .85, 0, 7); mg.fill(); }
+  mg.fillStyle = 'rgba(20,22,32,.9)'; for (const o of W.obs) { mg.beginPath(); mg.arc(ox + o.x * sc, oy + o.y * sc, Math.max(1.5, o.r * sc), 0, 7); mg.fill(); }
+  mg.fillStyle = '#dfe6f5'; for (const m of W.mods) mg.fillRect(ox + m.x * sc - 3, oy + m.y * sc - 3, 6, 6);
+  for (const o of objList()) { mg.fillStyle = o.done ? 'rgba(82,224,138,.9)' : o.kind === 'res' ? '#3fe0cf' : '#d6a8ff'; mg.beginPath(); mg.arc(ox + o.x * sc, oy + o.y * sc, 5, 0, 7); mg.fill(); mg.strokeStyle = '#000'; mg.lineWidth = 1; mg.stroke(); }
+  mg.strokeStyle = P.ready ? '#ffc24d' : '#8090b0'; mg.lineWidth = 2.5; mg.beginPath(); mg.arc(ox + W.site.x * sc, oy + W.site.y * sc, 7, 0, 7); mg.stroke(); if (W.site.done) { mg.fillStyle = '#52e08a'; mg.fill(); }
+  mg.fillStyle = '#fff'; mg.fillRect(ox + W.hub.x * sc - 5, oy + W.hub.y * sc - 5, 10, 10);
+  mg.fillStyle = '#ff4d4d'; for (const s of P.strikes) if (!s.hit) { mg.beginPath(); mg.arc(ox + s.x * sc, oy + s.y * sc, 4, 0, 7); mg.fill(); }
+  mg.strokeStyle = 'rgba(255,255,255,.7)'; mg.lineWidth = 1.5; mg.strokeRect(ox + cx * sc, oy + cy * sc, VW * sc, VH * sc);
+  mg.save(); mg.translate(ox + r.x * sc, oy + r.y * sc); mg.rotate(r.a); mg.fillStyle = '#fff'; mg.strokeStyle = '#000'; mg.lineWidth = 1.5; mg.beginPath(); mg.moveTo(9, 0); mg.lineTo(-6, -6); mg.lineTo(-6, 6); mg.closePath(); mg.fill(); mg.stroke(); mg.restore();
+}
+// ====================================================================
+//  mission start / briefing
+// ====================================================================
+function setControls(mode) {
+  const arc = mode !== 'surf';
+  $('#boost').classList.toggle('hide', !(TOUCH && !arc));
+  for (const id of ['#tl', '#tr', '#tact']) $(id).classList.toggle('hide', !(TOUCH && arc));
+  $('#tact').textContent = mode === 'land' ? 'THRUST' : 'BOOST'; $('#tl').textContent = '◀'; $('#tr').textContent = '▶';
+}
+function hideControls() { for (const id of ['#boost', '#tl', '#tr', '#tact', '#stick', '#scan']) $(id).classList.add('hide'); }
+function startMission(mi) {
+  audio(); clearToast(); const m = MISSIONS[mi], lvKey = SAVE.level;
+  const deck = m.mode === 'launch' ? mkDeck([['launch', 5], ['earthmoon', 2]]) : m.mode === 'land' ? mkDeck([['landing', 4]]) : mkDeck([[m.topic, 6]]);
+  P = { mi, m, mode: m.mode, L: LEVELS[lvKey], r: { bat: 100, hull: 100 }, qs: deck, asked: [], res: m.mode === 'surf' ? 'battery' : 'fuel', t: 0, wrong: 0, repairs: 0, parts: [], shake: 0, seen: {}, paused: true, over: false, god: false, auto: false, ts: 1, pad: { l: false, r: false, a: false }, boostBtn: false };
+  scr = 'play'; $('#ui').innerHTML = ''; $('#hud').classList.remove('hide'); mini.classList.toggle('hide', m.mode !== 'surf'); setControls(m.mode);
+  $('#gi1').textContent = m.mode === 'surf' ? '⚡' : '⛽'; $('.g.hull').classList.toggle('hide', m.mode === 'land');
+  if (m.mode === 'launch') initLaunch(); else if (m.mode === 'land') initLand(); else initSurf();
+  lastHud = ''; updateObjChips(true); briefing();
+}
+function briefing() {
+  const m = P.m, ov = $('#ov'); ov.classList.remove('hide'); const L = P.L;
+  const how = m.mode === 'launch' ?
+    '<div class="fcard" style="margin-top:8px">🧠 <b>Mission Control checks:</b> the rocket stops at <b>5 checkpoints</b> (pad, Max-Q, stage separation, fairing, engine burn) and asks a question. Right answers add fuel. Wrong answers cost fuel. Then you coast to the Moon with 2 more space-radio questions.</div>' +
+    '<div class="fcard" style="margin-top:8px">🎮 ' + (TOUCH ? 'Use the <b>◀ ▶</b> buttons to steer and hold <b>BOOST</b> to climb faster (uses more fuel). Coasting: <b>▲ ▼</b>.' : '<kbd>←</kbd><kbd>→</kbd> steer (<kbd>↑</kbd><kbd>↓</kbd> while coasting) · hold <kbd>Space</kbd> to boost · <kbd>Esc</kbd> pause') + '<br>⛈️ Dodge storm clouds, balloons, meteors and junk. ⛽ Grab fuel orbs!</div>' :
+    m.mode === 'land' ?
+      '<div class="fcard" style="margin-top:8px">🛬 <b>Land on the green pad.</b> Gravity pulls you down. Fire the engine to slow down (the engine pushes the way the lander points). Touch down <b>slowly (under ' + (L.vmax / 10).toFixed(1) + ' m/s down, ' + (L.hmax / 10).toFixed(1) + ' m/s sideways)</b> and <b>upright</b>.' + (L.assist ? ' Rookie mode helps level the lander for you.' : '') + '</div>' +
+      '<div class="fcard" style="margin-top:8px">📡 Mission Control will call you 3 times with a question while you descend. Right answers give extra fuel.</div>' +
+      '<div class="fcard" style="margin-top:8px">🎮 ' + (TOUCH ? '<b>◀ ▶</b> tilt · hold <b>THRUST</b> to fire the engine.' : '<kbd>←</kbd><kbd>→</kbd> tilt · hold <kbd>↑</kbd> or <kbd>Space</kbd> to fire the engine · <kbd>Esc</kbd> pause') + '</div>' :
+      '<div class="fcard" style="margin-top:8px">📦 <b>Cargo crates</b> (teal rings) and 🔬 the <b>survey</b> (purple ring): drive in, <b>stop</b> and hold still. A question pops up. Right answers load the cargo and recharge the battery.</div>' +
+      '<div class="fcard" style="margin-top:8px">🏗️ <b>Build site</b> (gold ring beside the lander): when all crates and the survey are done, stop in the ring, answer <b>2 engineering questions</b>, and watch your module get built!</div>' +
+      '<div class="fcard" style="margin-top:8px">🎮 ' + (TOUCH ? '<b>Drag</b> anywhere to drive. The BOOST button costs extra battery.' : '<kbd>←</kbd><kbd>→</kbd> steer · <kbd>↑</kbd><kbd>↓</kbd> drive (or <kbd>W A S D</kbd>) · <kbd>Space</kbd> boost · <kbd>Esc</kbd> pause') + '</div>';
+  ov.innerHTML = '<div class="panel modal"><div class="badge lab">Mission ' + m.id + ' of 8 · ' + esc(m.tag) + '</div><h2>' + m.emoji + ' ' + esc(m.name) + '</h2>' +
+    '<p style="font-weight:700;line-height:1.5;margin:6px 0 12px">' + m.story + '</p><div class="fcard">🎯 <b>Goal:</b> ' + esc(m.goal) + '</div>' + how +
+    '<div class="row end"><button class="btn ghost" data-act="map">Back</button><button class="btn" id="go">' + (m.mode === 'surf' ? 'Roll out! 🚙' : m.mode === 'launch' ? 'To the pad! 🚀' : 'Start descent 🛬') + '</button></div></div>';
+  $('#go').onclick = () => { SFX.click(); ov.classList.add('hide'); ov.innerHTML = ''; if (P.mode === 'launch') launchGo(); else P.paused = false; };
+  ov.querySelector('[data-act=map]').onclick = () => { ov.classList.add('hide'); ov.innerHTML = ''; toMap(); };
+}
+
+// ====================================================================
+//  finish / debrief
+// ====================================================================
+function calcStars() { return (P.wrong <= 1 && P.repairs === 0) ? 3 : (P.wrong <= 4 && P.repairs <= 1) ? 2 : 1; }
+function finishMission() {
+  P.paused = true; engineSound(false, 0);
+  if (P.m.id === 8) return finalCheck();
+  debrief(false);
+}
+function finalCheck() {
+  const pool = shuffle(BANK.filter(q => q.type !== 'pairs')), missed = pool.filter(q => SAVE.missed[q.id]), picks = [];
+  for (const q of [...missed, ...pool]) if (picks.length < 3 && !picks.some(p => p.t === q.t)) picks.push(q);
+  let i = 0; const ov = $('#ov');
+  const next = () => { if (i >= picks.length) { debrief(true); return; } const q = picks[i++]; ask(q, { badge: '🌟 Starbase check ' + i + ' of ' + picks.length, next: i === picks.length ? 'Switch on the lights! 💡' : 'Next check ▶' }, next); };
+  ov.classList.remove('hide'); ov.innerHTML = '<div class="panel modal" style="text-align:center"><div class="big">🌟</div><h2>Starbase Final Check</h2><p style="font-weight:700;line-height:1.5">The Launch Pad is built and all 6 modules are connected! Before the crew moves in, Mission Control needs <b>3 final checks</b> from everything you learned.</p><div class="row" style="justify-content:center"><button class="btn" id="chk">Start checks</button></div></div>';
+  $('#chk').onclick = () => { SFX.click(); next(); };
+}
+function debrief(final) {
+  const m = P.m, st = calcStars(), ov = $('#ov'); ov.classList.remove('hide'); SFX.fanfare();
+  SAVE.stars[m.id] = Math.max(SAVE.stars[m.id] || 0, st); persist();
+  const learned = P.asked, mins = Math.floor(P.t / 60), secs = Math.floor(P.t % 60), surf = m.mode === 'surf', M = surf ? MODULES[m.module] : null;
+  const certOK = final && MISSIONS.every(x => (SAVE.stars[x.id] || 0) > 0);
+  const title = final ? 'Starbase Alpha is open!' : surf ? M.name + ' built!' : m.mode === 'launch' ? 'Ready for the Moon!' : 'Touchdown!';
+  const big = final ? '🌙' : surf ? M.e : m.mode === 'launch' ? '🌕' : '🏁';
+  const repLabel = m.mode === 'surf' ? '🔧 Repairs' : m.mode === 'land' ? '💥 Crashes' : '🛠️ Repairs';
+  ov.innerHTML = '<div class="panel modal" style="text-align:center"><div class="big">' + big + '</div><h2>' + esc(title) + '</h2>' +
+    '<div class="sub">' + m.emoji + ' ' + esc(m.name) + '</div><div class="stars">' + [1, 2, 3].map(i => '<span class="star ' + (i > st ? 'off' : '') + '">★</span>').join('') + '</div>' +
+    (surf ? '<p style="font-weight:700;line-height:1.45;margin:4px 0 8px">' + esc(M.note) + '</p><canvas id="bcv" width="720" height="300"></canvas>' : '') +
+    '<div class="kv" style="justify-content:center"><div>⏱ ' + mins + ':' + String(secs).padStart(2, '0') + '</div><div>❌ Mistakes: ' + P.wrong + '</div><div>' + repLabel + ': ' + P.repairs + '</div></div>' +
+    '<p style="font-weight:700;color:var(--mute);margin:6px 0">' + (st === 3 ? 'Brilliant! Mission Control is cheering.' : st === 2 ? 'Great job! Fewer mistakes and repairs earn 3 stars.' : 'Mission done. Try again for more stars!') + '</p>' +
+    '<div style="text-align:left"><h3 style="margin:10px 0 6px">What you learned</h3><ul class="facts">' + learned.map(q => '<li>' + factHTML(q) + '</li>').join('') + '</ul></div>' +
+    (final ? '<div class="cert" style="margin-top:14px"><div class="big">🏅</div><h2>' + (certOK ? 'Starbase Commander Certificate' : 'Starbase Alpha Complete!') + '</h2><p style="font-weight:700">' + (certOK ? 'You launched from Earth, landed on the Moon and built a whole starbase. You learned <b>' + Object.keys(SAVE.facts).length + '</b> science facts. Next stop: <b>Mars</b>! 🔴' : 'The base is open! Finish every mission to earn the Commander Certificate.') + '</p></div>' : '') +
+    '<div class="row" style="justify-content:center"><button class="btn ghost" data-act="again">↻ Play again</button>' + (!final ? '<button class="btn" data-act="next">Next mission ▶</button>' : '') + '<button class="btn alt" data-act="map">Mission map</button></div></div>';
+  P.final = final;
+  ov.onclick = e => { const a = e.target.closest('[data-act]'); if (!a) return; SFX.click(); ov.classList.add('hide'); ov.innerHTML = ''; ov.onclick = null; const act = a.dataset.act; if (act === 'again') startMission(P.mi); else if (act === 'next') startMission(P.mi + 1); else toMap(); };
+}
+
+// ====================================================================
+//  HUD
+// ====================================================================
+let lastHud = '';
+function updateObjChips(force) {
+  if (!P) return; let h = '';
+  const chip = (txt, cls) => '<span class="chip ' + (cls || '') + '">' + txt + '</span>';
+  if (P.mode === 'launch') {
+    const total = 5 + 2, done = P.asked.length;
+    if (P.phase === 'coast') h = chip('🌌 Coasting to the Moon') + chip('🧠 ' + done + '/' + total);
+    else h = chip('📍 ' + Math.floor(P.dist / KM) + ' km') + chip('🧠 ' + done + '/' + total);
+  } else if (P.mode === 'land') {
+    const ln = P.ln, agl = Math.max(0, Math.round(terrainY(ln.x) - (ln.y + FOOT)));
+    h = chip('📍 ' + agl + ' m') + chip('🧠 ' + P.asked.length + '/4', P.asked.length >= 4 ? 'ok' : '') + chip('🎯 Pad', P.landed ? 'ok' : '');
+  } else {
+    const W = P.Wd, n = W.res.filter(x => x.done).length, s = W.survey.filter(x => x.done).length, M = MODULES[P.m.module];
+    h = chip('📦 ' + n + '/' + W.res.length, n === W.res.length ? 'ok' : '') + chip('🔬 ' + s + '/' + W.survey.length, s === W.survey.length ? 'ok' : '') + chip(M.e + ' Build', W.site.done ? 'ok' : P.ready ? 'go' : '');
+  }
+  if (h !== lastHud || force) { $('#objs').innerHTML = h; lastHud = h; }
+}
+function hudTick() {
+  const r = P.r, b = Math.round(r.bat), hl = Math.round(clamp(r.hull, 0, 100));
+  $('#gbat').style.width = b + '%'; $('#tbat').textContent = b + '%'; $('#ghull').style.width = hl + '%'; $('#thull').textContent = hl + '%';
+  $('.g.bat').classList.toggle('low', b < 18); $('.g.hull').classList.toggle('low', hl < 28);
+  updateObjChips();
+  if (P.mode === 'launch' && TOUCH) { const co = P.phase === 'coast'; $('#tl').textContent = co ? '▲' : '◀'; $('#tr').textContent = co ? '▼' : '▶'; }
+  const sc = $('#scan');
+  if (P.mode === 'surf' && P.act) { const o = P.act, site = o.kind === 'site'; sc.classList.remove('hide'); sc.style.left = ((r.x - P.cam.x) * Z) + 'px'; sc.style.top = ((r.y - P.cam.y) * Z - 80) + 'px'; sc.style.transform = 'translate(-50%,-50%)'; sc.firstChild.style.setProperty('--p', Math.round(clamp(o.prog, 0, 1) * 100) + '%'); $('#scani').textContent = site ? '🏗️' : o.res.e; $('#scant').textContent = site ? 'Getting ready to build… hold still' : o.kind === 'res' ? 'Loading cargo… hold still' : 'Surveying… hold still'; } else sc.classList.add('hide');
+}
+
+// ====================================================================
+//  attract scene (title / map / log background)
+// ====================================================================
+function drawAttract(t) {
+  const W = SW, H = SH; ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  const sk = ctx.createLinearGradient(0, 0, 0, H * .8); sk.addColorStop(0, '#01030a'); sk.addColorStop(1, '#0b1330'); ctx.fillStyle = sk; ctx.fillRect(0, 0, W, H);
+  drawStars(ctx, W, H, t, 1, .78);
+  if (Math.random() < .004) ATT.shoot.push({ x: Math.random() * W * .8, y: Math.random() * H * .3, l: 1 });
+  for (let i = ATT.shoot.length - 1; i >= 0; i--) { const s = ATT.shoot[i]; s.l -= .02; s.x += 9; s.y += 4; if (s.l <= 0) { ATT.shoot.splice(i, 1); continue; } ctx.strokeStyle = 'rgba(255,255,255,' + s.l + ')'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(s.x - 60, s.y - 26); ctx.stroke(); }
+  const er = clamp(Math.min(W, H) * .1, 40, 100); drawEarth(ctx, W * .87, H * .3, er, t);
+  const hy = H * .7;
+  const far = [[hy - 6, 40, .004, '#1a1d29'], [hy + 10, 26, .006, '#262a38']];
+  far.forEach(([base, amp, f, col], li) => { ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(0, H); for (let x = 0; x <= W; x += 12) ctx.lineTo(x, base - fbm(x * f + li * 9, 2, 6) * amp); ctx.lineTo(W, H); ctx.closePath(); ctx.fill(); });
+  const gy = hy + 46, gg = ctx.createLinearGradient(0, gy, 0, H); gg.addColorStop(0, '#7b7e88'); gg.addColorStop(.35, '#555862'); gg.addColorStop(1, '#262831'); ctx.fillStyle = gg; ctx.fillRect(0, gy, W, H - gy);
+  ctx.strokeStyle = 'rgba(255,255,255,.18)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+  for (let i = 0; i < 9; i++) { const x = (hash2(i, 5, 1) * 1.2 - .1) * W, y = gy + 18 + hash2(i, 6, 1) * (H - gy - 26), w = 24 + hash2(i, 7, 1) * 80; ctx.fillStyle = 'rgba(10,12,22,.4)'; ctx.beginPath(); ctx.ellipse(x, y, w, w * .2, 0, 0, 7); ctx.fill(); ctx.strokeStyle = 'rgba(255,255,255,.22)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(x, y, w, w * .2, 0, Math.PI * 1.05, Math.PI * 1.75); ctx.stroke(); }
+  const s = clamp(W / 900, .75, 1.6);
+  // landed ship + flag
+  const lx = W * .14; ctx.strokeStyle = '#d8dde8'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(lx + 70 * s, gy + 40 * s); ctx.lineTo(lx + 70 * s, gy - 20 * s); ctx.stroke(); ctx.fillStyle = '#1f4fbf'; ctx.fillRect(lx + 70 * s, gy - 20 * s, 28 * s, 17 * s); ctx.fillStyle = '#fff'; ctx.font = '800 ' + 12 * s + 'px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('★', lx + 84 * s, gy - 8 * s);
+  drawLanderSide(ctx, lx, gy + 12 * s, 1.3 * s, {});
+  // buggy
+  const bx = ((t * 38) % (W + 300)) - 150, by = Math.min(H - 16, gy + 70 * s);
+  if (Math.random() < .5) ATT.dust.push({ x: bx - 70 * s, y: by - 4, vx: -40 - Math.random() * 40, vy: -10 - Math.random() * 20, l: 1 });
+  for (let i = ATT.dust.length - 1; i >= 0; i--) { const d = ATT.dust[i]; d.l -= .02; d.x += d.vx * .016; d.y += d.vy * .016; if (d.l <= 0) { ATT.dust.splice(i, 1); continue; } ctx.fillStyle = 'rgba(190,195,210,' + d.l * .35 + ')'; ctx.beginPath(); ctx.arc(d.x, d.y, 4 + (1 - d.l) * 11, 0, 7); ctx.fill(); }
+  drawBuggySide(ctx, bx, by, s, t * 5);
+}
+
+// ====================================================================
+//  screens
+// ====================================================================
+function clearToast() { clearTimeout(toastT); $('#msg').innerHTML = ''; }
+function showTitle() {
+  clearToast(); scr = 'title'; P = null; $('#hud').classList.add('hide'); mini.classList.add('hide'); hideControls(); engineSound(false, 0); $('#ov').classList.add('hide');
+  const lv = SAVE.level;
+  $('#ui').innerHTML = '<div class="title"><h1><small>BUILD A BASE FROM SCRATCH</small>MOON STARBASE<br>BUILDER</h1><p>Launch a rocket from Earth, land on the Moon, then drive your buggy to build a whole starbase. Answer science questions to power every mission.</p>' +
+    '<div class="menu"><div class="row"><button class="btn" data-act="map" style="font-size:24px;padding:14px 34px">▶ Start the mission</button></div>' +
+    '<div class="row"><button class="btn alt small" data-act="log">📖 Mission log</button><button class="btn alt small" data-act="quiz">🧠 Quiz lab</button><button class="btn ghost small" data-act="how">❓ How to play</button><button class="btn ghost small" data-act="snd">' + (SAVE.sound ? '🔊 Sound on' : '🔇 Sound off') + '</button></div>' +
+    '<div class="seg" id="lvseg">' + Object.entries(LEVELS).map(([k, v]) => '<button data-lv="' + k + '" class="' + (k === lv ? 'on' : '') + '">' + v.name + '</button>').join('') + '</div>' +
+    '<div style="color:#dce9ff;font-weight:800;text-shadow:0 2px 8px #000">⭐ ' + totalStars() + ' / 24 stars · 🏗️ ' + builtCount() + ' / 6 modules · 💡 ' + Object.keys(SAVE.facts).length + ' / ' + BANK.length + ' facts</div></div></div>';
+}
+function toMap() {
+  clearToast(); scr = 'map'; P = null; $('#hud').classList.add('hide'); mini.classList.add('hide'); hideControls(); engineSound(false, 0);
+  $('#ui').innerHTML = '<div class="panel scr"><div class="top"><div><h2>🗺️ Mission map</h2><div class="sub">Finish a mission to unlock the next. Level: <b>' + LEVELS[SAVE.level].name + '</b></div></div><button class="btn ghost small" data-act="title">⌂ Home</button></div>' +
+    '<canvas id="bcv" width="960" height="330"></canvas><div class="sub" style="margin:-6px 0 12px;text-align:center">🌙 <b>Starbase Alpha</b>: ' + builtCount() + ' of 6 modules built' + (builtCount() === 0 ? ' · your base will grow here' : '') + '</div><div class="mgrid">' +
+    MISSIONS.map((m, i) => { const s = SAVE.stars[m.id] || 0, un = isUnlocked(i); return '<button class="mc ' + (un ? '' : 'lock') + '" data-mi="' + i + '"><span class="n">#' + m.id + '</span><span class="e">' + m.emoji + '</span><span class="nm">' + esc(m.name) + '</span><span class="tg">' + TOPICS[m.topic].emoji + ' ' + esc(m.tag) + '</span><span class="bd">' + (m.mode === 'launch' ? '🚀 Rocket flight' : m.mode === 'land' ? '🛬 Lander pilot' : '🏗️ Builds: ' + MODULES[m.module].name) + '</span><span class="st">' + [1, 2, 3].map(k => '<span class="star ' + (k > s ? 'off' : '') + '">★</span>').join('') + '</span></button>'; }).join('') + '</div>' +
+    (builtCount() ? '<div class="row end"><button class="btn ghost small" data-act="reset">↺ Reset my base</button></div>' : '') + '</div>';
+}
+let logTab = 'all';
+function showLog() {
+  scr = 'log'; $('#hud').classList.add('hide');
+  const list = BANK.filter(q => logTab === 'all' || q.t === logTab);
+  $('#ui').innerHTML = '<div class="panel scr"><div class="top"><div><h2>📖 Mission log</h2><div class="sub">Every question you answer unlocks a science fact. ' + Object.keys(SAVE.facts).length + ' of ' + BANK.length + ' collected.</div></div><button class="btn ghost small" data-act="title">⌂ Home</button></div>' +
+    '<div class="tabs"><button data-tab="all" class="' + (logTab === 'all' ? 'on' : '') + '">All</button>' + Object.entries(TOPICS).map(([k, v]) => '<button data-tab="' + k + '" class="' + (logTab === k ? 'on' : '') + '">' + v.emoji + ' ' + v.name + '</button>').join('') + '</div>' +
+    '<div class="fgrid">' + list.map(q => SAVE.facts[q.id] ? '<div class="fcard">' + factHTML(q) + '</div>' : '<div class="fcard lk">🔒 ' + TOPICS[q.t].emoji + ' Answer this question in a mission to unlock the fact.</div>').join('') + '</div></div>';
+}
+function startQuiz() {
+  const pool = shuffle(BANK), pr = q => (SAVE.missed[q.id] ? 2 : 0) + (SAVE.facts[q.id] ? 0 : 1), qs = pool.sort((a, b) => pr(b) - pr(a)).slice(0, 8); let i = 0, mist = 0;
+  $('#ui').innerHTML = ''; scr = 'quiz'; P = null;
+  const next = () => {
+    if (i >= qs.length) { const ov = $('#ov'); ov.classList.remove('hide'); ov.innerHTML = '<div class="panel modal" style="text-align:center"><div class="big">🧠</div><h2>Quiz lab done!</h2><p style="font-weight:700">' + (mist ? 'You made ' + mist + ' mistake' + (mist > 1 ? 's' : '') + '. Those questions will come back first next time.' : 'No mistakes at all. Fantastic!') + '</p><div class="row" style="justify-content:center"><button class="btn" data-act="quiz">Another round</button><button class="btn ghost" data-act="title">Home</button></div></div>'; ov.onclick = e => { const a = e.target.closest('[data-act]'); if (!a) return; ov.classList.add('hide'); ov.onclick = null; act(a.dataset.act); }; return; }
+    const q = qs[i++]; ask(q, { practice: true, badge: '🧠 Quiz lab ' + i + ' of ' + qs.length, next: i === qs.length ? 'Finish ▶' : 'Next ▶' }, m => { mist += m; if (m) { SAVE.missed[q.id] = (SAVE.missed[q.id] || 0) + 1; persist(); } next(); });
+  };
+  next();
+}
+function howTo() {
+  const ov = $('#ov'); ov.classList.remove('hide');
+  ov.innerHTML = '<div class="panel modal"><h2>❓ How to play</h2>' +
+    '<div class="fcard">🚀 <b>8 missions:</b> launch a rocket from Earth, coast to the Moon, land the lander, then <b>build 6 base modules</b> one by one: solar farm, habitat, ice mine, greenhouse, comms tower and launch pad.</div>' +
+    '<div class="fcard" style="margin-top:8px">🧠 <b>Questions power you up.</b> Right answers refill fuel or battery. Wrong answers cost some. Missed questions come back later so you can master them.</div>' +
+    '<div class="fcard" style="margin-top:8px">🚙 <b>Base missions:</b> ' + (TOUCH ? 'drag one finger to drive.' : 'arrow keys or <kbd>W A S D</kbd>, <kbd>Space</kbd> to boost.') + ' Stop in a ring and hold still to load crates, survey and build.</div>' +
+    '<div class="fcard" style="margin-top:8px">🛬 <b>Rocket and lander:</b> ' + (TOUCH ? 'use the on-screen buttons.' : '<kbd>←</kbd><kbd>→</kbd> to steer or tilt, <kbd>Space</kbd> or <kbd>↑</kbd> for engine power.') + '</div>' +
+    '<div class="fcard" style="margin-top:8px">⭐ <b>Stars:</b> 3 stars for 0–1 wrong answers and no repairs or crashes. Your base is saved on this device.</div>' +
+    '<div class="row end"><button class="btn" id="hgo">Got it!</button></div></div>';
+  $('#hgo').onclick = () => { ov.classList.add('hide'); ov.innerHTML = ''; SAVE.seen = true; persist(); };
+}
+function act(a) {
+  SFX.click();
+  if (a === 'map') { audio(); toMap(); if (!SAVE.seen) howTo(); } else if (a === 'title') showTitle(); else if (a === 'log') showLog(); else if (a === 'quiz') startQuiz(); else if (a === 'how') howTo();
+  else if (a === 'snd') { SAVE.sound = !SAVE.sound; persist(); showTitle(); }
+  else if (a === 'reset') { if (confirm('Remove all built modules and start the base again? Stars and facts stay.')) { SAVE.built = {}; persist(); toMap(); } }
+}
+$('#ui').addEventListener('click', e => {
+  const lv = e.target.closest('[data-lv]'); if (lv) { SAVE.level = lv.dataset.lv; persist(); SFX.click(); $('#lvseg').querySelectorAll('button').forEach(b => b.classList.toggle('on', b === lv)); return; }
+  const tab = e.target.closest('[data-tab]'); if (tab) { logTab = tab.dataset.tab; showLog(); return; }
+  const mi = e.target.closest('[data-mi]'); if (mi) { SFX.click(); startMission(+mi.dataset.mi); return; }
+  const a = e.target.closest('[data-act]'); if (a) act(a.dataset.act);
+});
+function pause() {
+  if (!P || P.paused || scr !== 'play') return; P.paused = true; engineSound(false, 0); const ov = $('#ov'); ov.classList.remove('hide');
+  ov.innerHTML = '<div class="panel modal" style="text-align:center"><div class="big">⏸</div><h2>Paused</h2><div class="row" style="justify-content:center"><button class="btn" data-act="resume">▶ Resume</button><button class="btn ghost" data-act="restart">↻ Restart mission</button><button class="btn alt" data-act="map">🗺️ Mission map</button></div></div>';
+  ov.onclick = e => { const a = e.target.closest('[data-act]'); if (!a) return; ov.classList.add('hide'); ov.innerHTML = ''; ov.onclick = null; if (a.dataset.act === 'resume') P.paused = false; else if (a.dataset.act === 'restart') startMission(P.mi); else toMap(); };
+}
+$('#bpause').onclick = pause;
+$('#bmute').onclick = () => { SAVE.sound = !SAVE.sound; persist(); $('#bmute').textContent = SAVE.sound ? '🔊' : '🔇'; if (!SAVE.sound) engineSound(false, 0); };
+
+// ====================================================================
+//  main loop
+// ====================================================================
+const UPD = { launch: dt => updateLaunch(dt), land: dt => updateLand(dt), surf: dt => updateSurf(dt) };
+const REN = { launch: t => renderLaunch(t), land: t => renderLand(t), surf: t => renderSurf(t) };
+function frame(ts) {
+  const dt = Math.min(.05, (ts - wallT) / 1000); wallT = ts; const t = ts / 1000;
+  if (scr === 'play' && P) {
+    if (!P.paused) { const n = P.ts > 1 ? P.ts : 1; for (let i = 0; i < n && !P.paused && scr === 'play'; i++) UPD[P.mode](dt * (P.ts < 1 ? P.ts : 1)); }
+    if (P && scr === 'play') { REN[P.mode](t); hudTick(); }
+  } else if (scr !== 'play') { drawAttract(t); }
+  const bc = $('#bcv'); if (bc) { const fin = P && P.final; drawBaseScene(bc.getContext('2d'), bc.width, bc.height, t, { night: !!fin }); }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(ts => { wallT = ts; frame(ts); });
+$('#bmute').textContent = SAVE.sound ? '🔊' : '🔇';
+showTitle();
+
+// debug hook (used by the automated tests)
+window.__m = { get P() { return P; }, start: startMission, save: SAVE, BANK, MISSIONS, MODULES, genWorld, reachable, ask, title: showTitle, map: toMap, quiz: startQuiz, log: showLog, fin: () => { if (P) finishMission(); } };
+</script></body></html>
