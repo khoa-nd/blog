@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mathematics in Deep Learning — Visual Math Index</title>
+  <meta name="description" content="A 60-day progressive visual guide & infographic poster library for Mathematics in Deep Learning (Yin Yang), from foundations to advanced theory." />
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+      font-size: 118%;
+    }
+    body {
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #ffffff;
+      color: #0f172a;
+    }
+  </style>
+</head>
+<body class="antialiased m-0 p-0">
+  <header class="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-slate-200 px-4 md:px-8 py-3">
+    <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2.5">
+        <span class="w-6 h-6 rounded-md flex items-center justify-center text-xs font-bold text-white bg-blue-600">&#10022;</span>
+        <span class="font-bold text-sm tracking-tight text-slate-900">Mathematics in Deep Learning</span>
+      </div>
+      <nav class="flex items-center gap-4 text-xs font-medium text-slate-600">
+        <a href="#published" class="hover:text-blue-600">Published (3)</a>
+        <a href="#roadmap" class="hover:text-blue-600">60-Day Roadmap</a>
+        <a href="https://nguyendangkhoa.info/" class="text-blue-600 font-semibold hover:underline">Home &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 md:px-8 py-10 space-y-12">
+    <!-- HERO -->
+    <section class="space-y-5">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+        Visual Study Companion &middot; Updated Daily at 6:00 AM GMT+7
+      </div>
+      <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 leading-tight">
+        Mathematics in Deep Learning — Visual Index
+      </h1>
+      <p class="text-base text-slate-600 max-w-3xl leading-relaxed">
+        One core math concept a day, ordered from <strong class="text-slate-900">essential foundations</strong> to <strong class="text-slate-900">modern generative &amp; learning theory</strong>.
+        Every concept comes in two visual formats: a <strong class="text-slate-900">Gemma-style interactive visual guide (HTML)</strong> and a clean <strong class="text-slate-900">editorial infographic poster (JPG)</strong>.
+      </p>
+
+      <!-- Progress Card -->
+      <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5 space-y-2.5">
+        <div class="flex flex-wrap items-center justify-between gap-2 text-sm">
+          <span class="font-bold text-slate-900">Curriculum Progress: 3 of 60 Concepts Live</span>
+          <span class="font-mono text-xs font-bold text-blue-700">5% complete</span>
+        </div>
+        <div class="w-full h-3 rounded-full bg-slate-200 overflow-hidden border border-slate-300">
+          <div class="h-full rounded-full bg-blue-600" style="width: 5%"></div>
+        </div>
+        <div class="flex flex-wrap gap-3 text-xs text-slate-500 pt-1">
+          <span>Path: <code class="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-slate-700">/books/math-dl-yinyang/</code></span>
+          <span>Source: <em>Mathematics in Deep Learning</em> (Yin Yang, 1st Ed.)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PUBLISHED GALLERY -->
+    <section id="published" class="space-y-5 scroll-mt-20">
+      <div class="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 class="text-2xl font-bold tracking-tight text-slate-900">Published Visual Guides</h2>
+        <span class="text-xs text-slate-500">Newest first &middot; Click any poster for full resolution</span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        
+        <article class="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col gap-3 shadow-sm hover:shadow-md transition">
+          <div class="flex items-center justify-between gap-2 text-xs">
+            <span class="px-2.5 py-0.5 rounded-full font-bold bg-blue-50 text-blue-700 border border-blue-200">Day 03</span>
+            <span class="text-slate-500">Tier 1 &middot; 2026-11-28</span>
+          </div>
+          
+            <a href="day-03-dot-products-and-projections.jpg" class="block overflow-hidden rounded-xl border border-slate-200 bg-slate-50 aspect-[2/3] group">
+              <img src="day-03-dot-products-and-projections.jpg" alt="Dot Products &amp; Geometric Alignment infographic poster" loading="lazy"
+                   class="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]" />
+            </a>
+          <div class="space-y-1 flex-1">
+            <h3 class="font-bold text-base text-slate-900 leading-snug">Dot Products &amp; Geometric Alignment</h3>
+            <p class="text-xs text-slate-500">Foundations &amp; Linear Building Blocks</p>
+            <code class="inline-block mt-1 text-[0.72rem] px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 break-all">w^T x = sum_i w_i x_i</code>
+          </div>
+          <div class="flex items-center gap-2 pt-2 border-t border-slate-100">
+            <a href="day-03-dot-products-and-projections.html" class="flex-1 text-center px-3 py-2 rounded-lg text-xs font-semibold bg-blue-600 text-white hover:bg-blue-700 transition">Interactive Guide &rarr;</a><a href="day-03-dot-products-and-projections.jpg" class="px-3 py-2 rounded-lg text-xs font-semibold border border-slate-300 text-slate-800 bg-white hover:bg-slate-50 transition">Poster JPG</a>
+          </div>
+        </article>
+        <article class="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col gap-3 shadow-sm hover:shadow-md transition">
+          <div class="flex items-center justify-between gap-2 text-xs">
+            <span class="px-2.5 py-0.5 rounded-full font-bold bg-blue-50 text-blue-700 border border-blue-200">Day 02</span>
+            <span class="text-slate-500">Tier 1 &middot; 2026-11-27</span>
+          </div>
+          
+            <a href="day-02-scalars-vectors-matrices-tensors.jpg" class="block overflow-hidden rounded-xl border border-slate-200 bg-slate-50 aspect-[2/3] group">
+              <img src="day-02-scalars-vectors-matrices-tensors.jpg" alt="Scalars, Vectors, Matrices &amp; Tensor Axis Semantics infographic poster" loading="lazy"
+                   class="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]" />
+            </a>
+          <div class="space-y-1 flex-1">
+            <h3 class="font-bold text-base text-slate-900 leading-snug">Scalars, Vectors, Matrices &amp; Tensor Axis Semantics</h3>
+            <p class="text-xs text-slate-500">Foundations &amp; Linear Building Blocks</p>
+            <code class="inline-block mt-1 text-[0.72rem] px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 break-all">x in R^d, W in R^{m x n}, X in R^{B x C x H x W}</code>
+          </div>
+          <div class="flex items-center gap-2 pt-2 border-t border-slate-100">
+            <a href="day-02-scalars-vectors-matrices-tensors.html" class="flex-1 text-center px-3 py-2 rounded-lg text-xs font-semibold bg-blue-600 text-white hover:bg-blue-700 transition">Interactive Guide &rarr;</a><a href="day-02-scalars-vectors-matrices-tensors.jpg" class="px-3 py-2 rounded-lg text-xs font-semibold border border-slate-300 text-slate-800 bg-white hover:bg-slate-50 transition">Poster JPG</a>
+          </div>
+        </article>
+        <article class="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col gap-3 shadow-sm hover:shadow-md transition">
+          <div class="flex items-center justify-between gap-2 text-xs">
+            <span class="px-2.5 py-0.5 rounded-full font-bold bg-blue-50 text-blue-700 border border-blue-200">Day 01</span>
+            <span class="text-slate-500">Tier 1 &middot; 2026-11-26</span>
+          </div>
+          
+            <a href="day-01-functions-domains-and-composition.jpg" class="block overflow-hidden rounded-xl border border-slate-200 bg-slate-50 aspect-[2/3] group">
+              <img src="day-01-functions-domains-and-composition.jpg" alt="Functions, Domains, Codomains &amp; Composition infographic poster" loading="lazy"
+                   class="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]" />
+            </a>
+          <div class="space-y-1 flex-1">
+            <h3 class="font-bold text-base text-slate-900 leading-snug">Functions, Domains, Codomains &amp; Composition</h3>
+            <p class="text-xs text-slate-500">Foundations &amp; Linear Building Blocks</p>
+            <code class="inline-block mt-1 text-[0.72rem] px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 break-all">f_theta: X -&gt; Y, g o f</code>
+          </div>
+          <div class="flex items-center gap-2 pt-2 border-t border-slate-100">
+            <a href="day-01-functions-domains-and-composition.html" class="flex-1 text-center px-3 py-2 rounded-lg text-xs font-semibold bg-blue-600 text-white hover:bg-blue-700 transition">Interactive Guide &rarr;</a><a href="day-01-functions-domains-and-composition.jpg" class="px-3 py-2 rounded-lg text-xs font-semibold border border-slate-300 text-slate-800 bg-white hover:bg-slate-50 transition">Poster JPG</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- FULL 60-DAY ROADMAP -->
+    <section id="roadmap" class="space-y-6 scroll-mt-20">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-2xl font-bold tracking-tight text-slate-900">Complete 60-Day Roadmap</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Easy to advanced &mdash; each day unlocks automatically at 6:00 AM GMT+7</p>
+        </div>
+        <div class="flex items-center gap-2 text-xs">
+          <button id="btn-all" class="px-3 py-1.5 rounded-lg font-semibold bg-slate-900 text-white cursor-pointer">All (60)</button>
+          <button id="btn-live" class="px-3 py-1.5 rounded-lg font-semibold border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 cursor-pointer">Live Only (3)</button>
+        </div>
+      </div>
+
+      <div class="space-y-8">
+        
+        <section id="phase-1" class="space-y-3 scroll-mt-20">
+          <div class="flex items-baseline justify-between gap-3 border-b border-slate-200 pb-2">
+            <h3 class="text-lg font-bold text-slate-900">Phase 1: Foundations &amp; Linear Building Blocks</h3>
+            <span class="text-xs font-semibold text-slate-500">3 / 12 published</span>
+          </div>
+          <div class="space-y-2">
+            
+            <div class="rounded-xl border bg-white border-slate-300 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="done">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-900 text-white shrink-0">D01</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><a href="day-01-functions-domains-and-composition.html" class="font-bold text-slate-900 hover:text-blue-600">Functions, Domains, Codomains &amp; Composition</a> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300">Live</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">f_theta: X -&gt; Y, g o f</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><a href="day-01-functions-domains-and-composition.html" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-600 text-white hover:bg-blue-700">Guide</a><a href="day-01-functions-domains-and-composition.jpg" class="px-2.5 py-1 rounded-md text-xs font-semibold border border-slate-300 bg-white text-slate-800 hover:bg-slate-50">Poster</a></div>
+            </div>
+            <div class="rounded-xl border bg-white border-slate-300 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="done">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-900 text-white shrink-0">D02</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><a href="day-02-scalars-vectors-matrices-tensors.html" class="font-bold text-slate-900 hover:text-blue-600">Scalars, Vectors, Matrices &amp; Tensor Axis Semantics</a> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300">Live</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">x in R^d, W in R^{m x n}, X in R^{B x C x H x W}</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><a href="day-02-scalars-vectors-matrices-tensors.html" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-600 text-white hover:bg-blue-700">Guide</a><a href="day-02-scalars-vectors-matrices-tensors.jpg" class="px-2.5 py-1 rounded-md text-xs font-semibold border border-slate-300 bg-white text-slate-800 hover:bg-slate-50">Poster</a></div>
+            </div>
+            <div class="rounded-xl border bg-white border-slate-300 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="done">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-900 text-white shrink-0">D03</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><a href="day-03-dot-products-and-projections.html" class="font-bold text-slate-900 hover:text-blue-600">Dot Products &amp; Geometric Alignment</a> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300">Live</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">w^T x = sum_i w_i x_i</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><a href="day-03-dot-products-and-projections.html" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-600 text-white hover:bg-blue-700">Guide</a><a href="day-03-dot-products-and-projections.jpg" class="px-2.5 py-1 rounded-md text-xs font-semibold border border-slate-300 bg-white text-slate-800 hover:bg-slate-50">Poster</a></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D04</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Matrix-Vector, Matrix-Matrix &amp; Outer Products</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">Wx, AB, u v^T</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D05</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Affine Transformations, Batched Broadcasting &amp; Transposes</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">z = Wx + b, Z = XW^T + 1_m b^T</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D06</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Hyperplanes, Half-Spaces &amp; Signed Margin</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">gamma(x) = (w^T x + b) / ||w||_2</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D07</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Convex Sets, Convex Combinations &amp; Nonlinear Feature Geometry</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">lambda a + (1 - lambda) b, phi(x)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D08</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Piecewise Functions, Activations &amp; Clipping (ReLU, Sigmoid, Tanh)</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">ReLU(z) = max(0, z), sigma(z), clip</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D09</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Indicator Functions, One-Hot Vectors &amp; Floor/Ceiling Arithmetic</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">1{A}, e_y in R^K, floor/ceil, P | H</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D10</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Single-Variable Derivatives, Chain Rule &amp; Computation DAGs</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">dL/dw = (dL/dz)(dz/dw)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D11</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Optimization, argmin/argmax &amp; Gradient Descent</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">theta_{t+1} = theta_t - eta * grad L(theta_t)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D12</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Regularization: L2 Weight Decay &amp; Pretrained Anchor Penalties</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">L(theta) + lambda ||theta||_2^2, lambda ||theta - theta_0||_2^2</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+          </div>
+        </section>
+        <section id="phase-2" class="space-y-3 scroll-mt-20">
+          <div class="flex items-baseline justify-between gap-3 border-b border-slate-200 pb-2">
+            <h3 class="text-lg font-bold text-slate-900">Phase 2: Probability, Information Theory &amp; Geometry</h3>
+            <span class="text-xs font-semibold text-slate-500">0 / 12 published</span>
+          </div>
+          <div class="space-y-2">
+            
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D13</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Discrete Probability, PMFs, Softmax &amp; the Probability Simplex</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">Delta^{K-1}, p_k = exp(z_k) / sum_j exp(z_j)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D14</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Expectation, Linearity of Expectation, Variance &amp; Covariance</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">E[X], Var(X), Cov(X, Y)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D15</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Conditional Probability, Bayes&#x27; Rule &amp; the Probability Chain Rule</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">P(A|B), P(x_{1:T}) = prod_t P(x_t | x_{&lt;t})</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D16</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Maximum Likelihood Estimation (MLE) &amp; Negative Log-Likelihood</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">max_theta prod_i p_theta(y_i | x_i) &lt;-&gt; min_theta sum_i -log p_theta</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D17</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Shannon Entropy &amp; Perplexity</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">H(p) = -sum p_k log p_k, PPL = exp(L)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D18</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Cross-Entropy, KL Divergence &amp; Jensen&#x27;s / Gibbs&#x27; Inequality</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">H(p, q) = H(p) + D_KL(p || q), D_KL &gt;= 0</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D19</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Empirical Risk, Dirac Data Measure, i.i.d. Sampling &amp; Law of Large Numbers</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">P_hat_D = (1/n) sum delta_{(x_i, y_i)}, R_hat(theta) -&gt; R(theta)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D20</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Vector &amp; Matrix Norms (L1, L2, L_inf, Frobenius &amp; Spectral)</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">||x||_1, ||x||_2, ||x||_inf, ||A||_F, ||A||_2</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D21</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Cosine Similarity, Unit-Sphere Geometry &amp; High-Dimensional Embeddings</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">cos(u, v) = (u^T v) / (||u||_2 ||v||_2), Johnson–Lindenstrauss</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D22</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Distribution Shift (Covariate/Label Shift) &amp; Pushforward Measures</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">P_train != P_test, r_# P</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D23</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Statistical Calibration, Temperature Scaling &amp; Expected Calibration Error</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">E[Z | C] = C, softmax(z / tau), ECE</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D24</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Mutual Information &amp; the InfoNCE Contrastive Lower Bound</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">I(X; Y) &gt;= log B - L_NCE</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+          </div>
+        </section>
+        <section id="phase-3" class="space-y-3 scroll-mt-20">
+          <div class="flex items-baseline justify-between gap-3 border-b border-slate-200 pb-2">
+            <h3 class="text-lg font-bold text-slate-900">Phase 3: Multivariable Calculus, Backprop &amp; Optimization</h3>
+            <span class="text-xs font-semibold text-slate-500">0 / 10 published</span>
+          </div>
+          <div class="space-y-2">
+            
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D25</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Partial Derivatives, Gradients, Directional Derivatives &amp; Cauchy–Schwarz</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">D_u f(x) = grad f(x)^T u, |u^T v| &lt;= ||u|| ||v||</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D26</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Convex vs. Nonconvex Landscapes, Saddle Points &amp; Subgradients</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">grad L = 0, ReLU kinks, straight-through estimator</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D27</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Taylor Approximations, Hessian Matrices &amp; Condition Number</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">f(x+dx) ~ f + g^T dx + (1/2) dx^T H dx, kappa(H) = lambda_max / lambda_min</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D28</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Jacobians, Vector-Jacobian Products (VJPs) &amp; Residual Jacobians</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">J_g(x), v^T J_g(x), I + J_F(x)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D29</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Matrix Calculus via Differentials, Trace &amp; Hadamard Product</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">dL = tr(G_W^T dW), g_z (x) sigma&#x27;(z)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D30</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Reverse-Mode Autodiff, Topological Order &amp; Finite-Difference Checks</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">Reverse DAG sweep, (f(x+h) - f(x-h)) / (2h)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D31</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Lipschitz Continuity &amp; the Descent Lemma</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">||grad f(x) - grad f(y)|| &lt;= beta ||x - y||, 0 &lt; eta &lt; 2/beta</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D32</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">SGD, Momentum, Adam/AdamW &amp; Gradient Clipping</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">Exponential moving averages m_t, v_t, bias correction, norm clipping</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D33</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Convolution as a Linear Operator: Toeplitz Matrices &amp; im2col</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">(K * X)_{i,j}, block-Toeplitz matrix, vec(X)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D34</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Translation Equivariance, Modular Shifts &amp; Receptive-Field Recurrences</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">F(T_delta X) = T_delta F(X), i - s mod n, (t^{-1} + 1 + t)^L</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+          </div>
+        </section>
+        <section id="phase-4" class="space-y-3 scroll-mt-20">
+          <div class="flex items-baseline justify-between gap-3 border-b border-slate-200 pb-2">
+            <h3 class="text-lg font-bold text-slate-900">Phase 4: Linear Algebra &amp; Architecture Math</h3>
+            <span class="text-xs font-semibold text-slate-500">0 / 9 published</span>
+          </div>
+          <div class="space-y-2">
+            
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D35</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Rank, Nullspace, Rank–Nullity &amp; Depthwise-Separable Factorizations</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">ker(D), rank(A) + nullity(A) = n, W_{u,v,c,r} = D_{u,v,c} P_{c,r}</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D36</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Eigenvalues, Spectral Radius &amp; Discrete-Time Dynamical Stability</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">Av = lambda v, rho(A), h_t = A h_{t-1}</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D37</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">BPTT Temporal Jacobians &amp; Diagonal Gating (LSTM / GRU)</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">prod_{k=t}^T J_k, diag(f_t), Hadamard memory highway</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D38</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Scaled Dot-Product Attention &amp; Variance Scaling (1 / sqrt(d_k))</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">softmax(Q K^T / sqrt(d_k)) V, Var(q^T k) = d_k</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D39</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Row-Stochastic Matrices, Weighted Graphs &amp; Causal Lower-Triangular Masks</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">A 1 = 1, M_{ij} = -inf for j &gt; i</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D40</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Permutation Matrices, Equivariance &amp; Multi-Head Block Projections</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">P^T P = I, F(PX) = P F(X), Concat(head_1, ..., head_h) W_O</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D41</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">SVD, Eckart–Young–Mirsky Low-Rank Approximation &amp; Linear CKA</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">W = U Sigma V^T, min_{rank &lt;= r} ||W - W_r||_F, CKA(Z, Z_0)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D42</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Vision Geometry: IoU / GIoU / DIoU, Hausdorff Distance &amp; Lovász Extension</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">IoU(A, B), d_H(A, B), soft Dice &amp; Lovász surrogate</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D43</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Bipartite Matching (Hungarian Algorithm) &amp; Detection/Retrieval Metrics</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">min_{sigma} sum_i C_{i, sigma(i)}, PR curves, AP/mAP, Recall@k, MRR</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+          </div>
+        </section>
+        <section id="phase-5" class="space-y-3 scroll-mt-20">
+          <div class="flex items-baseline justify-between gap-3 border-b border-slate-200 pb-2">
+            <h3 class="text-lg font-bold text-slate-900">Phase 5: RL, Preferences &amp; Dynamic Programming</h3>
+            <span class="text-xs font-semibold text-slate-500">0 / 7 published</span>
+          </div>
+          <div class="space-y-2">
+            
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D44</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Markov Chains, MDPs &amp; Discounted Geometric Series</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">P(s&#x27; | s, a), G_t = sum_{k=0}^inf gamma^k r_{t+k}, sum gamma^k = 1/(1-gamma)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D45</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Bellman Equations, L_inf Contraction Mappings &amp; Fixed-Point Iteration</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">||T V - T W||_inf &lt;= gamma ||V - W||_inf</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D46</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Score-Function / Log-Derivative Trick (REINFORCE) &amp; Clipped PPO Ratios</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">grad p_theta = p_theta grad log p_theta, clip(r_t, 1-eps, 1+eps)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D47</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Preference Relations, Bradley–Terry Models &amp; Lagrange Multipliers (RLHF/DPO)</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">y+ &gt; y-, sigma(r(y+) - r(y-)), pi*(y|x) propto pi_ref exp(r/beta)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D48</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Dynamic Programming for Sequence Alignment: CTC &amp; LogSumExp</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">alpha_t(s), log sum_i exp(a_i) = m + log sum exp(a_i - m)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D49</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">2D Grid DP: RNN-T Transducers, Levenshtein Edit Distance &amp; MAS</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">DP(t, u), WER/CER edit recursion, Monotonic Alignment Search</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D50</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Signal Processing: Nyquist–Shannon, STFT, Complex Exponentials &amp; Mel Filters</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">F_s &gt; 2B, X[m, k] = sum x[n] w[n-mH] e^{-2 pi i k n / L}</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+          </div>
+        </section>
+        <section id="phase-6" class="space-y-3 scroll-mt-20">
+          <div class="flex items-baseline justify-between gap-3 border-b border-slate-200 pb-2">
+            <h3 class="text-lg font-bold text-slate-900">Phase 6: Generative Models, Modern Architectures &amp; Theory</h3>
+            <span class="text-xs font-semibold text-slate-500">0 / 10 published</span>
+          </div>
+          <div class="space-y-2">
+            
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D51</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Multivariate Gaussians, Affine Gaussian Algebra &amp; the Reparameterization Trick</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">N(mu, Sigma), z = mu + sigma (x) eps, eps ~ N(0, I)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D52</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Variational Inference &amp; the Evidence Lower Bound (ELBO)</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">log p(x) &gt;= E_q[log p(x|z)] - D_KL(q(z|x) || p(z))</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D53</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Probability Divergences &amp; Optimal Transport (TV, JS, Wasserstein-1 &amp; GAN Minimax)</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">TV(P, Q), JSD(P || Q), W_1(P, Q) = sup_{||f||_L &lt;= 1} (E_P f - E_Q f)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D54</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Score Functions, Min-MSE Conditional Expectation &amp; Completing the Square</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">s(x) = grad_x log p(x), E[eps | x_t], q(x_{t-1} | x_t, x_0)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D55</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Diffusion Algebra, SNR, Reverse-Time SDEs &amp; Probability-Flow ODEs</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">x_t = sqrt(alpha_bar_t) x_0 + sqrt(1 - alpha_bar_t) eps, SNR(t)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D56</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Scalar &amp; Vector Quantization, Bitrates &amp; Rate–Distortion Tradeoffs</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">Error &lt;= n Delta^2 / 4, B = Q f_z log_2 K, RVQ</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D57</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">State-Space Models, Associative Parallel Prefix Scans &amp; MoE Load Balancing</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">s_t = A_t s_{t-1} + B_t x_t, (A_2, b_2) o (A_1, b_1), ceil(Tk / E)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D58</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Rejection Sampling (Speculative Decoding), Quantiles &amp; Pareto Dominance</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">Accept min(1, p/q), residual norm(max(0, p - q)), p95 &amp; Pareto frontier</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D59</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Concentration Inequalities (Hoeffding, Union Bound) &amp; VC / Sauer–Shelah</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">P(|mean - mu| &gt;= eps) &lt;= 2 exp(-2 n eps^2), sum_{j=0}^d C(n, j)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+            <div class="rounded-xl border bg-slate-50/70 border-slate-200 text-slate-500 px-4 py-3 flex flex-wrap items-center justify-between gap-3" data-status="pending">
+              <div class="flex items-start gap-3 min-w-0 flex-1">
+                <span class="font-mono text-xs font-bold px-2 py-1 rounded-md bg-slate-200 text-slate-600 shrink-0">D60</span>
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2"><span class="font-medium text-slate-600">Modern Generalization Theory: Excess Risk, Rademacher, Stability, PAC-Bayes &amp; NTK</span> <span class="px-2 py-0.5 rounded-full text-[0.7rem] font-medium bg-slate-100 text-slate-500 border border-slate-200">Upcoming</span></div>
+                  <div class="text-xs text-slate-500 font-mono truncate mt-0.5">Approximation + Estimation + Optimization error, H Delta H, PAC-Bayes KL</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0"><span class="text-xs italic text-slate-400">Queued</span></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+    Automatically generated &amp; published to <a href="https://nguyendangkhoa.info/books/math-dl-yinyang/" class="text-blue-600 hover:underline">nguyendangkhoa.info/books/math-dl-yinyang/</a>
+  </footer>
+
+  <script>
+    const btnAll = document.getElementById('btn-all');
+    const btnLive = document.getElementById('btn-live');
+    const items = document.querySelectorAll('[data-status]');
+    function setFilter(liveOnly) {
+      items.forEach(el => {
+        el.style.display = (!liveOnly || el.dataset.status === 'done') ? '' : 'none';
+      });
+      btnAll.className = liveOnly
+        ? 'px-3 py-1.5 rounded-lg font-semibold border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 cursor-pointer'
+        : 'px-3 py-1.5 rounded-lg font-semibold bg-slate-900 text-white cursor-pointer';
+      btnLive.className = liveOnly
+        ? 'px-3 py-1.5 rounded-lg font-semibold bg-slate-900 text-white cursor-pointer'
+        : 'px-3 py-1.5 rounded-lg font-semibold border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 cursor-pointer';
+    }
+    btnAll.addEventListener('click', () => setFilter(false));
+    btnLive.addEventListener('click', () => setFilter(true));
+  </script>
+</body>
+</html>
